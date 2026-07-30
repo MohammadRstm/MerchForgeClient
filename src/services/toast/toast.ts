@@ -1,24 +1,35 @@
 import { toast } from "sonner";
+import { DURATIONS } from "./constants";
 
 const notify = {
-    success(message: string) {
-        toast.success(message);
+    success(message: string, duration: number = DURATIONS.normal) {
+        toast.success(message, {
+            duration: duration,
+        });
     },
 
-    error(message: string) {
-        toast.error(message);
+    error(message: string,  duration: number = DURATIONS.normal) {
+        toast.error(message ,{
+            duration: duration,
+        });
     },
 
-    info(message: string) {
-        toast.info(message);
+    info(message: string,  duration: number = DURATIONS.normal) {
+        toast.info(message,{
+            duration: duration,
+        });
     },
 
-    warning(message: string) {
-        toast.warning(message);
+    warning(message: string,  duration: number = DURATIONS.normal) {
+        toast.warning(message,{
+            duration: duration,
+        });
     },
 
-    loading(message: string) {
-        return toast.loading(message);
+    loading(message: string,  duration: number = DURATIONS.normal) {
+        return toast.loading(message,{
+            duration: duration,
+        });
     },
 
     dismiss(id?: string | number) {
