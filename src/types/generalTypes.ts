@@ -5,3 +5,6 @@ export interface User{
     username: string,
     id: number
 };
+
+export type FormErrors<T> = Partial<Record<keyof T, string>>;
+

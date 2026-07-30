@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { createFieldUpdater } from "../../../../../utils/forms/createFieldUpdater";
 import type { SignupFormDataType } from "../../types";
 import { INITIAL_SIGNUP_FORM_DATA } from "../../config";
+import { createFieldUpdater } from "../../../../../utils/forms/createFieldUpdater";
 
 const useHandleSignupForm = () =>{
 

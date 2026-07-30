@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query"
 import { registerUser } from "../../services/registerUser";
 import { useNavigate } from "react-router";
-import { useAuth } from "../../../../../context/Auth";
+import useAuth from "../../../../../context/Auth/useAuth";
 
 const useRegister = () =>{
 
