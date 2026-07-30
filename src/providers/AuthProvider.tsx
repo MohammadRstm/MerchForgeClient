@@ -5,12 +5,12 @@ import AuthContext from "../context/Auth/AuthContext";
 export const AuthProvider = ({ children }: { children: React.ReactNode }) =>{
     const [user, setUser] = useState<User | null>(null);
 
-    const saveSession = (token: string, user : User) =>{
+    const login = (token: string, user : User) =>{
         localStorage.setItem("token" , token);
         setUser(user);
     };
     
-    const deleteSession = () => {
+    const logout = () => {
        setUser(null);
     }; 
 
@@ -20,8 +20,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) =>{
             value={{
                 user,
                 isAuthenticated: !!user,
-                saveSession,
-                deleteSession,
+                login,
+                logout,
             }}
         >
             {children}
