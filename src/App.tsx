@@ -20,7 +20,7 @@ function App(){
       authenticatedApi.interceptors.response.eject(id.autheticatedRespInterceptor);
     };
 
-  }, []);
+  }, [logout, navigate]);
 
 
   return <>
