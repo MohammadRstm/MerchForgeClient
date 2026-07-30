@@ -1,0 +1,23 @@
+import { Route, Routes } from "react-router"
+import PagesWithHeaderLayout from "../layout/PagesWithHeaders/PagesWithHeaders";
+import AuthenticatedRoutes from "./AuthenticatedRoutes";
+import ErrorBoundaryRoutes from "./ErrorBoundaryRoutes";
+import Home from "../features/Home/Home";
+
+const AppRoutes = () =>{
+
+    return(
+        <Routes>
+            <Route element={<ErrorBoundaryRoutes />}>
+                <Route element={<PagesWithHeaderLayout />}>
+                    <Route path="/" element={<Home />} />
+                    <Route element={<AuthenticatedRoutes />}>
+                        {/** EX USER PROFILE */}
+                    </Route>    
+                </Route>
+            </Route>
+        </Routes>
+    );
+}
+
+export default AppRoutes;

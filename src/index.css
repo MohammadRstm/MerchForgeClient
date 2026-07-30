@@ -30,9 +30,6 @@
   }
 }
 
-#root {
-}
-
-body {
+body, #root {
   margin: 0;
 }
