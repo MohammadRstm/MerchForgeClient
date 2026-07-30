@@ -1,8 +1,7 @@
 import type { ReactNode } from "react";
 import { BrowserRouter } from "react-router";
-import { QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "../context/Auth";
-import queryClient from "./queryCleint";
 
 
 /**
@@ -10,6 +9,8 @@ import queryClient from "./queryCleint";
  */
 
 export default function AppProviders({children,}:{children: ReactNode;}){
+    const queryClient = new QueryClient();
+
     return (
         <BrowserRouter>
             <QueryClientProvider client={queryClient}>
