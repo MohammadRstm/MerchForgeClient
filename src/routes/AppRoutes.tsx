@@ -21,8 +21,8 @@ const AppRoutes = () =>{
                     <Route path="/" element={<Home />} />
 
                     <Route element={<AuthenticatedRoutes />}>
-
-                    </Route>
+                        {/** EX USER PROFILE */}
+                    </Route>    
                 </Route>
             </Route>
 
