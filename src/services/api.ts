@@ -1,9 +1,10 @@
 import axios from "axios";
+import { env } from "../config/env";
 
 
 
 export const authenticatedApi = axios.create({
-    baseURL: import.meta.env.VITE_BASE_URL,
+    baseURL: env.apiUrl,
 });
 
 authenticatedApi.interceptors.request.use((config) => {
@@ -18,7 +19,7 @@ authenticatedApi.interceptors.request.use((config) => {
 
 
 export const unAuthenticatedApi = axios.create({
-    baseURL: import.meta.env.VITE_BASE_URL,
+    baseURL: env.apiUrl,
     headers: {
         Accept: "application/json",
     },
