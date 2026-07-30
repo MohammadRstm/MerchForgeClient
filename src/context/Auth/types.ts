@@ -1,4 +1,4 @@
-import type { User } from "../types/generalTypes";
+import type { User } from "../../types/generalTypes";
 
 export interface AuthContextType{
     user: User | null;
