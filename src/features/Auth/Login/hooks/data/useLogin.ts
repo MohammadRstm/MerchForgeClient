@@ -2,8 +2,8 @@ import { useMutation } from "@tanstack/react-query"
 import { useNavigate } from "react-router";
 import useAuth from "../../../../../context/Auth/useAuth";
 import { loginService } from "../../../../../services/api/auth.api";
-
-
+import { notify } from "../../../../../services/toast";
+import { routes } from "../../../../../config/routes";
 
 const useLogin = () =>{
     const { login } = useAuth();
@@ -14,7 +14,15 @@ const useLogin = () =>{
         onSuccess : (data) =>{
             // initialize the user session
             login(data.token, data.user);
-            naviagte("/");
+
+            notify.success(
+                "Welcome" + data.user.firstname + " " + data.user.lastname
+            );
+  
+            setTimeout(() =>{
+                naviagte(routes.HOME);
+            }, 2000);
+
         },
         onError : (error) =>{
             console.log(error);
