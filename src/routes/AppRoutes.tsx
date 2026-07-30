@@ -10,18 +10,19 @@ const AppRoutes = () =>{
 
     return(
         <Routes>
+            <Route element={<ErrorBoundaryRoutes />}>
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Signup />} />
+            
 
-            <Route element={<PagesWithHeaderLayout />}>
+                <Route element={<PagesWithHeaderLayout />}>
 
-                <Route element={<ErrorBoundaryRoutes />}>
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Signup />} />
-                </Route>
 
-                <Route path="/" element={<Home />} />
+                    <Route path="/" element={<Home />} />
 
-                <Route element={<AuthenticatedRoutes />}>
+                    <Route element={<AuthenticatedRoutes />}>
 
+                    </Route>
                 </Route>
             </Route>
 
