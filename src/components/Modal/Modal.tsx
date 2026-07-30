@@ -4,7 +4,7 @@ import ModalBody from "./compounds/ModalBody";
 import ModalFooter from "./compounds/ModalFooter";
 import ModalHeader from "./compounds/ModalHeader";
 import { useRef } from "react";
-import useClickOutside from "../../hooks/useClickOutSideElementToClose";
+import useClickOutside from "../../hooks/useClickOutsideElementToClose";
 
 export type ModalPropsType = {
     children : React.ReactNode;
