@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { BrowserRouter } from "react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { AuthProvider } from "../context/Auth";
+import { AuthProvider } from "./AuthProvider";
 
 
 /**
