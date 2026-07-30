@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react"
 
 export type useDebouncePropsType <T> = {
     debounceTimeMs : number;
-    value : T,
+    value : T;
 }
 
 const useDebounce = <T> ({
