@@ -10,14 +10,15 @@ import { authenticatedApi } from './services/api/api';
 function App(){
 
   const { logout } = useAuth();
-  const navigate = useNavigate;
+  const navigate = useNavigate();
 
   useEffect(() => {
 
-    const id = setupInterceptors(logout, navigate);
+    const receptors = setupInterceptors(logout, navigate);
 
     return () => {
-      authenticatedApi.interceptors.response.eject(id.autheticatedRespInterceptor);
+      authenticatedApi.interceptors.request.eject(receptors.authenticatedApiReqReceptor);
+      authenticatedApi.interceptors.response.eject(receptors.autheticatedRespInterceptor);
     };
 
   }, [logout, navigate]);

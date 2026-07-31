@@ -1,20 +1,21 @@
 import "./Header.css";
 import { Link } from "react-router";
 import { IoSearch } from "react-icons/io5";
+import { routes } from "../../config/routes";
 
 const Header = () =>{
 
     return(
         <div className="header">
             <div className="header-logo">
-               <Link className="home-link" to="/">Logo</Link>
+               <Link className="home-link" to={routes.LOGIN}>Logo</Link>
             </div> 
              
             
             <div className="header-search-bar">
                 <input
                 className="header-search-inp"
-                name="movie"
+                name="field_name"
                 type="text"
                 placeholder="Search..."
                 />
@@ -28,9 +29,9 @@ const Header = () =>{
             
 
             <div className="header-nav-bar">
-                <Link className="header-nav-link header-aboutus-link" to="/aboutus">Aboutus</Link>
-                <Link className="header-nav-link header-login-link" to="/login">Login</Link>
-                <Link className="header-nav-link header-signup-link" to="/signup">Signup</Link>
+                <Link className="header-nav-link header-aboutus-link" to={routes.ABOUTUS}>Aboutus</Link>
+                <Link className="header-nav-link header-login-link" to={routes.LOGIN}>Login</Link>
+                <Link className="header-nav-link header-signup-link" to={routes.SIGNUP}>Signup</Link>
             </div>
 
         </div>
