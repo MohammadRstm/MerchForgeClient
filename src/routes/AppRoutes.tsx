@@ -11,9 +11,9 @@ const AppRoutes = () =>{
     return(
         <Routes>
             <Route element={<ErrorBoundaryRoutes />}>
-                <Route path={routes.LOGIN} element={<Login />} />
 
                 <Route element={<PagesWithHeaderLayout />}>
+                    <Route path={routes.LOGIN} element={<Login />} />
                     <Route path={routes.HOME} element={<Home />} />
                     <Route element={<AuthenticatedRoutes />}>
                         {/** EX USER PROFILE */}
