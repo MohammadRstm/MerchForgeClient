@@ -8,7 +8,7 @@ const Header = () =>{
     return(
         <div className="header">
             <div className="header-logo">
-               <Link className="home-link" to={routes.LOGIN}>Logo</Link>
+               <Link className="home-link" to={routes.HOME}>Logo</Link>
             </div> 
              
             
