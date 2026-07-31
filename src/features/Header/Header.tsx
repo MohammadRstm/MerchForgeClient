@@ -15,7 +15,7 @@ const Header = () =>{
             <div className="header-search-bar">
                 <input
                 className="header-search-inp"
-                name="movie"
+                name="field_name"
                 type="text"
                 placeholder="Search..."
                 />
