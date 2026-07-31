@@ -1,6 +1,6 @@
 import { Outlet } from "react-router";
 import Header from "../../features/Header/Header";
-import "./PagesWithHeaderLayout.css";
+import "./PagesWithHeaders.css";
 
 const PagesWithHeaderLayout = () =>{
     return(
