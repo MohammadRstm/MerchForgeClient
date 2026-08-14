@@ -83,7 +83,7 @@
 
 .how__steps {
   list-style: none;
-  margin: 0;
+  margin: 2rem 0 0 0;
   padding: 0;
   display: grid;
   grid-template-columns: repeat(4, 1fr);

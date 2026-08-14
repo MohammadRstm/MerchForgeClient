@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
-import './AIServices.css';
+import './AiServices.css';
 
 interface ChatLine {
   from: 'merchant' | 'customer' | 'ai';
