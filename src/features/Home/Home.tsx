@@ -1,38 +1,34 @@
-import Footer from "../Footer/Footer";
-import Hero from "./components/Hero/Hero";
-import "./Home.css";
+import Hero from './components/Hero/Hero';
+import Navbar from './components/Navbar/Navbar';
+import Problem from './components/Problem/Problem';
+import HowItWorks from './components/HowItWorks/HowItWorks';
+import ProductManagement from './components/ProductManagement/ProductManagement';
+import AIProductCreation from './components/AiProductCreation/AiProductCreation';
+import WhyMerchForge from './components/WhyMerchForge/WhyMerchForge';
+import Integrations from './components/Integrations/Integrations';
+import AIServices from './components/AiServices/AiServices';
+import FinalCTA from './components/FinalCTA/FinalCTA';
+import Pricing from './components/Pricing/Pricing';
+import Footer from './components/Footer/Footer';
+import './Home.css';
 
-const Home = () => {
-    return (
-        <>
-                <Hero />
-            <main className="home">
-
-                <section className="features">
-                    <div className="feature-card">
-                        <h3>⚡ Fast</h3>
-                        <p>Built with Vite for lightning-fast development.</p>
-                    </div>
-
-                    <div className="feature-card">
-                        <h3>🧩 Reusable</h3>
-                        <p>Generic components, hooks, layouts, and utilities.</p>
-                    </div>
-
-                    <div className="feature-card">
-                        <h3>🔒 Production Ready</h3>
-                        <p>
-                            Authentication, route protection, validation, and error
-                            handling included.
-                        </p>
-                    </div>
-                </section>
-
-            </main>
-            <Footer />
-        </>
-
-    );
-};
-
-export default Home;
+export default function Home() {
+  return (
+    <div className="home" id="top">
+      <Navbar />
+      <main>
+        <Hero />
+        <Problem />
+        <HowItWorks />
+        <AIProductCreation />
+        <AIServices />
+        <ProductManagement />
+        <Integrations />
+        <Pricing />
+        <WhyMerchForge />
+        <FinalCTA />
+      </main>
+      <Footer />
+    </div>
+  );
+}
