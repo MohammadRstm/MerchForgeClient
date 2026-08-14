@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import logo from '../../../../assets/logo.svg';
 import './Navbar.css';
 
 interface NavLink {
@@ -51,6 +52,7 @@ export default function Navbar() {
     <header className={`navbar${scrolled ? ' navbar--scrolled' : ''}${menuOpen ? ' navbar--open' : ''}`}>
       <div className="navbar__inner">
         <a href="#top" className="navbar__logo" onClick={closeMenu}>
+          <img src={logo} alt="" className="navbar__logo-mark" />
           MerchForge
         </a>
 

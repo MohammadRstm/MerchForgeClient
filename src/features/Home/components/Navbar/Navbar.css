@@ -35,12 +35,21 @@
 }
 
 .navbar__logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
   font-family: 'Inter', system-ui, sans-serif;
   font-weight: 700;
   font-size: 1.125rem;
   letter-spacing: -0.01em;
   color: var(--nav-text);
   text-decoration: none;
+  flex-shrink: 0;
+}
+
+.navbar__logo-mark {
+  width: 30px;
+  height: 30px;
   flex-shrink: 0;
 }
 
