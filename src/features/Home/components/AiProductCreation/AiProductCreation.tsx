@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
-import './AIProductCreation.css';
+import BlackHoodieImage from '../../../../assets/Landing/Landing__AiProductCreation__blackHoodie.jpg';
+import './AiProductCreation.css';
 
 const UNDERSTOOD_FIELDS = ['Name', 'Description', 'Price', 'Sizes', 'Colors', 'Brand'];
 
@@ -65,7 +66,7 @@ export default function AIProductCreation() {
         >
           <div className="creation__inputs">
             <div className="creation__bubble creation__bubble--photo" style={withDelay(0.1)}>
-              <span className="creation__photo-swatch" aria-hidden="true" />
+              <img src={BlackHoodieImage} alt="" className="creation__photo-swatch" />
               <span className="creation__bubble-label">Product photo</span>
             </div>
 
@@ -89,7 +90,7 @@ export default function AIProductCreation() {
 
           <div className="creation__output">
             <div className="creation__listing" style={withDelay(0.55)}>
-              <div className="creation__listing-image" aria-hidden="true" />
+              <img src={BlackHoodieImage} alt="Classic Black Hoodie" className="creation__listing-image" />
               <div className="creation__listing-body">
                 <span className="creation__listing-name" style={withDelay(0.62)}>
                   Classic Black Hoodie

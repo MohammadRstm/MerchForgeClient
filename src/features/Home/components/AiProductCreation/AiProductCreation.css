@@ -118,7 +118,7 @@
   width: 42px;
   height: 42px;
   border-radius: 8px;
-  background: linear-gradient(135deg, #2b2b2e, #4a4a4e);
+  object-fit: cover;
   flex-shrink: 0;
 }
 
@@ -226,8 +226,11 @@
 }
 
 .creation__listing-image {
-  height: 140px;
-  background: linear-gradient(135deg, #2b2b2e, #4a4a4e);
+  display: block;
+  width: 100%;
+  max-height: 12rem;
+  background-color: #e4e4e4;
+  object-fit: contain;
 }
 
 .creation__listing-body {
