@@ -1,26 +1,12 @@
 import Footer from "../Footer/Footer";
+import Hero from "./components/Hero/Hero";
 import "./Home.css";
 
 const Home = () => {
     return (
         <>
+                <Hero />
             <main className="home">
-                <section className="hero">
-                    <span className="hero__badge">React + TypeScript Starter</span>
-
-                    <h1>Build something amazing.</h1>
-
-                    <p>
-                        A clean React starter template featuring authentication,
-                        protected routes, React Query, reusable components, custom
-                        hooks, and scalable project architecture.
-                    </p>
-
-                    <div className="hero__actions">
-                        <button className="btn btn-primary">Get Started</button>
-                        <button className="btn btn-secondary">Documentation</button>
-                    </div>
-                </section>
 
                 <section className="features">
                     <div className="feature-card">
