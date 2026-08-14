@@ -133,6 +133,8 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  height: 9rem;
+  margin-top: 6rem;
   padding: 0.5rem 0;
   flex-shrink: 0;
 }
@@ -180,6 +182,8 @@
 }
 
 .hero__flow {
+  margin-top: auto;
+  margin-bottom: auto;
   flex: 1 1 70px;
   min-width: 50px;
   max-width: 110px;
