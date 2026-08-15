@@ -11,7 +11,7 @@
 
   position: relative;
   background: var(--hero-bg);
-  padding: clamp(2.5rem, 6vw, 5.5rem) clamp(1.25rem, 5vw, 3rem) clamp(3rem, 7vw, 6rem);
+  padding:  clamp(1.5rem, 2vw, 3.5rem) clamp(1.25rem, 5vw, 3rem) clamp(3rem, 7vw, 6rem);
   overflow: hidden;
 }
 
