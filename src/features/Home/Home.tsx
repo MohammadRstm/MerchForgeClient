@@ -1,52 +1,34 @@
-import Footer from "../Footer/Footer";
-import "./Home.css";
+import Hero from './components/Hero/Hero';
+import Navbar from './components/Navbar/Navbar';
+import Problem from './components/Problem/Problem';
+import HowItWorks from './components/HowItWorks/HowItWorks';
+import ProductManagement from './components/ProductManagement/ProductManagement';
+import AIProductCreation from './components/AiProductCreation/AiProductCreation';
+import WhyMerchForge from './components/WhyMerchForge/WhyMerchForge';
+import Integrations from './components/Integrations/Integrations';
+import AIServices from './components/AiServices/AiServices';
+import FinalCTA from './components/FinalCTA/FinalCTA';
+import Pricing from './components/Pricing/Pricing';
+import Footer from './components/Footer/Footer';
+import './Home.css';
 
-const Home = () => {
-    return (
-        <>
-            <main className="home">
-                <section className="hero">
-                    <span className="hero__badge">React + TypeScript Starter</span>
-
-                    <h1>Build something amazing.</h1>
-
-                    <p>
-                        A clean React starter template featuring authentication,
-                        protected routes, React Query, reusable components, custom
-                        hooks, and scalable project architecture.
-                    </p>
-
-                    <div className="hero__actions">
-                        <button className="btn btn-primary">Get Started</button>
-                        <button className="btn btn-secondary">Documentation</button>
-                    </div>
-                </section>
-
-                <section className="features">
-                    <div className="feature-card">
-                        <h3>⚡ Fast</h3>
-                        <p>Built with Vite for lightning-fast development.</p>
-                    </div>
-
-                    <div className="feature-card">
-                        <h3>🧩 Reusable</h3>
-                        <p>Generic components, hooks, layouts, and utilities.</p>
-                    </div>
-
-                    <div className="feature-card">
-                        <h3>🔒 Production Ready</h3>
-                        <p>
-                            Authentication, route protection, validation, and error
-                            handling included.
-                        </p>
-                    </div>
-                </section>
-
-            </main>
-            <Footer />
-        </>
-
-    );
-};
-
-export default Home;
+export default function Home() {
+  return (
+    <div className="home" id="top">
+      <Navbar />
+      <main>
+        <Hero />
+        <Problem />
+        <HowItWorks />
+        <AIProductCreation />
+        <AIServices />
+        <ProductManagement />
+        <Integrations />
+        <Pricing />
+        <WhyMerchForge />
+        <FinalCTA />
+      </main>
+      <Footer />
+    </div>
+  );
+}
