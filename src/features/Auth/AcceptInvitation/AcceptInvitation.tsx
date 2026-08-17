@@ -1,48 +1,63 @@
-import { useMemo, useState, type FormEvent } from 'react';
+import {  useState, type FormEvent } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { z } from 'zod';
-import logo from '../../assets/logo.svg';
+import logo from "./../../../assets/logo.svg";
 import './AcceptInvitation.css';
 
 const registrationSchema = z.object({
-  firstName: z.string().trim().min(1, 'First name is required'),
-  lastName: z.string().trim().min(1, 'Last name is required'),
-  businessName: z.string().trim().min(1, 'Business name is required'),
-  email: z.string().trim().min(1, 'Email is required').email('Enter a valid email address'),
+  FirstName: z.string().trim().min(1, 'First name is required'),
+  LastName: z.string().trim().min(1, 'Last name is required'),
+  BusinessName: z.string().trim().min(1, 'Business name is required'),
+  Email: z.string().trim().min(1, 'Email is required').email('Enter a valid email address'),
+  InvitationToken: z.string().trim(),
 });
 
 type RegistrationFormValues = z.infer<typeof registrationSchema>;
 type FieldErrors = Partial<Record<keyof RegistrationFormValues, string>>;
 
-const REGISTRATION_ENDPOINT = 'https://localhost:7021/api/AuthController/businessOwner/registration';
+const REGISTRATION_ENDPOINT = 'https://localhost:7021/api/Auth/businessOwner/registration';
 
 async function submitBusinessOwnerRegistration(payload: RegistrationFormValues): Promise<void> {
+
   const response = await fetch(REGISTRATION_ENDPOINT, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
   });
+    const responseText = await response.text();
 
+    console.log("Status:", response.status);
+    console.log("Response:", responseText);
   if (!response.ok) {
+    console.log(response);
     throw new Error(`Registration request failed with status ${response.status}`);
   }
 }
 
-function readInvitationEmail(): string | null {
+function readInvitationEmail(): string {
   const params = new URLSearchParams(window.location.search);
   const rawEmail = params.get('email');
-  if (!rawEmail) return null;
+  if (!rawEmail) return "";
 
   const parsed = z.string().trim().email().safeParse(rawEmail);
-  return parsed.success ? parsed.data : null;
+  return parsed.success ? parsed.data : "";
+}
+
+function readInvitationToken() : string{
+    const params = new URLSearchParams(window.location.search);
+    const rawToken = params.get('token');
+    if(!rawToken) return "";
+
+    return rawToken;
 }
 
 export default function AcceptInvitation() {
-  const invitationEmail = useMemo(() => readInvitationEmail, []);
 
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [businessName, setBusinessName] = useState('');
+  const [email, setEmail] = useState(readInvitationEmail()); 
+  const [InvitationToken, setInvitationToken] = useState(readInvitationToken()); 
+  const [FirstName, setFirstName] = useState('');
+  const [LastName, setLastName] = useState('');
+  const [BusinessName, setBusinessName] = useState('');
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
   const registration = useMutation({
@@ -51,13 +66,14 @@ export default function AcceptInvitation() {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!invitationEmail) return;
+    if (email === "") return;
 
     const result = registrationSchema.safeParse({
-      firstName,
-      lastName,
-      businessName,
-      email: invitationEmail,
+      FirstName: FirstName,
+      LastName: LastName,
+      BusinessName: BusinessName,
+      Email: email,
+      InvitationToken: InvitationToken,
     });
 
     if (!result.success) {
@@ -81,7 +97,7 @@ export default function AcceptInvitation() {
     </a>
   );
 
-  if (!invitationEmail) {
+  if (email === "") {
     return (
       <main className="invite">
         <div className="invite__panel">
@@ -133,68 +149,68 @@ export default function AcceptInvitation() {
           <form className="invite__form" onSubmit={handleSubmit} noValidate>
             <div className="invite__row">
               <div className="invite__field">
-                <label htmlFor="firstName" className="invite__label">
+                <label htmlFor="FirstName" className="invite__label">
                   First name
                 </label>
                 <input
-                  id="firstName"
-                  name="firstName"
+                  id="FirstName"
+                  name="FirstName"
                   type="text"
                   autoComplete="given-name"
-                  className={`invite__input${fieldErrors.firstName ? ' invite__input--error' : ''}`}
-                  value={firstName}
+                  className={`invite__input${fieldErrors.FirstName ? ' invite__input--error' : ''}`}
+                  value={FirstName}
                   onChange={(event) => setFirstName(event.target.value)}
-                  aria-invalid={Boolean(fieldErrors.firstName)}
-                  aria-describedby={fieldErrors.firstName ? 'firstName-error' : undefined}
+                  aria-invalid={Boolean(fieldErrors.FirstName)}
+                  aria-describedby={fieldErrors.FirstName ? 'FirstName-error' : undefined}
                 />
-                {fieldErrors.firstName && (
-                  <span id="firstName-error" className="invite__error" role="alert">
-                    {fieldErrors.firstName}
+                {fieldErrors.FirstName && (
+                  <span id="FirstName-error" className="invite__error" role="alert">
+                    {fieldErrors.FirstName}
                   </span>
                 )}
               </div>
 
               <div className="invite__field">
-                <label htmlFor="lastName" className="invite__label">
+                <label htmlFor="LastName" className="invite__label">
                   Last name
                 </label>
                 <input
-                  id="lastName"
-                  name="lastName"
+                  id="LastName"
+                  name="LastName"
                   type="text"
                   autoComplete="family-name"
-                  className={`invite__input${fieldErrors.lastName ? ' invite__input--error' : ''}`}
-                  value={lastName}
+                  className={`invite__input${fieldErrors.LastName ? ' invite__input--error' : ''}`}
+                  value={LastName}
                   onChange={(event) => setLastName(event.target.value)}
-                  aria-invalid={Boolean(fieldErrors.lastName)}
-                  aria-describedby={fieldErrors.lastName ? 'lastName-error' : undefined}
+                  aria-invalid={Boolean(fieldErrors.LastName)}
+                  aria-describedby={fieldErrors.LastName ? 'LastName-error' : undefined}
                 />
-                {fieldErrors.lastName && (
-                  <span id="lastName-error" className="invite__error" role="alert">
-                    {fieldErrors.lastName}
+                {fieldErrors.LastName && (
+                  <span id="LastName-error" className="invite__error" role="alert">
+                    {fieldErrors.LastName}
                   </span>
                 )}
               </div>
             </div>
 
             <div className="invite__field">
-              <label htmlFor="businessName" className="invite__label">
+              <label htmlFor="BusinessName" className="invite__label">
                 Business name
               </label>
               <input
-                id="businessName"
-                name="businessName"
+                id="BusinessName"
+                name="BusinessName"
                 type="text"
                 autoComplete="organization"
-                className={`invite__input${fieldErrors.businessName ? ' invite__input--error' : ''}`}
-                value={businessName}
+                className={`invite__input${fieldErrors.BusinessName ? ' invite__input--error' : ''}`}
+                value={BusinessName}
                 onChange={(event) => setBusinessName(event.target.value)}
-                aria-invalid={Boolean(fieldErrors.businessName)}
-                aria-describedby={fieldErrors.businessName ? 'businessName-error' : undefined}
+                aria-invalid={Boolean(fieldErrors.BusinessName)}
+                aria-describedby={fieldErrors.BusinessName ? 'BusinessName-error' : undefined}
               />
-              {fieldErrors.businessName && (
-                <span id="businessName-error" className="invite__error" role="alert">
-                  {fieldErrors.businessName}
+              {fieldErrors.BusinessName && (
+                <span id="BusinessName-error" className="invite__error" role="alert">
+                  {fieldErrors.BusinessName}
                 </span>
               )}
             </div>
@@ -208,7 +224,7 @@ export default function AcceptInvitation() {
                 name="email"
                 type="email"
                 className="invite__input invite__input--disabled"
-                value={invitationEmail ?? ""}
+                value={email}
                 disabled
                 readOnly
               />
