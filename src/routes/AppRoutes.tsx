@@ -5,6 +5,7 @@ import ErrorBoundaryRoutes from "./ErrorBoundaryRoutes";
 import Home from "../features/Home/Home";
 import { routes } from "../config/routes";
 import Login from "../features/Auth/Login/Login";
+import AcceptInvitation from "../features/Auth/AcceptInvitation/AcceptInvitation";
 
 const AppRoutes = () =>{
 
@@ -12,8 +13,9 @@ const AppRoutes = () =>{
         <Routes>
             <Route element={<ErrorBoundaryRoutes />}>
 
-                    <Route path={routes.HOME} element={<Home />} />
+                <Route path={routes.HOME} element={<Home />} />
                 <Route element={<PagesWithHeaderLayout />}>
+                    <Route path={routes.ACCEPT_INVITATION} element={<AcceptInvitation />} />
                     <Route path={routes.LOGIN} element={<Login />} />
                     <Route element={<AuthenticatedRoutes />}>
                         {/** EX USER PROFILE */}
