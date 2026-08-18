@@ -19,6 +19,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) =>{
             accessTokenExpiresAt: data.authResponse.accessTokenExpiresAt,
         };
 
+        console.log("User session initialized:", session);
+
         localStorage.setItem(
             "userSession",
             JSON.stringify(session)
