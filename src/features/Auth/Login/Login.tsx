@@ -34,16 +34,16 @@ const Login = () => {
 
                     <input
                         id="username"
-                        name="username"
+                        name="Email"
                         className="login-form-inp"
                         type="text"
-                        placeholder="Enter your username"
-                        value={loginFormData.username}
+                        placeholder="Enter your email"
+                        value={loginFormData.Email}
                         onChange={handleChange}
                     />
 
-                    {errors?.username && (
-                        <p className="validation-errors">{errors.username}</p>
+                    {errors?.Email && (
+                        <p className="validation-errors">{errors.Email}</p>
                     )}
                 </label>
 
@@ -52,16 +52,16 @@ const Login = () => {
 
                     <input
                         id="password"
-                        name="password"
+                        name="Password"
                         className="login-form-inp"
                         type="password"
                         placeholder="Enter your password"
-                        value={loginFormData.password}
+                        value={loginFormData.Password}
                         onChange={handleChange}
                     />
 
-                    {errors?.password && (
-                        <p className="validation-errors">{errors.password}</p>
+                    {errors?.Password && (
+                        <p className="validation-errors">{errors.Password}</p>
                     )}
                 </label>
 

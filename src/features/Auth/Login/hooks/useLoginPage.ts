@@ -29,11 +29,13 @@ const useLoginPage = () =>{
         setErrors
         });
 
+        console.log(hasValidationErrors);
+     
         if(hasValidationErrors) return;    
 
         // login user to server & after successful login initialize user session
         loginToServer(loginFormData);
-    }
+    } 
 
     return {
         loginFormData,

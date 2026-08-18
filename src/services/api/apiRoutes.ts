@@ -1,8 +1,7 @@
 export const apiRoutes = {
     
     /** AUTH */
-    AUTH_LOGIN : "/auth/login",
-    AUTH_SIGNUP : "/auth/signup",
+    AUTH_LOGIN : "/Auth/login",
 
     /** USER */
     USER_PROFILE : "/profile",

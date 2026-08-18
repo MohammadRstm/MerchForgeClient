@@ -1,8 +1,5 @@
-import type { User } from "../../types/generalTypes";
-
 export interface AuthContextType{
-    user: User | null;
     isAuthenticated: boolean;
-    login: (token: string , user : User) => void;
+    login: (token: string , refreshToken : string) => void;
     logout: () => void;
 };
