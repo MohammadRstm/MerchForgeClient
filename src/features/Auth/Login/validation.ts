@@ -21,7 +21,11 @@ export const loginResponseSchema = z.object({
     userId: z.string().uuid(),
     firstName: z.string(),
     lastName: z.string(),
-    systemRole: z.string(),
+    systemRole:  z.enum([
+        "User",
+        "Admin",
+        "SuperAdmin",
+    ]),
 
     business: z.object({
         id: z.string().uuid(),

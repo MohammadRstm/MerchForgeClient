@@ -13,6 +13,7 @@ const Login = () => {
         handleChange,
     } = useLoginPage();
 
+    console.log(errors);
     return (
         <main className="login-page">
             <form className="login-form" onSubmit={submit}>
@@ -25,7 +26,7 @@ const Login = () => {
 
                 {loginError && (
                     <div className="login-server-errors">
-                        Invalid username or password.
+                        Invalid email or password.
                     </div>
                 )}
 
@@ -33,7 +34,7 @@ const Login = () => {
                     <span className="login-label-text">Username</span>
 
                     <input
-                        id="username"
+                        id="email"
                         name="Email"
                         className="login-form-inp"
                         type="text"
