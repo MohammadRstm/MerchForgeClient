@@ -65,7 +65,7 @@ export default function Navbar() {
         </nav>
 
         <div className="navbar__actions">
-          <a href="#login" className="navbar__login">
+          <a href="/login" className="navbar__login">
             Log in
           </a>
           <a href="#get-started" className="navbar__cta">

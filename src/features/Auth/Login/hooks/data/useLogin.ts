@@ -13,10 +13,11 @@ const useLogin = () =>{
         mutationFn: loginService,
         onSuccess : (data) =>{
             // initialize the user session
-            login(data.token, data.user);
+            
+            login(data);// we want to add data later on
 
             notify.success(
-                "Welcome" + data.user.firstname + " " + data.user.lastname
+                "Welcome"
             );
   
             setTimeout(() =>{
@@ -24,9 +25,6 @@ const useLogin = () =>{
             }, 2000);
 
         },
-        onError : (error) =>{
-            console.log(error);
-        }
 });
 };
 

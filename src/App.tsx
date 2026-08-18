@@ -5,7 +5,7 @@ import { ToastProvider } from './services/toast'
 import { setupInterceptors } from './services/api/interceptors';
 import useAuth from './context/Auth/useAuth';
 import { useNavigate } from 'react-router';
-import { authenticatedApi } from './services/api/api';
+import { authenticatedApi , unAuthenticatedApi} from './services/api/api';
 
 function App(){
 
@@ -17,8 +17,9 @@ function App(){
     const receptors = setupInterceptors(logout, navigate);
 
     return () => {
-      authenticatedApi.interceptors.request.eject(receptors.authenticatedApiReqReceptor);
-      authenticatedApi.interceptors.response.eject(receptors.autheticatedRespInterceptor);
+      authenticatedApi.interceptors.request.eject(receptors.authenticatedApiReqInterceptor);
+      authenticatedApi.interceptors.response.eject(receptors.authenticatedApiRespInterceptor);
+      unAuthenticatedApi.interceptors.response.eject(receptors.unAuthenticatedApiRespInterceptor);
     };
 
   }, [logout, navigate]);
