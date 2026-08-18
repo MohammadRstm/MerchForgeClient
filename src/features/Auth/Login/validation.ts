@@ -1,24 +1,31 @@
 import z from "zod";
 
 export const loginSchema = z.object({
-    username: z
-            .string()
-            .trim()
-            .min(2 , "Username must be atleast 2 charachters long"),
+    Email: z
+            .email()
+            .trim(),
 
-    password:z
+    Password:z
             .string()
             .trim()
             .min(8 , "Password must be atleast 8 characters long"),
 });
 
 export const loginResponseSchema = z.object({
-    token: z.string(),
-
-    user:z.object({
-        id: z.number(),
-        firstname: z.string(),
-        lastname: z.string(),
-        username: z.string(),
+    authResponse: z.object({
+        accessToken: z.string(),
+        refreshToken: z.string(),
+        accessTokenExpiresAt: z.iso.datetime(),
     }),
+
+    userId: z.string().uuid(),
+    firstName: z.string(),
+    lastName: z.string(),
+    systemRole: z.string(),
+
+    business: z.object({
+        id: z.string().uuid(),
+        name: z.string(),
+        role: z.enum(["Owner", "Admin", "Member"]),
+    }).nullable(),
 });

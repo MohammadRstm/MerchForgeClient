@@ -21,7 +21,6 @@ const validateForm = <T>({ schema , formData , setErrors} : validateFormParamTyp
    
     const result = schema.safeParse(formData);
 
-
     if(!result.success){
         const fieldErrors = z.flattenError(result.error).fieldErrors;
 
@@ -34,10 +33,10 @@ const validateForm = <T>({ schema , formData , setErrors} : validateFormParamTyp
 
         setErrors(errors);
 
-        return false;
+        return true;
     }
 
-    return true;
+    return false;
 }
 
 export default validateForm;

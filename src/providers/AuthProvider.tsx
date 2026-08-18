@@ -1,25 +1,43 @@
-import { useState } from "react";
-import type { User } from "../types/generalTypes";
 import AuthContext from "../context/Auth/AuthContext";
+import type { LoginResponse } from "../features/Auth/Login/types";
+import type { UserSession } from "../types/generalTypes";
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) =>{
-    const [user, setUser] = useState<User | null>(null);
+    // const [user, setUser] = useState<User | null>(null);
 
-    const login = (token: string, user : User) =>{
-        localStorage.setItem("token" , token);
-        setUser(user);
+    const login = (data : LoginResponse) =>{
+        const session: UserSession = {
+            userId: data.userId,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            systemRole: data.systemRole,
+
+            business: data.business,
+
+            accessToken: data.authResponse.accessToken,
+            refreshToken: data.authResponse.refreshToken,
+            accessTokenExpiresAt: data.authResponse.accessTokenExpiresAt,
+        };
+
+        console.log("User session initialized:", session);
+
+        localStorage.setItem(
+            "userSession",
+            JSON.stringify(session)
+        );
     };
     
     const logout = () => {
-       setUser(null);
+        localStorage.removeItem("userSession");
     }; 
 
+    const session = localStorage.getItem("userSession");
 
     return(
         <AuthContext
             value={{
-                user,
-                isAuthenticated: !!user,
+                isAuthenticated: !!session,
+                session: session ? JSON.parse(session) : null,
                 login,
                 logout,
             }}
