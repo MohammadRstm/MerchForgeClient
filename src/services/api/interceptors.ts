@@ -9,7 +9,7 @@ import {
 } from "axios";
 
 import { ApiError } from "../../Error/ApiError";
-import type { ApiErrorResponse } from "../../types/generalTypes";
+import { toApiError } from "./utils/toApiError";
 
 interface RetryableRequestConfig
     extends InternalAxiosRequestConfig {
@@ -71,31 +71,6 @@ export function setupInterceptors(
         return accessToken;
     };
 
-    const normalizeAxiosErrorIntoApiError = (error : AxiosError) =>{
-        
-        if (error.response?.data) {
-            return Promise.reject(
-                new ApiError(
-                    error.response.data as ApiErrorResponse,
-                    error.response.status
-                )
-            );
-        }
-
-        return Promise.reject(
-            new ApiError(
-                {
-                    type: "Unexpected",
-                    code: "NETWORK_ERROR",
-                    message:
-                        "Unable to connect to the server.",
-                    traceId: "",
-                },
-                error.response?.status ?? 0
-            )
-        );
-    }
-
     const handleSessionExpired = () => {
         if (isLoggingOut) {
             return;
@@ -138,58 +113,55 @@ export function setupInterceptors(
 
             async (error: AxiosError) => {
 
-                const originalRequest =
-                    error.config as RetryableRequestConfig | undefined;
+            const originalRequest =
+                error.config as RetryableRequestConfig | undefined;
 
-                if (
-                    error.response?.status === 401 &&
-                    originalRequest && 
-                    !originalRequest?._retry
-                ) {
+            if (
+                error.response?.status === 401 &&
+                originalRequest && 
+                !originalRequest?._retry
+            ) {
 
-                    originalRequest._retry = true;
+                originalRequest._retry = true;
 
-                    try {
-                        const newAccessToken =
-                            await refreshAccessToken();
+                try {
+                    const newAccessToken =
+                        await refreshAccessToken();
 
-                        originalRequest.headers.Authorization =
-                            `Bearer ${newAccessToken}`;
+                    originalRequest.headers.Authorization =
+                        `Bearer ${newAccessToken}`;
 
-                        return authenticatedApi(
-                            originalRequest
-                        );
+                    return authenticatedApi(
+                        originalRequest
+                    );
 
-                    } catch {
+                } catch {
 
-                       handleSessionExpired();
+                    handleSessionExpired();
 
-                        return Promise.reject(
-                            new ApiError(
-                                {
-                                    type: "Authentication",
-                                    code: "SESSION_EXPIRED",
-                                    message:
-                                        "Your session has expired.",
-                                    traceId: "",
-                                },
-                                401
-                            )
-                        );
-                    }
+                    return Promise.reject(
+                        new ApiError(
+                            {
+                                type: "Authentication",
+                                code: "SESSION_EXPIRED",
+                                message:
+                                    "Your session has expired.",
+                                traceId: "",
+                            },
+                            401
+                        )
+                    );
                 }
+            }
 
-                return await normalizeAxiosErrorIntoApiError(error);
+                return Promise.reject(toApiError(error));
             }
         );
 
         const unAuthenticatedApiRespInterceptor =
             unAuthenticatedApi.interceptors.response.use(
                 response => response,
-
-                async (error : AxiosError) => {
-                    return await normalizeAxiosErrorIntoApiError(error);
-                }
+                error => Promise.reject(toApiError(error))
         );
 
     return {
