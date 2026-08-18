@@ -29,7 +29,6 @@ const useLoginPage = () =>{
         setErrors
         });
 
-        console.log(hasValidationErrors);
      
         if(hasValidationErrors) return;    
 

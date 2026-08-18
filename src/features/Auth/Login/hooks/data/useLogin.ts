@@ -13,7 +13,8 @@ const useLogin = () =>{
         mutationFn: loginService,
         onSuccess : (data) =>{
             // initialize the user session
-            login(data.accessToken , data.refreshToken);// we want to add data later on
+            
+            login(data);// we want to add data later on
 
             notify.success(
                 "Welcome"

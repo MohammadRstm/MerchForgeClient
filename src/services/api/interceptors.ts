@@ -36,37 +36,45 @@ export function setupInterceptors(
     };
 
     const performRefresh = async (): Promise<string> => {
-        const refreshToken =
-            localStorage.getItem("refreshToken");
+        const storedSession = localStorage.getItem("userSession");
+
+        if (!storedSession) {
+            throw new Error("No user session available.");
+        }
+
+        const session = JSON.parse(storedSession);
+
+        const refreshToken = session.refreshToken;
 
         if (!refreshToken) {
             throw new Error("No refresh token available.");
         }
 
-        const response =
-            await unAuthenticatedApi.post(
-                "Auth/refresh",
-                {
-                    RefreshToken: refreshToken,
-                }
-            );
+        const response = await unAuthenticatedApi.post(
+            "Auth/refresh",
+            {
+                RefreshToken: refreshToken,
+            }
+        );
 
         const {
             accessToken,
-            refreshToken : newRefreshToken
+            refreshToken: newRefreshToken,
+            accessTokenExpiresAt,
         } = response.data;
 
-        localStorage.setItem(
-            "token",
-            accessToken
-        );
+        const updatedSession = {
+            ...session,
+            accessToken,
+            accessTokenExpiresAt,
 
-        if (newRefreshToken) {
-            localStorage.setItem(
-                "refreshToken",
-                newRefreshToken
-            );
-        }
+            refreshToken: newRefreshToken ?? session.refreshToken,
+        };
+
+        localStorage.setItem(
+            "userSession",
+            JSON.stringify(updatedSession)
+        );
 
         return accessToken;
     };
@@ -94,12 +102,17 @@ export function setupInterceptors(
         authenticatedApi.interceptors.request.use(
             (config) => {
 
-                const token =
-                    localStorage.getItem("token");
+                const storedSession =
+                localStorage.getItem("userSession");
+
+                const session = storedSession
+                    ? JSON.parse(storedSession)
+                    : null;
+
+                const token = session?.accessToken;
 
                 if (token) {
-                    config.headers.Authorization =
-                        `Bearer ${token}`;
+                    config.headers.Authorization = `Bearer ${token}`;
                 }
 
                 return config;

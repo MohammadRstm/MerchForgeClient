@@ -12,8 +12,20 @@ export const loginSchema = z.object({
 });
 
 export const loginResponseSchema = z.object({
-    accessToken: z.string(),
-    refreshToken: z.string(),
+    authResponse: z.object({
+        accessToken: z.string(),
+        refreshToken: z.string(),
+        accessTokenExpiresAt: z.iso.datetime(),
+    }),
 
-    accessTokenExpiresAt : z.iso.datetime(),
+    userId: z.string().uuid(),
+    firstName: z.string(),
+    lastName: z.string(),
+    systemRole: z.string(),
+
+    business: z.object({
+        id: z.string().uuid(),
+        name: z.string(),
+        role: z.enum(["Owner", "Admin", "Member"]),
+    }).nullable(),
 });

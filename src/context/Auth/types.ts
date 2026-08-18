@@ -1,5 +1,9 @@
+import type { LoginResponse } from "../../features/Auth/Login/types";
+import type { UserSession } from "../../types/generalTypes";
+
 export interface AuthContextType{
     isAuthenticated: boolean;
-    login: (token: string , refreshToken : string) => void;
+    session : UserSession | null;
+    login: (data : LoginResponse) => void;
     logout: () => void;
 };

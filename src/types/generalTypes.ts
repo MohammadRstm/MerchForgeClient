@@ -23,3 +23,22 @@ export interface ApiErrorResponse {
     traceId: string;
     errors?: Record<string, string[]>;
 }
+
+export interface UserSession {
+    userId: string;
+
+    firstName: string;
+    lastName: string;
+
+    systemRole: string;
+
+    business: {
+        id: string;
+        name: string;
+        role: "Owner" | "Admin" | "Member";
+    } | null;
+
+    accessToken: string;
+    refreshToken: string;
+    accessTokenExpiresAt: string;
+}
