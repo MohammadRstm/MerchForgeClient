@@ -1,0 +1,255 @@
+.dashboard-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 24px 64px;
+}
+
+.dashboard-heading {
+    margin-bottom: 24px;
+}
+
+.dashboard-stats-loading {
+    display: flex;
+    justify-content: center;
+    padding: 48px 0;
+}
+
+/* Stat cards */
+
+.dashboard-stat-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.dashboard-stat-card {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 20px;
+    border: 1px solid #e2e2e2;
+    border-radius: 10px;
+    background: #fff;
+}
+
+.dashboard-stat-card-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.dashboard-stat-card-label {
+    font-size: 13px;
+    color: #777;
+}
+
+/* Charts */
+
+.dashboard-charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.dashboard-chart-card {
+    padding: 16px;
+    border: 1px solid #e2e2e2;
+    border-radius: 10px;
+    background: #fff;
+}
+
+.dashboard-chart-title {
+    margin: 0 0 12px;
+    font-size: 15px;
+    color: #333;
+}
+
+.dashboard-chart-empty {
+    text-align: center;
+    color: #999;
+    padding: 48px 0;
+}
+
+/* Tables */
+
+.dashboard-table-card {
+    border: 1px solid #e2e2e2;
+    border-radius: 10px;
+    background: #fff;
+    padding: 20px;
+    margin-bottom: 24px;
+}
+
+.dashboard-table-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.dashboard-table-header h3 {
+    margin: 0;
+}
+
+.dashboard-table-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.dashboard-search-input,
+.dashboard-filter-select {
+    padding: 8px 12px;
+    border: 1px solid #e2e2e2;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.dashboard-search-input {
+    min-width: 220px;
+}
+
+.dashboard-table-loading {
+    display: flex;
+    justify-content: center;
+    padding: 32px 0;
+}
+
+.dashboard-table-message {
+    text-align: center;
+    color: #777;
+    padding: 32px 0;
+}
+
+.dashboard-table-message--error {
+    color: #d92d20;
+}
+
+.dashboard-table-wrapper {
+    overflow-x: auto;
+}
+
+.dashboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.dashboard-table th,
+.dashboard-table td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid #f0f0f0;
+    white-space: nowrap;
+}
+
+.dashboard-table th {
+    color: #777;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.dashboard-you-tag {
+    color: #999;
+    font-size: 12px;
+}
+
+.dashboard-owner-cell {
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard-owner-email {
+    font-size: 12px;
+    color: #999;
+}
+
+.dashboard-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    background: #f0f0f0;
+    color: #444;
+}
+
+.dashboard-badge--superadmin {
+    background: #fdecea;
+    color: #d92d20;
+}
+
+.dashboard-badge--admin {
+    background: #fff4e5;
+    color: #b25e00;
+}
+
+.dashboard-badge--user {
+    background: #e8f3ff;
+    color: #1d5fb8;
+}
+
+.dashboard-session {
+    color: #999;
+    font-size: 13px;
+}
+
+.dashboard-session--active {
+    color: #12875a;
+    font-weight: 600;
+}
+
+.dashboard-action-btn {
+    padding: 6px 12px;
+    border: 1px solid #e2e2e2;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.dashboard-action-btn:not(:disabled):hover {
+    border-color: #d92d20;
+    color: #d92d20;
+}
+
+.dashboard-action-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* Revoke modal */
+
+.dashboard-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.dashboard-modal-cancel-btn {
+    padding: 10px 18px;
+    border: 1px solid #e2e2e2;
+    border-radius: 6px;
+    background: #fff;
+    cursor: pointer;
+}
+
+.dashboard-modal-confirm-btn {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    background: #d92d20;
+    color: #fff;
+    cursor: pointer;
+}
+
+.dashboard-modal-confirm-btn:disabled,
+.dashboard-modal-cancel-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

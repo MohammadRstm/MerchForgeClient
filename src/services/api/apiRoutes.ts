@@ -6,5 +6,11 @@ export const apiRoutes = {
 
     /** USER */
     USER_PROFILE : "/profile",
-    
+
+    /** DASHBOARD */
+    DASHBOARD_STATS : "/Dashboard/stats",
+    DASHBOARD_USERS : "/Dashboard/users",
+    DASHBOARD_BUSINESSES : "/Dashboard/businesses",
+    DASHBOARD_REVOKE_USER_SESSIONS : (userId : string) => `/Dashboard/users/${userId}/revoke-sessions`,
+
 }

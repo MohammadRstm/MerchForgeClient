@@ -6,6 +6,7 @@ import Home from "../features/Home/Home";
 import { routes } from "../config/routes";
 import Login from "../features/Auth/Login/Login";
 import AcceptInvitation from "../features/Auth/AcceptInvitation/AcceptInvitation";
+import DashboardPage from "../features/Dashboard/DashboardPage";
 
 const AppRoutes = () =>{
 
@@ -18,8 +19,8 @@ const AppRoutes = () =>{
                     <Route path={routes.ACCEPT_INVITATION} element={<AcceptInvitation />} />
                     <Route path={routes.LOGIN} element={<Login />} />
                     <Route element={<AuthenticatedRoutes />}>
-                        {/** EX USER PROFILE */}
-                    </Route>    
+                        <Route path={routes.DASHBOARD} element={<DashboardPage />} />
+                    </Route>
                 </Route>
             </Route>
         </Routes>
