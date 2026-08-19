@@ -1,5 +1,5 @@
 import Hero from './components/Hero/Hero';
-import Navbar from './components/Navbar/Navbar';
+import Header from '../Header/Header';
 import Problem from './components/Problem/Problem';
 import HowItWorks from './components/HowItWorks/HowItWorks';
 import ProductManagement from './components/ProductManagement/ProductManagement';
@@ -15,7 +15,7 @@ import './Home.css';
 export default function Home() {
   return (
     <div className="home" id="top">
-      <Navbar />
+      <Header />
       <main>
         <Hero />
         <Problem />

@@ -1,0 +1,18 @@
+.sortable-header {
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+}
+
+.sortable-header:hover {
+    color: #ff9b00;
+}
+
+.sortable-header--active {
+    color: #ff9b00;
+    font-weight: 600;
+}
+
+.sortable-header-arrow {
+    font-size: 10px;
+}

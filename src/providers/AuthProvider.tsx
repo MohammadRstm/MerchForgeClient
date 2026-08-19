@@ -1,12 +1,18 @@
+import { useState } from "react";
 import AuthContext from "../context/Auth/AuthContext";
 import type { LoginResponse } from "../features/Auth/Login/types";
 import type { UserSession } from "../types/generalTypes";
 
+const readStoredSession = (): UserSession | null => {
+    const stored = localStorage.getItem("userSession");
+    return stored ? JSON.parse(stored) : null;
+};
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) =>{
-    // const [user, setUser] = useState<User | null>(null);
+    const [session, setSession] = useState<UserSession | null>(readStoredSession);
 
     const login = (data : LoginResponse) =>{
-        const session: UserSession = {
+        const newSession: UserSession = {
             userId: data.userId,
             firstName: data.firstName,
             lastName: data.lastName,
@@ -19,25 +25,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) =>{
             accessTokenExpiresAt: data.authResponse.accessTokenExpiresAt,
         };
 
-        console.log("User session initialized:", session);
-
         localStorage.setItem(
             "userSession",
-            JSON.stringify(session)
+            JSON.stringify(newSession)
         );
+
+        setSession(newSession);
     };
-    
+
     const logout = () => {
         localStorage.removeItem("userSession");
-    }; 
-
-    const session = localStorage.getItem("userSession");
+        setSession(null);
+    };
 
     return(
         <AuthContext
             value={{
                 isAuthenticated: !!session,
-                session: session ? JSON.parse(session) : null,
+                session,
                 login,
                 logout,
             }}
