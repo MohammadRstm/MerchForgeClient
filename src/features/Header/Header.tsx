@@ -1,49 +1,132 @@
-import "./Header.css";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router";
-import { IoSearch } from "react-icons/io5";
+import "./Header.css";
+import logo from "../../assets/logo.svg";
 import { routes } from "../../config/routes";
 import useAuth from "../../context/Auth/useAuth";
 
-const Header = () =>{
+interface NavLink {
+    label: string;
+    href: string;
+}
+
+const NAV_LINKS: NavLink[] = [
+    { label: "Features", href: "#features" },
+    { label: "AI", href: "#ai" },
+    { label: "Pricing", href: "#pricing" },
+    { label: "Coming Soon", href: "#coming-soon" },
+];
+
+const Header = () => {
     const { isAuthenticated } = useAuth();
 
-    return(
-        <div className="header">
-            <div className="header-logo">
-               <Link className="home-link" to={routes.HOME}>Logo</Link>
-            </div> 
-             
-            
-            <div className="header-search-bar">
-                <input
-                className="header-search-inp"
-                name="field_name"
-                type="text"
-                placeholder="Search..."
-                />
+    const [scrolled, setScrolled] = useState(false);
+    const [menuOpen, setMenuOpen] = useState(false);
+
+    useEffect(() => {
+        const onScroll = () => setScrolled(window.scrollY > 8);
+        onScroll();
+        window.addEventListener("scroll", onScroll, { passive: true });
+        return () => window.removeEventListener("scroll", onScroll);
+    }, []);
+
+    useEffect(() => {
+        if (!menuOpen) return;
+
+        const onKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "Escape") setMenuOpen(false);
+        };
+        const onResize = () => {
+            if (window.innerWidth > 720) setMenuOpen(false);
+        };
+
+        document.body.style.overflow = "hidden";
+        window.addEventListener("keydown", onKeyDown);
+        window.addEventListener("resize", onResize);
+
+        return () => {
+            document.body.style.overflow = "";
+            window.removeEventListener("keydown", onKeyDown);
+            window.removeEventListener("resize", onResize);
+        };
+    }, [menuOpen]);
+
+    const closeMenu = useCallback(() => setMenuOpen(false), []);
+
+    return (
+        <header className={`header${scrolled ? " header--scrolled" : ""}${menuOpen ? " header--open" : ""}`}>
+            <div className="header__inner">
+                <Link to={routes.HOME} className="header__logo" onClick={closeMenu}>
+                    <img src={logo} alt="" className="header__logo-mark" />
+                    MerchForge
+                </Link>
+
+                <nav className="header__links" aria-label="Primary">
+                    {NAV_LINKS.map((link) => (
+                        <a key={link.href} href={link.href} className="header__link">
+                            {link.label}
+                        </a>
+                    ))}
+                </nav>
+
+                <div className="header__actions">
+                    {isAuthenticated ? (
+                        <Link to={routes.DASHBOARD} className="header__cta">
+                            Dashboard
+                        </Link>
+                    ) : (
+                        <>
+                            <Link to={routes.LOGIN} className="header__login">
+                                Log in
+                            </Link>
+                            <Link to={routes.SIGNUP} className="header__cta">
+                                Sign up
+                            </Link>
+                        </>
+                    )}
+                </div>
 
                 <button
-                className="header-search-submit-btn"
+                    type="button"
+                    className="header__menu-toggle"
+                    aria-expanded={menuOpen}
+                    aria-controls="header-mobile-menu"
+                    aria-label={menuOpen ? "Close menu" : "Open menu"}
+                    onClick={() => setMenuOpen((open) => !open)}
                 >
-                    <IoSearch />
+                    <span className="header__menu-bar" />
+                    <span className="header__menu-bar" />
+                    <span className="header__menu-bar" />
                 </button>
             </div>
-            
 
-            <div className="header-nav-bar">
-                <Link className="header-nav-link header-aboutus-link" to={routes.ABOUTUS}>Aboutus</Link>
-                {isAuthenticated ? (
-                    <Link className="header-nav-link header-dashboard-link" to={routes.DASHBOARD}>Dashboard</Link>
-                ) : (
-                    <>
-                        <Link className="header-nav-link header-login-link" to={routes.LOGIN}>Login</Link>
-                        <Link className="header-nav-link header-signup-link" to={routes.SIGNUP}>Signup</Link>
-                    </>
-                )}
+            <div className="header__mobile" id="header-mobile-menu" hidden={!menuOpen}>
+                <nav className="header__mobile-links" aria-label="Mobile">
+                    {NAV_LINKS.map((link) => (
+                        <a key={link.href} href={link.href} className="header__mobile-link" onClick={closeMenu}>
+                            {link.label}
+                        </a>
+                    ))}
+                </nav>
+                <div className="header__mobile-actions">
+                    {isAuthenticated ? (
+                        <Link to={routes.DASHBOARD} className="header__cta header__cta--mobile" onClick={closeMenu}>
+                            Dashboard
+                        </Link>
+                    ) : (
+                        <>
+                            <Link to={routes.LOGIN} className="header__login header__login--mobile" onClick={closeMenu}>
+                                Log in
+                            </Link>
+                            <Link to={routes.SIGNUP} className="header__cta header__cta--mobile" onClick={closeMenu}>
+                                Sign up
+                            </Link>
+                        </>
+                    )}
+                </div>
             </div>
-
-        </div>
+        </header>
     );
-}
+};
 
 export default Header;
