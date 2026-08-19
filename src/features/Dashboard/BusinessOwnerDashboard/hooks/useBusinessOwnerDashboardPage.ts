@@ -4,6 +4,11 @@ import useBusinessProducts from "./data/useBusinessProducts";
 import useBusinessMembers from "./data/useBusinessMembers";
 import useBusinessSubscription from "./data/useBusinessSubscription";
 import useProductsTableState from "./ui/useProductsTableState";
+import useProductModal from "./ui/useProductModal";
+import useDeleteProduct from "./data/useDeleteProduct";
+import { useState } from "react";
+import { ApiError } from "../../../../Error/ApiError";
+import type { BusinessProductResponse } from "../types";
 
 const useBusinessOwnerDashboardPage = () => {
     const { session } = useAuth();
@@ -36,9 +41,48 @@ const useBusinessOwnerDashboardPage = () => {
         isError: subscriptionError,
     } = useBusinessSubscription(businessId);
 
+    const productModal = useProductModal(businessId);
+
+    const [productPendingDeletion, setProductPendingDeletion] =
+        useState<BusinessProductResponse | undefined>(undefined);
+
+    const {
+        mutate: deleteProduct,
+        isPending: isDeletingProduct,
+        error: deleteErrorRaw,
+        reset: resetDeleteError,
+    } = useDeleteProduct(businessId);
+
+    const requestDeleteProduct = (product: BusinessProductResponse) => {
+        resetDeleteError();
+        setProductPendingDeletion(product);
+    };
+
+    const confirmDeleteProduct = () => {
+        if (!productPendingDeletion) return;
+
+        deleteProduct(productPendingDeletion.id, {
+            onSuccess: () => setProductPendingDeletion(undefined),
+        });
+    };
+
     return {
         businessId,
         businessName: session?.business?.name ?? "",
+
+        productModal,
+
+        productPendingDeletion,
+        isDeletingProduct,
+        deleteProductError:
+            deleteErrorRaw instanceof ApiError
+                ? deleteErrorRaw.message
+                : deleteErrorRaw
+                    ? "Couldn't delete the product. Please try again."
+                    : undefined,
+        requestDeleteProduct,
+        confirmDeleteProduct,
+        cancelDeleteProduct: () => setProductPendingDeletion(undefined),
 
         stats,
         statsLoading,

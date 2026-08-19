@@ -42,6 +42,38 @@ export const businessProductResponseSchema = z.object({
 
 export const businessProductsPageSchema = pagedResultSchema(businessProductResponseSchema);
 
+export const productValueTypeSchema = z.enum(["Text", "Number", "Boolean", "TextList"]);
+
+export const productFormFieldSchema = z.object({
+    key: z.string(),
+    label: z.string(),
+    valueType: productValueTypeSchema,
+});
+
+export const productFormSchema = z.object({
+    categories: z.array(z.object({ id: z.string().uuid(), name: z.string() })),
+    metadataFields: z.array(productFormFieldSchema),
+});
+
+// Metadata is schemaless by design — its keys differ per business — so it's
+// validated as "an object" rather than against fixed fields.
+export const businessProductDetailSchema = z.object({
+    id: z.string().uuid(),
+    title: z.string(),
+    description: z.string(),
+    price: z.number(),
+    categoryId: z.string().uuid(),
+    categoryName: z.string(),
+    imageUrl: z.string().nullable(),
+    metadata: z.record(z.string(), z.unknown()).nullable(),
+    createdAt: z.iso.datetime(),
+    updatedAt: z.iso.datetime(),
+});
+
+export const productImageUploadSchema = z.object({
+    imageUrl: z.string(),
+});
+
 export const businessMemberResponseSchema = z.object({
     userId: z.string().uuid(),
     firstName: z.string(),
