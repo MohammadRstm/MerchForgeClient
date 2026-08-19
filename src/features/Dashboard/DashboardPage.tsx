@@ -1,12 +1,17 @@
 import "./Dashboard.css";
 import useAuth from "../../context/Auth/useAuth";
 import SuperAdminDashboard from "./SuperAdminDashboard/SuperAdminDashboard";
+import BusinessOwnerDashboard from "./BusinessOwnerDashboard/BusinessOwnerDashboard";
 
 const DashboardPage = () => {
     const { session } = useAuth();
 
     if (session?.systemRole === "SuperAdmin") {
         return <SuperAdminDashboard />;
+    }
+
+    if (session?.business?.role === "Owner") {
+        return <BusinessOwnerDashboard />;
     }
 
     return (
