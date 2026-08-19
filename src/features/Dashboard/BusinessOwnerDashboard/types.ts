@@ -7,6 +7,9 @@ import type {
     businessProductDetailSchema,
     businessProductResponseSchema,
     businessSubscriptionResponseSchema,
+    productDraftMessageSchema,
+    productDraftSchema,
+    productDraftStatusSchema,
     productFormFieldSchema,
     productFormSchema,
     productValueTypeSchema,
@@ -36,6 +39,10 @@ export type ProductFormValues = {
     imageUrl: string | null;
     metadata: Record<string, string | boolean>;
 };
+
+export type ProductDraft = z.infer<typeof productDraftSchema>;
+export type ProductDraftMessage = z.infer<typeof productDraftMessageSchema>;
+export type ProductDraftStatus = z.infer<typeof productDraftStatusSchema>;
 
 export type ProductSortField = "CreatedAt" | "Title" | "Price";
 

@@ -74,6 +74,53 @@ export const productImageUploadSchema = z.object({
     imageUrl: z.string(),
 });
 
+/**
+ * Mirrors ProductDraftStatus on the backend. A closed union rather than z.string()
+ * so an unexpected state fails validation loudly here instead of silently falling
+ * through every branch of the UI and rendering nothing.
+ */
+export const productDraftStatusSchema = z.enum([
+    "CollectingInformation",
+    "WaitingForMissingInformation",
+    "ProcessingImage",
+    "WaitingForImageApproval",
+    "WaitingForProductApproval",
+    "Completed",
+    "Cancelled",
+    "Failed",
+]);
+
+export const productDraftMessageSchema = z.object({
+    role: z.enum(["user", "assistant"]),
+    text: z.string(),
+    kind: z.enum(["text", "voice", "image"]),
+    at: z.iso.datetime(),
+});
+
+export const productDraftProductSchema = z.object({
+    title: z.string().nullable(),
+    description: z.string().nullable(),
+    price: z.number().nullable(),
+    categoryId: z.string().uuid().nullable(),
+    categoryName: z.string().nullable(),
+    // Schemaless by design - the keys differ per business - so validated as an
+    // object rather than against fixed fields.
+    metadata: z.record(z.string(), z.unknown()).nullable(),
+});
+
+export const productDraftSchema = z.object({
+    id: z.string().uuid(),
+    status: productDraftStatusSchema,
+    messages: z.array(productDraftMessageSchema),
+    draft: productDraftProductSchema.nullable(),
+    missingFields: z.array(z.string()),
+    originalImageUrl: z.string().nullable(),
+    processedImageUrl: z.string().nullable(),
+    imageModificationPrompt: z.string().nullable(),
+    canConfirm: z.boolean(),
+    productId: z.string().uuid().nullable(),
+});
+
 export const businessMemberResponseSchema = z.object({
     userId: z.string().uuid(),
     firstName: z.string(),

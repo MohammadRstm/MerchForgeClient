@@ -6,6 +6,11 @@ import ProductImageDropzone from "./ProductImageDropzone";
 
 type ProductModalProps = {
     modal: ReturnType<typeof useProductModal>;
+    /**
+     * Offered only when creating. Editing an existing product through a fresh
+     * conversation would create a second product rather than update this one.
+     */
+    onFillWithAi?: () => void;
 };
 
 /** Renders the input that matches an optional field's declared value type. */
@@ -58,7 +63,7 @@ const MetadataField = ({
     );
 };
 
-const ProductModal = ({ modal }: ProductModalProps) => {
+const ProductModal = ({ modal, onFillWithAi }: ProductModalProps) => {
     const {
         isOpen,
         isEditing,
@@ -85,7 +90,20 @@ const ProductModal = ({ modal }: ProductModalProps) => {
     return (
         <Modal isOpen={isOpen} onClose={close}>
             <Modal.Header>
-                <h2>{isEditing ? "Edit product" : "Add product"}</h2>
+                <div className="product-modal__header">
+                    <h2>{isEditing ? "Edit product" : "Add product"}</h2>
+
+                    {!isEditing && onFillWithAi && (
+                        <button
+                            type="button"
+                            className="business-dashboard-button-secondary product-modal__ai-button"
+                            onClick={onFillWithAi}
+                            disabled={isPreparing}
+                        >
+                            ✨ Fill with AI
+                        </button>
+                    )}
+                </div>
             </Modal.Header>
 
             <Modal.Body>

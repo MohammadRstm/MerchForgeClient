@@ -5,6 +5,7 @@ import useBusinessMembers from "./data/useBusinessMembers";
 import useBusinessSubscription from "./data/useBusinessSubscription";
 import useProductsTableState from "./ui/useProductsTableState";
 import useProductModal from "./ui/useProductModal";
+import useProductAiChat from "./ui/useProductAiChat";
 import useDeleteProduct from "./data/useDeleteProduct";
 import { useState } from "react";
 import { ApiError } from "../../../../Error/ApiError";
@@ -43,6 +44,22 @@ const useBusinessOwnerDashboardPage = () => {
 
     const productModal = useProductModal(businessId);
 
+    const aiChat = useProductAiChat(businessId, () => {
+        // The AI flow created the product itself, so the manual modal - if it was the
+        // route in - has nothing left to submit.
+        productModal.close();
+    });
+
+    /**
+     * Closes the manual form when handing over to the assistant. Both modals render
+     * their own backdrop, so leaving the first open stacks two dialogs and the owner
+     * ends up dismissing a form they thought they had left.
+     */
+    const openAiChat = () => {
+        productModal.close();
+        aiChat.open();
+    };
+
     const [productPendingDeletion, setProductPendingDeletion] =
         useState<BusinessProductResponse | undefined>(undefined);
 
@@ -71,6 +88,8 @@ const useBusinessOwnerDashboardPage = () => {
         businessName: session?.business?.name ?? "",
 
         productModal,
+        aiChat,
+        openAiChat,
 
         productPendingDeletion,
         isDeletingProduct,
