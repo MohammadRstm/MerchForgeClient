@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import './App.css'
 import AppRoutes from './routes/AppRoutes'
 import { ToastProvider } from './services/toast'
@@ -12,7 +12,7 @@ function App(){
   const { logout } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
 
     const receptors = setupInterceptors(logout, navigate);
 
