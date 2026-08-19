@@ -59,11 +59,11 @@ const SuperAdminDashboard = () => {
                     <div className="widget-charts-grid">
                         <BreakdownPieChart
                             title="Users by System Role"
-                            data={stats.usersBySystemRole.map((entry) => ({ label: entry.role, count: entry.count }))}
+                            data={stats.usersBySystemRole.map((entry) => ({ label: entry.key, count: entry.count }))}
                         />
                         <BreakdownPieChart
                             title="Business Members by Role"
-                            data={stats.businessUsersByRole.map((entry) => ({ label: entry.role, count: entry.count }))}
+                            data={stats.businessUsersByRole.map((entry) => ({ label: entry.key, count: entry.count }))}
                         />
                         <GrowthBarChart title="Businesses Created (6mo)" data={stats.businessesOverTime} />
                         <GrowthBarChart
