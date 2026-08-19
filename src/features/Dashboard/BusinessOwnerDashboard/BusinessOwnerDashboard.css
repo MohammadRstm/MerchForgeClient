@@ -1,0 +1,203 @@
+.business-dashboard-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 24px 64px;
+}
+
+.business-dashboard-heading {
+    margin-bottom: 24px;
+}
+
+.business-dashboard-stats-loading {
+    display: flex;
+    justify-content: center;
+    padding: 48px 0;
+}
+
+/* Tables */
+
+.business-dashboard-table-card {
+    border: 1px solid #e2e2e2;
+    border-radius: 10px;
+    background: #fff;
+    padding: 20px;
+    margin-bottom: 24px;
+}
+
+.business-dashboard-table-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.business-dashboard-table-header h3 {
+    margin: 0;
+}
+
+.business-dashboard-table-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.business-dashboard-search-input,
+.business-dashboard-filter-select {
+    padding: 8px 12px;
+    border: 1px solid #e2e2e2;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.business-dashboard-search-input {
+    min-width: 220px;
+}
+
+.business-dashboard-table-loading {
+    display: flex;
+    justify-content: center;
+    padding: 32px 0;
+}
+
+.business-dashboard-table-message {
+    text-align: center;
+    color: #777;
+    padding: 32px 0;
+}
+
+.business-dashboard-table-message--error {
+    color: #d92d20;
+}
+
+.business-dashboard-table-wrapper {
+    overflow-x: auto;
+}
+
+.business-dashboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.business-dashboard-table th,
+.business-dashboard-table td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid #f0f0f0;
+    white-space: nowrap;
+}
+
+.business-dashboard-table th {
+    color: #777;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.business-dashboard-product-thumb {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    object-fit: cover;
+}
+
+.business-dashboard-product-thumb-placeholder {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    background: #f0f0f0;
+}
+
+.business-dashboard-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    background: #f0f0f0;
+    color: #444;
+}
+
+.business-dashboard-badge--owner {
+    background: #fdecea;
+    color: #d92d20;
+}
+
+.business-dashboard-badge--admin {
+    background: #fff4e5;
+    color: #b25e00;
+}
+
+.business-dashboard-badge--member {
+    background: #e8f3ff;
+    color: #1d5fb8;
+}
+
+.business-dashboard-badge--status-active {
+    background: #e6f7ee;
+    color: #12875a;
+}
+
+.business-dashboard-badge--status-trialing {
+    background: #e8f3ff;
+    color: #1d5fb8;
+}
+
+.business-dashboard-badge--status-pastdue,
+.business-dashboard-badge--status-expired {
+    background: #fff4e5;
+    color: #b25e00;
+}
+
+.business-dashboard-badge--status-cancelled {
+    background: #fdecea;
+    color: #d92d20;
+}
+
+/* Subscription card */
+
+.business-dashboard-subscription-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.business-dashboard-subscription-plan {
+    display: block;
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.business-dashboard-subscription-price {
+    display: block;
+    font-size: 13px;
+    color: #777;
+    margin-top: 2px;
+}
+
+.business-dashboard-subscription-period {
+    margin: 12px 0 0;
+    font-size: 13px;
+    color: #777;
+}
+
+.business-dashboard-subscription-features {
+    margin: 16px 0 0;
+    padding-left: 20px;
+    font-size: 14px;
+    color: #333;
+}
+
+.business-dashboard-subscription-features li {
+    margin-bottom: 4px;
+}
+
+.business-dashboard-subscription-feature-limit {
+    color: #999;
+}
