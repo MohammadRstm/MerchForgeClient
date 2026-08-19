@@ -1,16 +1,41 @@
 import type z from "zod";
+
 import type { PagedQuery } from "../../../types/pagination";
 import type {
     businessDashboardStatsResponseSchema,
     businessMemberResponseSchema,
+    businessProductDetailSchema,
     businessProductResponseSchema,
     businessSubscriptionResponseSchema,
+    productFormFieldSchema,
+    productFormSchema,
+    productValueTypeSchema,
 } from "./validation";
 
 export type BusinessDashboardStatsResponse = z.infer<typeof businessDashboardStatsResponseSchema>;
 export type BusinessProductResponse = z.infer<typeof businessProductResponseSchema>;
 export type BusinessMemberResponse = z.infer<typeof businessMemberResponseSchema>;
 export type BusinessSubscriptionResponse = z.infer<typeof businessSubscriptionResponseSchema>;
+
+export type BusinessProductDetail = z.infer<typeof businessProductDetailSchema>;
+export type ProductForm = z.infer<typeof productFormSchema>;
+export type ProductFormField = z.infer<typeof productFormFieldSchema>;
+export type ProductValueType = z.infer<typeof productValueTypeSchema>;
+
+/**
+ * Product form state. Metadata values are kept as strings while editing — even
+ * numbers — because that's what inputs produce; they're converted to their real JSON
+ * types only on submit. TextList is held as one comma-separated string for the same
+ * reason. Booleans are the exception, since a checkbox already gives a real boolean.
+ */
+export type ProductFormValues = {
+    title: string;
+    description: string;
+    price: string;
+    categoryId: string;
+    imageUrl: string | null;
+    metadata: Record<string, string | boolean>;
+};
 
 export type ProductSortField = "CreatedAt" | "Title" | "Price";
 

@@ -3,11 +3,28 @@ import type { ProductsQueryParams } from "../../features/Dashboard/BusinessOwner
 import {
     businessDashboardStatsResponseSchema,
     businessMemberResponseSchema,
+    businessProductDetailSchema,
     businessProductsPageSchema,
     businessSubscriptionResponseSchema,
+    productFormSchema,
+    productImageUploadSchema,
 } from "../../features/Dashboard/BusinessOwnerDashboard/validation";
 import { authenticatedApi } from "./api";
 import { apiRoutes } from "./apiRoutes";
+
+/**
+ * Wire shape for create/update. Metadata values are already converted to their real
+ * JSON types (string / number / boolean / string[]) by the form before this point —
+ * the backend validates each against the type its definition declares.
+ */
+export type SaveProductPayload = {
+    title: string;
+    description: string;
+    price: number;
+    categoryId: string;
+    imageUrl: string | null;
+    metadata: Record<string, unknown> | null;
+};
 
 export const getBusinessDashboardStatsService = async (businessId: string) => {
     const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_STATS(businessId));
@@ -39,4 +56,63 @@ export const getBusinessSubscriptionService = async (businessId: string) => {
     }
 
     return businessSubscriptionResponseSchema.parse(response.data);
+};
+
+// ---- product CRUD ----
+
+export const getProductFormService = async (businessId: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_PRODUCT_FORM(businessId));
+
+    return productFormSchema.parse(data);
+};
+
+export const getBusinessProductService = async (businessId: string, productId: string) => {
+    const { data } = await authenticatedApi.get(
+        apiRoutes.BUSINESS_DASHBOARD_PRODUCT(businessId, productId)
+    );
+
+    return businessProductDetailSchema.parse(data);
+};
+
+export const createBusinessProductService = async (
+    businessId: string,
+    payload: SaveProductPayload
+) => {
+    const { data } = await authenticatedApi.post(
+        apiRoutes.BUSINESS_DASHBOARD_PRODUCTS(businessId),
+        payload
+    );
+
+    return businessProductDetailSchema.parse(data);
+};
+
+export const updateBusinessProductService = async (
+    businessId: string,
+    productId: string,
+    payload: SaveProductPayload
+) => {
+    const { data } = await authenticatedApi.put(
+        apiRoutes.BUSINESS_DASHBOARD_PRODUCT(businessId, productId),
+        payload
+    );
+
+    return businessProductDetailSchema.parse(data);
+};
+
+export const deleteBusinessProductService = async (businessId: string, productId: string) => {
+    await authenticatedApi.delete(apiRoutes.BUSINESS_DASHBOARD_PRODUCT(businessId, productId));
+};
+
+export const uploadProductImageService = async (businessId: string, file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    // Content-Type is deliberately not set: the browser must generate it so the
+    // multipart boundary is included, and setting it by hand omits that.
+    const { data } = await authenticatedApi.post(
+        apiRoutes.BUSINESS_DASHBOARD_PRODUCT_IMAGE(businessId),
+        formData
+    );
+
+    return productImageUploadSchema.parse(data);
 };
