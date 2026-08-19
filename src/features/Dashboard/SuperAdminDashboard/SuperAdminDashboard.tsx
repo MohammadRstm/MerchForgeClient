@@ -1,11 +1,11 @@
 import "./SuperAdminDashboard.css";
 import Modal from "../../../components/Modal/Modal";
 import Spinner from "../../../components/LoadingSpinner/LoadingSpinner";
+import StatCards from "../../../components/DashboardWidgets/StatCards";
+import BreakdownPieChart from "../../../components/DashboardWidgets/BreakdownPieChart";
+import GrowthBarChart from "../../../components/DashboardWidgets/GrowthBarChart";
 import useAuth from "../../../context/Auth/useAuth";
 import useSuperAdminDashboardPage from "./hooks/useSuperAdminDashboardPage";
-import StatCards from "./components/StatCards";
-import RoleBreakdownChart from "./components/RoleBreakdownChart";
-import TimeSeriesChart from "./components/TimeSeriesChart";
 import UsersTable from "./components/UsersTable";
 import BusinessesTable from "./components/BusinessesTable";
 
@@ -46,13 +46,27 @@ const SuperAdminDashboard = () => {
                 </p>
             ) : (
                 <>
-                    <StatCards stats={stats} />
+                    <StatCards
+                        cards={[
+                            { label: "Total Users", value: stats.totalUsers },
+                            { label: "Total Businesses", value: stats.totalBusinesses },
+                            { label: "Total Products", value: stats.totalProducts },
+                            { label: "Product Drafts", value: stats.totalProductDrafts },
+                            { label: "Pending Invitations", value: stats.pendingInvitations },
+                        ]}
+                    />
 
                     <div className="dashboard-charts-grid">
-                        <RoleBreakdownChart title="Users by System Role" data={stats.usersBySystemRole} />
-                        <RoleBreakdownChart title="Business Members by Role" data={stats.businessUsersByRole} />
-                        <TimeSeriesChart title="Businesses Created (6mo)" data={stats.businessesOverTime} />
-                        <TimeSeriesChart
+                        <BreakdownPieChart
+                            title="Users by System Role"
+                            data={stats.usersBySystemRole.map((entry) => ({ label: entry.role, count: entry.count }))}
+                        />
+                        <BreakdownPieChart
+                            title="Business Members by Role"
+                            data={stats.businessUsersByRole.map((entry) => ({ label: entry.role, count: entry.count }))}
+                        />
+                        <GrowthBarChart title="Businesses Created (6mo)" data={stats.businessesOverTime} />
+                        <GrowthBarChart
                             title="Products Created (6mo)"
                             data={stats.productsOverTime}
                             color="#3b82f6"
