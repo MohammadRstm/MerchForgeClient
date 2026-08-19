@@ -207,6 +207,100 @@
   word-break: break-all;
 }
 
+/* ---------- Categories ---------- */
+
+.invite__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  list-style: none;
+  margin: 0.15rem 0 0;
+  padding: 0;
+}
+
+.invite__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: 'Roboto', system-ui, sans-serif;
+  font-size: 0.8125rem;
+  color: var(--invite-text-secondary);
+  background: var(--invite-bg);
+  border: 1px solid var(--invite-border);
+  border-radius: 999px;
+  padding: 0.3rem 0.7rem;
+}
+
+/* Custom categories read as the owner's own additions, not platform defaults. */
+.invite__chip--custom {
+  color: var(--invite-text);
+  background: var(--invite-accent-tint);
+  border-color: var(--invite-accent);
+  padding-right: 0.35rem;
+}
+
+.invite__chip-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--invite-text-secondary);
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+  width: 1.15rem;
+  height: 1.15rem;
+  padding: 0;
+  cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+.invite__chip-remove:hover {
+  color: var(--invite-text);
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.invite__chip-remove:focus-visible {
+  outline: 2px solid var(--invite-accent);
+  outline-offset: 1px;
+}
+
+.invite__category-add {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem;
+  margin-top: 0.15rem;
+}
+
+.invite__add-category {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--invite-text);
+  background: transparent;
+  border: 1px solid var(--invite-border);
+  border-radius: 8px;
+  padding: 0 1rem;
+  cursor: pointer;
+  transition: border-color 0.18s ease, background-color 0.18s ease;
+}
+
+.invite__add-category:hover:not(:disabled) {
+  border-color: var(--invite-accent);
+  background: var(--invite-accent-tint);
+}
+
+.invite__add-category:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.invite__add-category:focus-visible {
+  outline: 2px solid var(--invite-accent);
+  outline-offset: 2px;
+}
+
 /* ---------- Submit button ---------- */
 
 .invite__submit {

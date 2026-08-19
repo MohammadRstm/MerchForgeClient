@@ -6,4 +6,6 @@ export const INITIAL_ACCEPT_INVITATION_FORM_DATA: AcceptInvitationFormDataType =
     BusinessName: "",
     Email: "",
     InvitationToken: "",
+    BusinessDomainId: "",
+    NewCategoryNames: [],
 };

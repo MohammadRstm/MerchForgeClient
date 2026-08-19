@@ -23,8 +23,21 @@ export default function AcceptInvitation() {
     rawPassword,
     isPasswordModalOpen,
 
+    domains,
+    domainsLoading,
+    domainsError,
+    domainCategories,
+    categoriesLoading,
+
+    newCategoryInput,
+    newCategoryError,
+
     submit,
     handleChange,
+    onDomainChange,
+    addNewCategory,
+    removeNewCategory,
+    handleNewCategoryInputChange,
     closePasswordModal,
   } = useAcceptInvitationPage();
 
@@ -185,6 +198,129 @@ export default function AcceptInvitation() {
               />
               <span className="invite__hint">This is the email your invitation was sent to.</span>
             </div>
+
+            <div className="invite__field">
+              <label htmlFor="BusinessDomainId" className="invite__label">
+                What does your business sell?
+              </label>
+              <select
+                id="BusinessDomainId"
+                name="BusinessDomainId"
+                className={`invite__input${errors.BusinessDomainId ? ' invite__input--error' : ''}`}
+                value={acceptInvitationFormData.BusinessDomainId}
+                onChange={(e) => onDomainChange(e.target.value)}
+                disabled={domainsLoading || domainsError}
+                aria-invalid={Boolean(errors.BusinessDomainId)}
+                aria-describedby={errors.BusinessDomainId ? 'BusinessDomainId-error' : undefined}
+              >
+                <option value="">
+                  {domainsLoading ? 'Loading…' : 'Select a business type'}
+                </option>
+                {domains?.map((domain) => (
+                  <option key={domain.id} value={domain.id}>
+                    {domain.name}
+                  </option>
+                ))}
+              </select>
+              <span className="invite__hint">
+                This determines the product categories available to your store.
+              </span>
+              {domainsError && (
+                <span className="invite__error" role="alert">
+                  Couldn't load business types. Refresh the page and try again.
+                </span>
+              )}
+              {errors.BusinessDomainId && (
+                <span id="BusinessDomainId-error" className="invite__error" role="alert">
+                  {errors.BusinessDomainId}
+                </span>
+              )}
+            </div>
+
+            {acceptInvitationFormData.BusinessDomainId && (
+              <div className="invite__field">
+                <span className="invite__label">Your categories</span>
+
+                {categoriesLoading ? (
+                  <span className="invite__hint">Loading categories…</span>
+                ) : (
+                  <>
+                    <span className="invite__hint">
+                      These come with your business type and are ready to use.
+                    </span>
+                    <ul className="invite__chips" data-testid="existing-categories">
+                      {domainCategories?.map((category) => (
+                        <li key={category.id} className="invite__chip">
+                          {category.name}
+                        </li>
+                      ))}
+                    </ul>
+
+                    <span className="invite__hint">
+                      Need something else? Add it below — it'll be private to your store.
+                    </span>
+
+                    {acceptInvitationFormData.NewCategoryNames.length > 0 && (
+                      <ul className="invite__chips" data-testid="new-categories">
+                        {acceptInvitationFormData.NewCategoryNames.map((name) => (
+                          <li key={name} className="invite__chip invite__chip--custom">
+                            {name}
+                            <button
+                              type="button"
+                              className="invite__chip-remove"
+                              onClick={() => removeNewCategory(name)}
+                              aria-label={`Remove ${name}`}
+                            >
+                              ×
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+
+                    <div className="invite__category-add">
+                      <input
+                        id="NewCategory"
+                        type="text"
+                        placeholder="e.g. Vintage"
+                        className={`invite__input${newCategoryError ? ' invite__input--error' : ''}`}
+                        value={newCategoryInput}
+                        onChange={(e) => handleNewCategoryInputChange(e.target.value)}
+                        onKeyDown={(e) => {
+                          // Enter adds a category rather than submitting the whole
+                          // form, which would be a surprising way to lose the input.
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            addNewCategory();
+                          }
+                        }}
+                        aria-label="New category name"
+                        aria-invalid={Boolean(newCategoryError)}
+                      />
+                      <button
+                        type="button"
+                        className="invite__add-category"
+                        onClick={addNewCategory}
+                        disabled={!newCategoryInput.trim()}
+                      >
+                        Add
+                      </button>
+                    </div>
+
+                    {newCategoryError && (
+                      <span className="invite__error" role="alert">
+                        {newCategoryError}
+                      </span>
+                    )}
+                    {errors.NewCategoryNames && (
+                      <span className="invite__error" role="alert">
+                        {errors.NewCategoryNames}
+                      </span>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
 
             {acceptInvitationError && (
               <p className="invite__form-error" role="alert">

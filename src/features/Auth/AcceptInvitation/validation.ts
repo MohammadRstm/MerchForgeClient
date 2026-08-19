@@ -6,7 +6,29 @@ export const acceptInvitationSchema = z.object({
     BusinessName: z.string().trim().min(1, "Business name is required"),
     Email: z.string().trim().min(1, "Email is required").email("Enter a valid email address"),
     InvitationToken: z.string().trim(),
+    BusinessDomainId: z.string().trim().min(1, "Select what your business sells"),
+    // Names only. The backend generates slugs and rejects anything that duplicates
+    // an existing platform category, so the form never invents ids.
+    NewCategoryNames: z
+        .array(z.string().trim().min(1).max(100))
+        .max(20, "Add at most 20 custom categories"),
 });
+
+export const domainSchema = z.object({
+    id: z.string(),
+    name: z.string(),
+    slug: z.string(),
+});
+
+export const domainsSchema = z.array(domainSchema);
+
+export const domainCategorySchema = z.object({
+    id: z.string(),
+    name: z.string(),
+    slug: z.string(),
+});
+
+export const domainCategoriesSchema = z.array(domainCategorySchema);
 
 export const acceptInvitationResponseSchema = z.object({
     authResponse: z.object({
