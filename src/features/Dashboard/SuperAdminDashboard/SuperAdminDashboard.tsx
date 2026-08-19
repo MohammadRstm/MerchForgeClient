@@ -56,7 +56,7 @@ const SuperAdminDashboard = () => {
                         ]}
                     />
 
-                    <div className="dashboard-charts-grid">
+                    <div className="widget-charts-grid">
                         <BreakdownPieChart
                             title="Users by System Role"
                             data={stats.usersBySystemRole.map((entry) => ({ label: entry.role, count: entry.count }))}
