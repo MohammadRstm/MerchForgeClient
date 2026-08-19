@@ -21,7 +21,7 @@ const useLogin = () =>{
             );
   
             setTimeout(() =>{
-                naviagte(routes.HOME);
+                naviagte(routes.DASHBOARD);
             }, 2000);
 
         },
