@@ -12,6 +12,9 @@ export const acceptInvitationSchema = z.object({
     NewCategoryNames: z
         .array(z.string().trim().min(1).max(100))
         .max(20, "Add at most 20 custom categories"),
+    // Keys only. The backend resolves them against the domain's catalogue and owns
+    // the resulting metadata shape, so the form never constructs the schema itself.
+    SelectedProductAttributeKeys: z.array(z.string().trim().min(1)),
 });
 
 export const domainSchema = z.object({
@@ -29,6 +32,15 @@ export const domainCategorySchema = z.object({
 });
 
 export const domainCategoriesSchema = z.array(domainCategorySchema);
+
+export const productAttributeSchema = z.object({
+    key: z.string(),
+    label: z.string(),
+    valueType: z.enum(["Text", "Number", "Boolean", "TextList"]),
+    displayOrder: z.number(),
+});
+
+export const productAttributesSchema = z.array(productAttributeSchema);
 
 export const acceptInvitationResponseSchema = z.object({
     authResponse: z.object({

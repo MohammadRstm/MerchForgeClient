@@ -46,10 +46,14 @@ const useHandleAcceptInvitationForm = (existingCategories: DomainCategory[]) => 
         // Custom categories are proposed against a specific domain's existing list,
         // so they stop being meaningful the moment the domain changes — keeping them
         // could submit a "Pizza" category the owner only wanted under Restaurant.
+        // Both selections are made against a specific domain's catalogue, so they
+        // stop being meaningful the moment the domain changes — keeping them could
+        // submit a "spicy" field the owner only ever wanted under Restaurant.
         setAcceptInvitationFormData((prev) => ({
             ...prev,
             BusinessDomainId: domainId,
             NewCategoryNames: [],
+            SelectedProductAttributeKeys: [],
         }));
         setErrors((prev) => ({ ...prev, BusinessDomainId: undefined }));
         setNewCategoryInput("");
@@ -101,6 +105,15 @@ const useHandleAcceptInvitationForm = (existingCategories: DomainCategory[]) => 
         }));
     };
 
+    const toggleProductAttribute = (key: string) => {
+        setAcceptInvitationFormData((prev) => ({
+            ...prev,
+            SelectedProductAttributeKeys: prev.SelectedProductAttributeKeys.includes(key)
+                ? prev.SelectedProductAttributeKeys.filter((existing) => existing !== key)
+                : [...prev.SelectedProductAttributeKeys, key],
+        }));
+    };
+
     const handleNewCategoryInputChange = (value: string) => {
         setNewCategoryInput(value);
         setNewCategoryError(undefined);
@@ -119,6 +132,7 @@ const useHandleAcceptInvitationForm = (existingCategories: DomainCategory[]) => 
         handleDomainChange,
         addNewCategory,
         removeNewCategory,
+        toggleProductAttribute,
         handleNewCategoryInputChange,
         setErrors,
     };

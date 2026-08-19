@@ -1,7 +1,12 @@
-import type { Domain, DomainCategory } from "../../features/Auth/AcceptInvitation/types";
+import type {
+    Domain,
+    DomainCategory,
+    ProductAttribute,
+} from "../../features/Auth/AcceptInvitation/types";
 import {
     domainCategoriesSchema,
     domainsSchema,
+    productAttributesSchema,
 } from "../../features/Auth/AcceptInvitation/validation";
 import { unAuthenticatedApi } from "./api";
 import { apiRoutes } from "./apiRoutes";
@@ -23,4 +28,14 @@ export const getDomainCategoriesService = async (
     );
 
     return domainCategoriesSchema.parse(data);
+};
+
+export const getDomainProductAttributesService = async (
+    domainId: string
+): Promise<ProductAttribute[]> => {
+    const { data } = await unAuthenticatedApi.get<ProductAttribute[]>(
+        apiRoutes.DOMAIN_PRODUCT_ATTRIBUTES(domainId)
+    );
+
+    return productAttributesSchema.parse(data);
 };

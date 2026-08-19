@@ -3,6 +3,7 @@ import validateForm from "../../../../utils/forms/validateForm";
 import { acceptInvitationSchema } from "../validation";
 import useAcceptInvitation from "./data/useAcceptInvitation";
 import useDomainCategories from "./data/useDomainCategories";
+import useDomainProductAttributes from "./data/useDomainProductAttributes";
 import useDomains from "./data/useDomains";
 import useHandleAcceptInvitationForm from "./ui/useHandleAcceptInvitationForm";
 
@@ -36,6 +37,11 @@ const useAcceptInvitationPage = () => {
     } = useDomainCategories(selectedDomainId);
 
     const {
+        data: productAttributes,
+        isLoading: productAttributesLoading,
+    } = useDomainProductAttributes(selectedDomainId);
+
+    const {
         acceptInvitationFormData,
         errors,
         isInvitationInvalid,
@@ -46,6 +52,7 @@ const useAcceptInvitationPage = () => {
         handleDomainChange,
         addNewCategory,
         removeNewCategory,
+        toggleProductAttribute,
         handleNewCategoryInputChange,
         setErrors,
     } = useHandleAcceptInvitationForm(domainCategories ?? []);
@@ -86,6 +93,8 @@ const useAcceptInvitationPage = () => {
         domainsError,
         domainCategories,
         categoriesLoading,
+        productAttributes,
+        productAttributesLoading,
 
         newCategoryInput,
         newCategoryError,
@@ -95,6 +104,7 @@ const useAcceptInvitationPage = () => {
         onDomainChange,
         addNewCategory,
         removeNewCategory,
+        toggleProductAttribute,
         handleNewCategoryInputChange,
         closePasswordModal,
     };
