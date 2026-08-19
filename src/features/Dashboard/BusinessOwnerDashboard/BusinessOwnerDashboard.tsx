@@ -7,6 +7,8 @@ import useBusinessOwnerDashboardPage from "./hooks/useBusinessOwnerDashboardPage
 import ProductsTable from "./components/ProductsTable";
 import MembersTable from "./components/MembersTable";
 import SubscriptionCard from "./components/SubscriptionCard";
+import ProductModal from "./components/ProductModal";
+import DeleteProductModal from "./components/DeleteProductModal";
 
 const currencyFormatter = new Intl.NumberFormat(undefined, {
     style: "currency",
@@ -34,6 +36,15 @@ const BusinessOwnerDashboard = () => {
         subscription,
         subscriptionLoading,
         subscriptionError,
+
+        productModal,
+
+        productPendingDeletion,
+        isDeletingProduct,
+        deleteProductError,
+        requestDeleteProduct,
+        confirmDeleteProduct,
+        cancelDeleteProduct,
     } = useBusinessOwnerDashboardPage();
 
     return (
@@ -103,6 +114,20 @@ const BusinessOwnerDashboard = () => {
                 isError={productsError}
                 tableState={productsTable}
                 categories={stats?.productsByCategory.map((entry) => entry.key) ?? []}
+                onAddProduct={productModal.openForCreate}
+                onEditProduct={productModal.openForEdit}
+                onDeleteProduct={requestDeleteProduct}
+                deletingProductId={isDeletingProduct ? productPendingDeletion?.id : undefined}
+            />
+
+            <ProductModal modal={productModal} />
+
+            <DeleteProductModal
+                product={productPendingDeletion}
+                isDeleting={isDeletingProduct}
+                error={deleteProductError}
+                onConfirm={confirmDeleteProduct}
+                onCancel={cancelDeleteProduct}
             />
         </main>
     );

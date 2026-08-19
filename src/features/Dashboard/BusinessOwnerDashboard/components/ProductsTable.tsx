@@ -4,6 +4,7 @@ import SortableHeader from "../../../../components/SortableHeader/SortableHeader
 import type { PagedResult } from "../../../../types/pagination";
 import type useProductsTableState from "../hooks/ui/useProductsTableState";
 import type { BusinessProductResponse } from "../types";
+import { resolveImageUrl } from "./ProductImageDropzone";
 
 type ProductsTableProps = {
     productsPage?: PagedResult<BusinessProductResponse>;
@@ -12,6 +13,10 @@ type ProductsTableProps = {
     isError: boolean;
     tableState: ReturnType<typeof useProductsTableState>;
     categories: string[];
+    onAddProduct: () => void;
+    onEditProduct: (productId: string) => void;
+    onDeleteProduct: (product: BusinessProductResponse) => void;
+    deletingProductId?: string;
 };
 
 const currencyFormatter = new Intl.NumberFormat(undefined, {
@@ -26,6 +31,10 @@ const ProductsTable = ({
     isError,
     tableState,
     categories,
+    onAddProduct,
+    onEditProduct,
+    onDeleteProduct,
+    deletingProductId,
 }: ProductsTableProps) => {
     const { query, searchInput, handleSearchChange, handleCategoryChange, handleSortChange, setPage } = tableState;
 
@@ -55,6 +64,14 @@ const ProductsTable = ({
                             </option>
                         ))}
                     </select>
+
+                    <button
+                        type="button"
+                        className="business-dashboard-button-primary"
+                        onClick={onAddProduct}
+                    >
+                        Add product
+                    </button>
                 </div>
             </div>
 
@@ -70,7 +87,7 @@ const ProductsTable = ({
                 <p className="business-dashboard-table-message">
                     {query.search || query.category
                         ? "No products match your search or filters."
-                        : "No products yet."}
+                        : "No products yet. Add your first one to get started."}
                 </p>
             ) : (
                 <div className="business-dashboard-table-wrapper">
@@ -100,6 +117,7 @@ const ProductsTable = ({
                                     sortDescending={query.sortDescending}
                                     onSort={handleSortChange}
                                 />
+                                <th>Actions</th>
                             </tr>
                         </thead>
 
@@ -109,18 +127,42 @@ const ProductsTable = ({
                                     <td>
                                         {product.imageUrl ? (
                                             <img
-                                                src={product.imageUrl}
-                                                alt={product.title}
+                                                src={resolveImageUrl(product.imageUrl)}
+                                                alt=""
                                                 className="business-dashboard-product-thumb"
                                             />
                                         ) : (
-                                            <span className="business-dashboard-product-thumb-placeholder" />
+                                            <span
+                                                className="business-dashboard-product-thumb-placeholder"
+                                                aria-hidden="true"
+                                            >
+                                                {product.title.charAt(0).toUpperCase()}
+                                            </span>
                                         )}
                                     </td>
                                     <td>{product.title}</td>
                                     <td>{product.category}</td>
                                     <td>{currencyFormatter.format(product.price)}</td>
                                     <td>{new Date(product.createdAt).toLocaleDateString()}</td>
+                                    <td>
+                                        <div className="business-dashboard-row-actions">
+                                            <button
+                                                type="button"
+                                                className="business-dashboard-button-ghost"
+                                                onClick={() => onEditProduct(product.id)}
+                                            >
+                                                Edit
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="business-dashboard-button-ghost business-dashboard-button-ghost--danger"
+                                                onClick={() => onDeleteProduct(product)}
+                                                disabled={deletingProductId === product.id}
+                                            >
+                                                {deletingProductId === product.id ? "Deleting…" : "Delete"}
+                                            </button>
+                                        </div>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>

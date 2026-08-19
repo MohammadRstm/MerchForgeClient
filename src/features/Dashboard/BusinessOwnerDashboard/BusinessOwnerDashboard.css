@@ -96,19 +96,30 @@
     text-transform: uppercase;
 }
 
+/* Circular so a row scans as "this product" at a glance rather than as a data cell. */
 .business-dashboard-product-thumb {
     width: 40px;
     height: 40px;
-    border-radius: 6px;
+    border-radius: 50%;
     object-fit: cover;
+    border: 1px solid #e2e2e2;
+    background: #f7f7f7;
 }
 
+/* Falls back to the product's initial, which is still a faster visual anchor than
+   an empty circle when a product has no image. */
 .business-dashboard-product-thumb-placeholder {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     width: 40px;
     height: 40px;
-    border-radius: 6px;
+    border-radius: 50%;
     background: #f0f0f0;
+    border: 1px solid #e2e2e2;
+    color: #8a8a8a;
+    font-size: 15px;
+    font-weight: 600;
 }
 
 .business-dashboard-badge {
@@ -200,4 +211,252 @@
 
 .business-dashboard-subscription-feature-limit {
     color: #999;
+}
+
+/* ---------- Buttons ---------- */
+
+.business-dashboard-button-primary,
+.business-dashboard-button-secondary,
+.business-dashboard-button-danger {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: background-color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+}
+
+.business-dashboard-button-primary {
+    background: #2563eb;
+    color: #fff;
+}
+
+.business-dashboard-button-primary:hover:not(:disabled) {
+    background: #1d4ed8;
+}
+
+.business-dashboard-button-secondary {
+    background: #fff;
+    color: #333;
+    border-color: #d4d4d4;
+}
+
+.business-dashboard-button-secondary:hover:not(:disabled) {
+    background: #f5f5f5;
+}
+
+.business-dashboard-button-danger {
+    background: #dc2626;
+    color: #fff;
+}
+
+.business-dashboard-button-danger:hover:not(:disabled) {
+    background: #b91c1c;
+}
+
+.business-dashboard-button-primary:disabled,
+.business-dashboard-button-secondary:disabled,
+.business-dashboard-button-danger:disabled,
+.business-dashboard-button-ghost:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.business-dashboard-button-ghost {
+    background: none;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #2563eb;
+    cursor: pointer;
+}
+
+.business-dashboard-button-ghost:hover:not(:disabled) {
+    background: #eff6ff;
+}
+
+.business-dashboard-button-ghost--danger {
+    color: #dc2626;
+}
+
+.business-dashboard-button-ghost--danger:hover:not(:disabled) {
+    background: #fef2f2;
+}
+
+.business-dashboard-row-actions {
+    display: flex;
+    gap: 4px;
+}
+
+/* ---------- Product form ---------- */
+
+.business-dashboard-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.business-dashboard-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.business-dashboard-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.business-dashboard-form-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+}
+
+.business-dashboard-form-optional {
+    font-weight: 400;
+    color: #8a8a8a;
+}
+
+.business-dashboard-form-input {
+    padding: 8px 12px;
+    border: 1px solid #e2e2e2;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    width: 100%;
+}
+
+.business-dashboard-form-input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.business-dashboard-form-textarea {
+    resize: vertical;
+}
+
+.business-dashboard-form-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.business-dashboard-form-checkbox input {
+    width: 16px;
+    height: 16px;
+    accent-color: #2563eb;
+    cursor: pointer;
+}
+
+.business-dashboard-form-error {
+    font-size: 13px;
+    color: #dc2626;
+}
+
+.business-dashboard-form-hint {
+    font-size: 12px;
+    color: #8a8a8a;
+}
+
+.business-dashboard-form-divider {
+    border: none;
+    border-top: 1px solid #ececec;
+    margin: 4px 0;
+}
+
+.business-dashboard-form-section {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* ---------- Image dropzone ---------- */
+
+.product-image-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-start;
+}
+
+.product-dropzone {
+    width: 100%;
+    min-height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #d4d4d4;
+    border-radius: 10px;
+    background: #fafafa;
+    cursor: pointer;
+    overflow: hidden;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.product-dropzone:hover,
+.product-dropzone--active {
+    border-color: #2563eb;
+    background: #eff6ff;
+}
+
+/* Once an image is in, the dashed border would compete with it for attention. */
+.product-dropzone--filled {
+    border-style: solid;
+    border-color: #e2e2e2;
+    background: #fff;
+    padding: 0;
+}
+
+.product-dropzone__state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 24px;
+    text-align: center;
+    color: #6b6b6b;
+    font-size: 14px;
+}
+
+.product-dropzone__icon {
+    font-size: 22px;
+    line-height: 1;
+    color: #2563eb;
+}
+
+.product-dropzone__hint {
+    font-size: 12px;
+    color: #9a9a9a;
+}
+
+.product-dropzone__preview {
+    width: 100%;
+    max-height: 240px;
+    object-fit: contain;
+    display: block;
+}
+
+.product-image-remove {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 13px;
+    color: #dc2626;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+@media (max-width: 560px) {
+    .business-dashboard-form-row {
+        grid-template-columns: 1fr;
+    }
 }
