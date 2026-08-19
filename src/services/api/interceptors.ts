@@ -1,6 +1,6 @@
 import type { NavigateFunction } from "react-router";
 import { unAuthenticatedApi ,authenticatedApi } from "./api";
-import { refreshSessionService } from "./auth.api";
+import { refreshSessionOnce } from "./auth.api";
 import { routes } from "../../config/routes";
 import { notify } from "../toast";
 import { buildSessionFromLoginResponse } from "../../context/Auth/sessionMapper";
@@ -39,7 +39,9 @@ export function setupInterceptors(
 
     const performRefresh = async (): Promise<string> => {
         // No refresh token to read: the browser sends the HttpOnly cookie on its own.
-        const data = await refreshSessionService();
+        // refreshSessionOnce also dedupes against AuthProvider's startup restore, on
+        // top of this closure's own refreshPromise dedupe below.
+        const data = await refreshSessionOnce();
 
         const updatedSession = buildSessionFromLoginResponse(data);
 

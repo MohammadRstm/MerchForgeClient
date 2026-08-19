@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import AuthContext from "../context/Auth/AuthContext";
 import { buildSessionFromLoginResponse } from "../context/Auth/sessionMapper";
 import type { LoginResponse } from "../features/Auth/Login/types";
-import { refreshSessionService } from "../services/api/auth.api";
+import { refreshSessionOnce } from "../services/api/auth.api";
 import type { UserSession } from "../types/generalTypes";
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) =>{
@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) =>{
 
         const restoreSession = async () => {
             try {
-                const data = await refreshSessionService();
+                const data = await refreshSessionOnce();
 
                 if (cancelled) return;
 
