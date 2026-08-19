@@ -30,7 +30,13 @@ export const getBusinessMembersService = async (businessId: string) => {
 };
 
 export const getBusinessSubscriptionService = async (businessId: string) => {
-    const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_SUBSCRIPTION(businessId));
+    const response = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_SUBSCRIPTION(businessId));
 
-    return businessSubscriptionResponseSchema.parse(data);
+    // A business with no subscription yet comes back as 204 No Content
+    // (ASP.NET Core's default behavior for an Ok(null) action result).
+    if (response.status === 204 || !response.data) {
+        return null;
+    }
+
+    return businessSubscriptionResponseSchema.parse(response.data);
 };
