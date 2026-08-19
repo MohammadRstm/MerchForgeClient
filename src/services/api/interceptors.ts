@@ -1,7 +1,9 @@
 import type { NavigateFunction } from "react-router";
 import { unAuthenticatedApi ,authenticatedApi } from "./api";
+import { refreshSessionService } from "./auth.api";
 import { routes } from "../../config/routes";
 import { notify } from "../toast";
+import { buildSessionFromLoginResponse } from "../../context/Auth/sessionMapper";
 
 import {
     type AxiosError,
@@ -36,47 +38,17 @@ export function setupInterceptors(
     };
 
     const performRefresh = async (): Promise<string> => {
-        const storedSession = localStorage.getItem("userSession");
+        // No refresh token to read: the browser sends the HttpOnly cookie on its own.
+        const data = await refreshSessionService();
 
-        if (!storedSession) {
-            throw new Error("No user session available.");
-        }
-
-        const session = JSON.parse(storedSession);
-
-        const refreshToken = session.refreshToken;
-
-        if (!refreshToken) {
-            throw new Error("No refresh token available.");
-        }
-
-        const response = await unAuthenticatedApi.post(
-            "Auth/refresh",
-            {
-                RefreshToken: refreshToken,
-            }
-        );
-
-        const {
-            accessToken,
-            refreshToken: newRefreshToken,
-            accessTokenExpiresAt,
-        } = response.data;
-
-        const updatedSession = {
-            ...session,
-            accessToken,
-            accessTokenExpiresAt,
-
-            refreshToken: newRefreshToken ?? session.refreshToken,
-        };
+        const updatedSession = buildSessionFromLoginResponse(data);
 
         localStorage.setItem(
             "userSession",
             JSON.stringify(updatedSession)
         );
 
-        return accessToken;
+        return updatedSession.accessToken;
     };
 
     const handleSessionExpired = () => {

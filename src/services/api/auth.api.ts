@@ -22,3 +22,18 @@ export const acceptInvitationService = async (acceptInvitationFormData : AcceptI
 
     return acceptInvitationResponseSchema.parse(data);
 }
+
+// The refresh token itself is never in this response — it's an HttpOnly cookie the
+// browser sends automatically. This is called both by the request interceptor's
+// refresh-on-401 flow and by AuthProvider on app startup to restore the session.
+export const refreshSessionService = async () : Promise<LoginResponse> =>{
+    const { data } = await unAuthenticatedApi.post<LoginResponse>(
+        apiRoutes.AUTH_REFRESH
+    );
+
+    return loginResponseSchema.parse(data);
+}
+
+export const logoutService = async () : Promise<void> =>{
+    await unAuthenticatedApi.post(apiRoutes.AUTH_LOGOUT);
+}

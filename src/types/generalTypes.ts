@@ -38,7 +38,8 @@ export interface UserSession {
         role: "Owner" | "Admin" | "Member";
     } | null;
 
+    // The refresh token is never present here or in localStorage — it lives
+    // only in an HttpOnly cookie the browser manages on its own.
     accessToken: string;
-    refreshToken: string;
     accessTokenExpiresAt: string;
 }
