@@ -22,3 +22,37 @@ export const acceptInvitationService = async (acceptInvitationFormData : AcceptI
 
     return acceptInvitationResponseSchema.parse(data);
 }
+
+// The refresh token itself is never in this response — it's an HttpOnly cookie the
+// browser sends automatically. This is called both by the request interceptor's
+// refresh-on-401 flow and by AuthProvider on app startup to restore the session.
+export const refreshSessionService = async () : Promise<LoginResponse> =>{
+    const { data } = await unAuthenticatedApi.post<LoginResponse>(
+        apiRoutes.AUTH_REFRESH
+    );
+
+    return loginResponseSchema.parse(data);
+}
+
+// Refresh rotates the token server-side, so two concurrent refresh calls would race:
+// whichever reaches the server second gets rejected because the first already
+// invalidated the cookie's token. This dedupes at the module level (not per-caller)
+// so it protects against every source of concurrent refreshes — simultaneous 401
+// retries in the axios interceptor, and React StrictMode's double-invoked effects
+// double-firing AuthProvider's startup restore — by having every caller share one
+// in-flight request instead of firing their own.
+let inFlightSessionRefresh: Promise<LoginResponse> | null = null;
+
+export const refreshSessionOnce = () : Promise<LoginResponse> =>{
+    if (!inFlightSessionRefresh) {
+        inFlightSessionRefresh = refreshSessionService().finally(() => {
+            inFlightSessionRefresh = null;
+        });
+    }
+
+    return inFlightSessionRefresh;
+}
+
+export const logoutService = async () : Promise<void> =>{
+    await unAuthenticatedApi.post(apiRoutes.AUTH_LOGOUT);
+}

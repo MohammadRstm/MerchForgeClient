@@ -3,6 +3,8 @@ export const apiRoutes = {
     /** AUTH */
     AUTH_LOGIN : "/Auth/login",
     AUTH_ACCEPT_INVITATION : "/Auth/businessOwner/registration",
+    AUTH_REFRESH : "/Auth/refresh",
+    AUTH_LOGOUT : "/Auth/logout",
 
     /** USER */
     USER_PROFILE : "/profile",

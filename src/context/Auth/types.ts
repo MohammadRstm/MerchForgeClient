@@ -3,6 +3,7 @@ import type { UserSession } from "../../types/generalTypes";
 
 export interface AuthContextType{
     isAuthenticated: boolean;
+    isInitializing: boolean;
     session : UserSession | null;
     login: (data : LoginResponse) => void;
     logout: () => void;

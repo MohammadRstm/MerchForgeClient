@@ -4,6 +4,7 @@ import "./Header.css";
 import logo from "../../assets/logo.svg";
 import { routes } from "../../config/routes";
 import useAuth from "../../context/Auth/useAuth";
+import useLogout from "./hooks/data/useLogout";
 
 interface NavLink {
     label: string;
@@ -19,6 +20,7 @@ const NAV_LINKS: NavLink[] = [
 
 const Header = () => {
     const { isAuthenticated } = useAuth();
+    const { mutate: submitLogout, isPending: logoutPending } = useLogout();
 
     const [scrolled, setScrolled] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
@@ -71,9 +73,19 @@ const Header = () => {
 
                 <div className="header__actions">
                     {isAuthenticated ? (
-                        <Link to={routes.DASHBOARD} className="header__cta">
-                            Dashboard
-                        </Link>
+                        <>
+                            <Link to={routes.DASHBOARD} className="header__cta">
+                                Dashboard
+                            </Link>
+                            <button
+                                type="button"
+                                className="header__login header__logout-btn"
+                                onClick={() => submitLogout()}
+                                disabled={logoutPending}
+                            >
+                                Log out
+                            </button>
+                        </>
                     ) : (
                         <>
                             <Link to={routes.LOGIN} className="header__login">
@@ -110,9 +122,22 @@ const Header = () => {
                 </nav>
                 <div className="header__mobile-actions">
                     {isAuthenticated ? (
-                        <Link to={routes.DASHBOARD} className="header__cta header__cta--mobile" onClick={closeMenu}>
-                            Dashboard
-                        </Link>
+                        <>
+                            <Link to={routes.DASHBOARD} className="header__cta header__cta--mobile" onClick={closeMenu}>
+                                Dashboard
+                            </Link>
+                            <button
+                                type="button"
+                                className="header__login header__login--mobile header__logout-btn"
+                                onClick={() => {
+                                    closeMenu();
+                                    submitLogout();
+                                }}
+                                disabled={logoutPending}
+                            >
+                                Log out
+                            </button>
+                        </>
                     ) : (
                         <>
                             <Link to={routes.LOGIN} className="header__login header__login--mobile" onClick={closeMenu}>

@@ -1,8 +1,8 @@
 import z from "zod";
 import { pagedResultSchema } from "../../../types/pagination";
 
-export const roleCountSchema = z.object({
-    role: z.string(),
+export const keyCountSchema = z.object({
+    key: z.string(),
     count: z.number(),
 });
 
@@ -18,8 +18,8 @@ export const dashboardStatsResponseSchema = z.object({
     totalProductDrafts: z.number(),
     pendingInvitations: z.number(),
 
-    usersBySystemRole: z.array(roleCountSchema),
-    businessUsersByRole: z.array(roleCountSchema),
+    usersBySystemRole: z.array(keyCountSchema),
+    businessUsersByRole: z.array(keyCountSchema),
 
     businessesOverTime: z.array(timeSeriesPointSchema),
     productsOverTime: z.array(timeSeriesPointSchema),

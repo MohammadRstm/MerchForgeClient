@@ -14,7 +14,6 @@ export const loginSchema = z.object({
 export const loginResponseSchema = z.object({
     authResponse: z.object({
         accessToken: z.string(),
-        refreshToken: z.string(),
         accessTokenExpiresAt: z.iso.datetime(),
     }),
 

@@ -109,6 +109,18 @@
   color: var(--nav-accent-mid);
 }
 
+.header__logout-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.header__logout-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .header__cta {
   font-family: 'Inter', system-ui, sans-serif;
   font-size: 0.9375rem;

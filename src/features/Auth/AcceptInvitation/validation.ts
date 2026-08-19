@@ -11,7 +11,6 @@ export const acceptInvitationSchema = z.object({
 export const acceptInvitationResponseSchema = z.object({
     authResponse: z.object({
         accessToken: z.string(),
-        refreshToken: z.string(),
         accessTokenExpiresAt: z.iso.datetime(),
     }),
 
