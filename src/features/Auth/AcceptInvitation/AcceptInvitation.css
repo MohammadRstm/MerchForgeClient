@@ -1,0 +1,255 @@
+.invite {
+  --invite-bg: #faf9f7;
+  --invite-card-bg: #ffffff;
+  --invite-text: #14161b;
+  --invite-text-secondary: #5b6270;
+  --invite-border: #e8e5e0;
+  --invite-accent: #ff9b00;
+  --invite-accent-mid: #ffaa00;
+  --invite-accent-tint: #fff4e0;
+  --invite-error: #b3453e;
+  --invite-error-bg: #fbeeee;
+  --invite-success: #2f7a3c;
+
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--invite-bg);
+  padding: clamp(1.5rem, 5vw, 3rem) clamp(1.25rem, 5vw, 3rem);
+}
+
+.invite__panel {
+  width: 100%;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ---------- Brand ---------- */
+
+.invite__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-decoration: none;
+  margin-bottom: 2rem;
+}
+
+.invite__brand-mark {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+}
+
+.invite__brand-name {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 1.0625rem;
+  letter-spacing: -0.01em;
+  color: var(--invite-text);
+}
+
+.invite__brand:focus-visible {
+  outline: 2px solid var(--invite-accent);
+  outline-offset: 2px;
+}
+
+/* ---------- Card ---------- */
+
+.invite__card {
+  width: 100%;
+  background: var(--invite-card-bg);
+  border: 1px solid var(--invite-border);
+  border-radius: 16px;
+  padding: clamp(1.75rem, 4vw, 2.5rem);
+  box-shadow: 0 28px 56px -34px rgba(20, 22, 27, 0.28);
+}
+
+.invite__card--status {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.invite__eyebrow {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--invite-accent);
+  margin: 0 0 0.9rem;
+}
+
+.invite__headline {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.5rem, 3vw, 1.875rem);
+  line-height: 1.22;
+  letter-spacing: -0.01em;
+  color: var(--invite-text);
+  margin: 0 0 0.75rem;
+}
+
+.invite__subtext {
+  font-family: 'Roboto', system-ui, sans-serif;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--invite-text-secondary);
+  margin: 0 0 1.75rem;
+}
+
+.invite__card--status .invite__subtext {
+  margin-bottom: 1.75rem;
+}
+
+/* ---------- Form ---------- */
+
+.invite__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.invite__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.invite__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.invite__label {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--invite-text);
+}
+
+.invite__input {
+  font-family: 'Roboto', system-ui, sans-serif;
+  font-size: 0.9375rem;
+  color: var(--invite-text);
+  background: #ffffff;
+  border: 1px solid var(--invite-border);
+  border-radius: 8px;
+  padding: 0.7rem 0.85rem;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.invite__input::placeholder {
+  color: var(--invite-text-secondary);
+}
+
+.invite__input:focus {
+  outline: none;
+  border-color: var(--invite-accent);
+  box-shadow: 0 0 0 3px var(--invite-accent-tint);
+}
+
+.invite__input--error {
+  border-color: var(--invite-error);
+}
+
+.invite__input--error:focus {
+  border-color: var(--invite-error);
+  box-shadow: 0 0 0 3px var(--invite-error-bg);
+}
+
+.invite__input--disabled,
+.invite__input:disabled {
+  background: var(--invite-bg);
+  color: var(--invite-text-secondary);
+  cursor: not-allowed;
+}
+
+.invite__error {
+  font-family: 'Roboto', system-ui, sans-serif;
+  font-size: 0.8125rem;
+  color: var(--invite-error);
+}
+
+.invite__hint {
+  font-family: 'Roboto', system-ui, sans-serif;
+  font-size: 0.8125rem;
+  color: var(--invite-text-secondary);
+}
+
+.invite__form-error {
+  font-family: 'Roboto', system-ui, sans-serif;
+  font-size: 0.875rem;
+  color: var(--invite-error);
+  background: var(--invite-error-bg);
+  border: 1px solid rgba(179, 69, 62, 0.25);
+  border-radius: 8px;
+  padding: 0.75rem 0.9rem;
+  margin: 0;
+}
+
+.invite__password {
+  font-family: 'Roboto Mono', 'Courier New', monospace;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--invite-text);
+  background: var(--invite-accent-tint);
+  border: 1px solid var(--invite-border);
+  border-radius: 8px;
+  padding: 0.75rem 0.9rem;
+  margin: 0;
+  word-break: break-all;
+}
+
+/* ---------- Submit button ---------- */
+
+.invite__submit {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  color: #1a1200;
+  background: var(--invite-accent);
+  border: none;
+  border-radius: 8px;
+  padding: 0.85rem 1.25rem;
+  cursor: pointer;
+  transition: background-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.invite__submit:hover:not(:disabled) {
+  background: var(--invite-accent-mid);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px -12px rgba(255, 155, 0, 0.55);
+}
+
+.invite__submit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.invite__submit:focus-visible {
+  outline: 2px solid var(--invite-accent);
+  outline-offset: 2px;
+}
+
+.invite__submit--link {
+  display: inline-block;
+  width: auto;
+  min-width: 10rem;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 480px) {
+  .invite__row {
+    grid-template-columns: 1fr;
+  }
+}

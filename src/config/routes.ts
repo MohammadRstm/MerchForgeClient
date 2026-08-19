@@ -3,4 +3,5 @@ export const routes = {
     SIGNUP: "/register",
     HOME: "/",
     ABOUTUS: "/aboutus",
+    ACCEPT_INVITATION: "/accept-invitation",
 };
