@@ -1,103 +1,30 @@
-import {  useState, type FormEvent } from 'react';
-import { useMutation } from '@tanstack/react-query';
-import { z } from 'zod';
+import { Link } from "react-router";
 import logo from "./../../../assets/logo.svg";
-import './AcceptInvitation.css';
+import { routes } from "./../../../config/routes";
+import "./AcceptInvitation.css";
+import useAcceptInvitationPage from "./hooks/useAcceptInvitationPage";
 
-const registrationSchema = z.object({
-  FirstName: z.string().trim().min(1, 'First name is required'),
-  LastName: z.string().trim().min(1, 'Last name is required'),
-  BusinessName: z.string().trim().min(1, 'Business name is required'),
-  Email: z.string().trim().min(1, 'Email is required').email('Enter a valid email address'),
-  InvitationToken: z.string().trim(),
-});
-
-type RegistrationFormValues = z.infer<typeof registrationSchema>;
-type FieldErrors = Partial<Record<keyof RegistrationFormValues, string>>;
-
-const REGISTRATION_ENDPOINT = 'https://localhost:7021/api/Auth/businessOwner/registration';
-
-async function submitBusinessOwnerRegistration(payload: RegistrationFormValues): Promise<void> {
-
-  const response = await fetch(REGISTRATION_ENDPOINT, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-    const responseText = await response.text();
-
-    console.log("Status:", response.status);
-    console.log("Response:", responseText);
-  if (!response.ok) {
-    console.log(response);
-    throw new Error(`Registration request failed with status ${response.status}`);
-  }
-}
-
-function readInvitationEmail(): string {
-  const params = new URLSearchParams(window.location.search);
-  const rawEmail = params.get('email');
-  if (!rawEmail) return "";
-
-  const parsed = z.string().trim().email().safeParse(rawEmail);
-  return parsed.success ? parsed.data : "";
-}
-
-function readInvitationToken() : string{
-    const params = new URLSearchParams(window.location.search);
-    const rawToken = params.get('token');
-    if(!rawToken) return "";
-
-    return rawToken;
-}
+const Brand = (
+  <a href="/" className="invite__brand">
+    <img src={logo} alt="" className="invite__brand-mark" />
+    <span className="invite__brand-name">MerchForge</span>
+  </a>
+);
 
 export default function AcceptInvitation() {
+  const {
+    acceptInvitationFormData,
+    errors,
+    isInvitationInvalid,
+    acceptInvitationPending,
+    acceptInvitationError,
+    acceptInvitationSuccess,
 
-  const [email, setEmail] = useState(readInvitationEmail()); 
-  const [InvitationToken, setInvitationToken] = useState(readInvitationToken()); 
-  const [FirstName, setFirstName] = useState('');
-  const [LastName, setLastName] = useState('');
-  const [BusinessName, setBusinessName] = useState('');
-  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+    submit,
+    handleChange,
+  } = useAcceptInvitationPage();
 
-  const registration = useMutation({
-    mutationFn: submitBusinessOwnerRegistration,
-  });
-
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (email === "") return;
-
-    const result = registrationSchema.safeParse({
-      FirstName: FirstName,
-      LastName: LastName,
-      BusinessName: BusinessName,
-      Email: email,
-      InvitationToken: InvitationToken,
-    });
-
-    if (!result.success) {
-      const nextErrors: FieldErrors = {};
-      for (const issue of result.error.issues) {
-        const key = issue.path[0] as keyof RegistrationFormValues;
-        if (!nextErrors[key]) nextErrors[key] = issue.message;
-      }
-      setFieldErrors(nextErrors);
-      return;
-    }
-
-    setFieldErrors({});
-    registration.mutate(result.data);
-  };
-
-  const Brand = (
-    <a href="/" className="invite__brand">
-      <img src={logo} alt="" className="invite__brand-mark" />
-      <span className="invite__brand-name">MerchForge</span>
-    </a>
-  );
-
-  if (email === "") {
+  if (isInvitationInvalid) {
     return (
       <main className="invite">
         <div className="invite__panel">
@@ -114,7 +41,7 @@ export default function AcceptInvitation() {
     );
   }
 
-  if (registration.isSuccess) {
+  if (acceptInvitationSuccess) {
     return (
       <main className="invite">
         <div className="invite__panel">
@@ -125,9 +52,9 @@ export default function AcceptInvitation() {
               Your MerchForge account has been created. You can log in now and start setting up
               your catalog.
             </p>
-            <a href="/login" className="invite__submit invite__submit--link">
+            <Link to={routes.LOGIN} className="invite__submit invite__submit--link">
               Go to login
-            </a>
+            </Link>
           </div>
         </div>
       </main>
@@ -146,7 +73,7 @@ export default function AcceptInvitation() {
             Fill in your details to finish setting up your MerchForge business account.
           </p>
 
-          <form className="invite__form" onSubmit={handleSubmit} noValidate>
+          <form className="invite__form" onSubmit={submit} noValidate>
             <div className="invite__row">
               <div className="invite__field">
                 <label htmlFor="FirstName" className="invite__label">
@@ -157,15 +84,15 @@ export default function AcceptInvitation() {
                   name="FirstName"
                   type="text"
                   autoComplete="given-name"
-                  className={`invite__input${fieldErrors.FirstName ? ' invite__input--error' : ''}`}
-                  value={FirstName}
-                  onChange={(event) => setFirstName(event.target.value)}
-                  aria-invalid={Boolean(fieldErrors.FirstName)}
-                  aria-describedby={fieldErrors.FirstName ? 'FirstName-error' : undefined}
+                  className={`invite__input${errors.FirstName ? ' invite__input--error' : ''}`}
+                  value={acceptInvitationFormData.FirstName}
+                  onChange={handleChange}
+                  aria-invalid={Boolean(errors.FirstName)}
+                  aria-describedby={errors.FirstName ? 'FirstName-error' : undefined}
                 />
-                {fieldErrors.FirstName && (
+                {errors.FirstName && (
                   <span id="FirstName-error" className="invite__error" role="alert">
-                    {fieldErrors.FirstName}
+                    {errors.FirstName}
                   </span>
                 )}
               </div>
@@ -179,15 +106,15 @@ export default function AcceptInvitation() {
                   name="LastName"
                   type="text"
                   autoComplete="family-name"
-                  className={`invite__input${fieldErrors.LastName ? ' invite__input--error' : ''}`}
-                  value={LastName}
-                  onChange={(event) => setLastName(event.target.value)}
-                  aria-invalid={Boolean(fieldErrors.LastName)}
-                  aria-describedby={fieldErrors.LastName ? 'LastName-error' : undefined}
+                  className={`invite__input${errors.LastName ? ' invite__input--error' : ''}`}
+                  value={acceptInvitationFormData.LastName}
+                  onChange={handleChange}
+                  aria-invalid={Boolean(errors.LastName)}
+                  aria-describedby={errors.LastName ? 'LastName-error' : undefined}
                 />
-                {fieldErrors.LastName && (
+                {errors.LastName && (
                   <span id="LastName-error" className="invite__error" role="alert">
-                    {fieldErrors.LastName}
+                    {errors.LastName}
                   </span>
                 )}
               </div>
@@ -202,15 +129,15 @@ export default function AcceptInvitation() {
                 name="BusinessName"
                 type="text"
                 autoComplete="organization"
-                className={`invite__input${fieldErrors.BusinessName ? ' invite__input--error' : ''}`}
-                value={BusinessName}
-                onChange={(event) => setBusinessName(event.target.value)}
-                aria-invalid={Boolean(fieldErrors.BusinessName)}
-                aria-describedby={fieldErrors.BusinessName ? 'BusinessName-error' : undefined}
+                className={`invite__input${errors.BusinessName ? ' invite__input--error' : ''}`}
+                value={acceptInvitationFormData.BusinessName}
+                onChange={handleChange}
+                aria-invalid={Boolean(errors.BusinessName)}
+                aria-describedby={errors.BusinessName ? 'BusinessName-error' : undefined}
               />
-              {fieldErrors.BusinessName && (
+              {errors.BusinessName && (
                 <span id="BusinessName-error" className="invite__error" role="alert">
-                  {fieldErrors.BusinessName}
+                  {errors.BusinessName}
                 </span>
               )}
             </div>
@@ -221,24 +148,24 @@ export default function AcceptInvitation() {
               </label>
               <input
                 id="email"
-                name="email"
+                name="Email"
                 type="email"
                 className="invite__input invite__input--disabled"
-                value={email}
+                value={acceptInvitationFormData.Email}
                 disabled
                 readOnly
               />
               <span className="invite__hint">This is the email your invitation was sent to.</span>
             </div>
 
-            {registration.isError && (
+            {acceptInvitationError && (
               <p className="invite__form-error" role="alert">
                 Something went wrong submitting your registration. Please try again.
               </p>
             )}
 
-            <button type="submit" className="invite__submit" disabled={registration.isPending}>
-              {registration.isPending ? 'Creating account…' : 'Complete registration'}
+            <button type="submit" className="invite__submit" disabled={acceptInvitationPending}>
+              {acceptInvitationPending ? 'Creating account…' : 'Complete registration'}
             </button>
           </form>
         </div>
