@@ -6,6 +6,10 @@ export const apiRoutes = {
     AUTH_REFRESH : "/Auth/refresh",
     AUTH_LOGOUT : "/Auth/logout",
 
+    /** DOMAINS (public reference data, read during registration) */
+    DOMAINS : "/domains",
+    DOMAIN_CATEGORIES : (domainId : string) => `/domains/${domainId}/categories`,
+
     /** USER */
     USER_PROFILE : "/profile",
 
