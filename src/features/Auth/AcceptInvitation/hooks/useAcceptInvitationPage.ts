@@ -1,4 +1,4 @@
-import type { FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import validateForm from "../../../../utils/forms/validateForm";
 import { acceptInvitationSchema } from "../validation";
 import useAcceptInvitation from "./data/useAcceptInvitation";
@@ -6,8 +6,11 @@ import useHandleAcceptInvitationForm from "./ui/useHandleAcceptInvitationForm";
 
 const useAcceptInvitationPage = () => {
 
+    const [isPasswordModalDismissed, setIsPasswordModalDismissed] = useState(false);
+
     const {
         mutate: submitInvitation,
+        data: acceptInvitationData,
         isPending: acceptInvitationPending,
         isError: acceptInvitationError,
         isSuccess: acceptInvitationSuccess,
@@ -36,6 +39,8 @@ const useAcceptInvitationPage = () => {
         submitInvitation(acceptInvitationFormData);
     };
 
+    const closePasswordModal = () => setIsPasswordModalDismissed(true);
+
     return {
         acceptInvitationFormData,
         errors,
@@ -43,9 +48,12 @@ const useAcceptInvitationPage = () => {
         acceptInvitationPending,
         acceptInvitationError,
         acceptInvitationSuccess,
+        rawPassword: acceptInvitationData?.rawPassword,
+        isPasswordModalOpen: acceptInvitationSuccess && !isPasswordModalDismissed,
 
         submit,
         handleChange,
+        closePasswordModal,
     };
 };
 

@@ -7,3 +7,13 @@ export const acceptInvitationSchema = z.object({
     Email: z.string().trim().min(1, "Email is required").email("Enter a valid email address"),
     InvitationToken: z.string().trim(),
 });
+
+export const acceptInvitationResponseSchema = z.object({
+    authResponse: z.object({
+        accessToken: z.string(),
+        refreshToken: z.string(),
+        accessTokenExpiresAt: z.iso.datetime(),
+    }),
+
+    rawPassword: z.string(),
+});

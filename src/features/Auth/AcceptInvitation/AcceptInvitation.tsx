@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import logo from "./../../../assets/logo.svg";
 import { routes } from "./../../../config/routes";
+import Modal from "./../../../components/Modal/Modal";
 import "./AcceptInvitation.css";
 import useAcceptInvitationPage from "./hooks/useAcceptInvitationPage";
 
@@ -19,9 +20,12 @@ export default function AcceptInvitation() {
     acceptInvitationPending,
     acceptInvitationError,
     acceptInvitationSuccess,
+    rawPassword,
+    isPasswordModalOpen,
 
     submit,
     handleChange,
+    closePasswordModal,
   } = useAcceptInvitationPage();
 
   if (isInvitationInvalid) {
@@ -57,6 +61,30 @@ export default function AcceptInvitation() {
             </Link>
           </div>
         </div>
+
+        <Modal isOpen={isPasswordModalOpen} onClose={closePasswordModal}>
+          <Modal.Header>
+            <h2>Save your password</h2>
+          </Modal.Header>
+          <Modal.Body>
+            <div>
+              <p className="invite__subtext">
+                This is your account password. For security reasons we can't show it to you
+                again, so save it somewhere safe before you continue.
+              </p>
+              <p className="invite__password">{rawPassword}</p>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <button
+              type="button"
+              className="invite__submit"
+              onClick={closePasswordModal}
+            >
+              I've saved my password
+            </button>
+          </Modal.Footer>
+        </Modal>
       </main>
     );
   }
