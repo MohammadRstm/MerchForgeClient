@@ -29,4 +29,14 @@ export const apiRoutes = {
     BUSINESS_DASHBOARD_PRODUCT : (businessId : string, productId : string) => `/businesses/${businessId}/dashboard/products/${productId}`,
     BUSINESS_DASHBOARD_PRODUCT_IMAGE : (businessId : string) => `/businesses/${businessId}/dashboard/products/image`,
 
+    /** AI PRODUCT DRAFTS */
+    PRODUCT_DRAFTS : (businessId : string) => `/businesses/${businessId}/dashboard/product-drafts`,
+    PRODUCT_DRAFT : (businessId : string, draftId : string) => `/businesses/${businessId}/dashboard/product-drafts/${draftId}`,
+    PRODUCT_DRAFT_MESSAGES : (businessId : string, draftId : string) => `/businesses/${businessId}/dashboard/product-drafts/${draftId}/messages`,
+    PRODUCT_DRAFT_VOICE : (businessId : string, draftId : string) => `/businesses/${businessId}/dashboard/product-drafts/${draftId}/voice`,
+    PRODUCT_DRAFT_IMAGE : (businessId : string, draftId : string) => `/businesses/${businessId}/dashboard/product-drafts/${draftId}/image`,
+    PRODUCT_DRAFT_IMAGE_APPROVAL : (businessId : string, draftId : string) => `/businesses/${businessId}/dashboard/product-drafts/${draftId}/image-approval`,
+    PRODUCT_DRAFT_CONFIRM : (businessId : string, draftId : string) => `/businesses/${businessId}/dashboard/product-drafts/${draftId}/confirm`,
+    PRODUCT_DRAFT_CANCEL : (businessId : string, draftId : string) => `/businesses/${businessId}/dashboard/product-drafts/${draftId}/cancel`,
+
 }

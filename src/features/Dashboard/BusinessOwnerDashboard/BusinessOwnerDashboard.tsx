@@ -9,6 +9,7 @@ import MembersTable from "./components/MembersTable";
 import SubscriptionCard from "./components/SubscriptionCard";
 import ProductModal from "./components/ProductModal";
 import DeleteProductModal from "./components/DeleteProductModal";
+import ProductAiChatModal from "./components/ProductAiChatModal";
 
 const currencyFormatter = new Intl.NumberFormat(undefined, {
     style: "currency",
@@ -38,6 +39,8 @@ const BusinessOwnerDashboard = () => {
         subscriptionError,
 
         productModal,
+        aiChat,
+        openAiChat,
 
         productPendingDeletion,
         isDeletingProduct,
@@ -120,7 +123,9 @@ const BusinessOwnerDashboard = () => {
                 deletingProductId={isDeletingProduct ? productPendingDeletion?.id : undefined}
             />
 
-            <ProductModal modal={productModal} />
+            <ProductModal modal={productModal} onFillWithAi={openAiChat} />
+
+            <ProductAiChatModal chat={aiChat} />
 
             <DeleteProductModal
                 product={productPendingDeletion}
