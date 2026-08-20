@@ -130,6 +130,35 @@ export const businessMemberResponseSchema = z.object({
     joinedAt: z.iso.datetime(),
 });
 
+/** The roles an owner may assign. Owner is deliberately absent — a business has one. */
+export const assignableBusinessRoleSchema = z.enum(["Admin", "Member"]);
+
+/** Creation echoes the member back, plus the one-time generated password. */
+export const createBusinessMemberResponseSchema = businessMemberResponseSchema.extend({
+    rawPassword: z.string(),
+});
+
+/** Mirrors the server's CreateBusinessMemberRequestValidator. */
+export const createBusinessMemberFormSchema = z.object({
+    firstName: z
+        .string()
+        .trim()
+        .min(1, "First name is required.")
+        .max(100, "First name must be 100 characters or fewer."),
+    lastName: z
+        .string()
+        .trim()
+        .min(1, "Last name is required.")
+        .max(100, "Last name must be 100 characters or fewer."),
+    email: z
+        .string()
+        .trim()
+        .min(1, "Email is required.")
+        .email("Enter a valid email address.")
+        .max(255, "Email must be 255 characters or fewer."),
+    role: assignableBusinessRoleSchema,
+});
+
 export const planFeatureItemSchema = z.object({
     featureKey: z.string(),
     featureName: z.string(),

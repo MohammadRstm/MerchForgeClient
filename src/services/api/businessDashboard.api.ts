@@ -1,8 +1,12 @@
 import z from "zod";
-import type { ProductsQueryParams } from "../../features/Dashboard/BusinessOwnerDashboard/types";
+import type {
+    ProductsQueryParams,
+    CreateBusinessMemberPayload,
+} from "../../features/Dashboard/BusinessOwnerDashboard/types";
 import {
     businessDashboardStatsResponseSchema,
     businessMemberResponseSchema,
+    createBusinessMemberResponseSchema,
     businessProductDetailSchema,
     businessProductsPageSchema,
     businessSubscriptionResponseSchema,
@@ -44,6 +48,23 @@ export const getBusinessMembersService = async (businessId: string) => {
     const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_MEMBERS(businessId));
 
     return z.array(businessMemberResponseSchema).parse(data);
+};
+
+/**
+ * Creates the account and attaches it to the business in one call. The businessId
+ * goes in the path, not the body — the API derives the tenant from the route it has
+ * already authorized.
+ */
+export const createBusinessMemberService = async (
+    businessId: string,
+    payload: CreateBusinessMemberPayload
+) => {
+    const { data } = await authenticatedApi.post(
+        apiRoutes.BUSINESS_DASHBOARD_MEMBERS(businessId),
+        payload
+    );
+
+    return createBusinessMemberResponseSchema.parse(data);
 };
 
 export const getBusinessSubscriptionService = async (businessId: string) => {

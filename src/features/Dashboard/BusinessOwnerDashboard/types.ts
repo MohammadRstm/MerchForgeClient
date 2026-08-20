@@ -4,6 +4,9 @@ import type { PagedQuery } from "../../../types/pagination";
 import type {
     businessDashboardStatsResponseSchema,
     businessMemberResponseSchema,
+    assignableBusinessRoleSchema,
+    createBusinessMemberResponseSchema,
+    createBusinessMemberFormSchema,
     businessProductDetailSchema,
     businessProductResponseSchema,
     businessSubscriptionResponseSchema,
@@ -18,6 +21,9 @@ import type {
 export type BusinessDashboardStatsResponse = z.infer<typeof businessDashboardStatsResponseSchema>;
 export type BusinessProductResponse = z.infer<typeof businessProductResponseSchema>;
 export type BusinessMemberResponse = z.infer<typeof businessMemberResponseSchema>;
+export type AssignableBusinessRole = z.infer<typeof assignableBusinessRoleSchema>;
+export type CreateBusinessMemberResponse = z.infer<typeof createBusinessMemberResponseSchema>;
+export type CreateBusinessMemberPayload = z.infer<typeof createBusinessMemberFormSchema>;
 export type BusinessSubscriptionResponse = z.infer<typeof businessSubscriptionResponseSchema>;
 
 export type BusinessProductDetail = z.infer<typeof businessProductDetailSchema>;

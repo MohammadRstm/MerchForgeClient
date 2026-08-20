@@ -14,6 +14,9 @@ export const apiRoutes = {
     /** USER */
     USER_PROFILE : "/profile",
 
+    /** INVITATIONS */
+    INVITATION_BUSINESS_OWNER : "/Invitation/business-owner",
+
     /** DASHBOARD */
     DASHBOARD_STATS : "/Dashboard/stats",
     DASHBOARD_USERS : "/Dashboard/users",

@@ -5,12 +5,14 @@ import type {
     dashboardUserResponseSchema,
     dashboardBusinessResponseSchema,
     revokeUserSessionsResponseSchema,
+    businessOwnerInvitationResponseSchema,
 } from "./validation";
 
 export type DashboardStatsResponse = z.infer<typeof dashboardStatsResponseSchema>;
 export type DashboardUserResponse = z.infer<typeof dashboardUserResponseSchema>;
 export type DashboardBusinessResponse = z.infer<typeof dashboardBusinessResponseSchema>;
 export type RevokeUserSessionsResponse = z.infer<typeof revokeUserSessionsResponseSchema>;
+export type BusinessOwnerInvitationResponse = z.infer<typeof businessOwnerInvitationResponseSchema>;
 
 export type UsersSortField = "CreatedAt" | "Name" | "Email";
 export type BusinessesSortField = "CreatedAt" | "Name" | "MemberCount" | "ProductCount";

@@ -4,8 +4,38 @@
     padding: 32px 24px 64px;
 }
 
-.dashboard-heading {
+.dashboard-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
     margin-bottom: 24px;
+}
+
+.dashboard-heading {
+    margin: 0;
+}
+
+.dashboard-primary-btn {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    background: #0f4c81;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.dashboard-primary-btn:hover {
+    background: #0c3d68;
+}
+
+.dashboard-primary-btn:focus-visible {
+    outline: 2px solid #0f4c81;
+    outline-offset: 2px;
 }
 
 .dashboard-stats-loading {
@@ -191,7 +221,69 @@
 }
 
 .dashboard-modal-confirm-btn:disabled,
-.dashboard-modal-cancel-btn:disabled {
+.dashboard-modal-cancel-btn:disabled,
+.dashboard-modal-primary-btn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+}
+
+/* Invite modal — a non-destructive confirm, so it must not borrow the red
+   revoke button above. */
+
+.dashboard-modal-primary-btn {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    background: #0f4c81;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.dashboard-modal-primary-btn:not(:disabled):hover {
+    background: #0c3d68;
+}
+
+.dashboard-modal-text {
+    margin: 0 0 16px;
+    color: #555;
+    line-height: 1.55;
+}
+
+.dashboard-invite-form {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.dashboard-invite-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+}
+
+.dashboard-invite-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #e2e2e2;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+}
+
+.dashboard-invite-input:focus {
+    outline: none;
+    border-color: #0f4c81;
+    box-shadow: 0 0 0 3px rgba(15, 76, 129, 0.12);
+}
+
+.dashboard-invite-input:disabled {
+    background: #f6f6f6;
+    cursor: not-allowed;
+}
+
+.dashboard-invite-error {
+    margin: 2px 0 0;
+    color: #d92d20;
+    font-size: 13px;
 }
