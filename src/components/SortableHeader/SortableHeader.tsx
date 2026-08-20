@@ -18,16 +18,25 @@ function SortableHeader<TField extends string>({
     const isActive = sortBy === field;
 
     return (
+        // aria-sort belongs on the cell; the control inside it is a real button so
+        // the column can be sorted by keyboard and is announced as actionable. A
+        // bare <th onClick> was reachable by mouse only.
         <th
             className={`sortable-header${isActive ? " sortable-header--active" : ""}`}
-            onClick={() => onSort(field)}
+            aria-sort={isActive ? (sortDescending ? "descending" : "ascending") : "none"}
         >
-            {label}
-            {isActive && (
-                <span className="sortable-header-arrow">
-                    {sortDescending ? " ▼" : " ▲"}
-                </span>
-            )}
+            <button
+                type="button"
+                className="sortable-header-button"
+                onClick={() => onSort(field)}
+            >
+                {label}
+                {isActive && (
+                    <span className="sortable-header-arrow" aria-hidden="true">
+                        {sortDescending ? " ▼" : " ▲"}
+                    </span>
+                )}
+            </button>
         </th>
     );
 }

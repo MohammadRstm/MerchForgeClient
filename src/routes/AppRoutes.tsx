@@ -7,6 +7,7 @@ import { routes } from "../config/routes";
 import Login from "../features/Auth/Login/Login";
 import AcceptInvitation from "../features/Auth/AcceptInvitation/AcceptInvitation";
 import DashboardPage from "../features/Dashboard/DashboardPage";
+import NotFound from "../features/NotFound/NotFound";
 
 const AppRoutes = () =>{
 
@@ -22,6 +23,10 @@ const AppRoutes = () =>{
                         <Route path={routes.DASHBOARD} element={<DashboardPage />} />
                     </Route>
                 </Route>
+
+                {/* Last: anything that matched nothing above lands here rather than
+                    rendering an empty page. */}
+                <Route path="*" element={<NotFound />} />
             </Route>
         </Routes>
     );

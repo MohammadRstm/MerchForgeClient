@@ -199,6 +199,14 @@
   animation: header-panel-in 0.22s ease;
 }
 
+/* The panel is toggled with the `hidden` attribute, but the UA's
+   `[hidden] { display: none }` loses to the `display: flex` above, so the closed
+   menu stayed in the layout and covered the page. Restoring it explicitly is what
+   actually hides the panel. */
+.header__mobile[hidden] {
+  display: none;
+}
+
 .header__mobile-links {
   display: flex;
   flex-direction: column;

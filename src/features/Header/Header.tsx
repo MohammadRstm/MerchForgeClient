@@ -11,11 +11,13 @@ interface NavLink {
     href: string;
 }
 
+// Every href must match an id actually rendered on the landing page — "#features"
+// and "#coming-soon" matched nothing, so those two nav items did nothing at all.
 const NAV_LINKS: NavLink[] = [
-    { label: "Features", href: "#features" },
+    { label: "Features", href: "#how-it-works" },
     { label: "AI", href: "#ai" },
     { label: "Pricing", href: "#pricing" },
-    { label: "Coming Soon", href: "#coming-soon" },
+    { label: "Coming Soon", href: "#integrations" },
 ];
 
 const Header = () => {
