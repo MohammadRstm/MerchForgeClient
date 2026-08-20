@@ -8,6 +8,7 @@ import useAuth from "../../../context/Auth/useAuth";
 import useSuperAdminDashboardPage from "./hooks/useSuperAdminDashboardPage";
 import UsersTable from "./components/UsersTable";
 import BusinessesTable from "./components/BusinessesTable";
+import InviteBusinessOwnerModal from "./components/InviteBusinessOwnerModal";
 
 const SuperAdminDashboard = () => {
     const { session } = useAuth();
@@ -30,11 +31,22 @@ const SuperAdminDashboard = () => {
         businessesTable,
 
         revokeConfirmation,
+        inviteForm,
     } = useSuperAdminDashboardPage();
 
     return (
         <main className="dashboard-page">
-            <h1 className="dashboard-heading">Platform Dashboard</h1>
+            <div className="dashboard-page-header">
+                <h1 className="dashboard-heading">Platform Dashboard</h1>
+
+                <button
+                    type="button"
+                    className="dashboard-primary-btn"
+                    onClick={inviteForm.open}
+                >
+                    Invite business owner
+                </button>
+            </div>
 
             {statsLoading ? (
                 <div className="dashboard-stats-loading">
@@ -92,6 +104,8 @@ const SuperAdminDashboard = () => {
                 isError={businessesError}
                 tableState={businessesTable}
             />
+
+            <InviteBusinessOwnerModal form={inviteForm} />
 
             <Modal
                 isOpen={!!revokeConfirmation.pendingUser}

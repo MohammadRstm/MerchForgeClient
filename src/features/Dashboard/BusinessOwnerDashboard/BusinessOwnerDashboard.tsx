@@ -10,6 +10,8 @@ import SubscriptionCard from "./components/SubscriptionCard";
 import ProductModal from "./components/ProductModal";
 import DeleteProductModal from "./components/DeleteProductModal";
 import ProductAiChatModal from "./components/ProductAiChatModal";
+import MemberModal from "./components/MemberModal";
+import MemberCredentialsModal from "./components/MemberCredentialsModal";
 
 const currencyFormatter = new Intl.NumberFormat(undefined, {
     style: "currency",
@@ -33,6 +35,7 @@ const BusinessOwnerDashboard = () => {
         members,
         membersLoading,
         membersError,
+        memberModal,
 
         subscription,
         subscriptionLoading,
@@ -108,7 +111,12 @@ const BusinessOwnerDashboard = () => {
                 isError={subscriptionError}
             />
 
-            <MembersTable members={members} isLoading={membersLoading} isError={membersError} />
+            <MembersTable
+                members={members}
+                isLoading={membersLoading}
+                isError={membersError}
+                onAddMember={memberModal.open}
+            />
 
             <ProductsTable
                 productsPage={productsPage}
@@ -133,6 +141,13 @@ const BusinessOwnerDashboard = () => {
                 error={deleteProductError}
                 onConfirm={confirmDeleteProduct}
                 onCancel={cancelDeleteProduct}
+            />
+
+            <MemberModal modal={memberModal} />
+
+            <MemberCredentialsModal
+                member={memberModal.created}
+                onDismiss={memberModal.dismissCreated}
             />
         </main>
     );

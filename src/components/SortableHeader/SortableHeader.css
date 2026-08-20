@@ -1,5 +1,4 @@
 .sortable-header {
-    cursor: pointer;
     user-select: none;
     white-space: nowrap;
 }
@@ -11,6 +10,26 @@
 .sortable-header--active {
     color: #ff9b00;
     font-weight: 600;
+}
+
+/* The button carries the click target, so it has to inherit the cell's typography
+   rather than bring the browser's default button styling with it. */
+.sortable-header-button {
+    all: unset;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font: inherit;
+    color: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+}
+
+.sortable-header-button:focus-visible {
+    outline: 2px solid #ff9b00;
+    outline-offset: 2px;
+    border-radius: 3px;
 }
 
 .sortable-header-arrow {

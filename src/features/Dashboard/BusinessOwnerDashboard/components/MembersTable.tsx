@@ -1,17 +1,36 @@
 import Spinner from "../../../../components/LoadingSpinner/LoadingSpinner";
-import type { BusinessMemberResponse } from "../types";
+import type { AssignableBusinessRole, BusinessMemberResponse } from "../types";
 
 type MembersTableProps = {
     members?: BusinessMemberResponse[];
     isLoading: boolean;
     isError: boolean;
+    onAddMember: (role: AssignableBusinessRole) => void;
 };
 
-const MembersTable = ({ members, isLoading, isError }: MembersTableProps) => {
+const MembersTable = ({ members, isLoading, isError, onAddMember }: MembersTableProps) => {
     return (
         <section className="business-dashboard-table-card">
             <div className="business-dashboard-table-header">
                 <h3>Team</h3>
+
+                <div className="business-dashboard-table-controls">
+                    <button
+                        type="button"
+                        className="business-dashboard-button-secondary"
+                        onClick={() => onAddMember("Admin")}
+                    >
+                        Add admin
+                    </button>
+
+                    <button
+                        type="button"
+                        className="business-dashboard-button-primary"
+                        onClick={() => onAddMember("Member")}
+                    >
+                        Add member
+                    </button>
+                </div>
             </div>
 
             {isLoading ? (

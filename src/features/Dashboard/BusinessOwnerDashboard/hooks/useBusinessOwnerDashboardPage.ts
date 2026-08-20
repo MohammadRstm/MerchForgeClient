@@ -5,6 +5,7 @@ import useBusinessMembers from "./data/useBusinessMembers";
 import useBusinessSubscription from "./data/useBusinessSubscription";
 import useProductsTableState from "./ui/useProductsTableState";
 import useProductModal from "./ui/useProductModal";
+import useMemberModal from "./ui/useMemberModal";
 import useProductAiChat from "./ui/useProductAiChat";
 import useDeleteProduct from "./data/useDeleteProduct";
 import { useState } from "react";
@@ -43,6 +44,7 @@ const useBusinessOwnerDashboardPage = () => {
     } = useBusinessSubscription(businessId);
 
     const productModal = useProductModal(businessId);
+    const memberModal = useMemberModal(businessId);
 
     const aiChat = useProductAiChat(businessId, () => {
         // The AI flow created the product itself, so the manual modal - if it was the
@@ -116,6 +118,7 @@ const useBusinessOwnerDashboardPage = () => {
         members,
         membersLoading,
         membersError,
+        memberModal,
 
         subscription,
         subscriptionLoading,

@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router';
+import { routes } from '../../../../config/routes';
 import './FinalCTA.css';
 
 export default function FinalCTA() {
@@ -35,10 +37,13 @@ export default function FinalCTA() {
           Set up your catalog and start creating products with AI in minutes.
         </p>
         <div className="final-cta__actions">
-          <a href="#get-started" className="final-cta__btn final-cta__btn--primary">
+          {/* This button lives inside #get-started, so linking there scrolled
+              nowhere. Login is the only real entry point — accounts come from an
+              invitation, not a signup form. */}
+          <Link to={routes.LOGIN} className="final-cta__btn final-cta__btn--primary">
             Get Started
-          </a>
-          <a href="#features" className="final-cta__btn final-cta__btn--secondary">
+          </Link>
+          <a href="#how-it-works" className="final-cta__btn final-cta__btn--secondary">
             Explore MerchForge
           </a>
         </div>

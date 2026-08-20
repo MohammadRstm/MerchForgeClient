@@ -1,0 +1,108 @@
+.notfound-page {
+    min-height: 100vh;
+    background: linear-gradient(
+        135deg,
+        var(--primary-color),
+        #12395d
+    );
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+.notfound-card {
+    width: min(480px, 100%);
+    padding: 3rem 2.5rem;
+    background: white;
+    border: 2px solid var(--tertiary-color);
+    border-radius: 18px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, .18);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+    text-align: center;
+}
+
+.notfound-code {
+    color: var(--secondary-color);
+    font-size: 3.5rem;
+    font-weight: bold;
+    letter-spacing: .05em;
+    line-height: 1;
+}
+
+.notfound-title {
+    margin: 0;
+    color: var(--primary-color);
+    font-size: 1.75rem;
+}
+
+.notfound-text {
+    margin: 0;
+    color: #555;
+    line-height: 1.6;
+    font-size: 1rem;
+}
+
+.notfound-actions {
+    margin-top: .5rem;
+    display: flex;
+    gap: .75rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.notfound-btn {
+    padding: .85rem 1.75rem;
+
+    border: 2px solid var(--primary-color);
+    border-radius: 10px;
+
+    background: var(--primary-color);
+    color: white;
+
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+
+    cursor: pointer;
+    transition: .25s;
+}
+
+.notfound-btn:hover {
+    background: var(--semi-color);
+    border-color: var(--semi-color);
+}
+
+.notfound-btn:active {
+    transform: scale(.98);
+}
+
+.notfound-btn--ghost {
+    background: transparent;
+    color: var(--primary-color);
+}
+
+.notfound-btn--ghost:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+@media (max-width: 500px) {
+
+    .notfound-card {
+        padding: 2rem 1.5rem;
+    }
+
+    .notfound-code {
+        font-size: 2.75rem;
+    }
+
+    .notfound-title {
+        font-size: 1.4rem;
+    }
+}

@@ -2,6 +2,7 @@ import "./Login.css";
 import { Link } from "react-router";
 import Spinner from "../../../components/LoadingSpinner/LoadingSpinner";
 import useLoginPage from "./hooks/useLoginPage";
+import { routes } from "../../../config/routes";
 
 const Login = () => {
     const {
@@ -81,7 +82,7 @@ const Login = () => {
                     Don't have an account?{" "}
                     <Link
                         className="signup-suggestion-link"
-                        to="/signup"
+                        to={routes.SIGNUP}
                     >
                         Create one
                     </Link>

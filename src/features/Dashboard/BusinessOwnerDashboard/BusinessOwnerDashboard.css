@@ -329,6 +329,10 @@
     font-size: 14px;
     font-family: inherit;
     width: 100%;
+    /* There is no global border-box reset, so width:100% plus this padding and
+       border made every input render ~25px wider than its container — overflowing
+       the modal's padding and swallowing the gap between side-by-side fields. */
+    box-sizing: border-box;
 }
 
 .business-dashboard-form-input:focus {
@@ -626,6 +630,71 @@
 
 @media (max-width: 560px) {
     .ai-chat__image-compare {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Team member form */
+
+.business-dashboard-member-intro {
+    margin: 0 0 16px;
+    color: #555;
+    line-height: 1.55;
+}
+
+.business-dashboard-member-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.business-dashboard-member-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.business-dashboard-member-role {
+    margin: 0;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+/* One-time credentials hand-off */
+
+.business-dashboard-credentials {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 16px;
+    margin: 0;
+    padding: 16px;
+    border: 1px solid #e2e2e2;
+    border-radius: 8px;
+    background: #fafafa;
+}
+
+.business-dashboard-credentials dt {
+    font-size: 13px;
+    font-weight: 600;
+    color: #6b7280;
+}
+
+.business-dashboard-credentials dd {
+    margin: 0;
+    font-size: 14px;
+    word-break: break-all;
+}
+
+.business-dashboard-credentials-secret {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    user-select: all;
+}
+
+@media (max-width: 520px) {
+    .business-dashboard-member-row {
         grid-template-columns: 1fr;
     }
 }

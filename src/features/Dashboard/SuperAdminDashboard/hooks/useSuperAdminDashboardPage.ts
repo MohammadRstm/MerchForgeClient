@@ -4,6 +4,7 @@ import useDashboardBusinesses from "./data/useDashboardBusinesses";
 import useUsersTableState from "./ui/useUsersTableState";
 import useBusinessesTableState from "./ui/useBusinessesTableState";
 import useRevokeConfirmation from "./ui/useRevokeConfirmation";
+import useInviteBusinessOwnerForm from "./ui/useInviteBusinessOwnerForm";
 
 const useSuperAdminDashboardPage = () => {
     const {
@@ -30,6 +31,7 @@ const useSuperAdminDashboardPage = () => {
     } = useDashboardBusinesses(businessesTable.query);
 
     const revokeConfirmation = useRevokeConfirmation();
+    const inviteForm = useInviteBusinessOwnerForm();
 
     return {
         stats,
@@ -49,6 +51,7 @@ const useSuperAdminDashboardPage = () => {
         businessesTable,
 
         revokeConfirmation,
+        inviteForm,
     };
 };
 
