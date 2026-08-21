@@ -176,6 +176,41 @@ const AiChatPanel = ({ chat }: AiChatPanelProps) => {
                                     <dt>Category</dt>
                                     <dd>{draft.draft.categoryName ?? "—"}</dd>
 
+                                    {draft.draft.compareAtPrice != null && (
+                                        <>
+                                            <dt>Compare-at price</dt>
+                                            <dd>{currencyFormatter.format(draft.draft.compareAtPrice)}</dd>
+                                        </>
+                                    )}
+
+                                    {draft.draft.sku != null && (
+                                        <>
+                                            <dt>SKU</dt>
+                                            <dd>{draft.draft.sku}</dd>
+                                        </>
+                                    )}
+
+                                    {draft.draft.stockQuantity != null && (
+                                        <>
+                                            <dt>Stock</dt>
+                                            <dd>{draft.draft.stockQuantity}</dd>
+                                        </>
+                                    )}
+
+                                    {draft.draft.tags.length > 0 && (
+                                        <>
+                                            <dt>Tags</dt>
+                                            <dd>{draft.draft.tags.join(", ")}</dd>
+                                        </>
+                                    )}
+
+                                    {draft.draft.saleEndsAt != null && (
+                                        <>
+                                            <dt>Sale ends</dt>
+                                            <dd>{new Date(draft.draft.saleEndsAt).toLocaleDateString()}</dd>
+                                        </>
+                                    )}
+
                                     {draft.draft.metadata &&
                                         Object.entries(draft.draft.metadata).map(([key, value]) => (
                                             <div key={key} style={{ display: "contents" }}>

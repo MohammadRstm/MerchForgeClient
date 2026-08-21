@@ -101,7 +101,7 @@ const formValuesToMetadata = (
 };
 
 /** yyyy-MM-dd for <input type="date">, in the browser's local time — dates aren't times, so no timezone conversion belongs here. */
-const isoToDateInputValue = (iso: string | null): string => {
+export const isoToDateInputValue = (iso: string | null): string => {
     if (!iso) return "";
     const date = new Date(iso);
     if (Number.isNaN(date.getTime())) return "";

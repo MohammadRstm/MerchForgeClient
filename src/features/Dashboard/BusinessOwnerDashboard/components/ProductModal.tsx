@@ -7,6 +7,7 @@ import ProductImagesField from "./ProductImagesField";
 import ColorListField from "./ColorListField";
 import AiChatPanel from "./AiChatPanel";
 import useClickOutside from "../../../../hooks/useClickOutsideElementToClose";
+import { isoToDateInputValue } from "../hooks/ui/useProductFormState";
 
 /**
  * Only touches the metadata keys the assistant has actually mentioned. Looping
@@ -151,7 +152,12 @@ const ProductModal = ({ modal, onFillWithAi, chat }: ProductModalProps) => {
         if (aiDraftProduct.title != null) setField("title", aiDraftProduct.title);
         if (aiDraftProduct.description != null) setField("description", aiDraftProduct.description);
         if (aiDraftProduct.price != null) setField("price", String(aiDraftProduct.price));
+        if (aiDraftProduct.compareAtPrice != null) setField("compareAtPrice", String(aiDraftProduct.compareAtPrice));
         if (aiDraftProduct.categoryId != null) setField("categoryId", aiDraftProduct.categoryId);
+        if (aiDraftProduct.sku != null) setField("sku", aiDraftProduct.sku);
+        if (aiDraftProduct.stockQuantity != null) setField("stockQuantity", String(aiDraftProduct.stockQuantity));
+        if (aiDraftProduct.tags.length > 0) setField("tags", aiDraftProduct.tags.join(", "));
+        if (aiDraftProduct.saleEndsAt != null) setField("saleEndsAt", isoToDateInputValue(aiDraftProduct.saleEndsAt));
         if (aiDraftProduct.metadata != null) {
             applyAiMetadataToForm(aiDraftProduct.metadata, form, setMetadataField);
         }
