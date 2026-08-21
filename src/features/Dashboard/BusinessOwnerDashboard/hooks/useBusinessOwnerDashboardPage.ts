@@ -8,6 +8,7 @@ import useProductModal from "./ui/useProductModal";
 import useProductDetailModal from "./ui/useProductDetailModal";
 import useMemberModal from "./ui/useMemberModal";
 import useWebsiteTemplateModal from "./ui/useWebsiteTemplateModal";
+import useFeatureCreditsModal from "./ui/useFeatureCreditsModal";
 import useProductAiChat from "./ui/useProductAiChat";
 import useDeleteProduct from "./data/useDeleteProduct";
 import { useState } from "react";
@@ -49,6 +50,7 @@ const useBusinessOwnerDashboardPage = () => {
     const productDetailModal = useProductDetailModal(businessId);
     const memberModal = useMemberModal(businessId);
     const websiteTemplateModal = useWebsiteTemplateModal(businessId);
+    const featureCreditsModal = useFeatureCreditsModal(businessId);
 
     /** Switches from viewing to editing the same product — the detail card is read-only, so an edit always starts a fresh trip through the form. */
     const editFromDetail = (productId: string) => {
@@ -135,6 +137,8 @@ const useBusinessOwnerDashboardPage = () => {
         subscription,
         subscriptionLoading,
         subscriptionError,
+
+        featureCreditsModal,
     };
 };
 

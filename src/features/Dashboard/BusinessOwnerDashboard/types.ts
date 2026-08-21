@@ -21,6 +21,9 @@ import type {
     websiteTemplateOptionSchema,
     chosenWebsiteTemplateSchema,
     businessWebsiteTemplateStatusSchema,
+    featureCreditPackageSchema,
+    featureCreditOverviewSchema,
+    businessFeatureCreditSchema,
 } from "./validation";
 
 export type BusinessDashboardStatsResponse = z.infer<typeof businessDashboardStatsResponseSchema>;
@@ -40,6 +43,10 @@ export type ProductValueType = z.infer<typeof productValueTypeSchema>;
 export type WebsiteTemplateOption = z.infer<typeof websiteTemplateOptionSchema>;
 export type ChosenWebsiteTemplate = z.infer<typeof chosenWebsiteTemplateSchema>;
 export type BusinessWebsiteTemplateStatus = z.infer<typeof businessWebsiteTemplateStatusSchema>;
+
+export type FeatureCreditPackage = z.infer<typeof featureCreditPackageSchema>;
+export type FeatureCreditOverview = z.infer<typeof featureCreditOverviewSchema>;
+export type BusinessFeatureCredit = z.infer<typeof businessFeatureCreditSchema>;
 
 /**
  * One image in the form's in-progress gallery. Keyed by url (already uploaded, always

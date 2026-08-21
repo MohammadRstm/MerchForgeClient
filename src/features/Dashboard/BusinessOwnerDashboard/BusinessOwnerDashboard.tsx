@@ -7,6 +7,8 @@ import useBusinessOwnerDashboardPage from "./hooks/useBusinessOwnerDashboardPage
 import ProductsTable from "./components/ProductsTable";
 import MembersTable from "./components/MembersTable";
 import SubscriptionCard from "./components/SubscriptionCard";
+import FeaturesCard from "./components/FeaturesCard";
+import FeatureCreditsModal from "./components/FeatureCreditsModal";
 import ProductModal from "./components/ProductModal";
 import ProductDetailModal from "./components/ProductDetailModal";
 import DeleteProductModal from "./components/DeleteProductModal";
@@ -42,6 +44,8 @@ const BusinessOwnerDashboard = () => {
         subscription,
         subscriptionLoading,
         subscriptionError,
+
+        featureCreditsModal,
 
         productModal,
         productDetailModal,
@@ -123,6 +127,13 @@ const BusinessOwnerDashboard = () => {
                 isError={subscriptionError}
             />
 
+            <FeaturesCard
+                features={featureCreditsModal.features}
+                isLoading={featureCreditsModal.isLoading}
+                isError={featureCreditsModal.isError}
+                onSelectFeature={featureCreditsModal.open}
+            />
+
             <MembersTable
                 members={members}
                 isLoading={membersLoading}
@@ -159,6 +170,8 @@ const BusinessOwnerDashboard = () => {
             <MemberModal modal={memberModal} />
 
             <ChooseWebsiteTemplateModal modal={websiteTemplateModal} />
+
+            <FeatureCreditsModal modal={featureCreditsModal} />
 
             <MemberCredentialsModal
                 member={memberModal.created}

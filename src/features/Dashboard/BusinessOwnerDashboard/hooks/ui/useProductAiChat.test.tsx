@@ -97,8 +97,13 @@ describe("useProductAiChat", () => {
                     title: "Pizza",
                     description: "Cheesy.",
                     price: 14.5,
+                    compareAtPrice: null,
                     categoryId: null,
                     categoryName: "Pizza",
+                    sku: null,
+                    stockQuantity: null,
+                    tags: [],
+                    saleEndsAt: null,
                     metadata: null,
                 },
             })

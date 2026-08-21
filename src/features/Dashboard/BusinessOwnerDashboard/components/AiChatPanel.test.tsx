@@ -75,8 +75,13 @@ describe("AiChatPanel", () => {
                             title: "Margherita Pizza",
                             description: "Classic.",
                             price: 14.5,
+                            compareAtPrice: null,
                             categoryId: "22222222-2222-4222-8222-222222222222",
                             categoryName: "Pizza",
+                            sku: null,
+                            stockQuantity: null,
+                            tags: [],
+                            saleEndsAt: null,
                             metadata: { ingredients: ["Tomato", "Basil"], spicy: false },
                         },
                     }),
@@ -97,8 +102,9 @@ describe("AiChatPanel", () => {
                 chat={chat({
                     draft: draft({
                         draft: {
-                            title: "Pizza", description: null, price: null,
-                            categoryId: null, categoryName: null, metadata: null,
+                            title: "Pizza", description: null, price: null, compareAtPrice: null,
+                            categoryId: null, categoryName: null, sku: null, stockQuantity: null,
+                            tags: [], saleEndsAt: null, metadata: null,
                         },
                         missingFields: ["description", "price"],
                     }),

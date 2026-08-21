@@ -222,6 +222,97 @@
     color: #999;
 }
 
+/* Features */
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.feature-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+    border: 1px solid #e2e2e2;
+    border-radius: 10px;
+    background: #fff;
+}
+
+.feature-card__name {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.feature-card__description {
+    margin: 0;
+    font-size: 13px;
+    color: #777;
+    flex: 1;
+}
+
+.feature-card__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+}
+
+.feature-card__balance {
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Feature credit package picker (modal) */
+
+.feature-package-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.feature-package-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 14px;
+    border: 1px solid #e2e2e2;
+    border-radius: 10px;
+    background: #fafafa;
+}
+
+.feature-package-card__name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.feature-package-card__credits {
+    font-size: 13px;
+    color: #555;
+}
+
+.feature-package-card__price {
+    font-size: 13px;
+    color: #777;
+    margin-bottom: 6px;
+}
+
+.feature-package-card .business-dashboard-button-primary {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
 /* ---------- Buttons ---------- */
 
 .business-dashboard-button-primary,
