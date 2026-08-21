@@ -222,61 +222,62 @@
     color: #999;
 }
 
-/* Feature credits */
+/* Features */
 
-.feature-credit-list {
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.feature-card {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 8px;
+    padding: 16px;
+    border: 1px solid #e2e2e2;
+    border-radius: 10px;
+    background: #fff;
 }
 
-.feature-credit {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.feature-credit + .feature-credit {
-    padding-top: 20px;
-    border-top: 1px solid #f0f0f0;
-}
-
-.feature-credit__header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
-}
-
-.feature-credit__name {
-    display: block;
+.feature-card__name {
     font-size: 16px;
     font-weight: 700;
     color: #1a1a1a;
 }
 
-.feature-credit__description {
-    display: block;
+.feature-card__description {
+    margin: 0;
     font-size: 13px;
     color: #777;
-    margin-top: 2px;
+    flex: 1;
 }
 
-.feature-credit__balance {
+.feature-card__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+}
+
+.feature-card__balance {
     font-size: 13px;
     font-weight: 600;
     color: #333;
-    white-space: nowrap;
 }
 
-.feature-credit-package-grid {
+/* Feature credit package picker (modal) */
+
+.feature-package-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 12px;
+    margin-top: 12px;
 }
 
-.feature-credit-package-card {
+.feature-package-card {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -287,24 +288,24 @@
     background: #fafafa;
 }
 
-.feature-credit-package-card__name {
+.feature-package-card__name {
     font-size: 14px;
     font-weight: 700;
     color: #1a1a1a;
 }
 
-.feature-credit-package-card__credits {
+.feature-package-card__credits {
     font-size: 13px;
     color: #555;
 }
 
-.feature-credit-package-card__price {
+.feature-package-card__price {
     font-size: 13px;
     color: #777;
     margin-bottom: 6px;
 }
 
-.feature-credit-package-card .business-dashboard-button-primary {
+.feature-package-card .business-dashboard-button-primary {
     width: 100%;
     display: flex;
     align-items: center;

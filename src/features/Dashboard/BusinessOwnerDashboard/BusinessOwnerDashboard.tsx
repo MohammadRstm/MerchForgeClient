@@ -8,6 +8,7 @@ import ProductsTable from "./components/ProductsTable";
 import MembersTable from "./components/MembersTable";
 import SubscriptionCard from "./components/SubscriptionCard";
 import FeaturesCard from "./components/FeaturesCard";
+import FeatureCreditsModal from "./components/FeatureCreditsModal";
 import ProductModal from "./components/ProductModal";
 import ProductDetailModal from "./components/ProductDetailModal";
 import DeleteProductModal from "./components/DeleteProductModal";
@@ -44,12 +45,7 @@ const BusinessOwnerDashboard = () => {
         subscriptionLoading,
         subscriptionError,
 
-        features,
-        featuresLoading,
-        featuresError,
-        purchasingPackageId,
-        purchaseFeatureCredits,
-        purchaseFeatureCreditsError,
+        featureCreditsModal,
 
         productModal,
         productDetailModal,
@@ -132,12 +128,10 @@ const BusinessOwnerDashboard = () => {
             />
 
             <FeaturesCard
-                features={features}
-                isLoading={featuresLoading}
-                isError={featuresError}
-                onPurchase={purchaseFeatureCredits}
-                purchasingPackageId={purchasingPackageId}
-                purchaseError={purchaseFeatureCreditsError}
+                features={featureCreditsModal.features}
+                isLoading={featureCreditsModal.isLoading}
+                isError={featureCreditsModal.isError}
+                onSelectFeature={featureCreditsModal.open}
             />
 
             <MembersTable
@@ -176,6 +170,8 @@ const BusinessOwnerDashboard = () => {
             <MemberModal modal={memberModal} />
 
             <ChooseWebsiteTemplateModal modal={websiteTemplateModal} />
+
+            <FeatureCreditsModal modal={featureCreditsModal} />
 
             <MemberCredentialsModal
                 member={memberModal.created}

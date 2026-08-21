@@ -5,28 +5,17 @@ type FeaturesCardProps = {
     features?: FeatureCreditOverview[];
     isLoading: boolean;
     isError: boolean;
-    onPurchase: (packageId: string) => void;
-    purchasingPackageId?: string;
-    purchaseError?: string;
+    onSelectFeature: (featureKey: string) => void;
 };
 
-const currencyFormatter = (currency: string) =>
-    new Intl.NumberFormat(undefined, { style: "currency", currency });
-
 /**
- * Features bought independently of the subscription plan, priced in credits rather
- * than a recurring fee: a business buys a package once, spends credits as it uses
- * the feature, and buys more when they run out. Plan-bundled access (includedInPlan)
- * is shown as unlimited rather than as a balance, since it genuinely isn't metered.
+ * One card per feature that can be bought independently of the subscription plan.
+ * A feature already included in the plan gets a badge instead of a buy button - it's
+ * unlimited, there's nothing to add credits to. Otherwise the button reads "Add
+ * credits" once the business has ever bought a package for it, or "Subscribe to
+ * feature" the first time - both open the same package picker.
  */
-const FeaturesCard = ({
-    features,
-    isLoading,
-    isError,
-    onPurchase,
-    purchasingPackageId,
-    purchaseError,
-}: FeaturesCardProps) => {
+const FeaturesCard = ({ features, isLoading, isError, onSelectFeature }: FeaturesCardProps) => {
     return (
         <section className="business-dashboard-table-card">
             <div className="business-dashboard-table-header">
@@ -46,73 +35,41 @@ const FeaturesCard = ({
                     No features available to buy right now.
                 </p>
             ) : (
-                <div className="feature-credit-list">
+                <div className="feature-grid">
                     {features.map((feature) => (
-                        <div key={feature.featureKey} className="feature-credit">
-                            <div className="feature-credit__header">
-                                <div>
-                                    <span className="feature-credit__name">{feature.featureName}</span>
-                                    {feature.featureDescription && (
-                                        <span className="feature-credit__description">
-                                            {feature.featureDescription}
-                                        </span>
-                                    )}
-                                </div>
+                        <div key={feature.featureKey} className="feature-card">
+                            <span className="feature-card__name">{feature.featureName}</span>
 
+                            {feature.featureDescription && (
+                                <p className="feature-card__description">{feature.featureDescription}</p>
+                            )}
+
+                            <div className="feature-card__footer">
                                 {feature.includedInPlan ? (
                                     <span className="business-dashboard-badge business-dashboard-badge--status-active">
                                         Included in your plan
                                     </span>
                                 ) : (
-                                    <span className="feature-credit__balance">
-                                        {feature.creditsRemaining} credit{feature.creditsRemaining === 1 ? "" : "s"}{" "}
-                                        remaining
-                                    </span>
+                                    <>
+                                        {feature.creditsGrantedTotal > 0 && (
+                                            <span className="feature-card__balance">
+                                                {feature.creditsRemaining} credit
+                                                {feature.creditsRemaining === 1 ? "" : "s"} remaining
+                                            </span>
+                                        )}
+
+                                        <button
+                                            type="button"
+                                            className="business-dashboard-button-primary"
+                                            onClick={() => onSelectFeature(feature.featureKey)}
+                                        >
+                                            {feature.creditsGrantedTotal > 0 ? "Add credits" : "Subscribe to feature"}
+                                        </button>
+                                    </>
                                 )}
                             </div>
-
-                            {!feature.includedInPlan && feature.packages.length > 0 && (
-                                <div className="feature-credit-package-grid">
-                                    {feature.packages.map((pkg) => {
-                                        const isPurchasingThis = purchasingPackageId === pkg.id;
-
-                                        return (
-                                            <div key={pkg.id} className="feature-credit-package-card">
-                                                <span className="feature-credit-package-card__name">{pkg.name}</span>
-                                                <span className="feature-credit-package-card__credits">
-                                                    {pkg.credits} credits
-                                                </span>
-                                                <span className="feature-credit-package-card__price">
-                                                    {currencyFormatter(pkg.currency).format(pkg.price)}
-                                                </span>
-
-                                                <button
-                                                    type="button"
-                                                    className="business-dashboard-button-primary"
-                                                    onClick={() => onPurchase(pkg.id)}
-                                                    disabled={purchasingPackageId != null}
-                                                >
-                                                    {isPurchasingThis ? (
-                                                        <>
-                                                            <Spinner size={14} /> Buying…
-                                                        </>
-                                                    ) : (
-                                                        "Buy"
-                                                    )}
-                                                </button>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            )}
                         </div>
                     ))}
-
-                    {purchaseError && (
-                        <p className="business-dashboard-table-message business-dashboard-table-message--error">
-                            {purchaseError}
-                        </p>
-                    )}
                 </div>
             )}
         </section>
