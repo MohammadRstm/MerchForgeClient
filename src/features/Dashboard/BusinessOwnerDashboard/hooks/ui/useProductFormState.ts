@@ -88,7 +88,7 @@ const formValuesToMetadata = (
             continue;
         }
 
-        if (field.valueType === "TextList") {
+        if (field.valueType === "TextList" || field.valueType === "ColorList") {
             const items = text.split(",").map((item) => item.trim()).filter(Boolean);
             if (items.length > 0) metadata[field.key] = items;
             continue;
