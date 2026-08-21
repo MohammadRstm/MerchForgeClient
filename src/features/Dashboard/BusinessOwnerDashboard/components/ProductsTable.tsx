@@ -4,7 +4,7 @@ import SortableHeader from "../../../../components/SortableHeader/SortableHeader
 import type { PagedResult } from "../../../../types/pagination";
 import type useProductsTableState from "../hooks/ui/useProductsTableState";
 import type { BusinessProductResponse } from "../types";
-import { resolveImageUrl } from "./ProductImageDropzone";
+import { resolveImageUrl } from "../utils/resolveImageUrl";
 
 type ProductsTableProps = {
     productsPage?: PagedResult<BusinessProductResponse>;
@@ -14,9 +14,22 @@ type ProductsTableProps = {
     tableState: ReturnType<typeof useProductsTableState>;
     categories: string[];
     onAddProduct: () => void;
+    onViewProduct: (productId: string) => void;
     onEditProduct: (productId: string) => void;
     onDeleteProduct: (product: BusinessProductResponse) => void;
     deletingProductId?: string;
+};
+
+const StockCell = ({ stockQuantity }: { stockQuantity: number | null }) => {
+    if (stockQuantity === null) {
+        return <span className="business-dashboard-badge">Not tracked</span>;
+    }
+
+    if (stockQuantity === 0) {
+        return <span className="business-dashboard-badge business-dashboard-badge--status-cancelled">Out of stock</span>;
+    }
+
+    return <span className="business-dashboard-badge business-dashboard-badge--status-active">{stockQuantity} in stock</span>;
 };
 
 const currencyFormatter = new Intl.NumberFormat(undefined, {
@@ -32,6 +45,7 @@ const ProductsTable = ({
     tableState,
     categories,
     onAddProduct,
+    onViewProduct,
     onEditProduct,
     onDeleteProduct,
     deletingProductId,
@@ -110,6 +124,7 @@ const ProductsTable = ({
                                     sortDescending={query.sortDescending}
                                     onSort={handleSortChange}
                                 />
+                                <th>Stock</th>
                                 <SortableHeader
                                     label="Added"
                                     field="CreatedAt"
@@ -123,7 +138,19 @@ const ProductsTable = ({
 
                         <tbody style={{ opacity: isFetching ? 0.6 : 1 }}>
                             {productsPage.items.map((product) => (
-                                <tr key={product.id}>
+                                <tr
+                                    key={product.id}
+                                    className="business-dashboard-table-row--clickable"
+                                    onClick={() => onViewProduct(product.id)}
+                                    role="button"
+                                    tabIndex={0}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter" || e.key === " ") {
+                                            e.preventDefault();
+                                            onViewProduct(product.id);
+                                        }
+                                    }}
+                                >
                                     <td>
                                         {product.imageUrl ? (
                                             <img
@@ -142,10 +169,23 @@ const ProductsTable = ({
                                     </td>
                                     <td>{product.title}</td>
                                     <td>{product.category}</td>
-                                    <td>{currencyFormatter.format(product.price)}</td>
+                                    <td>
+                                        <span className={product.compareAtPrice ? "product-price-current" : undefined}>
+                                            {currencyFormatter.format(product.price)}
+                                        </span>
+                                        {product.compareAtPrice && (
+                                            <span className="product-price-compare-at">
+                                                {" "}
+                                                {currencyFormatter.format(product.compareAtPrice)}
+                                            </span>
+                                        )}
+                                    </td>
+                                    <td>
+                                        <StockCell stockQuantity={product.stockQuantity} />
+                                    </td>
                                     <td>{new Date(product.createdAt).toLocaleDateString()}</td>
                                     <td>
-                                        <div className="business-dashboard-row-actions">
+                                        <div className="business-dashboard-row-actions" onClick={(e) => e.stopPropagation()}>
                                             <button
                                                 type="button"
                                                 className="business-dashboard-button-ghost"

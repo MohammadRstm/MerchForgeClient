@@ -16,17 +16,34 @@ import {
 import { authenticatedApi } from "./api";
 import { apiRoutes } from "./apiRoutes";
 
+/** One image in a save payload — already uploaded, referenced by the URL the upload endpoint returned. */
+export type SaveProductImagePayload = {
+    url: string;
+    isMain: boolean;
+    width?: number;
+    height?: number;
+    altText?: string;
+};
+
 /**
  * Wire shape for create/update. Metadata values are already converted to their real
  * JSON types (string / number / boolean / string[]) by the form before this point —
  * the backend validates each against the type its definition declares.
+ *
+ * A full replace, not a partial patch: every field is sent on every save, matching
+ * the backend's own SaveProductRequest contract (one DTO for both create and update).
  */
 export type SaveProductPayload = {
     title: string;
     description: string;
     price: number;
+    compareAtPrice?: number;
     categoryId: string;
-    imageUrl: string | null;
+    images: SaveProductImagePayload[];
+    sku?: string;
+    stockQuantity?: number;
+    tags: string[];
+    saleEndsAt?: string;
     metadata: Record<string, unknown> | null;
 };
 

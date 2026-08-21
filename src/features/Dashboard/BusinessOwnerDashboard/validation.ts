@@ -36,11 +36,23 @@ export const businessProductResponseSchema = z.object({
     title: z.string(),
     category: z.string(),
     price: z.number(),
+    compareAtPrice: z.number().nullable(),
     imageUrl: z.string().nullable(),
+    stockQuantity: z.number().nullable(),
     createdAt: z.iso.datetime(),
 });
 
 export const businessProductsPageSchema = pagedResultSchema(businessProductResponseSchema);
+
+export const productImageSchema = z.object({
+    id: z.string().uuid(),
+    url: z.string(),
+    isMain: z.boolean(),
+    width: z.number().nullable(),
+    height: z.number().nullable(),
+    altText: z.string().nullable(),
+    displayOrder: z.number(),
+});
 
 export const productValueTypeSchema = z.enum(["Text", "Number", "Boolean", "TextList"]);
 
@@ -62,9 +74,15 @@ export const businessProductDetailSchema = z.object({
     title: z.string(),
     description: z.string(),
     price: z.number(),
+    compareAtPrice: z.number().nullable(),
     categoryId: z.string().uuid(),
     categoryName: z.string(),
     imageUrl: z.string().nullable(),
+    images: z.array(productImageSchema),
+    sku: z.string().nullable(),
+    stockQuantity: z.number().nullable(),
+    tags: z.array(z.string()),
+    saleEndsAt: z.iso.datetime().nullable(),
     metadata: z.record(z.string(), z.unknown()).nullable(),
     createdAt: z.iso.datetime(),
     updatedAt: z.iso.datetime(),

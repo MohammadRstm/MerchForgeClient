@@ -8,6 +8,7 @@ import ProductsTable from "./components/ProductsTable";
 import MembersTable from "./components/MembersTable";
 import SubscriptionCard from "./components/SubscriptionCard";
 import ProductModal from "./components/ProductModal";
+import ProductDetailModal from "./components/ProductDetailModal";
 import DeleteProductModal from "./components/DeleteProductModal";
 import ProductAiChatModal from "./components/ProductAiChatModal";
 import MemberModal from "./components/MemberModal";
@@ -42,6 +43,8 @@ const BusinessOwnerDashboard = () => {
         subscriptionError,
 
         productModal,
+        productDetailModal,
+        editFromDetail,
         aiChat,
         openAiChat,
 
@@ -126,12 +129,15 @@ const BusinessOwnerDashboard = () => {
                 tableState={productsTable}
                 categories={stats?.productsByCategory.map((entry) => entry.key) ?? []}
                 onAddProduct={productModal.openForCreate}
+                onViewProduct={productDetailModal.open}
                 onEditProduct={productModal.openForEdit}
                 onDeleteProduct={requestDeleteProduct}
                 deletingProductId={isDeletingProduct ? productPendingDeletion?.id : undefined}
             />
 
             <ProductModal modal={productModal} onFillWithAi={openAiChat} />
+
+            <ProductDetailModal modal={productDetailModal} onEdit={editFromDetail} />
 
             <ProductAiChatModal chat={aiChat} />
 
