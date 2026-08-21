@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import type { CSSProperties } from "react";
 import { FiMic, FiSquare, FiX } from "react-icons/fi";
 import Spinner from "../../../../components/LoadingSpinner/LoadingSpinner";
 import type useProductAiChat from "../hooks/ui/useProductAiChat";
@@ -12,6 +13,13 @@ const currencyFormatter = new Intl.NumberFormat(undefined, {
     style: "currency",
     currency: "USD",
 });
+
+const formatElapsed = (ms: number) => {
+    const totalSeconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${String(seconds).padStart(2, "0")}`;
+};
 
 /**
  * The AI conversation, rendered as its own card beside the product form rather
@@ -88,7 +96,11 @@ const AiChatPanel = ({ chat }: AiChatPanelProps) => {
 
                             {isBusy && !isConfirming && (
                                 <div className="ai-chat__message ai-chat__message--assistant ai-chat__message--pending">
-                                    <Spinner size={16} />
+                                    <span className="ai-chat__typing" aria-label="Assistant is typing">
+                                        <span />
+                                        <span />
+                                        <span />
+                                    </span>
                                 </div>
                             )}
 
@@ -217,26 +229,44 @@ const AiChatPanel = ({ chat }: AiChatPanelProps) => {
                         </button>
                     )}
 
-                    <input
-                        className="business-dashboard-form-input"
-                        placeholder={voice.isRecording ? "Recording…" : "Describe your product…"}
-                        value={messageInput}
-                        onChange={(e) => setMessageInput(e.target.value)}
-                        onKeyDown={(e) => {
-                            if (e.key === "Enter") {
-                                e.preventDefault();
-                                sendMessage();
-                            }
-                        }}
-                        disabled={isBusy || voice.isRecording}
-                        aria-label="Message"
-                    />
+                    {voice.isRecording ? (
+                        <div className="ai-chat__recording" aria-live="polite">
+                            <span className="ai-chat__recording-dot" />
+
+                            <span className="ai-chat__recording-wave">
+                                {voice.waveform.map((level, index) => (
+                                    <span
+                                        key={index}
+                                        style={{ "--level": level } as CSSProperties}
+                                    />
+                                ))}
+                            </span>
+
+                            <span className="ai-chat__recording-time">{formatElapsed(voice.elapsedMs)}</span>
+                        </div>
+                    ) : (
+                        <input
+                            className="business-dashboard-form-input"
+                            placeholder="Describe your product…"
+                            value={messageInput}
+                            onChange={(e) => setMessageInput(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                    e.preventDefault();
+                                    sendMessage();
+                                }
+                            }}
+                            disabled={isBusy}
+                            aria-label="Message"
+                        />
+                    )}
 
                     <button
                         type="button"
                         className="business-dashboard-button-primary"
                         onClick={sendMessage}
-                        disabled={isBusy || !messageInput.trim()}
+                        disabled={isBusy || voice.isRecording || !messageInput.trim()}
+                        hidden={voice.isRecording}
                     >
                         Send
                     </button>

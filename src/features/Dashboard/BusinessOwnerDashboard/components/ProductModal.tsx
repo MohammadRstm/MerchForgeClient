@@ -99,6 +99,9 @@ const ProductModal = ({ modal, onFillWithAi, chat }: ProductModalProps) => {
 
     const isPreparing = productFormLoading || editingProductLoading;
     const isChatOpen = Boolean(chat?.isOpen);
+    // Confirming has its own "Creating…" state on the button, so the glow is
+    // reserved for genuinely waiting on the assistant's next turn.
+    const isAiThinking = isChatOpen && Boolean(chat?.isBusy) && !chat?.isConfirming;
 
     const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -136,7 +139,11 @@ const ProductModal = ({ modal, onFillWithAi, chat }: ProductModalProps) => {
     return (
         <div className="modal-backdrop">
             <div ref={wrapperRef} className="product-ai-modals">
-                <div className="modal-container product-form-card">
+                <div
+                    className={`modal-container product-form-card${
+                        isAiThinking ? " product-form-card--ai-glow" : ""
+                    }`}
+                >
                     <button
                         type="button"
                         className="modal-cancel-button"
