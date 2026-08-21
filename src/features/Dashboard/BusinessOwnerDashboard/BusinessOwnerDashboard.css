@@ -739,6 +739,122 @@
     white-space: nowrap;
 }
 
+/* Shared backdrop for the product form and, once "Fill with AI" is clicked, the
+   assistant beside it — two independent cards (each with its own header/body/
+   close button) rather than one wide dialog, so each genuinely reads as its own
+   modal. One backdrop and one click-outside region for the pair, though: two
+   separate backdrops would double-darken the page, and a click landing between
+   the cards should dismiss both, not neither. */
+.product-ai-modals {
+    display: flex;
+    align-items: stretch; /* equal-height cards: both stretch to match the taller one */
+    justify-content: center;
+    gap: 24px;
+}
+
+/* Reuses .modal-container's chrome (shadow, radius, max-height) via the shared
+   class on the element itself; this just narrows it to fit two side by side. */
+.product-form-card {
+    width: min(90vw, 620px);
+}
+
+.product-modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    /* Leaves room for the modal's own close button in the top-right. */
+    padding-right: 28px;
+}
+
+.product-modal__ai-button {
+    white-space: nowrap;
+}
+
+/* The assistant's own card. Grows in from nothing beside the form card, which —
+   because both sit in a centered flex row — is what makes the form appear to
+   glide left: it isn't animated directly, it's just reflowing every frame as
+   this sibling claims its share of the centered row. */
+.ai-chat-card {
+    position: relative;
+    width: 0;
+    overflow: hidden;
+    animation: aiChatCardIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes aiChatCardIn {
+    from {
+        width: 0;
+        opacity: 0;
+    }
+    to {
+        width: min(90vw, 420px);
+        opacity: 1;
+    }
+}
+
+.ai-chat-card .modal-header {
+    flex-shrink: 0;
+}
+
+.ai-chat-card .modal-header h2 {
+    font-size: 1.25rem;
+}
+
+.ai-chat-card__body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 24px 28px;
+}
+
+/* Pinned to the bottom of the card, like any chat composer — never part of the
+   scrolling message area above it. */
+.ai-chat-card__composer {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 16px 28px;
+    border-top: 1px solid #ececec;
+}
+
+.ai-chat-card__composer .business-dashboard-form-input {
+    flex: 1;
+}
+
+@media (max-width: 900px) {
+    .product-ai-modals {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .product-form-card,
+    .ai-chat-card {
+        max-height: 42vh;
+    }
+
+    /* Distinct name from the desktop keyframes — animation-name resolves from
+       the full stylesheet regardless of which @media block declared it, so
+       reusing the same name here would silently replace the desktop version. */
+    .ai-chat-card {
+        animation-name: aiChatCardInStacked;
+    }
+
+    @keyframes aiChatCardInStacked {
+        from {
+            width: min(90vw, 420px);
+            height: 0;
+            opacity: 0;
+        }
+        to {
+            width: min(90vw, 420px);
+            height: 42vh;
+            opacity: 1;
+        }
+    }
+}
+
 .ai-chat {
     display: flex;
     flex-direction: column;
@@ -787,6 +903,8 @@
 }
 
 .ai-chat__kind {
+    display: inline-flex;
+    align-items: center;
     font-size: 12px;
     line-height: 1.6;
 }
@@ -875,6 +993,18 @@
 .ai-chat__composer .business-dashboard-form-input {
     flex: 1;
 }
+
+.ai-chat__composer .business-dashboard-button-ghost {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
 
 /* Pulses while recording so it is obvious the microphone is live. */
 .ai-chat__record--active {

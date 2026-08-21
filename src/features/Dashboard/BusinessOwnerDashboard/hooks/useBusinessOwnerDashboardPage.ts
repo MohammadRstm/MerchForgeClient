@@ -63,12 +63,11 @@ const useBusinessOwnerDashboardPage = () => {
     });
 
     /**
-     * Closes the manual form when handing over to the assistant. Both modals render
-     * their own backdrop, so leaving the first open stacks two dialogs and the owner
-     * ends up dismissing a form they thought they had left.
+     * Opens the assistant alongside the still-open form rather than replacing it —
+     * the two are rendered as panes of the same modal (see ProductModal), so the
+     * owner keeps the fields in view while talking to the AI.
      */
     const openAiChat = () => {
-        productModal.close();
         aiChat.open();
     };
 

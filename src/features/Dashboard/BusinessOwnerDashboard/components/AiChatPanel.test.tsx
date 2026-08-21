@@ -1,12 +1,12 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import type { ProductDraft } from "../types";
-import ProductAiChatModal from "./ProductAiChatModal";
+import AiChatPanel from "./AiChatPanel";
 
 // The component renders from the draft alone, so the hook is supplied as a plain
 // object rather than being run - what is under test is that backend state maps to
 // the right UI, not how that state was fetched.
-type Chat = Parameters<typeof ProductAiChatModal>[0]["chat"];
+type Chat = Parameters<typeof AiChatPanel>[0]["chat"];
 
 const draft = (overrides: Partial<ProductDraft> = {}): ProductDraft => ({
     id: "11111111-1111-4111-8111-111111111111",
@@ -51,42 +51,24 @@ const chat = (overrides: Partial<Chat> = {}): Chat =>
         ...overrides,
     }) as Chat;
 
-const confirmButton = () => screen.getByRole("button", { name: /create product/i });
-
-describe("ProductAiChatModal", () => {
+describe("AiChatPanel", () => {
     it("renders the conversation", () => {
-        render(<ProductAiChatModal chat={chat()} />);
+        render(<AiChatPanel chat={chat()} />);
 
         expect(screen.getByText("Hi! Tell me about your product.")).toBeTruthy();
     });
 
-    it("disables creation until the backend says the draft can be confirmed", () => {
-        render(<ProductAiChatModal chat={chat({ draft: draft({ canConfirm: false }) })} />);
+    it("offers no create-product action of its own — that lives on the form card", () => {
+        // Confirming an AI draft and submitting the manual form mean the same thing,
+        // so there is only ever one create action, owned by ProductModal.
+        render(<AiChatPanel chat={chat({ draft: draft({ canConfirm: true }) })} />);
 
-        expect(confirmButton().hasAttribute("disabled")).toBe(true);
-    });
-
-    it("enables creation only on the backend's canConfirm", () => {
-        render(<ProductAiChatModal chat={chat({ draft: draft({ canConfirm: true }) })} />);
-
-        expect(confirmButton().hasAttribute("disabled")).toBe(false);
-    });
-
-    it("does not enable creation just because the agent moved to review", () => {
-        // The agent proposing a product is not the same as the product being valid;
-        // canConfirm is the backend's own verdict and is what gates the button.
-        render(
-            <ProductAiChatModal
-                chat={chat({ draft: draft({ status: "WaitingForProductApproval", canConfirm: false }) })}
-            />
-        );
-
-        expect(confirmButton().hasAttribute("disabled")).toBe(true);
+        expect(screen.queryByRole("button", { name: /create product/i })).toBeNull();
     });
 
     it("shows the product preview with resolved category and metadata", () => {
         render(
-            <ProductAiChatModal
+            <AiChatPanel
                 chat={chat({
                     draft: draft({
                         draft: {
@@ -111,7 +93,7 @@ describe("ProductAiChatModal", () => {
 
     it("lists what is still missing", () => {
         render(
-            <ProductAiChatModal
+            <AiChatPanel
                 chat={chat({
                     draft: draft({
                         draft: {
@@ -129,7 +111,7 @@ describe("ProductAiChatModal", () => {
 
     it("offers approve and reject while an edited image is pending", () => {
         render(
-            <ProductAiChatModal
+            <AiChatPanel
                 chat={chat({
                     draft: draft({
                         status: "WaitingForImageApproval",
@@ -151,14 +133,14 @@ describe("ProductAiChatModal", () => {
     });
 
     it("hides the composer once the conversation has ended", () => {
-        render(<ProductAiChatModal chat={chat({ draft: draft({ status: "Cancelled" }) })} />);
+        render(<AiChatPanel chat={chat({ draft: draft({ status: "Cancelled" }) })} />);
 
         expect(screen.queryByLabelText("Message")).toBeNull();
     });
 
     it("surfaces an error to the owner", () => {
         render(
-            <ProductAiChatModal
+            <AiChatPanel
                 chat={chat({ error: "The assistant is unavailable right now." })}
             />
         );
@@ -170,7 +152,7 @@ describe("ProductAiChatModal", () => {
         const base = chat();
 
         render(
-            <ProductAiChatModal
+            <AiChatPanel
                 chat={{ ...base, voice: { ...base.voice, isSupported: false } } as Chat}
             />
         );

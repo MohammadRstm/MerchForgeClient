@@ -17,7 +17,7 @@ const Modal = ({children , isOpen , onClose} : ModalPropsType) =>{
     const modalRef =   useRef<HTMLDivElement>(null);
 
     useClickOutside(modalRef , onClose);
-    
+
     if(!isOpen) return;
 
     return(
