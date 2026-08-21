@@ -12,6 +12,8 @@ import {
     businessSubscriptionResponseSchema,
     productFormSchema,
     productImageUploadSchema,
+    businessWebsiteTemplateStatusSchema,
+    chosenWebsiteTemplateSchema,
 } from "../../features/Dashboard/BusinessOwnerDashboard/validation";
 import { authenticatedApi } from "./api";
 import { apiRoutes } from "./apiRoutes";
@@ -139,6 +141,22 @@ export const updateBusinessProductService = async (
 
 export const deleteBusinessProductService = async (businessId: string, productId: string) => {
     await authenticatedApi.delete(apiRoutes.BUSINESS_DASHBOARD_PRODUCT(businessId, productId));
+};
+
+// ---- website template ----
+
+export const getWebsiteTemplateStatusService = async (businessId: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_WEBSITE_TEMPLATE(businessId));
+
+    return businessWebsiteTemplateStatusSchema.parse(data);
+};
+
+export const chooseWebsiteTemplateService = async (businessId: string, websiteTemplateId: string) => {
+    const { data } = await authenticatedApi.post(apiRoutes.BUSINESS_DASHBOARD_WEBSITE_TEMPLATE(businessId), {
+        websiteTemplateId,
+    });
+
+    return chosenWebsiteTemplateSchema.parse(data);
 };
 
 export const uploadProductImageService = async (businessId: string, file: File) => {

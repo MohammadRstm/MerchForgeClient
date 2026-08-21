@@ -13,6 +13,7 @@ import DeleteProductModal from "./components/DeleteProductModal";
 import ProductAiChatModal from "./components/ProductAiChatModal";
 import MemberModal from "./components/MemberModal";
 import MemberCredentialsModal from "./components/MemberCredentialsModal";
+import ChooseWebsiteTemplateModal from "./components/ChooseWebsiteTemplateModal";
 
 const currencyFormatter = new Intl.NumberFormat(undefined, {
     style: "currency",
@@ -37,6 +38,7 @@ const BusinessOwnerDashboard = () => {
         membersLoading,
         membersError,
         memberModal,
+        websiteTemplateModal,
 
         subscription,
         subscriptionLoading,
@@ -58,7 +60,15 @@ const BusinessOwnerDashboard = () => {
 
     return (
         <main className="business-dashboard-page">
-            <h1 className="business-dashboard-heading">{businessName || "Business"} Dashboard</h1>
+            <div className="business-dashboard-page-header">
+                <h1 className="business-dashboard-heading">{businessName || "Business"} Dashboard</h1>
+
+                {!websiteTemplateModal.isLoading && websiteTemplateModal.status?.chosen == null && (
+                    <button type="button" className="business-dashboard-button-primary" onClick={websiteTemplateModal.open}>
+                        Choose website template
+                    </button>
+                )}
+            </div>
 
             {statsLoading ? (
                 <div className="business-dashboard-stats-loading">
@@ -150,6 +160,8 @@ const BusinessOwnerDashboard = () => {
             />
 
             <MemberModal modal={memberModal} />
+
+            <ChooseWebsiteTemplateModal modal={websiteTemplateModal} />
 
             <MemberCredentialsModal
                 member={memberModal.created}
