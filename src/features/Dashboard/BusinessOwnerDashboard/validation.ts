@@ -225,3 +225,29 @@ export const businessWebsiteTemplateStatusSchema = z.object({
     chosen: chosenWebsiteTemplateSchema.nullable(),
     available: z.array(websiteTemplateOptionSchema),
 });
+
+// ---- feature credits ----
+
+export const featureCreditPackageSchema = z.object({
+    id: z.string().uuid(),
+    name: z.string(),
+    credits: z.number(),
+    price: z.number(),
+    currency: z.string(),
+});
+
+export const featureCreditOverviewSchema = z.object({
+    featureKey: z.string(),
+    featureName: z.string(),
+    featureDescription: z.string().nullable(),
+    includedInPlan: z.boolean(),
+    creditsRemaining: z.number(),
+    creditsGrantedTotal: z.number(),
+    packages: z.array(featureCreditPackageSchema),
+});
+
+export const businessFeatureCreditSchema = z.object({
+    featureKey: z.string(),
+    creditsRemaining: z.number(),
+    creditsGrantedTotal: z.number(),
+});

@@ -14,6 +14,8 @@ import {
     productImageUploadSchema,
     businessWebsiteTemplateStatusSchema,
     chosenWebsiteTemplateSchema,
+    featureCreditOverviewSchema,
+    businessFeatureCreditSchema,
 } from "../../features/Dashboard/BusinessOwnerDashboard/validation";
 import { authenticatedApi } from "./api";
 import { apiRoutes } from "./apiRoutes";
@@ -157,6 +159,22 @@ export const chooseWebsiteTemplateService = async (businessId: string, websiteTe
     });
 
     return chosenWebsiteTemplateSchema.parse(data);
+};
+
+// ---- feature credits ----
+
+export const getBusinessFeaturesService = async (businessId: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_FEATURES(businessId));
+
+    return z.array(featureCreditOverviewSchema).parse(data);
+};
+
+export const purchaseFeatureCreditsService = async (businessId: string, packageId: string) => {
+    const { data } = await authenticatedApi.post(apiRoutes.BUSINESS_DASHBOARD_FEATURE_PURCHASES(businessId), {
+        packageId,
+    });
+
+    return businessFeatureCreditSchema.parse(data);
 };
 
 export const uploadProductImageService = async (businessId: string, file: File) => {

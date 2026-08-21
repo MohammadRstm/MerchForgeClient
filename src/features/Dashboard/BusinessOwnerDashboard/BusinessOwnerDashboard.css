@@ -222,6 +222,96 @@
     color: #999;
 }
 
+/* Feature credits */
+
+.feature-credit-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.feature-credit {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.feature-credit + .feature-credit {
+    padding-top: 20px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.feature-credit__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.feature-credit__name {
+    display: block;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.feature-credit__description {
+    display: block;
+    font-size: 13px;
+    color: #777;
+    margin-top: 2px;
+}
+
+.feature-credit__balance {
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+    white-space: nowrap;
+}
+
+.feature-credit-package-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+}
+
+.feature-credit-package-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 14px;
+    border: 1px solid #e2e2e2;
+    border-radius: 10px;
+    background: #fafafa;
+}
+
+.feature-credit-package-card__name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.feature-credit-package-card__credits {
+    font-size: 13px;
+    color: #555;
+}
+
+.feature-credit-package-card__price {
+    font-size: 13px;
+    color: #777;
+    margin-bottom: 6px;
+}
+
+.feature-credit-package-card .business-dashboard-button-primary {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
 /* ---------- Buttons ---------- */
 
 .business-dashboard-button-primary,

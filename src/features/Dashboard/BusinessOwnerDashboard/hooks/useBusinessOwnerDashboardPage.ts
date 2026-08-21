@@ -3,6 +3,8 @@ import useBusinessDashboardStats from "./data/useBusinessDashboardStats";
 import useBusinessProducts from "./data/useBusinessProducts";
 import useBusinessMembers from "./data/useBusinessMembers";
 import useBusinessSubscription from "./data/useBusinessSubscription";
+import useBusinessFeatures from "./data/useBusinessFeatures";
+import usePurchaseFeatureCredits from "./data/usePurchaseFeatureCredits";
 import useProductsTableState from "./ui/useProductsTableState";
 import useProductModal from "./ui/useProductModal";
 import useProductDetailModal from "./ui/useProductDetailModal";
@@ -44,6 +46,25 @@ const useBusinessOwnerDashboardPage = () => {
         isLoading: subscriptionLoading,
         isError: subscriptionError,
     } = useBusinessSubscription(businessId);
+
+    const {
+        data: features,
+        isLoading: featuresLoading,
+        isError: featuresError,
+    } = useBusinessFeatures(businessId);
+
+    const {
+        mutate: purchaseFeatureCredits,
+        isPending: isPurchasingFeatureCredits,
+        variables: purchasingPackageId,
+        error: purchaseFeatureCreditsErrorRaw,
+        reset: resetPurchaseFeatureCreditsError,
+    } = usePurchaseFeatureCredits(businessId);
+
+    const requestPurchaseFeatureCredits = (packageId: string) => {
+        resetPurchaseFeatureCreditsError();
+        purchaseFeatureCredits(packageId);
+    };
 
     const productModal = useProductModal(businessId);
     const productDetailModal = useProductDetailModal(businessId);
@@ -135,6 +156,21 @@ const useBusinessOwnerDashboardPage = () => {
         subscription,
         subscriptionLoading,
         subscriptionError,
+
+        features,
+        featuresLoading,
+        featuresError,
+        // Cleared as soon as the mutation settles, not just when a new one starts —
+        // react-query keeps `variables` around after success/error, which would
+        // otherwise leave every "Buy" button disabled until the next purchase attempt.
+        purchasingPackageId: isPurchasingFeatureCredits ? purchasingPackageId : undefined,
+        purchaseFeatureCredits: requestPurchaseFeatureCredits,
+        purchaseFeatureCreditsError:
+            purchaseFeatureCreditsErrorRaw instanceof ApiError
+                ? purchaseFeatureCreditsErrorRaw.message
+                : purchaseFeatureCreditsErrorRaw
+                    ? "Couldn't complete the purchase. Please try again."
+                    : undefined,
     };
 };
 
