@@ -1,12 +1,36 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import Spinner from "../../../../components/LoadingSpinner/LoadingSpinner";
-import type { ProductFormField } from "../types";
+import type { ProductDraftProduct, ProductFormField } from "../types";
 import type useProductModal from "../hooks/ui/useProductModal";
 import type useProductAiChat from "../hooks/ui/useProductAiChat";
 import ProductImagesField from "./ProductImagesField";
 import ColorListField from "./ColorListField";
 import AiChatPanel from "./AiChatPanel";
 import useClickOutside from "../../../../hooks/useClickOutsideElementToClose";
+
+/**
+ * Only touches the metadata keys the assistant has actually mentioned. Looping
+ * over the full field list (the way editing an existing product populates the
+ * form) would blank out anything the owner already typed for a key the AI
+ * hasn't reached yet — the draft only ever reveals fields, it never clears them.
+ */
+const applyAiMetadataToForm = (
+    metadata: Record<string, unknown>,
+    fields: ProductFormField[],
+    setMetadataField: (key: string, value: string | boolean) => void
+) => {
+    for (const [key, raw] of Object.entries(metadata)) {
+        const field = fields.find((f) => f.key === key);
+        if (!field || raw == null) continue;
+
+        if (field.valueType === "Boolean") {
+            setMetadataField(key, raw === true);
+            continue;
+        }
+
+        setMetadataField(key, Array.isArray(raw) ? raw.join(", ") : String(raw));
+    }
+};
 
 type ProductModalProps = {
     modal: ReturnType<typeof useProductModal>;
@@ -113,6 +137,25 @@ const ProductModal = ({ modal, onFillWithAi, chat }: ProductModalProps) => {
     };
 
     useClickOutside(wrapperRef, handleClose);
+
+    // Mirrors the assistant's structured understanding into the real form fields
+    // as it arrives, so the owner watches the form fill in rather than only
+    // reading it off the chat's own "Product so far" preview. Only ever reveals
+    // values -- a field the AI hasn't reached yet (still null) is left exactly
+    // as the owner left it, never cleared.
+    const aiDraftProduct: ProductDraftProduct | undefined = chat?.draft?.draft ?? undefined;
+
+    useEffect(() => {
+        if (!aiDraftProduct) return;
+
+        if (aiDraftProduct.title != null) setField("title", aiDraftProduct.title);
+        if (aiDraftProduct.description != null) setField("description", aiDraftProduct.description);
+        if (aiDraftProduct.price != null) setField("price", String(aiDraftProduct.price));
+        if (aiDraftProduct.categoryId != null) setField("categoryId", aiDraftProduct.categoryId);
+        if (aiDraftProduct.metadata != null) {
+            applyAiMetadataToForm(aiDraftProduct.metadata, form, setMetadataField);
+        }
+    }, [aiDraftProduct, form, setField, setMetadataField]);
 
     if (!isOpen) return null;
 
