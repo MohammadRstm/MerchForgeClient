@@ -3,6 +3,7 @@ import type { SaveProductPayload } from "../../../../../services/api/businessDas
 import type {
     BusinessProductDetail,
     ProductFormField,
+    ProductFormImage,
     ProductFormValues,
 } from "../../types";
 
@@ -10,12 +11,21 @@ const EMPTY_FORM: ProductFormValues = {
     title: "",
     description: "",
     price: "",
+    compareAtPrice: "",
     categoryId: "",
-    imageUrl: null,
+    images: [],
+    sku: "",
+    stockQuantity: "",
+    tags: "",
+    saleEndsAt: "",
     metadata: {},
 };
 
-export type ProductFormErrors = Partial<Record<"title" | "description" | "price" | "categoryId", string>>;
+const MAX_IMAGES = 5;
+
+export type ProductFormErrors = Partial<
+    Record<"title" | "description" | "price" | "compareAtPrice" | "categoryId" | "images", string>
+>;
 
 /**
  * Converts a product's stored metadata back into the string/boolean values the form
@@ -90,6 +100,15 @@ const formValuesToMetadata = (
     return Object.keys(metadata).length > 0 ? metadata : null;
 };
 
+/** yyyy-MM-dd for <input type="date">, in the browser's local time — dates aren't times, so no timezone conversion belongs here. */
+const isoToDateInputValue = (iso: string | null): string => {
+    if (!iso) return "";
+    const date = new Date(iso);
+    if (Number.isNaN(date.getTime())) return "";
+
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+};
+
 const useProductFormState = (
     editingProduct: BusinessProductDetail | undefined,
     fields: ProductFormField[]
@@ -105,8 +124,21 @@ const useProductFormState = (
                 title: editingProduct.title,
                 description: editingProduct.description,
                 price: String(editingProduct.price),
+                compareAtPrice: editingProduct.compareAtPrice != null ? String(editingProduct.compareAtPrice) : "",
                 categoryId: editingProduct.categoryId,
-                imageUrl: editingProduct.imageUrl,
+                images: editingProduct.images
+                    .slice()
+                    .sort((a, b) => a.displayOrder - b.displayOrder)
+                    .map((image) => ({
+                        url: image.url,
+                        isMain: image.isMain,
+                        width: image.width ?? undefined,
+                        height: image.height ?? undefined,
+                    })),
+                sku: editingProduct.sku ?? "",
+                stockQuantity: editingProduct.stockQuantity != null ? String(editingProduct.stockQuantity) : "",
+                tags: editingProduct.tags.join(", "),
+                saleEndsAt: isoToDateInputValue(editingProduct.saleEndsAt),
                 metadata: metadataToFormValues(editingProduct.metadata, fields),
             });
         } else {
@@ -125,6 +157,42 @@ const useProductFormState = (
         setValues((prev) => ({ ...prev, metadata: { ...prev.metadata, [key]: value } }));
     };
 
+    /**
+     * The first image ever added becomes main automatically; every image after that
+     * simply joins the gallery. The user only ever needs to *change* which one is
+     * main (setMainImage) — there's no path where zero or many images end up main,
+     * so nothing has to validate that invariant after the fact.
+     */
+    const addImage = (image: Omit<ProductFormImage, "isMain">) => {
+        setValues((prev) => ({
+            ...prev,
+            images: [...prev.images, { ...image, isMain: prev.images.length === 0 }],
+        }));
+        setErrors((prev) => ({ ...prev, images: undefined }));
+    };
+
+    /** If the removed image was main, promotes whichever image is now first — the gallery is never left without one. */
+    const removeImage = (url: string) => {
+        setValues((prev) => {
+            const removedWasMain = prev.images.find((image) => image.url === url)?.isMain ?? false;
+            const remaining = prev.images.filter((image) => image.url !== url);
+
+            return {
+                ...prev,
+                images: removedWasMain && remaining.length > 0
+                    ? remaining.map((image, index) => ({ ...image, isMain: index === 0 }))
+                    : remaining,
+            };
+        });
+    };
+
+    const setMainImage = (url: string) => {
+        setValues((prev) => ({
+            ...prev,
+            images: prev.images.map((image) => ({ ...image, isMain: image.url === url })),
+        }));
+    };
+
     const validate = (): boolean => {
         const nextErrors: ProductFormErrors = {};
 
@@ -139,6 +207,19 @@ const useProductFormState = (
             nextErrors.price = "Enter a price of 0 or more";
         }
 
+        if (values.compareAtPrice.trim()) {
+            const compareAtPrice = Number(values.compareAtPrice);
+            if (Number.isNaN(compareAtPrice) || compareAtPrice <= price) {
+                nextErrors.compareAtPrice = "Must be greater than the price";
+            }
+        }
+
+        if (values.images.length === 0) {
+            nextErrors.images = "Add at least one image";
+        } else if (values.images.length > MAX_IMAGES) {
+            nextErrors.images = `A product can have at most ${MAX_IMAGES} images`;
+        }
+
         setErrors(nextErrors);
 
         return Object.keys(nextErrors).length === 0;
@@ -148,12 +229,36 @@ const useProductFormState = (
         title: values.title.trim(),
         description: values.description.trim(),
         price: Number(values.price),
+        compareAtPrice: values.compareAtPrice.trim() ? Number(values.compareAtPrice) : undefined,
         categoryId: values.categoryId,
-        imageUrl: values.imageUrl,
+        images: values.images.map((image) => ({
+            url: image.url,
+            isMain: image.isMain,
+            width: image.width,
+            height: image.height,
+        })),
+        sku: values.sku.trim() || undefined,
+        stockQuantity: values.stockQuantity.trim() ? Number(values.stockQuantity) : undefined,
+        tags: values.tags.split(",").map((tag) => tag.trim()).filter(Boolean),
+        // <input type="date"> gives "yyyy-MM-dd"; midnight local time is close enough
+        // for a promotion deadline and avoids the input silently rolling back a day
+        // in timezones behind UTC if this were parsed as UTC instead.
+        saleEndsAt: values.saleEndsAt ? new Date(`${values.saleEndsAt}T00:00:00`).toISOString() : undefined,
         metadata: formValuesToMetadata(values.metadata, fields),
     });
 
-    return { values, errors, setField, setMetadataField, validate, toPayload };
+    return {
+        values,
+        errors,
+        setField,
+        setMetadataField,
+        addImage,
+        removeImage,
+        setMainImage,
+        maxImages: MAX_IMAGES,
+        validate,
+        toPayload,
+    };
 };
 
 export default useProductFormState;

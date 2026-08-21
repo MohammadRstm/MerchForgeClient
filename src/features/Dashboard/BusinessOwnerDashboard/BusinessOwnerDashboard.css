@@ -412,12 +412,14 @@
     background: #eff6ff;
 }
 
-/* Once an image is in, the dashed border would compete with it for attention. */
-.product-dropzone--filled {
-    border-style: solid;
-    border-color: #e2e2e2;
-    background: #fff;
-    padding: 0;
+.product-dropzone--disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.product-dropzone--disabled:hover {
+    border-color: #d4d4d4;
+    background: #fafafa;
 }
 
 .product-dropzone__state {
@@ -442,21 +444,186 @@
     color: #9a9a9a;
 }
 
-.product-dropzone__preview {
+/* Product images field (form): a grid of existing images plus one add tile. */
+
+.product-images-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 10px;
+}
+
+.product-images-grid .product-dropzone {
+    min-height: 110px;
+    aspect-ratio: 1;
+}
+
+.product-images-grid .product-dropzone__state {
+    padding: 10px;
+    font-size: 11px;
+}
+
+.product-images-grid .product-dropzone__hint {
+    display: none;
+}
+
+.product-image-tile {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #e2e2e2;
+    background: #fafafa;
+}
+
+.product-image-tile--main {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 1px #2563eb;
+}
+
+.product-image-tile__preview {
     width: 100%;
-    max-height: 240px;
-    object-fit: contain;
+    height: 100%;
+    object-fit: cover;
     display: block;
 }
 
-.product-image-remove {
-    background: none;
+.product-image-tile__badge {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+}
+
+.product-image-tile__actions {
+    position: absolute;
+    inset: auto 0 0 0;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.65), transparent);
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+.product-image-tile:hover .product-image-tile__actions,
+.product-image-tile:focus-within .product-image-tile__actions {
+    opacity: 1;
+}
+
+.product-image-tile__action {
+    background: rgba(255, 255, 255, 0.95);
     border: none;
-    padding: 0;
-    font-size: 13px;
-    color: #dc2626;
+    border-radius: 6px;
+    padding: 3px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #1a1a1a;
     cursor: pointer;
-    text-decoration: underline;
+}
+
+.product-image-tile__action--danger {
+    color: #dc2626;
+}
+
+/* Products table: price with a struck-through compare-at price, and clickable rows. */
+
+.product-price-current {
+    color: #12875a;
+    font-weight: 600;
+}
+
+.product-price-compare-at {
+    color: #9a9a9a;
+    text-decoration: line-through;
+    font-size: 13px;
+}
+
+.business-dashboard-table-row--clickable {
+    cursor: pointer;
+}
+
+.business-dashboard-table-row--clickable:hover {
+    background: #fafafa;
+}
+
+/* Product detail card */
+
+.product-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.product-detail__gallery {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+}
+
+.product-detail__gallery-item {
+    position: relative;
+    flex: 0 0 auto;
+    width: 96px;
+    height: 96px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #e2e2e2;
+}
+
+.product-detail__gallery-item--main {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 1px #2563eb;
+}
+
+.product-detail__gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.product-detail__gallery-item .business-dashboard-badge {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    font-size: 10px;
+    padding: 1px 6px;
+}
+
+.product-detail__row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.product-detail__price {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.product-detail__description {
+    color: #444;
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+
+.product-detail__facts {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 6px 16px;
+    margin: 0;
+    font-size: 14px;
+}
+
+.product-detail__facts dt {
+    color: #777;
+}
+
+.product-detail__facts dd {
+    margin: 0;
+    color: #1a1a1a;
 }
 
 @media (max-width: 560px) {

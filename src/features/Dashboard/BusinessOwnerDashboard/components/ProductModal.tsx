@@ -2,7 +2,7 @@ import Modal from "../../../../components/Modal/Modal";
 import Spinner from "../../../../components/LoadingSpinner/LoadingSpinner";
 import type { ProductFormField } from "../types";
 import type useProductModal from "../hooks/ui/useProductModal";
-import ProductImageDropzone from "./ProductImageDropzone";
+import ProductImagesField from "./ProductImagesField";
 
 type ProductModalProps = {
     modal: ReturnType<typeof useProductModal>;
@@ -76,13 +76,15 @@ const ProductModal = ({ modal, onFillWithAi }: ProductModalProps) => {
         errors,
         setField,
         setMetadataField,
+        removeImage,
+        setMainImage,
+        maxImages,
         submit,
         isSaving,
         saveError,
         imageUploading,
         imageUploadError,
         uploadImage,
-        clearImage,
     } = modal;
 
     const isPreparing = productFormLoading || editingProductLoading;
@@ -113,12 +115,15 @@ const ProductModal = ({ modal, onFillWithAi }: ProductModalProps) => {
                     </div>
                 ) : (
                     <form className="business-dashboard-form" onSubmit={submit} noValidate>
-                        <ProductImageDropzone
-                            imageUrl={values.imageUrl}
+                        <ProductImagesField
+                            images={values.images}
+                            maxImages={maxImages}
                             isUploading={imageUploading}
                             uploadError={imageUploadError}
-                            onFileSelected={uploadImage}
-                            onClear={clearImage}
+                            validationError={errors.images}
+                            onAddImage={uploadImage}
+                            onRemoveImage={removeImage}
+                            onSetMainImage={setMainImage}
                         />
 
                         <div className="business-dashboard-form-field">
@@ -181,6 +186,31 @@ const ProductModal = ({ modal, onFillWithAi }: ProductModalProps) => {
                             </div>
 
                             <div className="business-dashboard-form-field">
+                                <label className="business-dashboard-form-label" htmlFor="product-compare-at-price">
+                                    Compare-at price
+                                    <span className="business-dashboard-form-optional"> (optional)</span>
+                                </label>
+                                <input
+                                    id="product-compare-at-price"
+                                    className="business-dashboard-form-input"
+                                    type="number"
+                                    min="0"
+                                    step="0.01"
+                                    placeholder="Shown struck through, for a sale"
+                                    value={values.compareAtPrice}
+                                    onChange={(e) => setField("compareAtPrice", e.target.value)}
+                                    aria-invalid={Boolean(errors.compareAtPrice)}
+                                />
+                                {errors.compareAtPrice && (
+                                    <span className="business-dashboard-form-error" role="alert">
+                                        {errors.compareAtPrice}
+                                    </span>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="business-dashboard-form-row">
+                            <div className="business-dashboard-form-field">
                                 <label className="business-dashboard-form-label" htmlFor="product-category">
                                     Category
                                 </label>
@@ -204,6 +234,66 @@ const ProductModal = ({ modal, onFillWithAi }: ProductModalProps) => {
                                     </span>
                                 )}
                             </div>
+
+                            <div className="business-dashboard-form-field">
+                                <label className="business-dashboard-form-label" htmlFor="product-sku">
+                                    SKU
+                                    <span className="business-dashboard-form-optional"> (optional)</span>
+                                </label>
+                                <input
+                                    id="product-sku"
+                                    className="business-dashboard-form-input"
+                                    value={values.sku}
+                                    onChange={(e) => setField("sku", e.target.value)}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="business-dashboard-form-row">
+                            <div className="business-dashboard-form-field">
+                                <label className="business-dashboard-form-label" htmlFor="product-stock-quantity">
+                                    Stock quantity
+                                    <span className="business-dashboard-form-optional"> (optional — leave blank if untracked)</span>
+                                </label>
+                                <input
+                                    id="product-stock-quantity"
+                                    className="business-dashboard-form-input"
+                                    type="number"
+                                    min="0"
+                                    step="1"
+                                    value={values.stockQuantity}
+                                    onChange={(e) => setField("stockQuantity", e.target.value)}
+                                />
+                            </div>
+
+                            <div className="business-dashboard-form-field">
+                                <label className="business-dashboard-form-label" htmlFor="product-sale-ends-at">
+                                    Sale ends
+                                    <span className="business-dashboard-form-optional"> (optional)</span>
+                                </label>
+                                <input
+                                    id="product-sale-ends-at"
+                                    className="business-dashboard-form-input"
+                                    type="date"
+                                    value={values.saleEndsAt}
+                                    onChange={(e) => setField("saleEndsAt", e.target.value)}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="business-dashboard-form-field">
+                            <label className="business-dashboard-form-label" htmlFor="product-tags">
+                                Tags
+                                <span className="business-dashboard-form-optional"> (optional)</span>
+                            </label>
+                            <input
+                                id="product-tags"
+                                className="business-dashboard-form-input"
+                                placeholder="New, Bestseller, Limited Edition"
+                                value={values.tags}
+                                onChange={(e) => setField("tags", e.target.value)}
+                            />
+                            <span className="business-dashboard-form-hint">Separate multiple tags with commas.</span>
                         </div>
 
                         {form.length > 0 && (

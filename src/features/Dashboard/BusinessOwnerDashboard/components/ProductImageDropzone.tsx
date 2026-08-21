@@ -1,29 +1,24 @@
 import { useRef, useState, type DragEvent } from "react";
 import Spinner from "../../../../components/LoadingSpinner/LoadingSpinner";
-import { env } from "../../../../config/env";
-
 type ProductImageDropzoneProps = {
-    imageUrl: string | null;
+    /** Disabled (rather than hidden) once the gallery is full, so the reason is visible in place. */
+    disabled?: boolean;
     isUploading: boolean;
     uploadError?: string;
     onFileSelected: (file: File) => void;
-    onClear: () => void;
 };
 
 /**
- * Stored image URLs are relative to the API, not the frontend, so they need the API
- * origin prefixed to render. Left relative on the wire so the same value stays
- * correct across environments.
+ * A single "drop or click to add an image" tile. The product form renders one of
+ * these per open gallery slot (see ProductImagesField) rather than a fixed one-image
+ * field — a product can carry up to 5 images now, each managed as its own gallery
+ * entry, not a single replaceable slot.
  */
-export const resolveImageUrl = (imageUrl: string): string =>
-    imageUrl.startsWith("http") ? imageUrl : `${env.apiUrl.replace(/\/$/, "")}${imageUrl}`;
-
 const ProductImageDropzone = ({
-    imageUrl,
+    disabled,
     isUploading,
     uploadError,
     onFileSelected,
-    onClear,
 }: ProductImageDropzoneProps) => {
     const inputRef = useRef<HTMLInputElement>(null);
     const [isDragging, setIsDragging] = useState(false);
@@ -31,6 +26,8 @@ const ProductImageDropzone = ({
     const handleDrop = (e: DragEvent<HTMLDivElement>) => {
         e.preventDefault();
         setIsDragging(false);
+
+        if (disabled) return;
 
         const file = e.dataTransfer.files?.[0];
         if (file) onFileSelected(file);
@@ -40,50 +37,39 @@ const ProductImageDropzone = ({
         <div className="product-image-field">
             <div
                 className={`product-dropzone${isDragging ? " product-dropzone--active" : ""}${
-                    imageUrl ? " product-dropzone--filled" : ""
+                    disabled ? " product-dropzone--disabled" : ""
                 }`}
                 onDragOver={(e) => {
                     e.preventDefault();
-                    setIsDragging(true);
+                    if (!disabled) setIsDragging(true);
                 }}
                 onDragLeave={() => setIsDragging(false)}
                 onDrop={handleDrop}
-                onClick={() => inputRef.current?.click()}
+                onClick={() => !disabled && inputRef.current?.click()}
                 role="button"
-                tabIndex={0}
+                tabIndex={disabled ? -1 : 0}
+                aria-disabled={disabled}
                 onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
+                    if (!disabled && (e.key === "Enter" || e.key === " ")) {
                         e.preventDefault();
                         inputRef.current?.click();
                     }
                 }}
-                aria-label={imageUrl ? "Replace product image" : "Add product image"}
+                aria-label="Add product image"
             >
                 {isUploading ? (
                     <div className="product-dropzone__state">
                         <Spinner size={24} />
                         <span>Uploading…</span>
                     </div>
-                ) : imageUrl ? (
-                    <img
-                        src={resolveImageUrl(imageUrl)}
-                        alt="Product preview"
-                        className="product-dropzone__preview"
-                    />
                 ) : (
                     <div className="product-dropzone__state">
                         <span className="product-dropzone__icon">↑</span>
-                        <span>Drop an image here, or click to choose one</span>
-                        <span className="product-dropzone__hint">JPEG, PNG, GIF or WEBP · up to 5 MB</span>
+                        <span>{disabled ? "Gallery full" : "Drop an image here, or click to choose one"}</span>
+                        {!disabled && <span className="product-dropzone__hint">JPEG, PNG, GIF or WEBP · up to 5 MB</span>}
                     </div>
                 )}
             </div>
-
-            {imageUrl && !isUploading && (
-                <button type="button" className="product-image-remove" onClick={onClear}>
-                    Remove image
-                </button>
-            )}
 
             {uploadError && (
                 <span className="business-dashboard-form-error" role="alert">
@@ -96,6 +82,7 @@ const ProductImageDropzone = ({
                 type="file"
                 accept="image/jpeg,image/png,image/gif,image/webp"
                 hidden
+                disabled={disabled}
                 onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (file) onFileSelected(file);

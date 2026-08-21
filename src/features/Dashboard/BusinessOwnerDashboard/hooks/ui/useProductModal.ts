@@ -31,7 +31,7 @@ const useProductModal = (businessId: string) => {
     // happens even with the modal closed, since this hook always runs.
     const fields = useMemo(() => productForm?.metadataFields ?? [], [productForm]);
 
-    const { values, errors, setField, setMetadataField, validate, toPayload } =
+    const { values, errors, setField, setMetadataField, addImage, removeImage, setMainImage, maxImages, validate, toPayload } =
         useProductFormState(editingProductId ? editingProduct : undefined, fields);
 
     const { mutate: save, isPending: isSaving, error: saveErrorRaw, reset: resetSave } = useSaveProduct(businessId);
@@ -56,13 +56,44 @@ const useProductModal = (businessId: string) => {
         setImageUploadError(undefined);
     };
 
+    /**
+     * Natural pixel size, read client-side rather than trusted from anywhere else:
+     * the upload endpoint doesn't compute it, and reading it here means the gallery
+     * carries real dimensions with no backend change required.
+     */
+    const readImageDimensions = (file: File): Promise<{ width: number; height: number } | undefined> =>
+        new Promise((resolve) => {
+            const objectUrl = URL.createObjectURL(file);
+            const img = new Image();
+
+            img.onload = () => {
+                URL.revokeObjectURL(objectUrl);
+                resolve({ width: img.naturalWidth, height: img.naturalHeight });
+            };
+            img.onerror = () => {
+                URL.revokeObjectURL(objectUrl);
+                resolve(undefined);
+            };
+
+            img.src = objectUrl;
+        });
+
     const uploadImage = async (file: File) => {
+        if (values.images.length >= maxImages) {
+            setImageUploadError(`A product can have at most ${maxImages} images.`);
+            return;
+        }
+
         setImageUploading(true);
         setImageUploadError(undefined);
 
         try {
-            const { imageUrl } = await uploadProductImageService(businessId, file);
-            setField("imageUrl", imageUrl);
+            const [{ imageUrl }, dimensions] = await Promise.all([
+                uploadProductImageService(businessId, file),
+                readImageDimensions(file),
+            ]);
+
+            addImage({ url: imageUrl, width: dimensions?.width, height: dimensions?.height });
         } catch (error) {
             // The server's message is specific and actionable ("Images must be 5 MB
             // or smaller", "isn't a valid image of the type it claims to be"), so
@@ -74,8 +105,6 @@ const useProductModal = (businessId: string) => {
             setImageUploading(false);
         }
     };
-
-    const clearImage = () => setField("imageUrl", null);
 
     const submit = (e?: FormEvent) => {
         e?.preventDefault();
@@ -105,6 +134,9 @@ const useProductModal = (businessId: string) => {
         errors,
         setField,
         setMetadataField,
+        removeImage,
+        setMainImage,
+        maxImages,
 
         submit,
         isSaving,
@@ -118,7 +150,6 @@ const useProductModal = (businessId: string) => {
         imageUploading,
         imageUploadError,
         uploadImage,
-        clearImage,
     };
 };
 

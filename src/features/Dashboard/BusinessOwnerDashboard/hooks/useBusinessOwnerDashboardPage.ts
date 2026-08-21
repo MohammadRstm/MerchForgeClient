@@ -5,6 +5,7 @@ import useBusinessMembers from "./data/useBusinessMembers";
 import useBusinessSubscription from "./data/useBusinessSubscription";
 import useProductsTableState from "./ui/useProductsTableState";
 import useProductModal from "./ui/useProductModal";
+import useProductDetailModal from "./ui/useProductDetailModal";
 import useMemberModal from "./ui/useMemberModal";
 import useProductAiChat from "./ui/useProductAiChat";
 import useDeleteProduct from "./data/useDeleteProduct";
@@ -44,7 +45,14 @@ const useBusinessOwnerDashboardPage = () => {
     } = useBusinessSubscription(businessId);
 
     const productModal = useProductModal(businessId);
+    const productDetailModal = useProductDetailModal(businessId);
     const memberModal = useMemberModal(businessId);
+
+    /** Switches from viewing to editing the same product — the detail card is read-only, so an edit always starts a fresh trip through the form. */
+    const editFromDetail = (productId: string) => {
+        productDetailModal.close();
+        productModal.openForEdit(productId);
+    };
 
     const aiChat = useProductAiChat(businessId, () => {
         // The AI flow created the product itself, so the manual modal - if it was the
@@ -90,6 +98,8 @@ const useBusinessOwnerDashboardPage = () => {
         businessName: session?.business?.name ?? "",
 
         productModal,
+        productDetailModal,
+        editFromDetail,
         aiChat,
         openAiChat,
 

@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import Modal from "../../../../components/Modal/Modal";
 import Spinner from "../../../../components/LoadingSpinner/LoadingSpinner";
 import type useProductAiChat from "../hooks/ui/useProductAiChat";
-import { resolveImageUrl } from "./ProductImageDropzone";
+import { resolveImageUrl } from "../utils/resolveImageUrl";
 
 type ProductAiChatModalProps = {
     chat: ReturnType<typeof useProductAiChat>;

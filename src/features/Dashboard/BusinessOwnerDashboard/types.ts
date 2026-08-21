@@ -9,6 +9,7 @@ import type {
     createBusinessMemberFormSchema,
     businessProductDetailSchema,
     businessProductResponseSchema,
+    productImageSchema,
     businessSubscriptionResponseSchema,
     productDraftMessageSchema,
     productDraftSchema,
@@ -27,22 +28,42 @@ export type CreateBusinessMemberPayload = z.infer<typeof createBusinessMemberFor
 export type BusinessSubscriptionResponse = z.infer<typeof businessSubscriptionResponseSchema>;
 
 export type BusinessProductDetail = z.infer<typeof businessProductDetailSchema>;
+export type BusinessProductImage = z.infer<typeof productImageSchema>;
 export type ProductForm = z.infer<typeof productFormSchema>;
 export type ProductFormField = z.infer<typeof productFormFieldSchema>;
 export type ProductValueType = z.infer<typeof productValueTypeSchema>;
 
 /**
+ * One image in the form's in-progress gallery. Keyed by url (already uploaded, always
+ * unique) rather than a synthetic id — there's nothing else to key it by until the
+ * product itself is saved.
+ */
+export type ProductFormImage = {
+    url: string;
+    isMain: boolean;
+    width?: number;
+    height?: number;
+};
+
+/**
  * Product form state. Metadata values are kept as strings while editing — even
  * numbers — because that's what inputs produce; they're converted to their real JSON
  * types only on submit. TextList is held as one comma-separated string for the same
- * reason. Booleans are the exception, since a checkbox already gives a real boolean.
+ * reason, and so is `tags`, which uses the identical convention. Booleans are the
+ * exception, since a checkbox already gives a real boolean.
  */
 export type ProductFormValues = {
     title: string;
     description: string;
     price: string;
+    compareAtPrice: string;
     categoryId: string;
-    imageUrl: string | null;
+    images: ProductFormImage[];
+    sku: string;
+    stockQuantity: string;
+    tags: string;
+    /** yyyy-MM-dd, matching <input type="date">. Empty string means no deadline. */
+    saleEndsAt: string;
     metadata: Record<string, string | boolean>;
 };
 
