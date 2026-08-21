@@ -38,8 +38,14 @@
     top: 16px;
     right: 16px;
 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     width: 36px;
     height: 36px;
+    padding: 0;
+    line-height: 1;
 
     border: none;
     border-radius: 50%;
