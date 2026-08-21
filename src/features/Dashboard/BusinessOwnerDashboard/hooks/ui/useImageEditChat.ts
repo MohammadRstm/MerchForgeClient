@@ -93,9 +93,18 @@ const useImageEditChat = (businessId: string, onImagesReplaced: (replacements: I
         setIsProcessing(true);
         setProgress({ done: 0, total: urls.length });
 
+        // Shown the instant the owner submits, not once the first edit comes back —
+        // otherwise the message reads as though it never sent until the AI answers.
+        // For a typed instruction this is already the final text; for voice it's a
+        // placeholder, patched below with the real transcript once it's known.
+        setMessages((prev) => [
+            ...prev,
+            { role: "user", text: text ?? "Voice message…", kind: audio ? "voice" : "text" },
+        ]);
+
         const replacements: ImageReplacement[] = [];
         let resolvedText = text;
-        let userBubbleShown = false;
+        let transcriptApplied = !audio;
         let failureCount = 0;
 
         for (const url of urls) {
@@ -108,12 +117,17 @@ const useImageEditChat = (businessId: string, onImagesReplaced: (replacements: I
 
                 resolvedText = job.prompt;
 
-                if (!userBubbleShown) {
-                    setMessages((prev) => [
-                        ...prev,
-                        { role: "user", text: job.prompt, kind: audio ? "voice" : "text" },
-                    ]);
-                    userBubbleShown = true;
+                if (!transcriptApplied) {
+                    const transcript = job.prompt;
+                    setMessages((prev) => {
+                        const lastUserIndex = prev.map((m) => m.role).lastIndexOf("user");
+                        if (lastUserIndex === -1) return prev;
+
+                        const next = [...prev];
+                        next[lastUserIndex] = { ...next[lastUserIndex], text: transcript };
+                        return next;
+                    });
+                    transcriptApplied = true;
                 }
 
                 if (job.outputImageUrl) {
@@ -121,15 +135,6 @@ const useImageEditChat = (businessId: string, onImagesReplaced: (replacements: I
                 }
             } catch (e) {
                 failureCount += 1;
-
-                if (!userBubbleShown) {
-                    setMessages((prev) => [
-                        ...prev,
-                        { role: "user", text: text ?? "Voice instruction", kind: audio ? "voice" : "text" },
-                    ]);
-                    userBubbleShown = true;
-                }
-
                 setError(describeError(e, "Couldn't edit one of the images."));
             }
 

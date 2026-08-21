@@ -12,11 +12,17 @@ import useVoiceRecorder from "./useVoiceRecorder";
  * off draft.status and draft.canConfirm — the component renders that rather than
  * tracking its own idea of the conversation.
  */
+export type PendingChatMessage = { text: string; kind: "text" | "voice" };
+
 const useProductAiChat = (businessId: string, onProductCreated: () => void) => {
     const [isOpen, setIsOpen] = useState(false);
     const [draft, setDraft] = useState<ProductDraft | undefined>(undefined);
     const [messageInput, setMessageInput] = useState("");
     const [error, setError] = useState<string | undefined>(undefined);
+    // Echoed the instant the owner sends something, before the round trip that
+    // actually adds it to draft.messages — otherwise the bubble only appears once
+    // the assistant's reply comes back, which reads as the message not having sent.
+    const [pendingMessage, setPendingMessage] = useState<PendingChatMessage | undefined>(undefined);
 
     const describeError = (e: unknown, fallback: string) =>
         e instanceof ApiError ? e.message : fallback;
@@ -29,9 +35,17 @@ const useProductAiChat = (businessId: string, onProductCreated: () => void) => {
     const voice = useVoiceRecorder((audio) => {
         if (!draft) return;
 
+        setPendingMessage({ text: "Voice message…", kind: "voice" });
+
         draftApi.sendVoice.mutate(
             { draftId: draft.id, audio },
-            { onError: (e) => setError(describeError(e, "Couldn't send that recording.")) }
+            {
+                onSuccess: () => setPendingMessage(undefined),
+                onError: (e) => {
+                    setPendingMessage(undefined);
+                    setError(describeError(e, "Couldn't send that recording."));
+                },
+            }
         );
     });
 
@@ -53,6 +67,7 @@ const useProductAiChat = (businessId: string, onProductCreated: () => void) => {
         setDraft(undefined);
         setMessageInput("");
         setError(undefined);
+        setPendingMessage(undefined);
     };
 
     const sendMessage = () => {
@@ -60,13 +75,16 @@ const useProductAiChat = (businessId: string, onProductCreated: () => void) => {
         if (!draft || !message) return;
 
         setMessageInput("");
+        setPendingMessage({ text: message, kind: "text" });
 
         draftApi.sendMessage.mutate(
             { draftId: draft.id, message },
             {
+                onSuccess: () => setPendingMessage(undefined),
                 onError: (e) => {
                     // Restored so a failed turn doesn't cost the owner what they typed.
                     setMessageInput(message);
+                    setPendingMessage(undefined);
                     setError(describeError(e, "Couldn't send that message."));
                 },
             }
@@ -133,6 +151,7 @@ const useProductAiChat = (businessId: string, onProductCreated: () => void) => {
         isBusy,
         isConfirming: draftApi.confirm.isPending,
         error,
+        pendingMessage,
 
         messageInput,
         setMessageInput,
