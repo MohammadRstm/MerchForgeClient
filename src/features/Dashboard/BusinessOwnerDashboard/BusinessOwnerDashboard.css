@@ -383,6 +383,89 @@
     color: #333;
 }
 
+/* ---------- Color list field ---------- */
+
+.color-list-field {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.color-swatch {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.color-swatch__remove {
+    opacity: 0;
+    color: #fff;
+    font-size: 16px;
+    line-height: 1;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
+    transition: opacity 0.1s ease;
+}
+
+.color-swatch:hover .color-swatch__remove {
+    opacity: 1;
+}
+
+.color-swatch--add {
+    background: #fff;
+    border: 1px dashed #b5b5b5;
+    color: #8a8a8a;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.color-swatch--add:hover,
+.color-swatch--active {
+    border-color: #2563eb;
+    color: #2563eb;
+}
+
+.color-picker-popover {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid #e2e2e2;
+    border-radius: 10px;
+    width: fit-content;
+}
+
+.color-picker-popover__brightness {
+    width: 160px;
+}
+
+.color-picker-popover__footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.color-picker-popover__preview {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    flex-shrink: 0;
+}
+
+.color-picker-popover__hex {
+    font-size: 13px;
+    font-family: monospace;
+    color: #333;
+    margin-right: auto;
+}
+
 /* ---------- Image dropzone ---------- */
 
 .product-image-field {

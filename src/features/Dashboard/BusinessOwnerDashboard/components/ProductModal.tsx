@@ -3,6 +3,7 @@ import Spinner from "../../../../components/LoadingSpinner/LoadingSpinner";
 import type { ProductFormField } from "../types";
 import type useProductModal from "../hooks/ui/useProductModal";
 import ProductImagesField from "./ProductImagesField";
+import ColorListField from "./ColorListField";
 
 type ProductModalProps = {
     modal: ReturnType<typeof useProductModal>;
@@ -37,6 +38,10 @@ const MetadataField = ({
     }
 
     const textValue = typeof value === "string" ? value : "";
+
+    if (field.valueType === "ColorList") {
+        return <ColorListField field={field} value={textValue} onChange={onChange} />;
+    }
 
     return (
         <div className="business-dashboard-form-field">

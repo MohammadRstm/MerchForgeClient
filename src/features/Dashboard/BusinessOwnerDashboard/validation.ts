@@ -54,7 +54,7 @@ export const productImageSchema = z.object({
     displayOrder: z.number(),
 });
 
-export const productValueTypeSchema = z.enum(["Text", "Number", "Boolean", "TextList"]);
+export const productValueTypeSchema = z.enum(["Text", "Number", "Boolean", "TextList", "ColorList"]);
 
 export const productFormFieldSchema = z.object({
     key: z.string(),
