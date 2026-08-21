@@ -1,10 +1,12 @@
 import useDashboardStats from "./data/useDashboardStats";
 import useDashboardUsers from "./data/useDashboardUsers";
 import useDashboardBusinesses from "./data/useDashboardBusinesses";
+import useDashboardWebsiteTemplates from "./data/useDashboardWebsiteTemplates";
 import useUsersTableState from "./ui/useUsersTableState";
 import useBusinessesTableState from "./ui/useBusinessesTableState";
 import useRevokeConfirmation from "./ui/useRevokeConfirmation";
 import useInviteBusinessOwnerForm from "./ui/useInviteBusinessOwnerForm";
+import useCreateWebsiteTemplateForm from "./ui/useCreateWebsiteTemplateForm";
 
 const useSuperAdminDashboardPage = () => {
     const {
@@ -30,8 +32,15 @@ const useSuperAdminDashboardPage = () => {
         isError: businessesError,
     } = useDashboardBusinesses(businessesTable.query);
 
+    const {
+        data: websiteTemplates,
+        isLoading: websiteTemplatesLoading,
+        isError: websiteTemplatesError,
+    } = useDashboardWebsiteTemplates();
+
     const revokeConfirmation = useRevokeConfirmation();
     const inviteForm = useInviteBusinessOwnerForm();
+    const createTemplateForm = useCreateWebsiteTemplateForm();
 
     return {
         stats,
@@ -50,8 +59,13 @@ const useSuperAdminDashboardPage = () => {
         businessesError,
         businessesTable,
 
+        websiteTemplates,
+        websiteTemplatesLoading,
+        websiteTemplatesError,
+
         revokeConfirmation,
         inviteForm,
+        createTemplateForm,
     };
 };
 

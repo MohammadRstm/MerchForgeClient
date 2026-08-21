@@ -256,6 +256,12 @@
     gap: 6px;
 }
 
+.dashboard-form-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
 .dashboard-invite-label {
     font-size: 13px;
     font-weight: 600;

@@ -6,6 +6,8 @@ import type {
     dashboardBusinessResponseSchema,
     revokeUserSessionsResponseSchema,
     businessOwnerInvitationResponseSchema,
+    websiteTemplateResponseSchema,
+    createWebsiteTemplateFormSchema,
 } from "./validation";
 
 export type DashboardStatsResponse = z.infer<typeof dashboardStatsResponseSchema>;
@@ -13,6 +15,19 @@ export type DashboardUserResponse = z.infer<typeof dashboardUserResponseSchema>;
 export type DashboardBusinessResponse = z.infer<typeof dashboardBusinessResponseSchema>;
 export type RevokeUserSessionsResponse = z.infer<typeof revokeUserSessionsResponseSchema>;
 export type BusinessOwnerInvitationResponse = z.infer<typeof businessOwnerInvitationResponseSchema>;
+export type WebsiteTemplateResponse = z.infer<typeof websiteTemplateResponseSchema>;
+
+/** The coerced/validated shape submitted to the API — displayOrder is a real number here. */
+export type CreateWebsiteTemplatePayload = z.infer<typeof createWebsiteTemplateFormSchema>;
+
+/** The raw, string-backed shape the form's controlled inputs hold before validation. */
+export type CreateWebsiteTemplateFormValues = {
+    businessDomainId: string;
+    name: string;
+    label: string;
+    videoPreviewUrl: string;
+    displayOrder: string;
+};
 
 export type UsersSortField = "CreatedAt" | "Name" | "Email";
 export type BusinessesSortField = "CreatedAt" | "Name" | "MemberCount" | "ProductCount";

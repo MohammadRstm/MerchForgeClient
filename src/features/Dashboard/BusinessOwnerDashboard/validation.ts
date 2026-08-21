@@ -196,3 +196,27 @@ export const businessSubscriptionResponseSchema = z
         features: z.array(planFeatureItemSchema),
     })
     .nullable();
+
+// ---- website template ----
+
+export const websiteTemplateOptionSchema = z.object({
+    id: z.string().uuid(),
+    name: z.string(),
+    label: z.string(),
+    videoPreviewUrl: z.string(),
+});
+
+export const chosenWebsiteTemplateSchema = z.object({
+    id: z.string().uuid(),
+    name: z.string(),
+    label: z.string(),
+    videoPreviewUrl: z.string(),
+    chosenAt: z.iso.datetime(),
+});
+
+export const businessWebsiteTemplateStatusSchema = z.object({
+    businessDomainId: z.string().uuid(),
+    domainName: z.string(),
+    chosen: chosenWebsiteTemplateSchema.nullable(),
+    available: z.array(websiteTemplateOptionSchema),
+});

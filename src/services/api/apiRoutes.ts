@@ -22,6 +22,7 @@ export const apiRoutes = {
     DASHBOARD_USERS : "/Dashboard/users",
     DASHBOARD_BUSINESSES : "/Dashboard/businesses",
     DASHBOARD_REVOKE_USER_SESSIONS : (userId : string) => `/Dashboard/users/${userId}/revoke-sessions`,
+    DASHBOARD_WEBSITE_TEMPLATES : "/Dashboard/website-templates",
 
     /** BUSINESS DASHBOARD */
     BUSINESS_DASHBOARD_STATS : (businessId : string) => `/businesses/${businessId}/dashboard/stats`,
@@ -31,6 +32,7 @@ export const apiRoutes = {
     BUSINESS_DASHBOARD_PRODUCT_FORM : (businessId : string) => `/businesses/${businessId}/dashboard/product-form`,
     BUSINESS_DASHBOARD_PRODUCT : (businessId : string, productId : string) => `/businesses/${businessId}/dashboard/products/${productId}`,
     BUSINESS_DASHBOARD_PRODUCT_IMAGE : (businessId : string) => `/businesses/${businessId}/dashboard/products/image`,
+    BUSINESS_DASHBOARD_WEBSITE_TEMPLATE : (businessId : string) => `/businesses/${businessId}/dashboard/website-template`,
 
     /** AI PRODUCT DRAFTS */
     PRODUCT_DRAFTS : (businessId : string) => `/businesses/${businessId}/dashboard/product-drafts`,

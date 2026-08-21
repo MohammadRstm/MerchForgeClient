@@ -4,8 +4,17 @@
     padding: 32px 24px 64px;
 }
 
-.business-dashboard-heading {
+.business-dashboard-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
     margin-bottom: 24px;
+}
+
+.business-dashboard-heading {
+    margin-bottom: 0;
 }
 
 .business-dashboard-stats-loading {
@@ -947,4 +956,62 @@
     .business-dashboard-member-row {
         grid-template-columns: 1fr;
     }
+}
+
+/* ---------- Website template picker ---------- */
+
+.website-template-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.website-template-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px;
+    border: 2px solid #e2e2e2;
+    border-radius: 10px;
+    background: #fff;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.15s ease;
+}
+
+.website-template-card:hover {
+    border-color: #93c5fd;
+}
+
+.website-template-card--selected {
+    border-color: #2563eb;
+}
+
+.website-template-card__video-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 16 / 10;
+    border-radius: 6px;
+    background: #f5f5f5;
+    overflow: hidden;
+}
+
+.website-template-card__video-placeholder video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.website-template-card__video-fallback {
+    font-size: 13px;
+    color: #8a8a8a;
+}
+
+.website-template-card__label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    padding: 0 4px 4px;
 }
