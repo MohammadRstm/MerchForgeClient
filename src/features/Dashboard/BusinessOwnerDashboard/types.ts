@@ -12,6 +12,7 @@ import type {
     productImageSchema,
     businessSubscriptionResponseSchema,
     productDraftMessageSchema,
+    productDraftProductSchema,
     productDraftSchema,
     productDraftStatusSchema,
     productFormFieldSchema,
@@ -77,6 +78,7 @@ export type ProductFormValues = {
 export type ProductDraft = z.infer<typeof productDraftSchema>;
 export type ProductDraftMessage = z.infer<typeof productDraftMessageSchema>;
 export type ProductDraftStatus = z.infer<typeof productDraftStatusSchema>;
+export type ProductDraftProduct = z.infer<typeof productDraftProductSchema>;
 
 export type ProductSortField = "CreatedAt" | "Title" | "Price";
 

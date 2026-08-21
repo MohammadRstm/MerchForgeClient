@@ -10,7 +10,6 @@ import SubscriptionCard from "./components/SubscriptionCard";
 import ProductModal from "./components/ProductModal";
 import ProductDetailModal from "./components/ProductDetailModal";
 import DeleteProductModal from "./components/DeleteProductModal";
-import ProductAiChatModal from "./components/ProductAiChatModal";
 import MemberModal from "./components/MemberModal";
 import MemberCredentialsModal from "./components/MemberCredentialsModal";
 import ChooseWebsiteTemplateModal from "./components/ChooseWebsiteTemplateModal";
@@ -145,11 +144,9 @@ const BusinessOwnerDashboard = () => {
                 deletingProductId={isDeletingProduct ? productPendingDeletion?.id : undefined}
             />
 
-            <ProductModal modal={productModal} onFillWithAi={openAiChat} />
+            <ProductModal modal={productModal} onFillWithAi={openAiChat} chat={aiChat} />
 
             <ProductDetailModal modal={productDetailModal} onEdit={editFromDetail} />
-
-            <ProductAiChatModal chat={aiChat} />
 
             <DeleteProductModal
                 product={productPendingDeletion}

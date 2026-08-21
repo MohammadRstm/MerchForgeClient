@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { SaveProductPayload } from "../../../../../services/api/businessDashboard.api";
 import type {
     BusinessProductDetail,
@@ -101,7 +101,7 @@ const formValuesToMetadata = (
 };
 
 /** yyyy-MM-dd for <input type="date">, in the browser's local time — dates aren't times, so no timezone conversion belongs here. */
-const isoToDateInputValue = (iso: string | null): string => {
+export const isoToDateInputValue = (iso: string | null): string => {
     if (!iso) return "";
     const date = new Date(iso);
     if (Number.isNaN(date.getTime())) return "";
@@ -148,14 +148,18 @@ const useProductFormState = (
         setErrors({});
     }, [editingProduct, fields]);
 
-    const setField = <K extends keyof ProductFormValues>(key: K, value: ProductFormValues[K]) => {
+    // Stable across renders (empty deps -- both only ever touch the setState
+    // setters, which React itself guarantees are stable) so effects elsewhere,
+    // like the AI draft sync in ProductModal, can depend on them safely without
+    // re-running on every render.
+    const setField = useCallback(<K extends keyof ProductFormValues>(key: K, value: ProductFormValues[K]) => {
         setValues((prev) => ({ ...prev, [key]: value }));
         setErrors((prev) => ({ ...prev, [key]: undefined }));
-    };
+    }, []);
 
-    const setMetadataField = (key: string, value: string | boolean) => {
+    const setMetadataField = useCallback((key: string, value: string | boolean) => {
         setValues((prev) => ({ ...prev, metadata: { ...prev.metadata, [key]: value } }));
-    };
+    }, []);
 
     /**
      * The first image ever added becomes main automatically; every image after that

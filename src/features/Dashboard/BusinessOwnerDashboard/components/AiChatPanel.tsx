@@ -1,10 +1,11 @@
 import { useEffect, useRef } from "react";
-import Modal from "../../../../components/Modal/Modal";
+import type { CSSProperties } from "react";
+import { FiMic, FiSquare, FiX } from "react-icons/fi";
 import Spinner from "../../../../components/LoadingSpinner/LoadingSpinner";
 import type useProductAiChat from "../hooks/ui/useProductAiChat";
 import { resolveImageUrl } from "../utils/resolveImageUrl";
 
-type ProductAiChatModalProps = {
+type AiChatPanelProps = {
     chat: ReturnType<typeof useProductAiChat>;
 };
 
@@ -13,13 +14,22 @@ const currencyFormatter = new Intl.NumberFormat(undefined, {
     currency: "USD",
 });
 
+const formatElapsed = (ms: number) => {
+    const totalSeconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${String(seconds).padStart(2, "0")}`;
+};
+
 /**
- * Presentation for the AI conversation. Holds no workflow logic: what to offer is
- * read off the draft's status and canConfirm, both decided by the backend.
+ * The AI conversation, rendered as its own card beside the product form rather
+ * than replacing it. Holds no workflow logic: what to offer is read off the
+ * draft's status and canConfirm, both decided by the backend. Creating the
+ * product is not this panel's job — that button lives on the form card, since
+ * confirming is really "the form is done," whether AI or the owner filled it.
  */
-const ProductAiChatModal = ({ chat }: ProductAiChatModalProps) => {
+const AiChatPanel = ({ chat }: AiChatPanelProps) => {
     const {
-        isOpen,
         cancel,
         draft,
         isStarting,
@@ -29,13 +39,10 @@ const ProductAiChatModal = ({ chat }: ProductAiChatModalProps) => {
         messageInput,
         setMessageInput,
         sendMessage,
-        attachImage,
         resolveImage,
-        confirm,
         voice,
     } = chat;
 
-    const imageInputRef = useRef<HTMLInputElement>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     // Keeps the newest turn in view as the conversation grows.
@@ -47,12 +54,21 @@ const ProductAiChatModal = ({ chat }: ProductAiChatModalProps) => {
     const isFinished = draft?.status === "Completed" || draft?.status === "Cancelled";
 
     return (
-        <Modal isOpen={isOpen} onClose={cancel}>
-            <Modal.Header>
-                <h2>Fill with AI</h2>
-            </Modal.Header>
+        <div className="modal-container ai-chat-card">
+            <button
+                type="button"
+                className="modal-cancel-button"
+                onClick={cancel}
+                aria-label="Close AI assistant"
+            >
+                <FiX />
+            </button>
 
-            <Modal.Body>
+            <div className="modal-header">
+                <h2>Fill with AI</h2>
+            </div>
+
+            <div className="ai-chat-card__body">
                 {isStarting ? (
                     <div className="business-dashboard-table-loading">
                         <Spinner size={28} />
@@ -71,7 +87,7 @@ const ProductAiChatModal = ({ chat }: ProductAiChatModalProps) => {
                                 >
                                     {message.kind === "voice" && (
                                         <span className="ai-chat__kind" title="Sent as a voice message">
-                                            🎤
+                                            <FiMic />
                                         </span>
                                     )}
                                     <span>{message.text}</span>
@@ -80,7 +96,11 @@ const ProductAiChatModal = ({ chat }: ProductAiChatModalProps) => {
 
                             {isBusy && !isConfirming && (
                                 <div className="ai-chat__message ai-chat__message--assistant ai-chat__message--pending">
-                                    <Spinner size={16} />
+                                    <span className="ai-chat__typing" aria-label="Assistant is typing">
+                                        <span />
+                                        <span />
+                                        <span />
+                                    </span>
                                 </div>
                             )}
 
@@ -156,6 +176,41 @@ const ProductAiChatModal = ({ chat }: ProductAiChatModalProps) => {
                                     <dt>Category</dt>
                                     <dd>{draft.draft.categoryName ?? "—"}</dd>
 
+                                    {draft.draft.compareAtPrice != null && (
+                                        <>
+                                            <dt>Compare-at price</dt>
+                                            <dd>{currencyFormatter.format(draft.draft.compareAtPrice)}</dd>
+                                        </>
+                                    )}
+
+                                    {draft.draft.sku != null && (
+                                        <>
+                                            <dt>SKU</dt>
+                                            <dd>{draft.draft.sku}</dd>
+                                        </>
+                                    )}
+
+                                    {draft.draft.stockQuantity != null && (
+                                        <>
+                                            <dt>Stock</dt>
+                                            <dd>{draft.draft.stockQuantity}</dd>
+                                        </>
+                                    )}
+
+                                    {draft.draft.tags.length > 0 && (
+                                        <>
+                                            <dt>Tags</dt>
+                                            <dd>{draft.draft.tags.join(", ")}</dd>
+                                        </>
+                                    )}
+
+                                    {draft.draft.saleEndsAt != null && (
+                                        <>
+                                            <dt>Sale ends</dt>
+                                            <dd>{new Date(draft.draft.saleEndsAt).toLocaleDateString()}</dd>
+                                        </>
+                                    )}
+
                                     {draft.draft.metadata &&
                                         Object.entries(draft.draft.metadata).map(([key, value]) => (
                                             <div key={key} style={{ display: "contents" }}>
@@ -183,72 +238,6 @@ const ProductAiChatModal = ({ chat }: ProductAiChatModalProps) => {
                             </p>
                         )}
 
-                        {!isFinished && !awaitingImageApproval && (
-                            <div className="ai-chat__composer">
-                                <button
-                                    type="button"
-                                    className="business-dashboard-button-ghost"
-                                    onClick={() => imageInputRef.current?.click()}
-                                    disabled={isBusy}
-                                    title="Attach a product photo"
-                                >
-                                    📎
-                                </button>
-
-                                {voice.isSupported && (
-                                    <button
-                                        type="button"
-                                        className={`business-dashboard-button-ghost${
-                                            voice.isRecording ? " ai-chat__record--active" : ""
-                                        }`}
-                                        onClick={voice.isRecording ? voice.stop : voice.start}
-                                        disabled={isBusy}
-                                        title={voice.isRecording ? "Stop recording" : "Record a voice message"}
-                                    >
-                                        {voice.isRecording ? "■" : "🎤"}
-                                    </button>
-                                )}
-
-                                <input
-                                    className="business-dashboard-form-input"
-                                    placeholder={
-                                        voice.isRecording ? "Recording…" : "Describe your product…"
-                                    }
-                                    value={messageInput}
-                                    onChange={(e) => setMessageInput(e.target.value)}
-                                    onKeyDown={(e) => {
-                                        if (e.key === "Enter") {
-                                            e.preventDefault();
-                                            sendMessage();
-                                        }
-                                    }}
-                                    disabled={isBusy || voice.isRecording}
-                                    aria-label="Message"
-                                />
-
-                                <button
-                                    type="button"
-                                    className="business-dashboard-button-primary"
-                                    onClick={sendMessage}
-                                    disabled={isBusy || !messageInput.trim()}
-                                >
-                                    Send
-                                </button>
-
-                                <input
-                                    ref={imageInputRef}
-                                    type="file"
-                                    accept="image/jpeg,image/png,image/gif,image/webp"
-                                    hidden
-                                    onChange={(e) => {
-                                        const file = e.target.files?.[0];
-                                        if (file) attachImage(file);
-                                        e.target.value = "";
-                                    }}
-                                />
-                            </div>
-                        )}
-
                         {voice.error && (
                             <p className="business-dashboard-form-error" role="alert">
                                 {voice.error}
@@ -256,26 +245,70 @@ const ProductAiChatModal = ({ chat }: ProductAiChatModalProps) => {
                         )}
                     </div>
                 )}
-            </Modal.Body>
+            </div>
 
-            <Modal.Footer>
-                <button type="button" className="business-dashboard-button-secondary" onClick={cancel}>
-                    Cancel
-                </button>
+            {draft && !isFinished && !awaitingImageApproval && (
+                <div className="ai-chat-card__composer">
+                    {voice.isSupported && (
+                        <button
+                            type="button"
+                            className={`business-dashboard-button-ghost${
+                                voice.isRecording ? " ai-chat__record--active" : ""
+                            }`}
+                            onClick={voice.isRecording ? voice.stop : voice.start}
+                            disabled={isBusy}
+                            title={voice.isRecording ? "Stop recording" : "Record a voice message"}
+                            aria-label={voice.isRecording ? "Stop recording" : "Record a voice message"}
+                        >
+                            {voice.isRecording ? <FiSquare /> : <FiMic />}
+                        </button>
+                    )}
 
-                {/* Gated on the backend's canConfirm, never on the assistant saying it
-                    looks done — creating the product is always an explicit action. */}
-                <button
-                    type="button"
-                    className="business-dashboard-button-primary"
-                    onClick={confirm}
-                    disabled={!draft?.canConfirm || isBusy}
-                >
-                    {isConfirming ? "Creating…" : "Create product"}
-                </button>
-            </Modal.Footer>
-        </Modal>
+                    {voice.isRecording ? (
+                        <div className="ai-chat__recording" aria-live="polite">
+                            <span className="ai-chat__recording-dot" />
+
+                            <span className="ai-chat__recording-wave">
+                                {voice.waveform.map((level, index) => (
+                                    <span
+                                        key={index}
+                                        style={{ "--level": level } as CSSProperties}
+                                    />
+                                ))}
+                            </span>
+
+                            <span className="ai-chat__recording-time">{formatElapsed(voice.elapsedMs)}</span>
+                        </div>
+                    ) : (
+                        <input
+                            className="business-dashboard-form-input"
+                            placeholder="Describe your product…"
+                            value={messageInput}
+                            onChange={(e) => setMessageInput(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                    e.preventDefault();
+                                    sendMessage();
+                                }
+                            }}
+                            disabled={isBusy}
+                            aria-label="Message"
+                        />
+                    )}
+
+                    <button
+                        type="button"
+                        className="business-dashboard-button-primary"
+                        onClick={sendMessage}
+                        disabled={isBusy || voice.isRecording || !messageInput.trim()}
+                        hidden={voice.isRecording}
+                    >
+                        Send
+                    </button>
+                </div>
+            )}
+        </div>
     );
 };
 
-export default ProductAiChatModal;
+export default AiChatPanel;

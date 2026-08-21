@@ -1,9 +1,37 @@
-import Modal from "../../../../components/Modal/Modal";
+import { useEffect, useRef } from "react";
 import Spinner from "../../../../components/LoadingSpinner/LoadingSpinner";
-import type { ProductFormField } from "../types";
+import type { ProductDraftProduct, ProductFormField } from "../types";
 import type useProductModal from "../hooks/ui/useProductModal";
+import type useProductAiChat from "../hooks/ui/useProductAiChat";
 import ProductImagesField from "./ProductImagesField";
 import ColorListField from "./ColorListField";
+import AiChatPanel from "./AiChatPanel";
+import useClickOutside from "../../../../hooks/useClickOutsideElementToClose";
+import { isoToDateInputValue } from "../hooks/ui/useProductFormState";
+
+/**
+ * Only touches the metadata keys the assistant has actually mentioned. Looping
+ * over the full field list (the way editing an existing product populates the
+ * form) would blank out anything the owner already typed for a key the AI
+ * hasn't reached yet — the draft only ever reveals fields, it never clears them.
+ */
+const applyAiMetadataToForm = (
+    metadata: Record<string, unknown>,
+    fields: ProductFormField[],
+    setMetadataField: (key: string, value: string | boolean) => void
+) => {
+    for (const [key, raw] of Object.entries(metadata)) {
+        const field = fields.find((f) => f.key === key);
+        if (!field || raw == null) continue;
+
+        if (field.valueType === "Boolean") {
+            setMetadataField(key, raw === true);
+            continue;
+        }
+
+        setMetadataField(key, Array.isArray(raw) ? raw.join(", ") : String(raw));
+    }
+};
 
 type ProductModalProps = {
     modal: ReturnType<typeof useProductModal>;
@@ -12,6 +40,8 @@ type ProductModalProps = {
      * conversation would create a second product rather than update this one.
      */
     onFillWithAi?: () => void;
+    /** Present alongside onFillWithAi — its isOpen decides whether the AI card is showing. */
+    chat?: ReturnType<typeof useProductAiChat>;
 };
 
 /** Renders the input that matches an optional field's declared value type. */
@@ -68,7 +98,7 @@ const MetadataField = ({
     );
 };
 
-const ProductModal = ({ modal, onFillWithAi }: ProductModalProps) => {
+const ProductModal = ({ modal, onFillWithAi, chat }: ProductModalProps) => {
     const {
         isOpen,
         isEditing,
@@ -93,259 +123,344 @@ const ProductModal = ({ modal, onFillWithAi }: ProductModalProps) => {
     } = modal;
 
     const isPreparing = productFormLoading || editingProductLoading;
+    const isChatOpen = Boolean(chat?.isOpen);
+    // Confirming has its own "Creating…" state on the button, so the glow is
+    // reserved for genuinely waiting on the assistant's next turn.
+    const isAiThinking = isChatOpen && Boolean(chat?.isBusy) && !chat?.isConfirming;
+
+    const wrapperRef = useRef<HTMLDivElement>(null);
+
+    // Cancelling the AI conversation is part of closing the pair while it's open —
+    // otherwise a draft would keep running in the background with no way back to it.
+    const handleClose = () => {
+        if (chat?.isOpen) chat.cancel();
+        close();
+    };
+
+    useClickOutside(wrapperRef, handleClose);
+
+    // Mirrors the assistant's structured understanding into the real form fields
+    // as it arrives, so the owner watches the form fill in rather than only
+    // reading it off the chat's own "Product so far" preview. Only ever reveals
+    // values -- a field the AI hasn't reached yet (still null) is left exactly
+    // as the owner left it, never cleared.
+    const aiDraftProduct: ProductDraftProduct | undefined = chat?.draft?.draft ?? undefined;
+
+    useEffect(() => {
+        if (!aiDraftProduct) return;
+
+        if (aiDraftProduct.title != null) setField("title", aiDraftProduct.title);
+        if (aiDraftProduct.description != null) setField("description", aiDraftProduct.description);
+        if (aiDraftProduct.price != null) setField("price", String(aiDraftProduct.price));
+        if (aiDraftProduct.compareAtPrice != null) setField("compareAtPrice", String(aiDraftProduct.compareAtPrice));
+        if (aiDraftProduct.categoryId != null) setField("categoryId", aiDraftProduct.categoryId);
+        if (aiDraftProduct.sku != null) setField("sku", aiDraftProduct.sku);
+        if (aiDraftProduct.stockQuantity != null) setField("stockQuantity", String(aiDraftProduct.stockQuantity));
+        if (aiDraftProduct.tags.length > 0) setField("tags", aiDraftProduct.tags.join(", "));
+        if (aiDraftProduct.saleEndsAt != null) setField("saleEndsAt", isoToDateInputValue(aiDraftProduct.saleEndsAt));
+        if (aiDraftProduct.metadata != null) {
+            applyAiMetadataToForm(aiDraftProduct.metadata, form, setMetadataField);
+        }
+    }, [aiDraftProduct, form, setField, setMetadataField]);
+
+    if (!isOpen) return null;
+
+    // Confirming an AI draft and submitting the manual form both mean the same
+    // thing — "this product is done" — so there is only ever one primary action.
+    // While the assistant is open it's wired to the draft's confirm instead of the
+    // plain form submit; the chat card itself offers no create action of its own.
+    const primaryLabel = isChatOpen
+        ? chat?.isConfirming
+            ? "Creating…"
+            : "Create product"
+        : isSaving
+          ? "Saving…"
+          : isEditing
+            ? "Save changes"
+            : "Add product";
+
+    const primaryDisabled = isChatOpen
+        ? !chat?.draft?.canConfirm || chat?.isBusy
+        : isSaving || isPreparing || imageUploading;
+
+    const handlePrimaryAction = isChatOpen ? chat?.confirm : submit;
 
     return (
-        <Modal isOpen={isOpen} onClose={close}>
-            <Modal.Header>
-                <div className="product-modal__header">
-                    <h2>{isEditing ? "Edit product" : "Add product"}</h2>
+        <div className="modal-backdrop">
+            <div ref={wrapperRef} className="product-ai-modals">
+                <div className="modal-container product-form-card">
+                    {isAiThinking && (
+                        // Traces the card's own border rather than anything inside it — a
+                        // short segment of stroke chasing continuously around the perimeter,
+                        // not a spinner or gradient blob sitting over the form.
+                        <svg className="product-form-card__glow-trace" aria-hidden="true">
+                            <rect x="0" y="0" width="100%" height="100%" rx="16" pathLength={100} />
+                        </svg>
+                    )}
 
-                    {!isEditing && onFillWithAi && (
+                    <button
+                        type="button"
+                        className="modal-cancel-button"
+                        onClick={handleClose}
+                        aria-label="Close modal"
+                    >
+                        ×
+                    </button>
+
+                    <div className="modal-header">
+                        <div className="product-modal__header">
+                            <h2>{isEditing ? "Edit product" : "Add product"}</h2>
+
+                            {!isEditing && onFillWithAi && !isChatOpen && (
+                                <button
+                                    type="button"
+                                    className="business-dashboard-button-secondary product-modal__ai-button"
+                                    onClick={onFillWithAi}
+                                    disabled={isPreparing}
+                                >
+                                    ✨ Fill with AI
+                                </button>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="modal-body">
+                        {isPreparing ? (
+                            <div className="business-dashboard-table-loading">
+                                <Spinner size={28} />
+                            </div>
+                        ) : (
+                            <form className="business-dashboard-form" onSubmit={submit} noValidate>
+                                <ProductImagesField
+                                    images={values.images}
+                                    maxImages={maxImages}
+                                    isUploading={imageUploading}
+                                    uploadError={imageUploadError}
+                                    validationError={errors.images}
+                                    onAddImage={uploadImage}
+                                    onRemoveImage={removeImage}
+                                    onSetMainImage={setMainImage}
+                                />
+
+                                <div className="business-dashboard-form-field">
+                                    <label className="business-dashboard-form-label" htmlFor="product-title">
+                                        Title
+                                    </label>
+                                    <input
+                                        id="product-title"
+                                        className="business-dashboard-form-input"
+                                        value={values.title}
+                                        onChange={(e) => setField("title", e.target.value)}
+                                        aria-invalid={Boolean(errors.title)}
+                                    />
+                                    {errors.title && (
+                                        <span className="business-dashboard-form-error" role="alert">
+                                            {errors.title}
+                                        </span>
+                                    )}
+                                </div>
+
+                                <div className="business-dashboard-form-field">
+                                    <label className="business-dashboard-form-label" htmlFor="product-description">
+                                        Description
+                                    </label>
+                                    <textarea
+                                        id="product-description"
+                                        className="business-dashboard-form-input business-dashboard-form-textarea"
+                                        rows={3}
+                                        value={values.description}
+                                        onChange={(e) => setField("description", e.target.value)}
+                                        aria-invalid={Boolean(errors.description)}
+                                    />
+                                    {errors.description && (
+                                        <span className="business-dashboard-form-error" role="alert">
+                                            {errors.description}
+                                        </span>
+                                    )}
+                                </div>
+
+                                <div className="business-dashboard-form-row">
+                                    <div className="business-dashboard-form-field">
+                                        <label className="business-dashboard-form-label" htmlFor="product-price">
+                                            Price
+                                        </label>
+                                        <input
+                                            id="product-price"
+                                            className="business-dashboard-form-input"
+                                            type="number"
+                                            min="0"
+                                            step="0.01"
+                                            value={values.price}
+                                            onChange={(e) => setField("price", e.target.value)}
+                                            aria-invalid={Boolean(errors.price)}
+                                        />
+                                        {errors.price && (
+                                            <span className="business-dashboard-form-error" role="alert">
+                                                {errors.price}
+                                            </span>
+                                        )}
+                                    </div>
+
+                                    <div className="business-dashboard-form-field">
+                                        <label className="business-dashboard-form-label" htmlFor="product-compare-at-price">
+                                            Compare-at price
+                                            <span className="business-dashboard-form-optional"> (optional)</span>
+                                        </label>
+                                        <input
+                                            id="product-compare-at-price"
+                                            className="business-dashboard-form-input"
+                                            type="number"
+                                            min="0"
+                                            step="0.01"
+                                            placeholder="Shown struck through, for a sale"
+                                            value={values.compareAtPrice}
+                                            onChange={(e) => setField("compareAtPrice", e.target.value)}
+                                            aria-invalid={Boolean(errors.compareAtPrice)}
+                                        />
+                                        {errors.compareAtPrice && (
+                                            <span className="business-dashboard-form-error" role="alert">
+                                                {errors.compareAtPrice}
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="business-dashboard-form-row">
+                                    <div className="business-dashboard-form-field">
+                                        <label className="business-dashboard-form-label" htmlFor="product-category">
+                                            Category
+                                        </label>
+                                        <select
+                                            id="product-category"
+                                            className="business-dashboard-form-input"
+                                            value={values.categoryId}
+                                            onChange={(e) => setField("categoryId", e.target.value)}
+                                            aria-invalid={Boolean(errors.categoryId)}
+                                        >
+                                            <option value="">Select a category</option>
+                                            {productForm?.categories.map((category) => (
+                                                <option key={category.id} value={category.id}>
+                                                    {category.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        {errors.categoryId && (
+                                            <span className="business-dashboard-form-error" role="alert">
+                                                {errors.categoryId}
+                                            </span>
+                                        )}
+                                    </div>
+
+                                    <div className="business-dashboard-form-field">
+                                        <label className="business-dashboard-form-label" htmlFor="product-sku">
+                                            SKU
+                                            <span className="business-dashboard-form-optional"> (optional)</span>
+                                        </label>
+                                        <input
+                                            id="product-sku"
+                                            className="business-dashboard-form-input"
+                                            value={values.sku}
+                                            onChange={(e) => setField("sku", e.target.value)}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="business-dashboard-form-row">
+                                    <div className="business-dashboard-form-field">
+                                        <label className="business-dashboard-form-label" htmlFor="product-stock-quantity">
+                                            Stock quantity
+                                            <span className="business-dashboard-form-optional"> (optional — leave blank if untracked)</span>
+                                        </label>
+                                        <input
+                                            id="product-stock-quantity"
+                                            className="business-dashboard-form-input"
+                                            type="number"
+                                            min="0"
+                                            step="1"
+                                            value={values.stockQuantity}
+                                            onChange={(e) => setField("stockQuantity", e.target.value)}
+                                        />
+                                    </div>
+
+                                    <div className="business-dashboard-form-field">
+                                        <label className="business-dashboard-form-label" htmlFor="product-sale-ends-at">
+                                            Sale ends
+                                            <span className="business-dashboard-form-optional"> (optional)</span>
+                                        </label>
+                                        <input
+                                            id="product-sale-ends-at"
+                                            className="business-dashboard-form-input"
+                                            type="date"
+                                            value={values.saleEndsAt}
+                                            onChange={(e) => setField("saleEndsAt", e.target.value)}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="business-dashboard-form-field">
+                                    <label className="business-dashboard-form-label" htmlFor="product-tags">
+                                        Tags
+                                        <span className="business-dashboard-form-optional"> (optional)</span>
+                                    </label>
+                                    <input
+                                        id="product-tags"
+                                        className="business-dashboard-form-input"
+                                        placeholder="New, Bestseller, Limited Edition"
+                                        value={values.tags}
+                                        onChange={(e) => setField("tags", e.target.value)}
+                                    />
+                                    <span className="business-dashboard-form-hint">Separate multiple tags with commas.</span>
+                                </div>
+
+                                {form.length > 0 && (
+                                    <>
+                                        <hr className="business-dashboard-form-divider" />
+                                        <p className="business-dashboard-form-section">
+                                            Product details
+                                            <span className="business-dashboard-form-optional">
+                                                {" "}
+                                                — all optional
+                                            </span>
+                                        </p>
+
+                                        {form.map((field) => (
+                                            <MetadataField
+                                                key={field.key}
+                                                field={field}
+                                                value={values.metadata[field.key] ?? ""}
+                                                onChange={(value) => setMetadataField(field.key, value)}
+                                            />
+                                        ))}
+                                    </>
+                                )}
+
+                                {saveError && (
+                                    <p className="business-dashboard-form-error" role="alert">
+                                        {saveError}
+                                    </p>
+                                )}
+                            </form>
+                        )}
+                    </div>
+
+                    <div className="modal-footer">
+                        <button type="button" className="business-dashboard-button-secondary" onClick={handleClose}>
+                            Cancel
+                        </button>
                         <button
                             type="button"
-                            className="business-dashboard-button-secondary product-modal__ai-button"
-                            onClick={onFillWithAi}
-                            disabled={isPreparing}
+                            className="business-dashboard-button-primary"
+                            onClick={handlePrimaryAction}
+                            disabled={primaryDisabled}
                         >
-                            ✨ Fill with AI
+                            {primaryLabel}
                         </button>
-                    )}
-                </div>
-            </Modal.Header>
-
-            <Modal.Body>
-                {isPreparing ? (
-                    <div className="business-dashboard-table-loading">
-                        <Spinner size={28} />
                     </div>
-                ) : (
-                    <form className="business-dashboard-form" onSubmit={submit} noValidate>
-                        <ProductImagesField
-                            images={values.images}
-                            maxImages={maxImages}
-                            isUploading={imageUploading}
-                            uploadError={imageUploadError}
-                            validationError={errors.images}
-                            onAddImage={uploadImage}
-                            onRemoveImage={removeImage}
-                            onSetMainImage={setMainImage}
-                        />
+                </div>
 
-                        <div className="business-dashboard-form-field">
-                            <label className="business-dashboard-form-label" htmlFor="product-title">
-                                Title
-                            </label>
-                            <input
-                                id="product-title"
-                                className="business-dashboard-form-input"
-                                value={values.title}
-                                onChange={(e) => setField("title", e.target.value)}
-                                aria-invalid={Boolean(errors.title)}
-                            />
-                            {errors.title && (
-                                <span className="business-dashboard-form-error" role="alert">
-                                    {errors.title}
-                                </span>
-                            )}
-                        </div>
-
-                        <div className="business-dashboard-form-field">
-                            <label className="business-dashboard-form-label" htmlFor="product-description">
-                                Description
-                            </label>
-                            <textarea
-                                id="product-description"
-                                className="business-dashboard-form-input business-dashboard-form-textarea"
-                                rows={3}
-                                value={values.description}
-                                onChange={(e) => setField("description", e.target.value)}
-                                aria-invalid={Boolean(errors.description)}
-                            />
-                            {errors.description && (
-                                <span className="business-dashboard-form-error" role="alert">
-                                    {errors.description}
-                                </span>
-                            )}
-                        </div>
-
-                        <div className="business-dashboard-form-row">
-                            <div className="business-dashboard-form-field">
-                                <label className="business-dashboard-form-label" htmlFor="product-price">
-                                    Price
-                                </label>
-                                <input
-                                    id="product-price"
-                                    className="business-dashboard-form-input"
-                                    type="number"
-                                    min="0"
-                                    step="0.01"
-                                    value={values.price}
-                                    onChange={(e) => setField("price", e.target.value)}
-                                    aria-invalid={Boolean(errors.price)}
-                                />
-                                {errors.price && (
-                                    <span className="business-dashboard-form-error" role="alert">
-                                        {errors.price}
-                                    </span>
-                                )}
-                            </div>
-
-                            <div className="business-dashboard-form-field">
-                                <label className="business-dashboard-form-label" htmlFor="product-compare-at-price">
-                                    Compare-at price
-                                    <span className="business-dashboard-form-optional"> (optional)</span>
-                                </label>
-                                <input
-                                    id="product-compare-at-price"
-                                    className="business-dashboard-form-input"
-                                    type="number"
-                                    min="0"
-                                    step="0.01"
-                                    placeholder="Shown struck through, for a sale"
-                                    value={values.compareAtPrice}
-                                    onChange={(e) => setField("compareAtPrice", e.target.value)}
-                                    aria-invalid={Boolean(errors.compareAtPrice)}
-                                />
-                                {errors.compareAtPrice && (
-                                    <span className="business-dashboard-form-error" role="alert">
-                                        {errors.compareAtPrice}
-                                    </span>
-                                )}
-                            </div>
-                        </div>
-
-                        <div className="business-dashboard-form-row">
-                            <div className="business-dashboard-form-field">
-                                <label className="business-dashboard-form-label" htmlFor="product-category">
-                                    Category
-                                </label>
-                                <select
-                                    id="product-category"
-                                    className="business-dashboard-form-input"
-                                    value={values.categoryId}
-                                    onChange={(e) => setField("categoryId", e.target.value)}
-                                    aria-invalid={Boolean(errors.categoryId)}
-                                >
-                                    <option value="">Select a category</option>
-                                    {productForm?.categories.map((category) => (
-                                        <option key={category.id} value={category.id}>
-                                            {category.name}
-                                        </option>
-                                    ))}
-                                </select>
-                                {errors.categoryId && (
-                                    <span className="business-dashboard-form-error" role="alert">
-                                        {errors.categoryId}
-                                    </span>
-                                )}
-                            </div>
-
-                            <div className="business-dashboard-form-field">
-                                <label className="business-dashboard-form-label" htmlFor="product-sku">
-                                    SKU
-                                    <span className="business-dashboard-form-optional"> (optional)</span>
-                                </label>
-                                <input
-                                    id="product-sku"
-                                    className="business-dashboard-form-input"
-                                    value={values.sku}
-                                    onChange={(e) => setField("sku", e.target.value)}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="business-dashboard-form-row">
-                            <div className="business-dashboard-form-field">
-                                <label className="business-dashboard-form-label" htmlFor="product-stock-quantity">
-                                    Stock quantity
-                                    <span className="business-dashboard-form-optional"> (optional — leave blank if untracked)</span>
-                                </label>
-                                <input
-                                    id="product-stock-quantity"
-                                    className="business-dashboard-form-input"
-                                    type="number"
-                                    min="0"
-                                    step="1"
-                                    value={values.stockQuantity}
-                                    onChange={(e) => setField("stockQuantity", e.target.value)}
-                                />
-                            </div>
-
-                            <div className="business-dashboard-form-field">
-                                <label className="business-dashboard-form-label" htmlFor="product-sale-ends-at">
-                                    Sale ends
-                                    <span className="business-dashboard-form-optional"> (optional)</span>
-                                </label>
-                                <input
-                                    id="product-sale-ends-at"
-                                    className="business-dashboard-form-input"
-                                    type="date"
-                                    value={values.saleEndsAt}
-                                    onChange={(e) => setField("saleEndsAt", e.target.value)}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="business-dashboard-form-field">
-                            <label className="business-dashboard-form-label" htmlFor="product-tags">
-                                Tags
-                                <span className="business-dashboard-form-optional"> (optional)</span>
-                            </label>
-                            <input
-                                id="product-tags"
-                                className="business-dashboard-form-input"
-                                placeholder="New, Bestseller, Limited Edition"
-                                value={values.tags}
-                                onChange={(e) => setField("tags", e.target.value)}
-                            />
-                            <span className="business-dashboard-form-hint">Separate multiple tags with commas.</span>
-                        </div>
-
-                        {form.length > 0 && (
-                            <>
-                                <hr className="business-dashboard-form-divider" />
-                                <p className="business-dashboard-form-section">
-                                    Product details
-                                    <span className="business-dashboard-form-optional">
-                                        {" "}
-                                        — all optional
-                                    </span>
-                                </p>
-
-                                {form.map((field) => (
-                                    <MetadataField
-                                        key={field.key}
-                                        field={field}
-                                        value={values.metadata[field.key] ?? ""}
-                                        onChange={(value) => setMetadataField(field.key, value)}
-                                    />
-                                ))}
-                            </>
-                        )}
-
-                        {saveError && (
-                            <p className="business-dashboard-form-error" role="alert">
-                                {saveError}
-                            </p>
-                        )}
-                    </form>
-                )}
-            </Modal.Body>
-
-            <Modal.Footer>
-                <button type="button" className="business-dashboard-button-secondary" onClick={close}>
-                    Cancel
-                </button>
-                <button
-                    type="button"
-                    className="business-dashboard-button-primary"
-                    onClick={submit}
-                    disabled={isSaving || isPreparing || imageUploading}
-                >
-                    {isSaving ? "Saving…" : isEditing ? "Save changes" : "Add product"}
-                </button>
-            </Modal.Footer>
-        </Modal>
+                {chat && isChatOpen && <AiChatPanel chat={chat} />}
+            </div>
+        </div>
     );
 };
 

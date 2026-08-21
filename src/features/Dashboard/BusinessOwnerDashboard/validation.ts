@@ -119,8 +119,13 @@ export const productDraftProductSchema = z.object({
     title: z.string().nullable(),
     description: z.string().nullable(),
     price: z.number().nullable(),
+    compareAtPrice: z.number().nullable(),
     categoryId: z.string().uuid().nullable(),
     categoryName: z.string().nullable(),
+    sku: z.string().nullable(),
+    stockQuantity: z.number().nullable(),
+    tags: z.array(z.string()),
+    saleEndsAt: z.iso.datetime().nullable(),
     // Schemaless by design - the keys differ per business - so validated as an
     // object rather than against fixed fields.
     metadata: z.record(z.string(), z.unknown()).nullable(),

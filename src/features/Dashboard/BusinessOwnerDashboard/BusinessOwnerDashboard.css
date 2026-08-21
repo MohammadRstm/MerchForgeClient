@@ -739,6 +739,122 @@
     white-space: nowrap;
 }
 
+/* Shared backdrop for the product form and, once "Fill with AI" is clicked, the
+   assistant beside it — two independent cards (each with its own header/body/
+   close button) rather than one wide dialog, so each genuinely reads as its own
+   modal. One backdrop and one click-outside region for the pair, though: two
+   separate backdrops would double-darken the page, and a click landing between
+   the cards should dismiss both, not neither. */
+.product-ai-modals {
+    display: flex;
+    align-items: stretch; /* equal-height cards: both stretch to match the taller one */
+    justify-content: center;
+    gap: 24px;
+}
+
+/* Reuses .modal-container's chrome (shadow, radius, max-height) via the shared
+   class on the element itself; this just narrows it to fit two side by side. */
+.product-form-card {
+    width: min(90vw, 620px);
+}
+
+.product-modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    /* Leaves room for the modal's own close button in the top-right. */
+    padding-right: 28px;
+}
+
+.product-modal__ai-button {
+    white-space: nowrap;
+}
+
+/* The assistant's own card. Grows in from nothing beside the form card, which —
+   because both sit in a centered flex row — is what makes the form appear to
+   glide left: it isn't animated directly, it's just reflowing every frame as
+   this sibling claims its share of the centered row. */
+.ai-chat-card {
+    position: relative;
+    width: 0;
+    overflow: hidden;
+    animation: aiChatCardIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes aiChatCardIn {
+    from {
+        width: 0;
+        opacity: 0;
+    }
+    to {
+        width: min(90vw, 420px);
+        opacity: 1;
+    }
+}
+
+.ai-chat-card .modal-header {
+    flex-shrink: 0;
+}
+
+.ai-chat-card .modal-header h2 {
+    font-size: 1.25rem;
+}
+
+.ai-chat-card__body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 24px 28px;
+}
+
+/* Pinned to the bottom of the card, like any chat composer — never part of the
+   scrolling message area above it. */
+.ai-chat-card__composer {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 16px 28px;
+    border-top: 1px solid #ececec;
+}
+
+.ai-chat-card__composer .business-dashboard-form-input {
+    flex: 1;
+}
+
+@media (max-width: 900px) {
+    .product-ai-modals {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .product-form-card,
+    .ai-chat-card {
+        max-height: 42vh;
+    }
+
+    /* Distinct name from the desktop keyframes — animation-name resolves from
+       the full stylesheet regardless of which @media block declared it, so
+       reusing the same name here would silently replace the desktop version. */
+    .ai-chat-card {
+        animation-name: aiChatCardInStacked;
+    }
+
+    @keyframes aiChatCardInStacked {
+        from {
+            width: min(90vw, 420px);
+            height: 0;
+            opacity: 0;
+        }
+        to {
+            width: min(90vw, 420px);
+            height: 42vh;
+            opacity: 1;
+        }
+    }
+}
+
 .ai-chat {
     display: flex;
     flex-direction: column;
@@ -787,6 +903,8 @@
 }
 
 .ai-chat__kind {
+    display: inline-flex;
+    align-items: center;
     font-size: 12px;
     line-height: 1.6;
 }
@@ -876,6 +994,18 @@
     flex: 1;
 }
 
+.ai-chat__composer .business-dashboard-button-ghost {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+
 /* Pulses while recording so it is obvious the microphone is live. */
 .ai-chat__record--active {
     color: #dc2626;
@@ -885,6 +1015,122 @@
 
 @keyframes ai-chat-recording {
     50% { opacity: 0.45; }
+}
+
+/* Replaces the text input while recording — a live amplitude waveform plus a
+   running timer, so the owner sees their own voice is actually being picked up
+   rather than trusting a static "Recording…" label. */
+.ai-chat__recording {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 12px;
+    min-width: 0;
+}
+
+.ai-chat__recording-dot {
+    width: 9px;
+    height: 9px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #dc2626;
+    animation: ai-chat-recording 1.2s ease-in-out infinite;
+}
+
+.ai-chat__recording-wave {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    height: 24px;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.ai-chat__recording-wave span {
+    --level: 0;
+    flex-shrink: 0;
+    width: 3px;
+    border-radius: 2px;
+    background: #2563eb;
+    height: calc(4px + var(--level) * 20px);
+    transition: height 0.08s ease-out;
+}
+
+.ai-chat__recording-time {
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+    font-size: 13px;
+    color: #555;
+}
+
+/* A staggered, fading bounce — the familiar "someone is typing" cue. */
+.ai-chat__typing {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 2px;
+}
+
+.ai-chat__typing span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #8a8a8a;
+    animation: ai-chat-typing-bounce 1.2s ease-in-out infinite;
+}
+
+.ai-chat__typing span:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.ai-chat__typing span:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes ai-chat-typing-bounce {
+    0%, 60%, 100% {
+        transform: translateY(0);
+        opacity: 0.35;
+    }
+    30% {
+        transform: translateY(-4px);
+        opacity: 1;
+    }
+}
+
+/* A short segment of light tracing the form card's own border while the
+   assistant is working — the border itself is the loading indicator, nothing
+   is layered over the form. Draws directly on the card's existing rounded-rect
+   outline (an SVG stroke follows that exact path, including the corners, in a
+   way a rotating gradient can't), using the app's own primary blue rather than
+   introducing new "AI" colours. */
+.product-form-card__glow-trace {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
+}
+
+.product-form-card__glow-trace rect {
+    fill: none;
+    stroke: #2563eb;
+    stroke-width: 2;
+    stroke-linecap: round;
+    /* A short lit segment (6 of every 100 units, per pathLength) followed by a
+       long dark gap covering the rest of the perimeter. */
+    stroke-dasharray: 6 94;
+    filter: drop-shadow(0 0 3px rgba(37, 99, 235, 0.7));
+    animation: form-glow-trace 2.8s linear infinite;
+}
+
+@keyframes form-glow-trace {
+    to {
+        stroke-dashoffset: -100;
+    }
 }
 
 @media (max-width: 560px) {
