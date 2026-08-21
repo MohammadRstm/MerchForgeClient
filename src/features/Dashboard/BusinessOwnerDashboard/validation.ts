@@ -251,3 +251,15 @@ export const businessFeatureCreditSchema = z.object({
     creditsRemaining: z.number(),
     creditsGrantedTotal: z.number(),
 });
+
+// ---- AI image editing ----
+
+export const imageEditJobSchema = z.object({
+    id: z.string().uuid(),
+    status: z.enum(["Completed", "Failed"]),
+    prompt: z.string(),
+    inputImageUrls: z.array(z.string()),
+    outputImageUrl: z.string().nullable(),
+    errorMessage: z.string().nullable(),
+    createdAt: z.iso.datetime(),
+});

@@ -3,9 +3,11 @@ import Spinner from "../../../../components/LoadingSpinner/LoadingSpinner";
 import type { ProductDraftProduct, ProductFormField } from "../types";
 import type useProductModal from "../hooks/ui/useProductModal";
 import type useProductAiChat from "../hooks/ui/useProductAiChat";
+import type useImageEditChat from "../hooks/ui/useImageEditChat";
 import ProductImagesField from "./ProductImagesField";
 import ColorListField from "./ColorListField";
 import AiChatPanel from "./AiChatPanel";
+import ImageEditChatPanel from "./ImageEditChatPanel";
 import useClickOutside from "../../../../hooks/useClickOutsideElementToClose";
 import { isoToDateInputValue } from "../hooks/ui/useProductFormState";
 
@@ -42,6 +44,8 @@ type ProductModalProps = {
     onFillWithAi?: () => void;
     /** Present alongside onFillWithAi — its isOpen decides whether the AI card is showing. */
     chat?: ReturnType<typeof useProductAiChat>;
+    /** Offered whenever there's at least one image, in both create and edit — unlike onFillWithAi, touching up a photo makes sense either way. */
+    imageEditChat?: ReturnType<typeof useImageEditChat>;
 };
 
 /** Renders the input that matches an optional field's declared value type. */
@@ -98,7 +102,7 @@ const MetadataField = ({
     );
 };
 
-const ProductModal = ({ modal, onFillWithAi, chat }: ProductModalProps) => {
+const ProductModal = ({ modal, onFillWithAi, chat, imageEditChat }: ProductModalProps) => {
     const {
         isOpen,
         isEditing,
@@ -124,6 +128,7 @@ const ProductModal = ({ modal, onFillWithAi, chat }: ProductModalProps) => {
 
     const isPreparing = productFormLoading || editingProductLoading;
     const isChatOpen = Boolean(chat?.isOpen);
+    const isImageEditOpen = Boolean(imageEditChat?.isOpen);
     // Confirming has its own "Creating…" state on the button, so the glow is
     // reserved for genuinely waiting on the assistant's next turn.
     const isAiThinking = isChatOpen && Boolean(chat?.isBusy) && !chat?.isConfirming;
@@ -134,6 +139,7 @@ const ProductModal = ({ modal, onFillWithAi, chat }: ProductModalProps) => {
     // otherwise a draft would keep running in the background with no way back to it.
     const handleClose = () => {
         if (chat?.isOpen) chat.cancel();
+        if (imageEditChat?.isOpen) imageEditChat.close();
         close();
     };
 
@@ -211,7 +217,7 @@ const ProductModal = ({ modal, onFillWithAi, chat }: ProductModalProps) => {
                         <div className="product-modal__header">
                             <h2>{isEditing ? "Edit product" : "Add product"}</h2>
 
-                            {!isEditing && onFillWithAi && !isChatOpen && (
+                            {!isEditing && onFillWithAi && !isChatOpen && !isImageEditOpen && (
                                 <button
                                     type="button"
                                     className="business-dashboard-button-secondary product-modal__ai-button"
@@ -240,6 +246,10 @@ const ProductModal = ({ modal, onFillWithAi, chat }: ProductModalProps) => {
                                     onAddImage={uploadImage}
                                     onRemoveImage={removeImage}
                                     onSetMainImage={setMainImage}
+                                    onEditImages={imageEditChat && !isChatOpen ? imageEditChat.open : undefined}
+                                    isSelectingForEdit={isImageEditOpen}
+                                    selectedForEdit={imageEditChat?.selectedUrls}
+                                    onToggleSelectForEdit={imageEditChat?.toggleSelect}
                                 />
 
                                 <div className="business-dashboard-form-field">
@@ -459,6 +469,7 @@ const ProductModal = ({ modal, onFillWithAi, chat }: ProductModalProps) => {
                 </div>
 
                 {chat && isChatOpen && <AiChatPanel chat={chat} />}
+                {imageEditChat && isImageEditOpen && <ImageEditChatPanel chat={imageEditChat} />}
             </div>
         </div>
     );

@@ -46,4 +46,7 @@ export const apiRoutes = {
     PRODUCT_DRAFT_CONFIRM : (businessId : string, draftId : string) => `/businesses/${businessId}/dashboard/product-drafts/${draftId}/confirm`,
     PRODUCT_DRAFT_CANCEL : (businessId : string, draftId : string) => `/businesses/${businessId}/dashboard/product-drafts/${draftId}/cancel`,
 
+    /** AI IMAGE EDITING */
+    IMAGE_EDITS : (businessId : string) => `/businesses/${businessId}/dashboard/image-edits`,
+
 }

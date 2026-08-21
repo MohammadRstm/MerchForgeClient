@@ -11,6 +11,12 @@ type ProductImagesFieldProps = {
     onAddImage: (file: File) => void;
     onRemoveImage: (url: string) => void;
     onSetMainImage: (url: string) => void;
+    /** Absent while the AI chat is open — there's only one second card, and it's either "Fill with AI" or this. */
+    onEditImages?: () => void;
+    /** True once "Edit images" has been clicked: tiles become pickable instead of offering their normal actions. */
+    isSelectingForEdit?: boolean;
+    selectedForEdit?: Set<string>;
+    onToggleSelectForEdit?: (url: string) => void;
 };
 
 /**
@@ -28,6 +34,10 @@ const ProductImagesField = ({
     onAddImage,
     onRemoveImage,
     onSetMainImage,
+    onEditImages,
+    isSelectingForEdit,
+    selectedForEdit,
+    onToggleSelectForEdit,
 }: ProductImagesFieldProps) => {
     return (
         <div className="business-dashboard-form-field">
@@ -37,34 +47,58 @@ const ProductImagesField = ({
             </label>
 
             <div className="product-images-grid">
-                {images.map((image) => (
-                    <div key={image.url} className={`product-image-tile${image.isMain ? " product-image-tile--main" : ""}`}>
-                        <img src={resolveImageUrl(image.url)} alt="Product" className="product-image-tile__preview" />
+                {images.map((image) => {
+                    const isSelected = selectedForEdit?.has(image.url) ?? false;
 
-                        {image.isMain && <span className="business-dashboard-badge product-image-tile__badge">Main</span>}
+                    return (
+                        <div
+                            key={image.url}
+                            className={[
+                                "product-image-tile",
+                                image.isMain ? "product-image-tile--main" : "",
+                                isSelectingForEdit ? "product-image-tile--selectable" : "",
+                                isSelected ? "product-image-tile--selected" : "",
+                            ].filter(Boolean).join(" ")}
+                            onClick={isSelectingForEdit ? () => onToggleSelectForEdit?.(image.url) : undefined}
+                            role={isSelectingForEdit ? "button" : undefined}
+                            tabIndex={isSelectingForEdit ? 0 : undefined}
+                        >
+                            <img src={resolveImageUrl(image.url)} alt="Product" className="product-image-tile__preview" />
 
-                        <div className="product-image-tile__actions">
-                            {!image.isMain && (
-                                <button
-                                    type="button"
-                                    className="product-image-tile__action"
-                                    onClick={() => onSetMainImage(image.url)}
+                            {image.isMain && <span className="business-dashboard-badge product-image-tile__badge">Main</span>}
+
+                            {isSelectingForEdit ? (
+                                <span
+                                    className={`product-image-tile__select-mark${isSelected ? " product-image-tile__select-mark--checked" : ""}`}
+                                    aria-hidden="true"
                                 >
-                                    Make main
-                                </button>
+                                    {isSelected && "✓"}
+                                </span>
+                            ) : (
+                                <div className="product-image-tile__actions">
+                                    {!image.isMain && (
+                                        <button
+                                            type="button"
+                                            className="product-image-tile__action"
+                                            onClick={() => onSetMainImage(image.url)}
+                                        >
+                                            Make main
+                                        </button>
+                                    )}
+                                    <button
+                                        type="button"
+                                        className="product-image-tile__action product-image-tile__action--danger"
+                                        onClick={() => onRemoveImage(image.url)}
+                                    >
+                                        Remove
+                                    </button>
+                                </div>
                             )}
-                            <button
-                                type="button"
-                                className="product-image-tile__action product-image-tile__action--danger"
-                                onClick={() => onRemoveImage(image.url)}
-                            >
-                                Remove
-                            </button>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
 
-                {images.length < maxImages && (
+                {!isSelectingForEdit && images.length < maxImages && (
                     <ProductImageDropzone isUploading={isUploading} uploadError={uploadError} onFileSelected={onAddImage} />
                 )}
             </div>
@@ -73,6 +107,16 @@ const ProductImagesField = ({
                 <span className="business-dashboard-form-error" role="alert">
                     {validationError}
                 </span>
+            )}
+
+            {onEditImages && !isSelectingForEdit && images.length > 0 && (
+                <button
+                    type="button"
+                    className="business-dashboard-button-secondary product-images-field__edit-button"
+                    onClick={onEditImages}
+                >
+                    ✨ Edit images
+                </button>
             )}
         </div>
     );
