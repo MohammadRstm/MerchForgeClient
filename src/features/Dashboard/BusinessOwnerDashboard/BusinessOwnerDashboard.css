@@ -1100,36 +1100,36 @@
     }
 }
 
-/* A comet of colour chasing around the form card's border while the assistant
-   is working — signals "the result is about to land here" without blocking
-   the form itself, which stays fully usable underneath. */
-.product-form-card--ai-glow {
-    position: relative;
-    z-index: 0;
-}
-
-.product-form-card--ai-glow::before {
-    content: "";
+/* A short segment of light tracing the form card's own border while the
+   assistant is working — the border itself is the loading indicator, nothing
+   is layered over the form. Draws directly on the card's existing rounded-rect
+   outline (an SVG stroke follows that exact path, including the corners, in a
+   way a rotating gradient can't), using the app's own primary blue rather than
+   introducing new "AI" colours. */
+.product-form-card__glow-trace {
     position: absolute;
-    inset: -3px;
-    z-index: -1;
-    border-radius: 20px;
-    background: conic-gradient(
-        from 0deg,
-        transparent 0%,
-        #7c3aed 8%,
-        #2563eb 16%,
-        #22d3ee 24%,
-        transparent 34%,
-        transparent 100%
-    );
-    filter: blur(2px);
-    animation: ai-glow-spin 2.4s linear infinite;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
 }
 
-@keyframes ai-glow-spin {
+.product-form-card__glow-trace rect {
+    fill: none;
+    stroke: #2563eb;
+    stroke-width: 2;
+    stroke-linecap: round;
+    /* A short lit segment (6 of every 100 units, per pathLength) followed by a
+       long dark gap covering the rest of the perimeter. */
+    stroke-dasharray: 6 94;
+    filter: drop-shadow(0 0 3px rgba(37, 99, 235, 0.7));
+    animation: form-glow-trace 2.8s linear infinite;
+}
+
+@keyframes form-glow-trace {
     to {
-        transform: rotate(360deg);
+        stroke-dashoffset: -100;
     }
 }
 

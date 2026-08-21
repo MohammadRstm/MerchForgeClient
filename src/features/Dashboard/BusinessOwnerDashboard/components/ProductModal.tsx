@@ -139,11 +139,16 @@ const ProductModal = ({ modal, onFillWithAi, chat }: ProductModalProps) => {
     return (
         <div className="modal-backdrop">
             <div ref={wrapperRef} className="product-ai-modals">
-                <div
-                    className={`modal-container product-form-card${
-                        isAiThinking ? " product-form-card--ai-glow" : ""
-                    }`}
-                >
+                <div className="modal-container product-form-card">
+                    {isAiThinking && (
+                        // Traces the card's own border rather than anything inside it — a
+                        // short segment of stroke chasing continuously around the perimeter,
+                        // not a spinner or gradient blob sitting over the form.
+                        <svg className="product-form-card__glow-trace" aria-hidden="true">
+                            <rect x="0" y="0" width="100%" height="100%" rx="16" pathLength={100} />
+                        </svg>
+                    )}
+
                     <button
                         type="button"
                         className="modal-cancel-button"
