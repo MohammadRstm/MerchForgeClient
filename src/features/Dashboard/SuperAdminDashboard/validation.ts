@@ -73,3 +73,44 @@ export const inviteBusinessOwnerFormSchema = z.object({
         .email("Enter a valid email address.")
         .max(255, "Email must be 255 characters or fewer."),
 });
+
+export const websiteTemplateResponseSchema = z.object({
+    id: z.string().uuid(),
+    businessDomainId: z.string().uuid(),
+    domainName: z.string(),
+    name: z.string(),
+    label: z.string(),
+    videoPreviewUrl: z.string(),
+    isActive: z.boolean(),
+    displayOrder: z.number(),
+    businessesUsingIt: z.number(),
+    createdAt: z.iso.datetime(),
+});
+
+export const websiteTemplatesResponseSchema = z.array(websiteTemplateResponseSchema);
+
+/** Mirrors the server's CreateWebsiteTemplateRequestValidator so the form fails before the round trip. */
+export const createWebsiteTemplateFormSchema = z.object({
+    businessDomainId: z.string().trim().min(1, "Select a domain."),
+    // Lowercase-hyphen-numeric on purpose: expected to match a physical template
+    // project's own folder name, e.g. "fashion-template-02".
+    name: z
+        .string()
+        .trim()
+        .min(1, "Enter a template name.")
+        .max(100, "Name must be 100 characters or fewer.")
+        .regex(
+            /^[a-z0-9]+(-[a-z0-9]+)*$/,
+            "Use lowercase letters, numbers and hyphens only, e.g. 'fashion-template-02'."
+        ),
+    label: z.string().trim().min(1, "Enter a display label.").max(150, "Label must be 150 characters or fewer."),
+    videoPreviewUrl: z
+        .string()
+        .trim()
+        .min(1, "Enter a video preview URL.")
+        .max(500, "URL must be 500 characters or fewer."),
+    displayOrder: z.coerce
+        .number({ message: "Display order must be a number." })
+        .int("Display order must be a whole number.")
+        .min(0, "Display order must be zero or greater."),
+});

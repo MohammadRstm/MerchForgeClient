@@ -8,7 +8,9 @@ import useAuth from "../../../context/Auth/useAuth";
 import useSuperAdminDashboardPage from "./hooks/useSuperAdminDashboardPage";
 import UsersTable from "./components/UsersTable";
 import BusinessesTable from "./components/BusinessesTable";
+import WebsiteTemplatesTable from "./components/WebsiteTemplatesTable";
 import InviteBusinessOwnerModal from "./components/InviteBusinessOwnerModal";
+import CreateWebsiteTemplateModal from "./components/CreateWebsiteTemplateModal";
 
 const SuperAdminDashboard = () => {
     const { session } = useAuth();
@@ -30,8 +32,13 @@ const SuperAdminDashboard = () => {
         businessesError,
         businessesTable,
 
+        websiteTemplates,
+        websiteTemplatesLoading,
+        websiteTemplatesError,
+
         revokeConfirmation,
         inviteForm,
+        createTemplateForm,
     } = useSuperAdminDashboardPage();
 
     return (
@@ -105,7 +112,16 @@ const SuperAdminDashboard = () => {
                 tableState={businessesTable}
             />
 
+            <WebsiteTemplatesTable
+                templates={websiteTemplates}
+                isLoading={websiteTemplatesLoading}
+                isError={websiteTemplatesError}
+                onAdd={createTemplateForm.open}
+            />
+
             <InviteBusinessOwnerModal form={inviteForm} />
+
+            <CreateWebsiteTemplateModal form={createTemplateForm} />
 
             <Modal
                 isOpen={!!revokeConfirmation.pendingUser}

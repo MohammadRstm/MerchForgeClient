@@ -1,12 +1,15 @@
 import type {
     BusinessesQueryParams,
     UsersQueryParams,
+    CreateWebsiteTemplatePayload,
 } from "../../features/Dashboard/SuperAdminDashboard/types";
 import {
     dashboardBusinessesPageSchema,
     dashboardStatsResponseSchema,
     dashboardUsersPageSchema,
     revokeUserSessionsResponseSchema,
+    websiteTemplateResponseSchema,
+    websiteTemplatesResponseSchema,
 } from "../../features/Dashboard/SuperAdminDashboard/validation";
 import { authenticatedApi } from "./api";
 import { apiRoutes } from "./apiRoutes";
@@ -39,4 +42,16 @@ export const revokeUserSessionsService = async (userId: string) => {
     );
 
     return revokeUserSessionsResponseSchema.parse(data);
+};
+
+export const getDashboardWebsiteTemplatesService = async () => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_WEBSITE_TEMPLATES);
+
+    return websiteTemplatesResponseSchema.parse(data);
+};
+
+export const createWebsiteTemplateService = async (payload: CreateWebsiteTemplatePayload) => {
+    const { data } = await authenticatedApi.post(apiRoutes.DASHBOARD_WEBSITE_TEMPLATES, payload);
+
+    return websiteTemplateResponseSchema.parse(data);
 };
