@@ -1,3 +1,5 @@
+import Tooltip from "../../../../components/Tooltip/Tooltip";
+
 type AiCreditBadgeProps = {
     creditsRemaining?: number;
     creditsGrantedTotal?: number;
@@ -39,13 +41,15 @@ const ringColorForUsage = (usedFraction: number): string => {
 const AiCreditBadge = ({ creditsRemaining, creditsGrantedTotal, includedInPlan }: AiCreditBadgeProps) => {
     if (includedInPlan) {
         return (
-            <span
-                className="ai-chat-card__credit-ring ai-chat-card__credit-ring--unlimited"
-                title="Unlimited — included in your plan"
-                aria-label="Unlimited, included in your plan"
-            >
-                ∞
-            </span>
+            <Tooltip content="Unlimited — included in your plan">
+                <span
+                    className="ai-chat-card__credit-ring ai-chat-card__credit-ring--unlimited"
+                    role="img"
+                    aria-label="Unlimited, included in your plan"
+                >
+                    ∞
+                </span>
+            </Tooltip>
         );
     }
 
@@ -57,37 +61,38 @@ const AiCreditBadge = ({ creditsRemaining, creditsGrantedTotal, includedInPlan }
     const usedFraction = Math.min(1, Math.max(0, (creditsGrantedTotal - creditsRemaining) / creditsGrantedTotal));
 
     return (
-        <span
-            className="ai-chat-card__credit-ring"
-            title={`${creditsRemaining} of ${creditsGrantedTotal} credits left`}
-            role="img"
-            aria-label={`${creditsRemaining} of ${creditsGrantedTotal} credits left`}
-        >
-            <svg width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`} aria-hidden="true">
-                <circle
-                    className="ai-chat-card__credit-ring-track"
-                    cx={SIZE / 2}
-                    cy={SIZE / 2}
-                    r={RADIUS}
-                    strokeWidth={STROKE_WIDTH}
-                    fill="none"
-                />
-                <circle
-                    cx={SIZE / 2}
-                    cy={SIZE / 2}
-                    r={RADIUS}
-                    strokeWidth={STROKE_WIDTH}
-                    fill="none"
-                    stroke={ringColorForUsage(usedFraction)}
-                    strokeLinecap="round"
-                    strokeDasharray={CIRCUMFERENCE}
-                    strokeDashoffset={CIRCUMFERENCE * (1 - usedFraction)}
-                    // Starts the fill at 12 o'clock rather than 3 o'clock.
-                    transform={`rotate(-90 ${SIZE / 2} ${SIZE / 2})`}
-                    style={{ transition: "stroke-dashoffset 0.3s ease, stroke 0.3s ease" }}
-                />
-            </svg>
-        </span>
+        <Tooltip content={`${creditsRemaining} of ${creditsGrantedTotal} credits left`}>
+            <span
+                className="ai-chat-card__credit-ring"
+                role="img"
+                aria-label={`${creditsRemaining} of ${creditsGrantedTotal} credits left`}
+            >
+                <svg width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`} aria-hidden="true">
+                    <circle
+                        className="ai-chat-card__credit-ring-track"
+                        cx={SIZE / 2}
+                        cy={SIZE / 2}
+                        r={RADIUS}
+                        strokeWidth={STROKE_WIDTH}
+                        fill="none"
+                    />
+                    <circle
+                        cx={SIZE / 2}
+                        cy={SIZE / 2}
+                        r={RADIUS}
+                        strokeWidth={STROKE_WIDTH}
+                        fill="none"
+                        stroke={ringColorForUsage(usedFraction)}
+                        strokeLinecap="round"
+                        strokeDasharray={CIRCUMFERENCE}
+                        strokeDashoffset={CIRCUMFERENCE * (1 - usedFraction)}
+                        // Starts the fill at 12 o'clock rather than 3 o'clock.
+                        transform={`rotate(-90 ${SIZE / 2} ${SIZE / 2})`}
+                        style={{ transition: "stroke-dashoffset 0.3s ease, stroke 0.3s ease" }}
+                    />
+                </svg>
+            </span>
+        </Tooltip>
     );
 };
 
