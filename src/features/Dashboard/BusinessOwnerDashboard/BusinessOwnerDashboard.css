@@ -977,41 +977,35 @@
 .ai-chat-card__header-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 12px;
+    /* Hugs the title rather than spreading across the row - the ring sits right
+       beside "Fill with AI", not pinned to the far edge of the header. */
+    justify-content: flex-start;
+    gap: 8px;
 }
 
 /* A small usage ring, styled after Claude Code's own rate-limit indicators: the
    filled arc grows as credits are spent, not as they remain, so it reads the same
-   way a "% of your limit used" ring does. */
+   way a "% of your limit used" ring does. Its stroke colour is computed per-render
+   (green through yellow into dark red) rather than styled here, since it's a
+   continuous function of usage, not a fixed set of states a class can express. */
 .ai-chat-card__credit-ring {
     flex-shrink: 0;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 22px;
-    height: 22px;
+    width: 15px;
+    height: 15px;
 }
 
 .ai-chat-card__credit-ring-track {
     stroke: #e2e2e2;
 }
 
-.ai-chat-card__credit-ring-fill {
-    stroke: #2563eb;
-    stroke-linecap: round;
-    transition: stroke-dashoffset 0.3s ease;
-}
-
-.ai-chat-card__credit-ring--empty .ai-chat-card__credit-ring-fill {
-    stroke: #dc2626;
-}
-
 .ai-chat-card__credit-ring--unlimited {
     border-radius: 50%;
     border: 1.5px solid #2563eb;
     color: #2563eb;
-    font-size: 13px;
+    font-size: 10px;
     font-weight: 700;
     line-height: 1;
 }
