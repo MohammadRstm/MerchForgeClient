@@ -38,7 +38,7 @@ const useImageEditChat = (businessId: string, onImagesReplaced: (replacements: I
 
     const describeError = describeAiChatError;
 
-    const { creditsRemaining, includedInPlan } = useFeatureCreditBalance(
+    const { creditsRemaining, creditsGrantedTotal, includedInPlan } = useFeatureCreditBalance(
         businessId,
         FEATURE_KEY_AI_IMAGE_EDITING
     );
@@ -203,6 +203,7 @@ const useImageEditChat = (businessId: string, onImagesReplaced: (replacements: I
         voice,
 
         creditsRemaining,
+        creditsGrantedTotal,
         includedInPlan,
     };
 };

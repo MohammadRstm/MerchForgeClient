@@ -28,6 +28,7 @@ const ImageEditChatPanel = ({ chat }: ImageEditChatPanelProps) => {
         error,
         voice,
         creditsRemaining,
+        creditsGrantedTotal,
         includedInPlan,
     } = chat;
 
@@ -52,7 +53,11 @@ const ImageEditChatPanel = ({ chat }: ImageEditChatPanelProps) => {
             <div className="modal-header">
                 <div className="ai-chat-card__header-row">
                     <h2>Edit images</h2>
-                    <AiCreditBadge creditsRemaining={creditsRemaining} includedInPlan={includedInPlan} />
+                    <AiCreditBadge
+                        creditsRemaining={creditsRemaining}
+                        creditsGrantedTotal={creditsGrantedTotal}
+                        includedInPlan={includedInPlan}
+                    />
                 </div>
             </div>
 

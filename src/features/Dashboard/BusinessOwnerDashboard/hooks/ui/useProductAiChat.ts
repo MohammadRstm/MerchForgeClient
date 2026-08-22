@@ -28,7 +28,7 @@ const useProductAiChat = (businessId: string, onProductCreated: () => void) => {
 
     const describeError = describeAiChatError;
 
-    const { creditsRemaining, includedInPlan } = useFeatureCreditBalance(
+    const { creditsRemaining, creditsGrantedTotal, includedInPlan } = useFeatureCreditBalance(
         businessId,
         FEATURE_KEY_AI_PRODUCT_GENERATION
     );
@@ -159,6 +159,7 @@ const useProductAiChat = (businessId: string, onProductCreated: () => void) => {
         error,
         pendingMessage,
         creditsRemaining,
+        creditsGrantedTotal,
         includedInPlan,
 
         messageInput,

@@ -18,6 +18,19 @@ const formatElapsed = (ms: number) => {
 };
 
 /**
+ * Missing fields come back as the backend's own names, including "metadata.colors"
+ * for a business-configured field — "metadata" is an implementation word the owner
+ * has no reason to know. Strips that prefix and turns the raw key into a label
+ * ("stockQuantity" -> "Stock quantity") without needing the field definitions this
+ * panel doesn't have.
+ */
+const formatMissingField = (field: string): string => {
+    const key = field.startsWith("metadata.") ? field.slice("metadata.".length) : field;
+    const spaced = key.replace(/([a-z0-9])([A-Z])/g, "$1 $2");
+    return spaced.charAt(0).toUpperCase() + spaced.slice(1).toLowerCase();
+};
+
+/**
  * The AI conversation, rendered as its own card beside the product form rather
  * than replacing it. Holds no workflow logic: what to offer is read off the
  * draft's status and canConfirm, both decided by the backend. Creating the
@@ -34,6 +47,7 @@ const AiChatPanel = ({ chat }: AiChatPanelProps) => {
         error,
         pendingMessage,
         creditsRemaining,
+        creditsGrantedTotal,
         includedInPlan,
         messageInput,
         setMessageInput,
@@ -67,7 +81,11 @@ const AiChatPanel = ({ chat }: AiChatPanelProps) => {
             <div className="modal-header">
                 <div className="ai-chat-card__header-row">
                     <h2>Fill with AI</h2>
-                    <AiCreditBadge creditsRemaining={creditsRemaining} includedInPlan={includedInPlan} />
+                    <AiCreditBadge
+                        creditsRemaining={creditsRemaining}
+                        creditsGrantedTotal={creditsGrantedTotal}
+                        includedInPlan={includedInPlan}
+                    />
                 </div>
             </div>
 
@@ -175,7 +193,7 @@ const AiChatPanel = ({ chat }: AiChatPanelProps) => {
                             field already derived. */}
                         {draft.missingFields.length > 0 && (
                             <p className="business-dashboard-form-hint" data-testid="ai-missing-fields">
-                                Still needed: {draft.missingFields.join(", ")}
+                                Still needed: {draft.missingFields.map(formatMissingField).join(", ")}
                             </p>
                         )}
 

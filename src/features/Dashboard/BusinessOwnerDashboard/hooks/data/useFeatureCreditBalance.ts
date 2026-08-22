@@ -12,6 +12,7 @@ const useFeatureCreditBalance = (businessId: string, featureKey: string) => {
 
     return {
         creditsRemaining: feature?.creditsRemaining,
+        creditsGrantedTotal: feature?.creditsGrantedTotal,
         includedInPlan: feature?.includedInPlan ?? false,
     };
 };

@@ -963,6 +963,10 @@
 
 .ai-chat-card .modal-header {
     flex-shrink: 0;
+    /* The close button is absolute, 16px inset and 36px wide (see .modal-cancel-button) -
+       the base .modal-header's 28px padding alone isn't enough clearance for anything
+       flush against the header's own right edge. */
+    padding-right: 56px;
 }
 
 .ai-chat-card .modal-header h2 {
@@ -977,20 +981,39 @@
     gap: 12px;
 }
 
-.ai-chat-card__credits {
+/* A small usage ring, styled after Claude Code's own rate-limit indicators: the
+   filled arc grows as credits are spent, not as they remain, so it reads the same
+   way a "% of your limit used" ring does. */
+.ai-chat-card__credit-ring {
     flex-shrink: 0;
-    font-size: 12px;
-    font-weight: 600;
-    color: #555;
-    background: #f0f0f0;
-    border-radius: 999px;
-    padding: 3px 10px;
-    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
 }
 
-.ai-chat-card__credits--empty {
-    color: #d92d20;
-    background: #fdecea;
+.ai-chat-card__credit-ring-track {
+    stroke: #e2e2e2;
+}
+
+.ai-chat-card__credit-ring-fill {
+    stroke: #2563eb;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.3s ease;
+}
+
+.ai-chat-card__credit-ring--empty .ai-chat-card__credit-ring-fill {
+    stroke: #dc2626;
+}
+
+.ai-chat-card__credit-ring--unlimited {
+    border-radius: 50%;
+    border: 1.5px solid #2563eb;
+    color: #2563eb;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
 }
 
 .ai-chat-card__body {

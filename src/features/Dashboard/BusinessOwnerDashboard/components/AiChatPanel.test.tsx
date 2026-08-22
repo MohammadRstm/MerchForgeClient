@@ -37,6 +37,7 @@ const chat = (overrides: Partial<Chat> = {}): Chat =>
         error: undefined,
         pendingMessage: undefined,
         creditsRemaining: undefined,
+        creditsGrantedTotal: undefined,
         includedInPlan: false,
         messageInput: "",
         setMessageInput: vi.fn(),
@@ -98,7 +99,7 @@ describe("AiChatPanel", () => {
         expect(screen.queryByText("Margherita Pizza")).toBeNull();
     });
 
-    it("lists what is still missing", () => {
+    it("lists what is still missing, in human terms rather than the raw field names", () => {
         render(
             <AiChatPanel
                 chat={chat({
@@ -108,13 +109,18 @@ describe("AiChatPanel", () => {
                             categoryId: null, categoryName: null, sku: null, stockQuantity: null,
                             tags: [], saleEndsAt: null, metadata: null,
                         },
-                        missingFields: ["description", "price"],
+                        // "metadata.colors" is the backend's own naming for a business-
+                        // configured field — the owner has no reason to see the word
+                        // "metadata" or the raw camelCase key.
+                        missingFields: ["description", "price", "metadata.colors", "metadata.stockKeepingUnit"],
                     }),
                 })}
             />
         );
 
-        expect(screen.getByText(/still needed/i).textContent).toContain("description, price");
+        const text = screen.getByText(/still needed/i).textContent;
+        expect(text).toContain("Description, Price, Colors, Stock keeping unit");
+        expect(text).not.toContain("metadata");
     });
 
     it("offers approve and reject while an edited image is pending", () => {
