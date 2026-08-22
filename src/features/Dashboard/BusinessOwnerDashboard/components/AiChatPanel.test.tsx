@@ -36,6 +36,8 @@ const chat = (overrides: Partial<Chat> = {}): Chat =>
         isConfirming: false,
         error: undefined,
         pendingMessage: undefined,
+        creditsRemaining: undefined,
+        includedInPlan: false,
         messageInput: "",
         setMessageInput: vi.fn(),
         sendMessage: vi.fn(),

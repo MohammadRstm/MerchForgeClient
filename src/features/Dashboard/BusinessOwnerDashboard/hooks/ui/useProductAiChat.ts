@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { describeAiChatError } from "../../utils/describeAiChatError";
+import { FEATURE_KEY_AI_PRODUCT_GENERATION } from "../../constants/featureKeys";
 import type { ProductDraft } from "../../types";
 import useProductDraft from "../data/useProductDraft";
+import useFeatureCreditBalance from "../data/useFeatureCreditBalance";
 import useVoiceRecorder from "./useVoiceRecorder";
 
 /**
@@ -25,6 +27,11 @@ const useProductAiChat = (businessId: string, onProductCreated: () => void) => {
     const [pendingMessage, setPendingMessage] = useState<PendingChatMessage | undefined>(undefined);
 
     const describeError = describeAiChatError;
+
+    const { creditsRemaining, includedInPlan } = useFeatureCreditBalance(
+        businessId,
+        FEATURE_KEY_AI_PRODUCT_GENERATION
+    );
 
     const draftApi = useProductDraft(businessId, (updated) => {
         setDraft(updated);
@@ -151,6 +158,8 @@ const useProductAiChat = (businessId: string, onProductCreated: () => void) => {
         isConfirming: draftApi.confirm.isPending,
         error,
         pendingMessage,
+        creditsRemaining,
+        includedInPlan,
 
         messageInput,
         setMessageInput,

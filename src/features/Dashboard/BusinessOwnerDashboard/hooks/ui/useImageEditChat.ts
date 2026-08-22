@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { describeAiChatError } from "../../utils/describeAiChatError";
+import { FEATURE_KEY_AI_IMAGE_EDITING } from "../../constants/featureKeys";
 import useEditProductImage from "../data/useEditProductImage";
+import useFeatureCreditBalance from "../data/useFeatureCreditBalance";
 import useVoiceRecorder from "./useVoiceRecorder";
 
 export type ImageEditChatMessage = {
@@ -35,6 +37,11 @@ const useImageEditChat = (businessId: string, onImagesReplaced: (replacements: I
     const editImage = useEditProductImage(businessId);
 
     const describeError = describeAiChatError;
+
+    const { creditsRemaining, includedInPlan } = useFeatureCreditBalance(
+        businessId,
+        FEATURE_KEY_AI_IMAGE_EDITING
+    );
 
     const open = () => {
         setIsOpen(true);
@@ -194,6 +201,9 @@ const useImageEditChat = (businessId: string, onImagesReplaced: (replacements: I
         processingUrl,
         error,
         voice,
+
+        creditsRemaining,
+        includedInPlan,
     };
 };
 

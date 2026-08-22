@@ -4,6 +4,7 @@ import { FiMic, FiSquare, FiX } from "react-icons/fi";
 import Spinner from "../../../../components/LoadingSpinner/LoadingSpinner";
 import type useProductAiChat from "../hooks/ui/useProductAiChat";
 import { resolveImageUrl } from "../utils/resolveImageUrl";
+import AiCreditBadge from "./AiCreditBadge";
 
 type AiChatPanelProps = {
     chat: ReturnType<typeof useProductAiChat>;
@@ -32,6 +33,8 @@ const AiChatPanel = ({ chat }: AiChatPanelProps) => {
         isConfirming,
         error,
         pendingMessage,
+        creditsRemaining,
+        includedInPlan,
         messageInput,
         setMessageInput,
         sendMessage,
@@ -62,7 +65,10 @@ const AiChatPanel = ({ chat }: AiChatPanelProps) => {
             </button>
 
             <div className="modal-header">
-                <h2>Fill with AI</h2>
+                <div className="ai-chat-card__header-row">
+                    <h2>Fill with AI</h2>
+                    <AiCreditBadge creditsRemaining={creditsRemaining} includedInPlan={includedInPlan} />
+                </div>
             </div>
 
             <div className="ai-chat-card__body">

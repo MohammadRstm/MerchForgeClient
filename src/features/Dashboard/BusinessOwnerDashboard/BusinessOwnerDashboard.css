@@ -967,6 +967,30 @@
 
 .ai-chat-card .modal-header h2 {
     font-size: 1.25rem;
+    margin: 0;
+}
+
+.ai-chat-card__header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.ai-chat-card__credits {
+    flex-shrink: 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: #555;
+    background: #f0f0f0;
+    border-radius: 999px;
+    padding: 3px 10px;
+    white-space: nowrap;
+}
+
+.ai-chat-card__credits--empty {
+    color: #d92d20;
+    background: #fdecea;
 }
 
 .ai-chat-card__body {
