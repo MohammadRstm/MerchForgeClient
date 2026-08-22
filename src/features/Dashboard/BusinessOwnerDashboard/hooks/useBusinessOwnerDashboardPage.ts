@@ -10,6 +10,7 @@ import useMemberModal from "./ui/useMemberModal";
 import useWebsiteTemplateModal from "./ui/useWebsiteTemplateModal";
 import useFeatureCreditsModal from "./ui/useFeatureCreditsModal";
 import useProductAiChat from "./ui/useProductAiChat";
+import useImageEditChat from "./ui/useImageEditChat";
 import useDeleteProduct from "./data/useDeleteProduct";
 import { useState } from "react";
 import { ApiError } from "../../../../Error/ApiError";
@@ -73,6 +74,14 @@ const useBusinessOwnerDashboardPage = () => {
         aiChat.open();
     };
 
+    // Each replacement swaps one form image in place — the edited result taking the
+    // exact spot (and isMain state) the original occupied, not a new gallery entry.
+    const imageEditChat = useImageEditChat(businessId, (replacements) => {
+        for (const { oldUrl, newUrl } of replacements) {
+            productModal.replaceImage(oldUrl, newUrl);
+        }
+    });
+
     const [productPendingDeletion, setProductPendingDeletion] =
         useState<BusinessProductResponse | undefined>(undefined);
 
@@ -105,6 +114,7 @@ const useBusinessOwnerDashboardPage = () => {
         editFromDetail,
         aiChat,
         openAiChat,
+        imageEditChat,
 
         productPendingDeletion,
         isDeletingProduct,

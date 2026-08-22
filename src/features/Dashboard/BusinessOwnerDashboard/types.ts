@@ -24,6 +24,7 @@ import type {
     featureCreditPackageSchema,
     featureCreditOverviewSchema,
     businessFeatureCreditSchema,
+    imageEditJobSchema,
 } from "./validation";
 
 export type BusinessDashboardStatsResponse = z.infer<typeof businessDashboardStatsResponseSchema>;
@@ -47,6 +48,8 @@ export type BusinessWebsiteTemplateStatus = z.infer<typeof businessWebsiteTempla
 export type FeatureCreditPackage = z.infer<typeof featureCreditPackageSchema>;
 export type FeatureCreditOverview = z.infer<typeof featureCreditOverviewSchema>;
 export type BusinessFeatureCredit = z.infer<typeof businessFeatureCreditSchema>;
+
+export type ImageEditJob = z.infer<typeof imageEditJobSchema>;
 
 /**
  * One image in the form's in-progress gallery. Keyed by url (already uploaded, always

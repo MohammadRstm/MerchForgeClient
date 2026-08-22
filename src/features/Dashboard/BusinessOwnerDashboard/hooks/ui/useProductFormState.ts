@@ -197,6 +197,16 @@ const useProductFormState = (
         }));
     };
 
+    /** Swaps one image's url for another in place — the AI edit result replacing what was there, not a new gallery entry. isMain and position are untouched. */
+    const replaceImage = (oldUrl: string, newUrl: string) => {
+        setValues((prev) => ({
+            ...prev,
+            images: prev.images.map((image) =>
+                image.url === oldUrl ? { ...image, url: newUrl, width: undefined, height: undefined } : image
+            ),
+        }));
+    };
+
     const validate = (): boolean => {
         const nextErrors: ProductFormErrors = {};
 
@@ -259,6 +269,7 @@ const useProductFormState = (
         addImage,
         removeImage,
         setMainImage,
+        replaceImage,
         maxImages: MAX_IMAGES,
         validate,
         toPayload,

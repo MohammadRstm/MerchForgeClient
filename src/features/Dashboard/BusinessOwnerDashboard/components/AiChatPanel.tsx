@@ -36,6 +36,7 @@ const AiChatPanel = ({ chat }: AiChatPanelProps) => {
         isBusy,
         isConfirming,
         error,
+        pendingMessage,
         messageInput,
         setMessageInput,
         sendMessage,
@@ -45,10 +46,11 @@ const AiChatPanel = ({ chat }: AiChatPanelProps) => {
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    // Keeps the newest turn in view as the conversation grows.
+    // Keeps the newest turn in view as the conversation grows — including the
+    // instant the owner's own message appears, before the assistant has replied.
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, [draft?.messages.length]);
+    }, [draft?.messages.length, pendingMessage]);
 
     const awaitingImageApproval = draft?.status === "WaitingForImageApproval";
     const isFinished = draft?.status === "Completed" || draft?.status === "Cancelled";
@@ -93,6 +95,17 @@ const AiChatPanel = ({ chat }: AiChatPanelProps) => {
                                     <span>{message.text}</span>
                                 </div>
                             ))}
+
+                            {pendingMessage && (
+                                <div className="ai-chat__message ai-chat__message--user">
+                                    {pendingMessage.kind === "voice" && (
+                                        <span className="ai-chat__kind" title="Sent as a voice message">
+                                            <FiMic />
+                                        </span>
+                                    )}
+                                    <span>{pendingMessage.text}</span>
+                                </div>
+                            )}
 
                             {isBusy && !isConfirming && (
                                 <div className="ai-chat__message ai-chat__message--assistant ai-chat__message--pending">
