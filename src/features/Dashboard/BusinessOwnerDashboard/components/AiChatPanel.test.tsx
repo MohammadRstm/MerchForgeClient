@@ -35,6 +35,7 @@ const chat = (overrides: Partial<Chat> = {}): Chat =>
         isBusy: false,
         isConfirming: false,
         error: undefined,
+        pendingMessage: undefined,
         messageInput: "",
         setMessageInput: vi.fn(),
         sendMessage: vi.fn(),
@@ -66,7 +67,9 @@ describe("AiChatPanel", () => {
         expect(screen.queryByRole("button", { name: /create product/i })).toBeNull();
     });
 
-    it("shows the product preview with resolved category and metadata", () => {
+    it("does not restate the derived product — the form fields are where that shows up", () => {
+        // The chat used to dump title/price/category/metadata into its own preview
+        // grid; that's gone, since the form itself fills in live from the same data.
         render(
             <AiChatPanel
                 chat={chat({
@@ -89,11 +92,8 @@ describe("AiChatPanel", () => {
             />
         );
 
-        expect(screen.getByText("Margherita Pizza")).toBeTruthy();
-        // A name, not a guid.
-        expect(screen.getByText("Pizza")).toBeTruthy();
-        // Lists are joined for reading rather than dumped as JSON.
-        expect(screen.getByText("Tomato, Basil")).toBeTruthy();
+        expect(screen.queryByTestId("ai-preview")).toBeNull();
+        expect(screen.queryByText("Margherita Pizza")).toBeNull();
     });
 
     it("lists what is still missing", () => {

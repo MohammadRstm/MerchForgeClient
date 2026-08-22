@@ -9,11 +9,6 @@ type AiChatPanelProps = {
     chat: ReturnType<typeof useProductAiChat>;
 };
 
-const currencyFormatter = new Intl.NumberFormat(undefined, {
-    style: "currency",
-    currency: "USD",
-});
-
 const formatElapsed = (ms: number) => {
     const totalSeconds = Math.floor(ms / 1000);
     const minutes = Math.floor(totalSeconds / 60);
@@ -168,81 +163,14 @@ const AiChatPanel = ({ chat }: AiChatPanelProps) => {
                             </div>
                         )}
 
-                        {draft.draft && (
-                            <div className="ai-chat__preview" data-testid="ai-preview">
-                                <p className="business-dashboard-form-section">Product so far</p>
-
-                                <dl className="ai-chat__preview-grid">
-                                    <dt>Title</dt>
-                                    <dd>{draft.draft.title ?? "—"}</dd>
-
-                                    <dt>Description</dt>
-                                    <dd>{draft.draft.description ?? "—"}</dd>
-
-                                    <dt>Price</dt>
-                                    <dd>
-                                        {draft.draft.price != null
-                                            ? currencyFormatter.format(draft.draft.price)
-                                            : "—"}
-                                    </dd>
-
-                                    <dt>Category</dt>
-                                    <dd>{draft.draft.categoryName ?? "—"}</dd>
-
-                                    {draft.draft.compareAtPrice != null && (
-                                        <>
-                                            <dt>Compare-at price</dt>
-                                            <dd>{currencyFormatter.format(draft.draft.compareAtPrice)}</dd>
-                                        </>
-                                    )}
-
-                                    {draft.draft.sku != null && (
-                                        <>
-                                            <dt>SKU</dt>
-                                            <dd>{draft.draft.sku}</dd>
-                                        </>
-                                    )}
-
-                                    {draft.draft.stockQuantity != null && (
-                                        <>
-                                            <dt>Stock</dt>
-                                            <dd>{draft.draft.stockQuantity}</dd>
-                                        </>
-                                    )}
-
-                                    {draft.draft.tags.length > 0 && (
-                                        <>
-                                            <dt>Tags</dt>
-                                            <dd>{draft.draft.tags.join(", ")}</dd>
-                                        </>
-                                    )}
-
-                                    {draft.draft.saleEndsAt != null && (
-                                        <>
-                                            <dt>Sale ends</dt>
-                                            <dd>{new Date(draft.draft.saleEndsAt).toLocaleDateString()}</dd>
-                                        </>
-                                    )}
-
-                                    {draft.draft.metadata &&
-                                        Object.entries(draft.draft.metadata).map(([key, value]) => (
-                                            <div key={key} style={{ display: "contents" }}>
-                                                <dt>{key}</dt>
-                                                <dd>
-                                                    {Array.isArray(value)
-                                                        ? value.join(", ")
-                                                        : String(value)}
-                                                </dd>
-                                            </div>
-                                        ))}
-                                </dl>
-
-                                {draft.missingFields.length > 0 && (
-                                    <p className="business-dashboard-form-hint">
-                                        Still needed: {draft.missingFields.join(", ")}
-                                    </p>
-                                )}
-                            </div>
+                        {/* The AI's understanding is visible where it actually matters — the
+                            form fields fill in live as the conversation progresses — so this
+                            card only needs to say what's still missing, not restate every
+                            field already derived. */}
+                        {draft.missingFields.length > 0 && (
+                            <p className="business-dashboard-form-hint" data-testid="ai-missing-fields">
+                                Still needed: {draft.missingFields.join(", ")}
+                            </p>
                         )}
 
                         {error && (

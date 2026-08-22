@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ApiError } from "../../../../../Error/ApiError";
+import { describeAiChatError } from "../../utils/describeAiChatError";
 import type { ProductDraft } from "../../types";
 import useProductDraft from "../data/useProductDraft";
 import useVoiceRecorder from "./useVoiceRecorder";
@@ -24,8 +24,7 @@ const useProductAiChat = (businessId: string, onProductCreated: () => void) => {
     // the assistant's reply comes back, which reads as the message not having sent.
     const [pendingMessage, setPendingMessage] = useState<PendingChatMessage | undefined>(undefined);
 
-    const describeError = (e: unknown, fallback: string) =>
-        e instanceof ApiError ? e.message : fallback;
+    const describeError = describeAiChatError;
 
     const draftApi = useProductDraft(businessId, (updated) => {
         setDraft(updated);

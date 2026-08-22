@@ -17,6 +17,8 @@ type ProductImagesFieldProps = {
     isSelectingForEdit?: boolean;
     selectedForEdit?: Set<string>;
     onToggleSelectForEdit?: (url: string) => void;
+    /** The one selected image an edit request is in flight for right now — others stay merely selected, still queued. */
+    processingImageUrl?: string;
 };
 
 /**
@@ -38,6 +40,7 @@ const ProductImagesField = ({
     isSelectingForEdit,
     selectedForEdit,
     onToggleSelectForEdit,
+    processingImageUrl,
 }: ProductImagesFieldProps) => {
     return (
         <div className="business-dashboard-form-field">
@@ -49,6 +52,7 @@ const ProductImagesField = ({
             <div className="product-images-grid">
                 {images.map((image) => {
                     const isSelected = selectedForEdit?.has(image.url) ?? false;
+                    const isProcessing = image.url === processingImageUrl;
 
                     return (
                         <div
@@ -63,6 +67,14 @@ const ProductImagesField = ({
                             role={isSelectingForEdit ? "button" : undefined}
                             tabIndex={isSelectingForEdit ? 0 : undefined}
                         >
+                            {isProcessing && (
+                                // Same border-trace technique as the form card's own AI-thinking
+                                // glow — a short lit segment tracing this tile's exact outline.
+                                <svg className="product-image-tile__glow-trace" aria-hidden="true">
+                                    <rect x="0" y="0" width="100%" height="100%" rx="10" pathLength={100} />
+                                </svg>
+                            )}
+
                             <img src={resolveImageUrl(image.url)} alt="Product" className="product-image-tile__preview" />
 
                             {image.isMain && <span className="business-dashboard-badge product-image-tile__badge">Main</span>}

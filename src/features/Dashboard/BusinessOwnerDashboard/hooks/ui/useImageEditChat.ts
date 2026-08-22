@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ApiError } from "../../../../../Error/ApiError";
+import { describeAiChatError } from "../../utils/describeAiChatError";
 import useEditProductImage from "../data/useEditProductImage";
 import useVoiceRecorder from "./useVoiceRecorder";
 
@@ -29,11 +29,12 @@ const useImageEditChat = (businessId: string, onImagesReplaced: (replacements: I
     const [error, setError] = useState<string | undefined>(undefined);
     const [isProcessing, setIsProcessing] = useState(false);
     const [progress, setProgress] = useState<{ done: number; total: number } | undefined>(undefined);
+    /** Which selected image the current request is for — the others are still queued, not yet started. */
+    const [processingUrl, setProcessingUrl] = useState<string | undefined>(undefined);
 
     const editImage = useEditProductImage(businessId);
 
-    const describeError = (e: unknown, fallback: string) =>
-        e instanceof ApiError ? e.message : fallback;
+    const describeError = describeAiChatError;
 
     const open = () => {
         setIsOpen(true);
@@ -57,6 +58,7 @@ const useImageEditChat = (businessId: string, onImagesReplaced: (replacements: I
         setMessageInput("");
         setError(undefined);
         setProgress(undefined);
+        setProcessingUrl(undefined);
     };
 
     const toggleSelect = (url: string) => {
@@ -108,6 +110,8 @@ const useImageEditChat = (businessId: string, onImagesReplaced: (replacements: I
         let failureCount = 0;
 
         for (const url of urls) {
+            setProcessingUrl(url);
+
             try {
                 const job = await editImage.mutateAsync({
                     imageUrl: url,
@@ -143,6 +147,7 @@ const useImageEditChat = (businessId: string, onImagesReplaced: (replacements: I
 
         setIsProcessing(false);
         setProgress(undefined);
+        setProcessingUrl(undefined);
         setSelectedUrls(new Set());
 
         if (replacements.length > 0) {
@@ -186,6 +191,7 @@ const useImageEditChat = (businessId: string, onImagesReplaced: (replacements: I
 
         isProcessing,
         progress,
+        processingUrl,
         error,
         voice,
     };
