@@ -4,21 +4,30 @@ import { FiMic, FiSquare, FiX } from "react-icons/fi";
 import Spinner from "../../../../components/LoadingSpinner/LoadingSpinner";
 import type useProductAiChat from "../hooks/ui/useProductAiChat";
 import { resolveImageUrl } from "../utils/resolveImageUrl";
+import AiCreditBadge from "./AiCreditBadge";
 
 type AiChatPanelProps = {
     chat: ReturnType<typeof useProductAiChat>;
 };
-
-const currencyFormatter = new Intl.NumberFormat(undefined, {
-    style: "currency",
-    currency: "USD",
-});
 
 const formatElapsed = (ms: number) => {
     const totalSeconds = Math.floor(ms / 1000);
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
     return `${minutes}:${String(seconds).padStart(2, "0")}`;
+};
+
+/**
+ * Missing fields come back as the backend's own names, including "metadata.colors"
+ * for a business-configured field — "metadata" is an implementation word the owner
+ * has no reason to know. Strips that prefix and turns the raw key into a label
+ * ("stockQuantity" -> "Stock quantity") without needing the field definitions this
+ * panel doesn't have.
+ */
+const formatMissingField = (field: string): string => {
+    const key = field.startsWith("metadata.") ? field.slice("metadata.".length) : field;
+    const spaced = key.replace(/([a-z0-9])([A-Z])/g, "$1 $2");
+    return spaced.charAt(0).toUpperCase() + spaced.slice(1).toLowerCase();
 };
 
 /**
@@ -37,6 +46,9 @@ const AiChatPanel = ({ chat }: AiChatPanelProps) => {
         isConfirming,
         error,
         pendingMessage,
+        creditsRemaining,
+        creditsGrantedTotal,
+        includedInPlan,
         messageInput,
         setMessageInput,
         sendMessage,
@@ -67,7 +79,14 @@ const AiChatPanel = ({ chat }: AiChatPanelProps) => {
             </button>
 
             <div className="modal-header">
-                <h2>Fill with AI</h2>
+                <div className="ai-chat-card__header-row">
+                    <h2>Fill with AI</h2>
+                    <AiCreditBadge
+                        creditsRemaining={creditsRemaining}
+                        creditsGrantedTotal={creditsGrantedTotal}
+                        includedInPlan={includedInPlan}
+                    />
+                </div>
             </div>
 
             <div className="ai-chat-card__body">
@@ -168,81 +187,14 @@ const AiChatPanel = ({ chat }: AiChatPanelProps) => {
                             </div>
                         )}
 
-                        {draft.draft && (
-                            <div className="ai-chat__preview" data-testid="ai-preview">
-                                <p className="business-dashboard-form-section">Product so far</p>
-
-                                <dl className="ai-chat__preview-grid">
-                                    <dt>Title</dt>
-                                    <dd>{draft.draft.title ?? "—"}</dd>
-
-                                    <dt>Description</dt>
-                                    <dd>{draft.draft.description ?? "—"}</dd>
-
-                                    <dt>Price</dt>
-                                    <dd>
-                                        {draft.draft.price != null
-                                            ? currencyFormatter.format(draft.draft.price)
-                                            : "—"}
-                                    </dd>
-
-                                    <dt>Category</dt>
-                                    <dd>{draft.draft.categoryName ?? "—"}</dd>
-
-                                    {draft.draft.compareAtPrice != null && (
-                                        <>
-                                            <dt>Compare-at price</dt>
-                                            <dd>{currencyFormatter.format(draft.draft.compareAtPrice)}</dd>
-                                        </>
-                                    )}
-
-                                    {draft.draft.sku != null && (
-                                        <>
-                                            <dt>SKU</dt>
-                                            <dd>{draft.draft.sku}</dd>
-                                        </>
-                                    )}
-
-                                    {draft.draft.stockQuantity != null && (
-                                        <>
-                                            <dt>Stock</dt>
-                                            <dd>{draft.draft.stockQuantity}</dd>
-                                        </>
-                                    )}
-
-                                    {draft.draft.tags.length > 0 && (
-                                        <>
-                                            <dt>Tags</dt>
-                                            <dd>{draft.draft.tags.join(", ")}</dd>
-                                        </>
-                                    )}
-
-                                    {draft.draft.saleEndsAt != null && (
-                                        <>
-                                            <dt>Sale ends</dt>
-                                            <dd>{new Date(draft.draft.saleEndsAt).toLocaleDateString()}</dd>
-                                        </>
-                                    )}
-
-                                    {draft.draft.metadata &&
-                                        Object.entries(draft.draft.metadata).map(([key, value]) => (
-                                            <div key={key} style={{ display: "contents" }}>
-                                                <dt>{key}</dt>
-                                                <dd>
-                                                    {Array.isArray(value)
-                                                        ? value.join(", ")
-                                                        : String(value)}
-                                                </dd>
-                                            </div>
-                                        ))}
-                                </dl>
-
-                                {draft.missingFields.length > 0 && (
-                                    <p className="business-dashboard-form-hint">
-                                        Still needed: {draft.missingFields.join(", ")}
-                                    </p>
-                                )}
-                            </div>
+                        {/* The AI's understanding is visible where it actually matters — the
+                            form fields fill in live as the conversation progresses — so this
+                            card only needs to say what's still missing, not restate every
+                            field already derived. */}
+                        {draft.missingFields.length > 0 && (
+                            <p className="business-dashboard-form-hint" data-testid="ai-missing-fields">
+                                Still needed: {draft.missingFields.map(formatMissingField).join(", ")}
+                            </p>
                         )}
 
                         {error && (

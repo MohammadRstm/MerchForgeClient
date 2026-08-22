@@ -250,6 +250,7 @@ const ProductModal = ({ modal, onFillWithAi, chat, imageEditChat }: ProductModal
                                     isSelectingForEdit={isImageEditOpen}
                                     selectedForEdit={imageEditChat?.selectedUrls}
                                     onToggleSelectForEdit={imageEditChat?.toggleSelect}
+                                    processingImageUrl={imageEditChat?.processingUrl}
                                 />
 
                                 <div className="business-dashboard-form-field">

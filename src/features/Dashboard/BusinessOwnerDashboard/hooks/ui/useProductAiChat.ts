@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { ApiError } from "../../../../../Error/ApiError";
+import { describeAiChatError } from "../../utils/describeAiChatError";
+import { FEATURE_KEY_AI_PRODUCT_GENERATION } from "../../constants/featureKeys";
 import type { ProductDraft } from "../../types";
 import useProductDraft from "../data/useProductDraft";
+import useFeatureCreditBalance from "../data/useFeatureCreditBalance";
 import useVoiceRecorder from "./useVoiceRecorder";
 
 /**
@@ -24,8 +26,12 @@ const useProductAiChat = (businessId: string, onProductCreated: () => void) => {
     // the assistant's reply comes back, which reads as the message not having sent.
     const [pendingMessage, setPendingMessage] = useState<PendingChatMessage | undefined>(undefined);
 
-    const describeError = (e: unknown, fallback: string) =>
-        e instanceof ApiError ? e.message : fallback;
+    const describeError = describeAiChatError;
+
+    const { creditsRemaining, creditsGrantedTotal, includedInPlan } = useFeatureCreditBalance(
+        businessId,
+        FEATURE_KEY_AI_PRODUCT_GENERATION
+    );
 
     const draftApi = useProductDraft(businessId, (updated) => {
         setDraft(updated);
@@ -152,6 +158,9 @@ const useProductAiChat = (businessId: string, onProductCreated: () => void) => {
         isConfirming: draftApi.confirm.isPending,
         error,
         pendingMessage,
+        creditsRemaining,
+        creditsGrantedTotal,
+        includedInPlan,
 
         messageInput,
         setMessageInput,

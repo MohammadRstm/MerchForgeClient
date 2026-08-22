@@ -20,6 +20,13 @@ import type { ProductDraft } from "../../types";
 const useProductDraft = (businessId: string, onDraftUpdated: (draft: ProductDraft) => void) => {
     const queryClient = useQueryClient();
 
+    // Every one of these can spend an ai.product_generation credit server-side (any
+    // turn that reaches the model), so the balance shown elsewhere - the chat header,
+    // the Features card - needs to refetch after each, not just once the whole
+    // conversation ends.
+    const invalidateFeatureCredits = () =>
+        queryClient.invalidateQueries({ queryKey: ["business-dashboard", "features", businessId] });
+
     const start = useMutation({
         mutationFn: () => startProductDraftService(businessId),
         onSuccess: onDraftUpdated,
@@ -28,19 +35,28 @@ const useProductDraft = (businessId: string, onDraftUpdated: (draft: ProductDraf
     const sendMessage = useMutation({
         mutationFn: ({ draftId, message }: { draftId: string; message: string }) =>
             sendProductDraftMessageService(businessId, draftId, message),
-        onSuccess: onDraftUpdated,
+        onSuccess: (draft) => {
+            onDraftUpdated(draft);
+            invalidateFeatureCredits();
+        },
     });
 
     const sendVoice = useMutation({
         mutationFn: ({ draftId, audio }: { draftId: string; audio: Blob }) =>
             sendProductDraftVoiceService(businessId, draftId, audio),
-        onSuccess: onDraftUpdated,
+        onSuccess: (draft) => {
+            onDraftUpdated(draft);
+            invalidateFeatureCredits();
+        },
     });
 
     const attachImage = useMutation({
         mutationFn: ({ draftId, file }: { draftId: string; file: File }) =>
             attachProductDraftImageService(businessId, draftId, file),
-        onSuccess: onDraftUpdated,
+        onSuccess: (draft) => {
+            onDraftUpdated(draft);
+            invalidateFeatureCredits();
+        },
     });
 
     const resolveImage = useMutation({

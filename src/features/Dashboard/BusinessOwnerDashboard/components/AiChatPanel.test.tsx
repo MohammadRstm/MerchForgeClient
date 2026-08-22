@@ -35,6 +35,10 @@ const chat = (overrides: Partial<Chat> = {}): Chat =>
         isBusy: false,
         isConfirming: false,
         error: undefined,
+        pendingMessage: undefined,
+        creditsRemaining: undefined,
+        creditsGrantedTotal: undefined,
+        includedInPlan: false,
         messageInput: "",
         setMessageInput: vi.fn(),
         sendMessage: vi.fn(),
@@ -66,7 +70,9 @@ describe("AiChatPanel", () => {
         expect(screen.queryByRole("button", { name: /create product/i })).toBeNull();
     });
 
-    it("shows the product preview with resolved category and metadata", () => {
+    it("does not restate the derived product — the form fields are where that shows up", () => {
+        // The chat used to dump title/price/category/metadata into its own preview
+        // grid; that's gone, since the form itself fills in live from the same data.
         render(
             <AiChatPanel
                 chat={chat({
@@ -89,14 +95,11 @@ describe("AiChatPanel", () => {
             />
         );
 
-        expect(screen.getByText("Margherita Pizza")).toBeTruthy();
-        // A name, not a guid.
-        expect(screen.getByText("Pizza")).toBeTruthy();
-        // Lists are joined for reading rather than dumped as JSON.
-        expect(screen.getByText("Tomato, Basil")).toBeTruthy();
+        expect(screen.queryByTestId("ai-preview")).toBeNull();
+        expect(screen.queryByText("Margherita Pizza")).toBeNull();
     });
 
-    it("lists what is still missing", () => {
+    it("lists what is still missing, in human terms rather than the raw field names", () => {
         render(
             <AiChatPanel
                 chat={chat({
@@ -106,13 +109,18 @@ describe("AiChatPanel", () => {
                             categoryId: null, categoryName: null, sku: null, stockQuantity: null,
                             tags: [], saleEndsAt: null, metadata: null,
                         },
-                        missingFields: ["description", "price"],
+                        // "metadata.colors" is the backend's own naming for a business-
+                        // configured field — the owner has no reason to see the word
+                        // "metadata" or the raw camelCase key.
+                        missingFields: ["description", "price", "metadata.colors", "metadata.stockKeepingUnit"],
                     }),
                 })}
             />
         );
 
-        expect(screen.getByText(/still needed/i).textContent).toContain("description, price");
+        const text = screen.getByText(/still needed/i).textContent;
+        expect(text).toContain("Description, Price, Colors, Stock keeping unit");
+        expect(text).not.toContain("metadata");
     });
 
     it("offers approve and reject while an edited image is pending", () => {

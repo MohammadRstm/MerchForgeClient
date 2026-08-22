@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import { useEffect, useRef } from "react";
 import { FiMic, FiSquare, FiX } from "react-icons/fi";
 import type useImageEditChat from "../hooks/ui/useImageEditChat";
+import AiCreditBadge from "./AiCreditBadge";
 
 type ImageEditChatPanelProps = {
     chat: ReturnType<typeof useImageEditChat>;
@@ -15,8 +16,21 @@ type ImageEditChatPanelProps = {
  * with the model.
  */
 const ImageEditChatPanel = ({ chat }: ImageEditChatPanelProps) => {
-    const { close, selectedUrls, messages, messageInput, setMessageInput, sendMessage, isProcessing, progress, error, voice } =
-        chat;
+    const {
+        close,
+        selectedUrls,
+        messages,
+        messageInput,
+        setMessageInput,
+        sendMessage,
+        isProcessing,
+        progress,
+        error,
+        voice,
+        creditsRemaining,
+        creditsGrantedTotal,
+        includedInPlan,
+    } = chat;
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -37,7 +51,14 @@ const ImageEditChatPanel = ({ chat }: ImageEditChatPanelProps) => {
             </button>
 
             <div className="modal-header">
-                <h2>Edit images</h2>
+                <div className="ai-chat-card__header-row">
+                    <h2>Edit images</h2>
+                    <AiCreditBadge
+                        creditsRemaining={creditsRemaining}
+                        creditsGrantedTotal={creditsGrantedTotal}
+                        includedInPlan={includedInPlan}
+                    />
+                </div>
             </div>
 
             <div className="ai-chat-card__body">

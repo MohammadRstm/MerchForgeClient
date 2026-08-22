@@ -708,6 +708,29 @@
     color: #dc2626;
 }
 
+/* Same border-trace technique and animation as the form card's AI-thinking glow
+   (see product-form-card__glow-trace below), scoped to one tile at a time — the
+   image a request is actually in flight for, not every selected one. */
+.product-image-tile__glow-trace {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
+    z-index: 1;
+}
+
+.product-image-tile__glow-trace rect {
+    fill: none;
+    stroke: #2563eb;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-dasharray: 6 94;
+    filter: drop-shadow(0 0 3px rgba(37, 99, 235, 0.7));
+    animation: form-glow-trace 2.8s linear infinite;
+}
+
 .product-image-tile--selectable {
     cursor: pointer;
     transition: box-shadow 0.15s ease;
@@ -940,10 +963,51 @@
 
 .ai-chat-card .modal-header {
     flex-shrink: 0;
+    /* The close button is absolute, 16px inset and 36px wide (see .modal-cancel-button) -
+       the base .modal-header's 28px padding alone isn't enough clearance for anything
+       flush against the header's own right edge. */
+    padding-right: 56px;
 }
 
 .ai-chat-card .modal-header h2 {
     font-size: 1.25rem;
+    margin: 0;
+}
+
+.ai-chat-card__header-row {
+    display: flex;
+    align-items: center;
+    /* Hugs the title rather than spreading across the row - the ring sits right
+       beside "Fill with AI", not pinned to the far edge of the header. */
+    justify-content: flex-start;
+    gap: 8px;
+}
+
+/* A small usage ring, styled after Claude Code's own rate-limit indicators: the
+   filled arc grows as credits are spent, not as they remain, so it reads the same
+   way a "% of your limit used" ring does. Its stroke colour is computed per-render
+   (green through yellow into dark red) rather than styled here, since it's a
+   continuous function of usage, not a fixed set of states a class can express. */
+.ai-chat-card__credit-ring {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 15px;
+    height: 15px;
+}
+
+.ai-chat-card__credit-ring-track {
+    stroke: #e2e2e2;
+}
+
+.ai-chat-card__credit-ring--unlimited {
+    border-radius: 50%;
+    border: 1.5px solid #2563eb;
+    color: #2563eb;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1;
 }
 
 .ai-chat-card__body {
@@ -1098,35 +1162,6 @@
 .ai-chat__image-actions {
     display: flex;
     gap: 8px;
-}
-
-.ai-chat__preview {
-    border: 1px solid #e2e2e2;
-    border-radius: 10px;
-    padding: 12px;
-    background: #fafafa;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.ai-chat__preview-grid {
-    display: grid;
-    grid-template-columns: minmax(90px, auto) 1fr;
-    gap: 4px 12px;
-    margin: 0;
-    font-size: 14px;
-}
-
-.ai-chat__preview-grid dt {
-    color: #777;
-    font-weight: 600;
-}
-
-.ai-chat__preview-grid dd {
-    margin: 0;
-    color: #1a1a1a;
-    word-break: break-word;
 }
 
 .ai-chat__composer {
