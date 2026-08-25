@@ -1,7 +1,6 @@
 import type { CSSProperties } from "react";
 import { FiMic, FiSquare, FiX } from "react-icons/fi";
 import type useVoiceProductDraft from "../hooks/ui/useVoiceProductDraft";
-import formatMissingField from "../utils/formatMissingField";
 import AiCreditBadge from "./AiCreditBadge";
 
 type VoiceProductButtonProps = {
@@ -17,10 +16,10 @@ const formatElapsed = (ms: number) => {
 
 /**
  * The whole AI product-creation entry point, replacing the old side-by-side chat
- * card: one floating button, bottom-right of the form. Press it to start a draft
- * and begin recording; the extracted fields mirror live into the real form (see
- * ProductModal's aiDraftProduct effect), same as before — this only changes how a
- * turn is sent, not what happens with the result.
+ * card: one button, bottom-left of the footer, beside Cancel/Create. Press it to
+ * start a draft and begin recording; the extracted fields mirror live into the
+ * real form (see ProductModal's aiDraftProduct effect), same as before — this
+ * only changes how a turn is sent, not what happens with the result.
  *
  * Voice is the only input, so there is no text composer here at all — pressing the
  * button while a draft is already active starts another recorded turn instead of
@@ -43,6 +42,7 @@ const VoiceProductButton = ({ voiceDraft }: VoiceProductButtonProps) => {
 
     const isFinished = draft?.status === "Completed" || draft?.status === "Cancelled";
     const isThinking = isActive && isBusy && !isConfirming && !voice.isRecording;
+    const showCreditTracker = isActive && !isFinished;
 
     const handlePress = () => {
         if (voice.isRecording) {
@@ -62,77 +62,86 @@ const VoiceProductButton = ({ voiceDraft }: VoiceProductButtonProps) => {
 
     return (
         <div className="voice-product-button">
-            {voice.isRecording && (
-                <div className="voice-product-button__pill ai-chat__recording" aria-live="polite">
-                    <span className="ai-chat__recording-dot" />
+            {/* Stacked above the button, credit tracker first (topmost) then the
+                audio tracker (closest to the button) — never restacked the other
+                way, so the credit ring stays in the same spot whether or not a
+                recording is in progress. */}
+            <div className="voice-product-button__stack">
+                {showCreditTracker && (
+                    <div className="voice-product-button__pill voice-product-button__controls">
+                        <AiCreditBadge
+                            creditsRemaining={creditsRemaining}
+                            creditsGrantedTotal={creditsGrantedTotal}
+                            includedInPlan={includedInPlan}
+                        />
+                        <button
+                            type="button"
+                            className="voice-product-button__discard"
+                            onClick={cancel}
+                            disabled={voice.isRecording}
+                            aria-label="Discard AI draft"
+                            title="Discard AI draft"
+                        >
+                            <FiX />
+                        </button>
+                    </div>
+                )}
 
-                    <span className="ai-chat__recording-wave">
-                        {voice.waveform.map((level, index) => (
-                            <span key={index} style={{ "--level": level } as CSSProperties} />
-                        ))}
-                    </span>
+                {voice.isRecording && (
+                    <div className="voice-product-button__pill ai-chat__recording" aria-live="polite">
+                        <span className="ai-chat__recording-dot" />
 
-                    <span className="ai-chat__recording-time">{formatElapsed(voice.elapsedMs)}</span>
-                </div>
-            )}
+                        <span className="ai-chat__recording-wave">
+                            {voice.waveform.map((level, index) => (
+                                <span key={index} style={{ "--level": level } as CSSProperties} />
+                            ))}
+                        </span>
 
-            {isThinking && (
-                <div className="voice-product-button__pill voice-product-button__status">
-                    <span className="ai-chat__typing" aria-label="Assistant is thinking">
-                        <span />
-                        <span />
-                        <span />
-                    </span>
-                </div>
-            )}
+                        <span className="ai-chat__recording-time">{formatElapsed(voice.elapsedMs)}</span>
+                    </div>
+                )}
 
-            {isActive && !voice.isRecording && !isThinking && draft && draft.missingFields.length > 0 && (
-                <p className="voice-product-button__pill business-dashboard-form-hint">
-                    Still needed: {draft.missingFields.map(formatMissingField).join(", ")}
-                </p>
-            )}
+                {isThinking && (
+                    <div className="voice-product-button__pill voice-product-button__status">
+                        <span className="ai-chat__typing" aria-label="Assistant is thinking">
+                            <span />
+                            <span />
+                            <span />
+                        </span>
+                    </div>
+                )}
 
-            {(error || voice.error) && (
-                <p className="voice-product-button__pill business-dashboard-form-error" role="alert">
-                    {error ?? voice.error}
-                </p>
-            )}
-
-            {isActive && !isFinished && (
-                <div className="voice-product-button__controls">
-                    <AiCreditBadge
-                        creditsRemaining={creditsRemaining}
-                        creditsGrantedTotal={creditsGrantedTotal}
-                        includedInPlan={includedInPlan}
-                    />
-                    <button
-                        type="button"
-                        className="voice-product-button__discard"
-                        onClick={cancel}
-                        disabled={voice.isRecording}
-                        aria-label="Discard AI draft"
-                        title="Discard AI draft"
-                    >
-                        <FiX />
-                    </button>
-                </div>
-            )}
+                {!voice.isRecording && !isThinking && (error || voice.error) && (
+                    <p className="voice-product-button__pill business-dashboard-form-error" role="alert">
+                        {error ?? voice.error}
+                    </p>
+                )}
+            </div>
 
             <button
                 type="button"
-                className={`voice-product-button__fab${voice.isRecording ? " voice-product-button__fab--recording" : ""}`}
+                className={`business-dashboard-button-secondary voice-product-button__fab${
+                    voice.isRecording ? " voice-product-button__fab--recording" : ""
+                }`}
                 onClick={handlePress}
                 disabled={disabled}
-                aria-label={voice.isRecording ? "Stop recording" : "Describe your product with your voice"}
                 title={
                     !voice.isSupported
                         ? "Voice recording isn't supported in this browser."
                         : voice.isRecording
                           ? "Stop recording"
-                          : "Describe your product with your voice"
+                          : "Add product details with your voice"
                 }
             >
-                {voice.isRecording ? <FiSquare /> : <FiMic />}
+                {voice.isRecording ? (
+                    <>
+                        <FiSquare /> Stop
+                    </>
+                ) : (
+                    <>
+                        Add with <FiMic />
+                    </>
+                )}
             </button>
         </div>
     );

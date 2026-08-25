@@ -452,23 +452,25 @@ const ProductModal = ({ modal, voiceDraft, imageEditChat }: ProductModalProps) =
                         )}
                     </div>
 
-                    <div className="modal-footer">
-                        <button type="button" className="business-dashboard-button-secondary" onClick={handleClose}>
-                            Cancel
-                        </button>
-                        <button
-                            type="button"
-                            className="business-dashboard-button-primary"
-                            onClick={handlePrimaryAction}
-                            disabled={primaryDisabled}
-                        >
-                            {primaryLabel}
-                        </button>
-                    </div>
+                    <div className="modal-footer product-form-card__footer">
+                        {!isEditing && voiceDraft && !isImageEditOpen && (
+                            <VoiceProductButton voiceDraft={voiceDraft} />
+                        )}
 
-                    {!isEditing && voiceDraft && !isImageEditOpen && (
-                        <VoiceProductButton voiceDraft={voiceDraft} />
-                    )}
+                        <div className="product-form-card__footer-actions">
+                            <button type="button" className="business-dashboard-button-secondary" onClick={handleClose}>
+                                Cancel
+                            </button>
+                            <button
+                                type="button"
+                                className="business-dashboard-button-primary"
+                                onClick={handlePrimaryAction}
+                                disabled={primaryDisabled}
+                            >
+                                {primaryLabel}
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 {imageEditChat && isImageEditOpen && <ImageEditChatPanel chat={imageEditChat} />}

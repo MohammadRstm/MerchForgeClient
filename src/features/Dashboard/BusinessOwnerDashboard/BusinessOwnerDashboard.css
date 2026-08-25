@@ -1230,59 +1230,55 @@
 
 /* ---------- Voice product button (AI product creation entry point) ---------- */
 
-/* Floats bottom-right of the form card, clearing the footer bar rather than
-   overlapping it. Positioned relative to .product-form-card (which shares
-   .modal-container's position: relative), not .modal-body, so it stays put
-   regardless of how far the form is scrolled. Children stack bottom-to-top via
-   column-reverse: the button is always last in markup order but always drawn
-   at the bottom, with the pill/hint/controls appearing above it as they show up. */
+/* Lives inside .modal-footer itself now, at the opposite end from Cancel/Create.
+   .modal-footer is shared chrome (every modal in the app uses it) and keeps its
+   own justify-content: flex-end untouched — margin-right: auto on this wrapper is
+   what pushes it to the left edge instead, without an app-wide override. Cancel
+   and Create are wrapped in their own flex group (.product-form-card__footer-actions)
+   so the two clusters read as "this side" / "that side" rather than three loose
+   buttons in a row. */
 .voice-product-button {
+    position: relative;
+    display: inline-flex;
+    margin-right: auto;
+}
+
+.product-form-card__footer-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* The pill stack floats above the button rather than pushing the footer taller —
+   left-anchored to match the button now living at the left edge. Order is
+   document order, top to bottom: credit tracker first, then whichever status
+   pill applies (audio tracker while recording, thinking/error/missing-fields
+   otherwise), so the credit ring never changes position as the button's state
+   changes underneath it. */
+.voice-product-button__stack {
     position: absolute;
-    right: 20px;
-    bottom: 88px;
+    left: 0;
+    bottom: calc(100% + 10px);
     z-index: 2;
 
     display: flex;
-    flex-direction: column-reverse;
-    align-items: flex-end;
+    flex-direction: column;
     gap: 8px;
 
     max-width: min(80vw, 320px);
 }
 
 .voice-product-button__fab {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    border: none;
-
-    background: #2563eb;
-    color: #fff;
-    font-size: 20px;
-
-    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
-    cursor: pointer;
-    transition: background-color 0.15s ease, transform 0.1s ease, opacity 0.15s ease;
-}
-
-.voice-product-button__fab:hover:not(:disabled) {
-    background: #1d4ed8;
-    transform: scale(1.04);
-}
-
-.voice-product-button__fab:disabled {
-    opacity: 0.55;
-    cursor: not-allowed;
+    gap: 6px;
+    white-space: nowrap;
 }
 
 .voice-product-button__fab--recording {
-    background: #dc2626;
-    box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35);
+    color: #dc2626;
+    background: #fef2f2;
+    border-color: #f5b5b5;
     animation: ai-chat-recording 1.2s ease-in-out infinite;
 }
 
@@ -1347,15 +1343,12 @@ p.voice-product-button__pill {
 }
 
 @media (max-width: 560px) {
-    .voice-product-button {
-        right: 14px;
-        bottom: 76px;
+    .product-form-card__footer {
+        flex-wrap: wrap;
     }
 
-    .voice-product-button__fab {
-        width: 46px;
-        height: 46px;
-        font-size: 18px;
+    .voice-product-button {
+        margin-right: 0;
     }
 }
 

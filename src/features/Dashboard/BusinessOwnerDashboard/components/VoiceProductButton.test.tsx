@@ -55,7 +55,7 @@ describe("VoiceProductButton", () => {
     it("renders an idle mic button before any draft exists", () => {
         render(<VoiceProductButton voiceDraft={voiceDraft()} />);
 
-        expect(screen.getByRole("button", { name: /describe your product with your voice/i })).toBeTruthy();
+        expect(screen.getByRole("button", { name: /add with/i })).toBeTruthy();
     });
 
     it("starts a draft on first press", () => {
@@ -63,7 +63,7 @@ describe("VoiceProductButton", () => {
 
         render(<VoiceProductButton voiceDraft={voiceDraft({ start })} />);
 
-        screen.getByRole("button", { name: /describe your product with your voice/i }).click();
+        screen.getByRole("button", { name: /add with/i }).click();
 
         expect(start).toHaveBeenCalledOnce();
     });
@@ -83,7 +83,7 @@ describe("VoiceProductButton", () => {
             />
         );
 
-        screen.getByRole("button", { name: /describe your product with your voice/i }).click();
+        screen.getByRole("button", { name: /add with/i }).click();
 
         expect(voiceStart).toHaveBeenCalledOnce();
         expect(start).not.toHaveBeenCalled();
@@ -102,7 +102,7 @@ describe("VoiceProductButton", () => {
             />
         );
 
-        screen.getByRole("button", { name: /stop recording/i }).click();
+        screen.getByRole("button", { name: /^stop$/i }).click();
 
         expect(stop).toHaveBeenCalledOnce();
     });
@@ -119,21 +119,6 @@ describe("VoiceProductButton", () => {
         );
 
         expect(screen.getByText("0:05")).toBeTruthy();
-    });
-
-    it("lists what is still missing, in human terms rather than the raw field names", () => {
-        render(
-            <VoiceProductButton
-                voiceDraft={voiceDraft({
-                    isActive: true,
-                    draft: draft({ missingFields: ["price", "metadata.colors"] }),
-                })}
-            />
-        );
-
-        const text = screen.getByText(/still needed/i).textContent;
-        expect(text).toContain("Price, Colors");
-        expect(text).not.toContain("metadata");
     });
 
     it("discarding the draft calls cancel", () => {
@@ -159,8 +144,35 @@ describe("VoiceProductButton", () => {
             />
         );
 
-        const button = screen.getByRole("button", { name: /describe your product with your voice/i });
+        const button = screen.getByRole("button", { name: /add with/i });
         expect(button.hasAttribute("disabled")).toBe(true);
+    });
+
+    it("stacks the credit tracker above the audio tracker while recording", () => {
+        const { container } = render(
+            <VoiceProductButton
+                voiceDraft={voiceDraft({
+                    isActive: true,
+                    draft: draft(),
+                    creditsRemaining: 10,
+                    creditsGrantedTotal: 20,
+                    voice: { isSupported: true, isRecording: true, error: undefined, waveform: [0.3], elapsedMs: 1000, start: vi.fn(), stop: vi.fn() },
+                })}
+            />
+        );
+
+        const stack = container.querySelector(".voice-product-button__stack");
+        const creditPill = stack?.querySelector(".voice-product-button__controls");
+        const audioPill = stack?.querySelector(".ai-chat__recording");
+
+        expect(creditPill).toBeTruthy();
+        expect(audioPill).toBeTruthy();
+
+        // DOCUMENT_POSITION_FOLLOWING means audioPill comes after creditPill in
+        // source order, which — under the stack's plain column flex-direction —
+        // is what puts the credit tracker visually above the audio tracker.
+        const position = creditPill!.compareDocumentPosition(audioPill!);
+        expect(position & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     });
 
     it("surfaces an error to the owner", () => {
