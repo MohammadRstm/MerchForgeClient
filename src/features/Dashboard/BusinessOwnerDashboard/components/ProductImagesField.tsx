@@ -17,6 +17,8 @@ type ProductImagesFieldProps = {
     onEditImages?: () => void;
     /** Opens the "generate in multiple angles" modal — a separate one-shot action from the open-ended edit chat above. */
     onGenerateAngles?: () => void;
+    /** Opens the "add images with colors" modal — absent until an image is uploaded and at least one product color is chosen. */
+    onGenerateColors?: () => void;
     /** True once "Edit images" has been clicked: tiles become pickable instead of offering their normal actions. */
     isSelectingForEdit?: boolean;
     selectedForEdit?: Set<string>;
@@ -42,6 +44,7 @@ const ProductImagesField = ({
     onSetMainImage,
     onEditImages,
     onGenerateAngles,
+    onGenerateColors,
     isSelectingForEdit,
     selectedForEdit,
     onToggleSelectForEdit,
@@ -152,6 +155,16 @@ const ProductImagesField = ({
                             onClick={onGenerateAngles}
                         >
                             🔄 Generate in multiple angles
+                        </button>
+                    )}
+
+                    {onGenerateColors && (
+                        <button
+                            type="button"
+                            className="business-dashboard-button-secondary product-images-field__colors-button"
+                            onClick={onGenerateColors}
+                        >
+                            🎨 Add images with colors
                         </button>
                     )}
                 </div>
