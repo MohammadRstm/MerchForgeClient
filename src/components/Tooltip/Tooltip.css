@@ -5,8 +5,6 @@
 
 .tooltip-bubble {
     position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
     z-index: 20;
 
     padding: 6px 10px;
@@ -21,8 +19,28 @@
 
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
     pointer-events: none;
+}
 
-    animation: tooltipIn 0.12s ease-out;
+/* Centered on the trigger — bleeds evenly past both edges of the trigger, which
+   is a problem specifically when the trigger sits close to a clipping ancestor
+   (e.g. a modal's overflow: hidden); use align="start"/"end" there instead. */
+.tooltip-bubble--align-center {
+    left: 50%;
+    transform: translateX(-50%);
+    animation: tooltipInCenter 0.12s ease-out;
+}
+
+/* Anchored to the trigger's own left edge, growing only rightward — for a
+   trigger close to a container's left edge. */
+.tooltip-bubble--align-start {
+    left: 0;
+    animation: tooltipInSide 0.12s ease-out;
+}
+
+/* Mirror of align-start, for a trigger close to a container's right edge. */
+.tooltip-bubble--align-end {
+    right: 0;
+    animation: tooltipInSide 0.12s ease-out;
 }
 
 .tooltip-bubble--bottom {
@@ -38,9 +56,23 @@
 .tooltip-bubble::after {
     content: "";
     position: absolute;
+    border: 5px solid transparent;
+}
+
+.tooltip-bubble--align-center::after {
     left: 50%;
     transform: translateX(-50%);
-    border: 5px solid transparent;
+}
+
+/* Off-center rather than flush with the bubble's own edge, so the pointer still
+   lands reasonably close to the trigger it's attached to instead of pointing at
+   empty space at the far end of a wide bubble. */
+.tooltip-bubble--align-start::after {
+    left: 12px;
+}
+
+.tooltip-bubble--align-end::after {
+    right: 12px;
 }
 
 .tooltip-bubble--bottom::after {
@@ -53,7 +85,7 @@
     border-top-color: #1a1a1a;
 }
 
-@keyframes tooltipIn {
+@keyframes tooltipInCenter {
     from {
         opacity: 0;
         transform: translateX(-50%) scale(0.92);
@@ -61,5 +93,16 @@
     to {
         opacity: 1;
         transform: translateX(-50%) scale(1);
+    }
+}
+
+@keyframes tooltipInSide {
+    from {
+        opacity: 0;
+        transform: scale(0.92);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
     }
 }

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /** How many recent amplitude samples are kept — sets the width of the waveform. */
 const WAVEFORM_LENGTH = 40;
@@ -24,6 +24,11 @@ const useVoiceRecorder = (onRecorded: (audio: Blob) => void) => {
 
     const recorderRef = useRef<MediaRecorder | null>(null);
     const chunksRef = useRef<Blob[]>([]);
+    // Set right before a discard-stop, so the onstop handler that same stop()
+    // call triggers knows to throw the audio away instead of handing it to
+    // onRecorded — the recording still needs the browser's own stop sequence
+    // (flushing the last chunk, releasing the mic) to run either way.
+    const discardNextRef = useRef(false);
     const audioContextRef = useRef<AudioContext | null>(null);
     const analyserRef = useRef<AnalyserNode | null>(null);
     const rafRef = useRef<number | null>(null);
@@ -81,6 +86,11 @@ const useVoiceRecorder = (onRecorded: (audio: Blob) => void) => {
 
                 const audio = new Blob(chunksRef.current, { type: recorder.mimeType || "audio/webm" });
                 chunksRef.current = [];
+
+                if (discardNextRef.current) {
+                    discardNextRef.current = false;
+                    return;
+                }
 
                 if (audio.size > 0) onRecorded(audio);
             };
@@ -142,7 +152,37 @@ const useVoiceRecorder = (onRecorded: (audio: Blob) => void) => {
         setIsRecording(false);
     };
 
-    return { isSupported, isRecording, error, start, stop, waveform, elapsedMs };
+    /**
+     * Stops recording the same way stop() does, but throws the result away
+     * instead of handing it to onRecorded — for when the owner abandons the
+     * conversation (closes the modal, discards the draft) mid-recording, where
+     * sending what they were saying would mean processing (and spending a
+     * credit on) a turn for a draft that no longer exists.
+     */
+    const cancel = () => {
+        if (!recorderRef.current) return;
+
+        discardNextRef.current = true;
+        recorderRef.current.stop();
+        recorderRef.current = null;
+        setIsRecording(false);
+    };
+
+    // Safety net for any unmount that isn't routed through cancel() first (a
+    // parent closing without calling it, React discarding the component
+    // outright) — otherwise the mic stays live and the browser keeps showing it
+    // as in use for as long as the underlying MediaRecorder is never stopped.
+    useEffect(() => {
+        return () => {
+            if (recorderRef.current) {
+                discardNextRef.current = true;
+                recorderRef.current.stop();
+            }
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    return { isSupported, isRecording, error, start, stop, cancel, waveform, elapsedMs };
 };
 
 export default useVoiceRecorder;

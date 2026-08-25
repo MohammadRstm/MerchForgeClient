@@ -73,6 +73,7 @@ const VoiceProductButton = ({ voiceDraft }: VoiceProductButtonProps) => {
                             creditsRemaining={creditsRemaining}
                             creditsGrantedTotal={creditsGrantedTotal}
                             includedInPlan={includedInPlan}
+                            tooltipAlign="start"
                         />
                         <button
                             type="button"
@@ -101,21 +102,6 @@ const VoiceProductButton = ({ voiceDraft }: VoiceProductButtonProps) => {
                     </div>
                 )}
 
-                {isThinking && (
-                    <div className="voice-product-button__pill voice-product-button__status">
-                        <span className="ai-chat__typing" aria-label="Assistant is thinking">
-                            <span />
-                            <span />
-                            <span />
-                        </span>
-                    </div>
-                )}
-
-                {!voice.isRecording && !isThinking && (error || voice.error) && (
-                    <p className="voice-product-button__pill business-dashboard-form-error" role="alert">
-                        {error ?? voice.error}
-                    </p>
-                )}
             </div>
 
             <button
@@ -130,12 +116,18 @@ const VoiceProductButton = ({ voiceDraft }: VoiceProductButtonProps) => {
                         ? "Voice recording isn't supported in this browser."
                         : voice.isRecording
                           ? "Stop recording"
-                          : "Add product details with your voice"
+                          : isThinking
+                            ? "Processing your recording…"
+                            : "Add product details with your voice"
                 }
             >
                 {voice.isRecording ? (
                     <>
                         <FiSquare /> Stop
+                    </>
+                ) : isThinking ? (
+                    <>
+                        <span className="voice-product-button__spinner" aria-hidden="true" /> Processing…
                     </>
                 ) : (
                     <>
@@ -143,6 +135,12 @@ const VoiceProductButton = ({ voiceDraft }: VoiceProductButtonProps) => {
                     </>
                 )}
             </button>
+
+            {!voice.isRecording && !isThinking && (error || voice.error) && (
+                <p className="voice-product-button__error" role="alert">
+                    {error ?? voice.error}
+                </p>
+            )}
         </div>
     );
 };

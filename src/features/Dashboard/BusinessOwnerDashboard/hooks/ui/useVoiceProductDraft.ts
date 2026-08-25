@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { describeAiChatError } from "../../utils/describeAiChatError";
 import { FEATURE_KEY_AI_PRODUCT_GENERATION } from "../../constants/featureKeys";
 import type { ProductDraft } from "../../types";
@@ -32,11 +32,23 @@ const useVoiceProductDraft = (businessId: string, onProductCreated: () => void) 
         setError(undefined);
     });
 
+    // The recorder hands the finished recording to this callback from
+    // MediaRecorder's own onstop event, which fires asynchronously, well after
+    // the render that started it. Closing over `draft` directly would bake in
+    // whatever it was at that render — undefined on a first recording, since
+    // recording starts in the same tick as the draft-creation request, before it
+    // has resolved. A ref sidesteps that: it's the same mutable box across every
+    // render, so by the time the recording actually finishes it always reads the
+    // latest draft rather than whichever one existed when recording began.
+    const draftRef = useRef(draft);
+    draftRef.current = draft;
+
     const voice = useVoiceRecorder((audio) => {
-        if (!draft) return;
+        const currentDraft = draftRef.current;
+        if (!currentDraft) return;
 
         draftApi.sendVoice.mutate(
-            { draftId: draft.id, audio },
+            { draftId: currentDraft.id, audio },
             {
                 onError: (e) => setError(describeError(e, "Couldn't send that recording.")),
             }
@@ -98,6 +110,12 @@ const useVoiceProductDraft = (businessId: string, onProductCreated: () => void) 
     };
 
     const cancel = () => {
+        // Stops the mic and throws away whatever was recorded so far, rather
+        // than letting it finish and get sent to a draft that's about to be
+        // discarded — otherwise closing mid-recording would still process (and
+        // spend a credit on) a turn for a conversation the owner just abandoned.
+        if (voice.isRecording) voice.cancel();
+
         if (!draft) {
             close();
             return;

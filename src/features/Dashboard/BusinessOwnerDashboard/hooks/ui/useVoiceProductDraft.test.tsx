@@ -16,7 +16,14 @@ vi.mock("../../../../../services/api/productDrafts.api", () => ({
     cancelProductDraftService: vi.fn(),
 }));
 
+// Mocked so a test can trigger "a recording just finished" on demand, rather
+// than driving a real MediaRecorder (unavailable in jsdom regardless) — this is
+// what lets the regression test below reproduce the exact race that used to
+// drop recordings silently.
+vi.mock("./useVoiceRecorder", () => ({ default: vi.fn() }));
+
 import * as api from "../../../../../services/api/productDrafts.api";
+import useVoiceRecorder from "./useVoiceRecorder";
 import useVoiceProductDraft from "./useVoiceProductDraft";
 
 const BUSINESS_ID = "33333333-3333-4333-8333-333333333333";
@@ -48,9 +55,31 @@ const wrapper = ({ children }: { children: ReactNode }) => {
 const renderVoiceDraft = (onProductCreated = vi.fn()) =>
     renderHook(() => useVoiceProductDraft(BUSINESS_ID, onProductCreated), { wrapper });
 
+/**
+ * The onRecorded callback bound at the moment recording actually started —
+ * captured inside the mocked start(), not on every render, to mirror how the
+ * real MediaRecorder.onstop handler is set up once per recording and does not
+ * get swapped out by later re-renders the way a fresh closure would be.
+ */
+let capturedOnRecorded: ((audio: Blob) => void) | undefined;
+
 describe("useVoiceProductDraft", () => {
     beforeEach(() => {
         vi.clearAllMocks();
+        capturedOnRecorded = undefined;
+
+        vi.mocked(useVoiceRecorder).mockImplementation((onRecorded) => ({
+            isSupported: true,
+            isRecording: false,
+            error: undefined,
+            waveform: [],
+            elapsedMs: 0,
+            start: vi.fn(async () => {
+                capturedOnRecorded = onRecorded;
+            }),
+            stop: vi.fn(),
+            cancel: vi.fn(),
+        }));
     });
 
     it("starts inactive with no draft", () => {
@@ -72,6 +101,78 @@ describe("useVoiceProductDraft", () => {
         expect(result.current.isActive).toBe(true);
         await waitFor(() => expect(result.current.draft).toBeDefined());
         expect(result.current.draft!.id).toBe("11111111-1111-4111-8111-111111111111");
+    });
+
+    it("sends a finished recording to the draft even though it was still undefined when recording began", async () => {
+        // Reproduces the exact race that silently dropped every first recording:
+        // start() fires the draft-creation request and begins recording in the
+        // same tick, so the draft is still undefined at the moment recording
+        // starts. It only resolves afterward. A recording that finishes after
+        // that point must still be sent to the draft that exists by then, not
+        // discarded because of what existed when recording began.
+        vi.mocked(api.startProductDraftService).mockResolvedValue(draft());
+        vi.mocked(api.sendProductDraftVoiceService).mockResolvedValue(draft());
+
+        const { result } = renderVoiceDraft();
+
+        await act(async () => {
+            await result.current.start();
+        });
+        await waitFor(() => expect(result.current.draft).toBeDefined());
+
+        const audio = new Blob(["x"], { type: "audio/webm" });
+        act(() => capturedOnRecorded?.(audio));
+
+        await waitFor(() => expect(api.sendProductDraftVoiceService).toHaveBeenCalledTimes(1));
+        expect(api.sendProductDraftVoiceService).toHaveBeenCalledWith(
+            BUSINESS_ID,
+            result.current.draft!.id,
+            audio
+        );
+    });
+
+    it("discards an in-progress recording instead of sending it when the draft is cancelled", async () => {
+        // Closing the product modal mid-recording routes here (ProductModal's
+        // handleClose always calls cancel() while a draft is active). What's
+        // being said must never reach the backend for a draft that's about to
+        // be thrown away — that would process, and spend a credit on, a turn
+        // for a conversation the owner just abandoned.
+        vi.mocked(api.startProductDraftService).mockResolvedValue(draft());
+        vi.mocked(api.cancelProductDraftService).mockResolvedValue(draft({ status: "Cancelled" }));
+
+        const voiceCancel = vi.fn();
+        let isRecording = false;
+
+        vi.mocked(useVoiceRecorder).mockImplementation((onRecorded) => ({
+            isSupported: true,
+            get isRecording() {
+                return isRecording;
+            },
+            error: undefined,
+            waveform: [],
+            elapsedMs: 0,
+            start: vi.fn(async () => {
+                capturedOnRecorded = onRecorded;
+            }),
+            stop: vi.fn(),
+            cancel: voiceCancel,
+        }));
+
+        const { result, rerender } = renderVoiceDraft();
+
+        await act(async () => {
+            await result.current.start();
+        });
+        await waitFor(() => expect(result.current.draft).toBeDefined());
+
+        // The owner is mid-recording when they close the modal.
+        isRecording = true;
+        rerender();
+
+        act(() => result.current.cancel());
+
+        expect(voiceCancel).toHaveBeenCalledOnce();
+        expect(api.sendProductDraftVoiceService).not.toHaveBeenCalled();
     });
 
     it("cancelling clears the draft so pressing the mic again does not show a stale one", async () => {

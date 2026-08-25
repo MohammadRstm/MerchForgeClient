@@ -47,6 +47,7 @@ const voiceDraft = (overrides: Partial<VoiceDraft> = {}): VoiceDraft =>
             elapsedMs: 0,
             start: vi.fn(),
             stop: vi.fn(),
+            cancel: vi.fn(),
         },
         ...overrides,
     }) as VoiceDraft;
@@ -78,7 +79,7 @@ describe("VoiceProductButton", () => {
                     isActive: true,
                     draft: draft(),
                     start,
-                    voice: { isSupported: true, isRecording: false, error: undefined, waveform: [], elapsedMs: 0, start: voiceStart, stop: vi.fn() },
+                    voice: { isSupported: true, isRecording: false, error: undefined, waveform: [], elapsedMs: 0, start: voiceStart, stop: vi.fn(), cancel: vi.fn() },
                 })}
             />
         );
@@ -89,6 +90,24 @@ describe("VoiceProductButton", () => {
         expect(start).not.toHaveBeenCalled();
     });
 
+    it("shows a processing state inside the button once a recording is sent for transcription", () => {
+        render(
+            <VoiceProductButton
+                voiceDraft={voiceDraft({
+                    isActive: true,
+                    isBusy: true,
+                    draft: draft(),
+                    voice: { isSupported: true, isRecording: false, error: undefined, waveform: [], elapsedMs: 0, start: vi.fn(), stop: vi.fn(), cancel: vi.fn() },
+                })}
+            />
+        );
+
+        const button = screen.getByRole("button", { name: /processing/i });
+        expect(button.hasAttribute("disabled")).toBe(true);
+        // Not the idle label — otherwise pressing again mid-turn would look possible.
+        expect(screen.queryByText(/^add with/i)).toBeNull();
+    });
+
     it("stops recording on press while recording", () => {
         const stop = vi.fn();
 
@@ -97,7 +116,7 @@ describe("VoiceProductButton", () => {
                 voiceDraft={voiceDraft({
                     isActive: true,
                     draft: draft(),
-                    voice: { isSupported: true, isRecording: true, error: undefined, waveform: [0.2, 0.5], elapsedMs: 3200, start: vi.fn(), stop },
+                    voice: { isSupported: true, isRecording: true, error: undefined, waveform: [0.2, 0.5], elapsedMs: 3200, start: vi.fn(), stop, cancel: vi.fn() },
                 })}
             />
         );
@@ -113,7 +132,7 @@ describe("VoiceProductButton", () => {
                 voiceDraft={voiceDraft({
                     isActive: true,
                     draft: draft(),
-                    voice: { isSupported: true, isRecording: true, error: undefined, waveform: [0.1, 0.4, 0.9], elapsedMs: 5000, start: vi.fn(), stop: vi.fn() },
+                    voice: { isSupported: true, isRecording: true, error: undefined, waveform: [0.1, 0.4, 0.9], elapsedMs: 5000, start: vi.fn(), stop: vi.fn(), cancel: vi.fn() },
                 })}
             />
         );
@@ -139,7 +158,7 @@ describe("VoiceProductButton", () => {
         render(
             <VoiceProductButton
                 voiceDraft={voiceDraft({
-                    voice: { isSupported: false, isRecording: false, error: undefined, waveform: [], elapsedMs: 0, start: vi.fn(), stop: vi.fn() },
+                    voice: { isSupported: false, isRecording: false, error: undefined, waveform: [], elapsedMs: 0, start: vi.fn(), stop: vi.fn(), cancel: vi.fn() },
                 })}
             />
         );
@@ -156,7 +175,7 @@ describe("VoiceProductButton", () => {
                     draft: draft(),
                     creditsRemaining: 10,
                     creditsGrantedTotal: 20,
-                    voice: { isSupported: true, isRecording: true, error: undefined, waveform: [0.3], elapsedMs: 1000, start: vi.fn(), stop: vi.fn() },
+                    voice: { isSupported: true, isRecording: true, error: undefined, waveform: [0.3], elapsedMs: 1000, start: vi.fn(), stop: vi.fn(), cancel: vi.fn() },
                 })}
             />
         );
