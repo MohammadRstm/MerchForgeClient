@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { FiEdit3, FiRotateCw, FiDroplet } from "react-icons/fi";
 import type { ProductFormImage } from "../types";
 import { resolveImageUrl } from "../utils/resolveImageUrl";
 import ProductImageDropzone from "./ProductImageDropzone";
@@ -17,8 +18,10 @@ type ProductImagesFieldProps = {
     onEditImages?: () => void;
     /** Opens the "generate in multiple angles" modal — a separate one-shot action from the open-ended edit chat above. */
     onGenerateAngles?: () => void;
-    /** Opens the "add images with colors" modal — absent until an image is uploaded and at least one product color is chosen. */
+    /** Opens the "add images with colors" modal — always rendered once images exist, but disabled until the product has at least one chosen color. */
     onGenerateColors?: () => void;
+    /** Whether the product currently has at least one chosen color — gates onGenerateColors's enabled state, not its visibility. */
+    hasProductColors?: boolean;
     /** True once "Edit images" has been clicked: tiles become pickable instead of offering their normal actions. */
     isSelectingForEdit?: boolean;
     selectedForEdit?: Set<string>;
@@ -45,6 +48,7 @@ const ProductImagesField = ({
     onEditImages,
     onGenerateAngles,
     onGenerateColors,
+    hasProductColors,
     isSelectingForEdit,
     selectedForEdit,
     onToggleSelectForEdit,
@@ -144,7 +148,7 @@ const ProductImagesField = ({
                             className="business-dashboard-button-secondary product-images-field__edit-button"
                             onClick={onEditImages}
                         >
-                            ✨ Edit images
+                            <FiEdit3 aria-hidden="true" /> Edit images
                         </button>
                     )}
 
@@ -154,7 +158,7 @@ const ProductImagesField = ({
                             className="business-dashboard-button-secondary product-images-field__angles-button"
                             onClick={onGenerateAngles}
                         >
-                            🔄 Generate in multiple angles
+                            <FiRotateCw aria-hidden="true" /> Generate in multiple angles
                         </button>
                     )}
 
@@ -163,8 +167,10 @@ const ProductImagesField = ({
                             type="button"
                             className="business-dashboard-button-secondary product-images-field__colors-button"
                             onClick={onGenerateColors}
+                            disabled={!hasProductColors}
+                            title={hasProductColors ? undefined : "Pick at least one product color first"}
                         >
-                            🎨 Add images with colors
+                            <FiDroplet aria-hidden="true" /> Add images with colors
                         </button>
                     )}
                 </div>

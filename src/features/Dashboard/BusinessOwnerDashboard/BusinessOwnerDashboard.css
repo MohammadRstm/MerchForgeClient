@@ -775,6 +775,12 @@
     margin-top: 10px;
 }
 
+.product-images-field__actions button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
 /* Generate in multiple angles */
 
 .angle-picker-grid {

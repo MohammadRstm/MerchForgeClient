@@ -254,11 +254,8 @@ const ProductModal = ({ modal, voiceDraft, imageEditChat, multiAngle, colorImage
                                     onSetMainImage={setMainImage}
                                     onEditImages={imageEditChat && !isVoiceDraftActive ? imageEditChat.open : undefined}
                                     onGenerateAngles={multiAngle && !isVoiceDraftActive ? multiAngle.open : undefined}
-                                    onGenerateColors={
-                                        colorImages && !isVoiceDraftActive && colorImages.hasColors
-                                            ? colorImages.open
-                                            : undefined
-                                    }
+                                    onGenerateColors={colorImages && !isVoiceDraftActive ? colorImages.open : undefined}
+                                    hasProductColors={colorImages?.hasColors}
                                     isSelectingForEdit={isImageEditOpen}
                                     selectedForEdit={imageEditChat?.selectedUrls}
                                     onToggleSelectForEdit={imageEditChat?.toggleSelect}
