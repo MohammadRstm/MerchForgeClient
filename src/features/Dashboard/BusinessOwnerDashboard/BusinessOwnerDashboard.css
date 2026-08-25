@@ -920,6 +920,39 @@
     color: #dc2626;
 }
 
+/* Suggest details from photo */
+
+.suggest-details__rows {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.suggest-details__row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.suggest-details__row input[type="checkbox"] {
+    margin-top: 3px;
+    flex-shrink: 0;
+}
+
+.suggest-details__row-label {
+    font-weight: 600;
+    min-width: 120px;
+    flex-shrink: 0;
+    font-size: 13px;
+    color: #444;
+}
+
+.suggest-details__row-value {
+    font-size: 13px;
+    color: #222;
+}
+
 /* Image edit chat */
 
 .image-edit-chat__selection-hint {

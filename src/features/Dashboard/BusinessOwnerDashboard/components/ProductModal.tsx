@@ -13,31 +13,7 @@ import ImageEditChatPanel from "./ImageEditChatPanel";
 import MultiAngleImagesModal from "./MultiAngleImagesModal";
 import ColorImagesModal from "./ColorImagesModal";
 import useClickOutside from "../../../../hooks/useClickOutsideElementToClose";
-import { isoToDateInputValue } from "../hooks/ui/useProductFormState";
-
-/**
- * Only touches the metadata keys the assistant has actually mentioned. Looping
- * over the full field list (the way editing an existing product populates the
- * form) would blank out anything the owner already typed for a key the AI
- * hasn't reached yet — the draft only ever reveals fields, it never clears them.
- */
-const applyAiMetadataToForm = (
-    metadata: Record<string, unknown>,
-    fields: ProductFormField[],
-    setMetadataField: (key: string, value: string | boolean) => void
-) => {
-    for (const [key, raw] of Object.entries(metadata)) {
-        const field = fields.find((f) => f.key === key);
-        if (!field || raw == null) continue;
-
-        if (field.valueType === "Boolean") {
-            setMetadataField(key, raw === true);
-            continue;
-        }
-
-        setMetadataField(key, Array.isArray(raw) ? raw.join(", ") : String(raw));
-    }
-};
+import { applyAiDraftToForm } from "../utils/applyAiDraftToForm";
 
 type ProductModalProps = {
     modal: ReturnType<typeof useProductModal>;
@@ -166,18 +142,7 @@ const ProductModal = ({ modal, voiceDraft, imageEditChat, multiAngle, colorImage
     useEffect(() => {
         if (!aiDraftProduct) return;
 
-        if (aiDraftProduct.title != null) setField("title", aiDraftProduct.title);
-        if (aiDraftProduct.description != null) setField("description", aiDraftProduct.description);
-        if (aiDraftProduct.price != null) setField("price", String(aiDraftProduct.price));
-        if (aiDraftProduct.compareAtPrice != null) setField("compareAtPrice", String(aiDraftProduct.compareAtPrice));
-        if (aiDraftProduct.categoryId != null) setField("categoryId", aiDraftProduct.categoryId);
-        if (aiDraftProduct.sku != null) setField("sku", aiDraftProduct.sku);
-        if (aiDraftProduct.stockQuantity != null) setField("stockQuantity", String(aiDraftProduct.stockQuantity));
-        if (aiDraftProduct.tags.length > 0) setField("tags", aiDraftProduct.tags.join(", "));
-        if (aiDraftProduct.saleEndsAt != null) setField("saleEndsAt", isoToDateInputValue(aiDraftProduct.saleEndsAt));
-        if (aiDraftProduct.metadata != null) {
-            applyAiMetadataToForm(aiDraftProduct.metadata, form, setMetadataField);
-        }
+        applyAiDraftToForm(aiDraftProduct, form, { setField, setMetadataField });
     }, [aiDraftProduct, form, setField, setMetadataField]);
 
     if (!isOpen) return null;
