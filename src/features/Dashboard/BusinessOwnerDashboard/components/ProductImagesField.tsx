@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FiEdit3, FiRotateCw, FiDroplet } from "react-icons/fi";
+import { FiEdit3 } from "react-icons/fi";
 import type { ProductFormImage } from "../types";
 import { resolveImageUrl } from "../utils/resolveImageUrl";
 import ProductImageDropzone from "./ProductImageDropzone";
@@ -14,20 +14,14 @@ type ProductImagesFieldProps = {
     onAddImage: (file: File) => void;
     onRemoveImage: (url: string) => void;
     onSetMainImage: (url: string) => void;
-    /** Absent while the AI chat is open — there's only one second card, and it's either "Fill with AI" or this. */
-    onEditImages?: () => void;
-    /** Opens the "generate in multiple angles" modal — a separate one-shot action from the open-ended edit chat above. */
-    onGenerateAngles?: () => void;
-    /** Opens the "add images with colors" modal — always rendered once images exist, but disabled until the product has at least one chosen color. */
-    onGenerateColors?: () => void;
-    /** Whether the product currently has at least one chosen color — gates onGenerateColors's enabled state, not its visibility. */
-    hasProductColors?: boolean;
-    /** True once "Edit images" has been clicked: tiles become pickable instead of offering their normal actions. */
+    /** Opens the image-tools menu (custom edit, angles, colors, background/enhance, suggest details). Absent while some other AI flow already owns the gallery's selection. */
+    onOpenImageTools?: () => void;
+    /** True while some flow (the edit chat, or a quick edit) has put the gallery into pick-images mode: tiles become pickable instead of offering their normal actions. */
     isSelectingForEdit?: boolean;
     selectedForEdit?: Set<string>;
     onToggleSelectForEdit?: (url: string) => void;
-    /** The one selected image an edit request is in flight for right now — others stay merely selected, still queued. */
-    processingImageUrl?: string;
+    /** Images a request is in flight for right now — others stay merely selected, still queued. More than one at once when edits run concurrently. */
+    processingImageUrls?: Set<string>;
 };
 
 /**
@@ -45,14 +39,11 @@ const ProductImagesField = ({
     onAddImage,
     onRemoveImage,
     onSetMainImage,
-    onEditImages,
-    onGenerateAngles,
-    onGenerateColors,
-    hasProductColors,
+    onOpenImageTools,
     isSelectingForEdit,
     selectedForEdit,
     onToggleSelectForEdit,
-    processingImageUrl,
+    processingImageUrls,
 }: ProductImagesFieldProps) => {
     const [lightboxUrl, setLightboxUrl] = useState<string | undefined>(undefined);
 
@@ -66,7 +57,7 @@ const ProductImagesField = ({
             <div className="product-images-grid">
                 {images.map((image) => {
                     const isSelected = selectedForEdit?.has(image.url) ?? false;
-                    const isProcessing = image.url === processingImageUrl;
+                    const isProcessing = processingImageUrls?.has(image.url) ?? false;
 
                     return (
                         <div
@@ -140,40 +131,14 @@ const ProductImagesField = ({
                 </span>
             )}
 
-            {!isSelectingForEdit && images.length > 0 && (
-                <div className="product-images-field__actions">
-                    {onEditImages && (
-                        <button
-                            type="button"
-                            className="business-dashboard-button-secondary product-images-field__edit-button"
-                            onClick={onEditImages}
-                        >
-                            <FiEdit3 aria-hidden="true" /> Edit images
-                        </button>
-                    )}
-
-                    {onGenerateAngles && (
-                        <button
-                            type="button"
-                            className="business-dashboard-button-secondary product-images-field__angles-button"
-                            onClick={onGenerateAngles}
-                        >
-                            <FiRotateCw aria-hidden="true" /> Generate in multiple angles
-                        </button>
-                    )}
-
-                    {onGenerateColors && (
-                        <button
-                            type="button"
-                            className="business-dashboard-button-secondary product-images-field__colors-button"
-                            onClick={onGenerateColors}
-                            disabled={!hasProductColors}
-                            title={hasProductColors ? undefined : "Pick at least one product color first"}
-                        >
-                            <FiDroplet aria-hidden="true" /> Add images with colors
-                        </button>
-                    )}
-                </div>
+            {onOpenImageTools && !isSelectingForEdit && images.length > 0 && (
+                <button
+                    type="button"
+                    className="business-dashboard-button-secondary product-images-field__edit-button"
+                    onClick={onOpenImageTools}
+                >
+                    <FiEdit3 aria-hidden="true" /> Edit images
+                </button>
             )}
 
             <ImageLightbox url={lightboxUrl} onClose={() => setLightboxUrl(undefined)} />

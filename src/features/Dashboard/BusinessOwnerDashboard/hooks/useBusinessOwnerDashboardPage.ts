@@ -13,6 +13,8 @@ import useVoiceProductDraft from "./ui/useVoiceProductDraft";
 import useImageEditChat from "./ui/useImageEditChat";
 import useMultiAngleImages from "./ui/useMultiAngleImages";
 import useColorImages from "./ui/useColorImages";
+import useQuickImageEdits from "./ui/useQuickImageEdits";
+import useSuggestProductDetails from "./ui/useSuggestProductDetails";
 import { getProductColors } from "../utils/getProductColors";
 import useDeleteProduct from "./data/useDeleteProduct";
 import { useState } from "react";
@@ -89,6 +91,14 @@ const useBusinessOwnerDashboardPage = () => {
         removeNonMainImages: productModal.removeNonMainImages,
     });
 
+    const quickImageEdits = useQuickImageEdits(businessId, {
+        replaceImage: productModal.replaceImage,
+    });
+
+    const suggestDetails = useSuggestProductDetails(businessId, {
+        images: productModal.values.images,
+    });
+
     const [productPendingDeletion, setProductPendingDeletion] =
         useState<BusinessProductResponse | undefined>(undefined);
 
@@ -123,6 +133,8 @@ const useBusinessOwnerDashboardPage = () => {
         imageEditChat,
         multiAngle,
         colorImages,
+        quickImageEdits,
+        suggestDetails,
 
         productPendingDeletion,
         isDeletingProduct,
