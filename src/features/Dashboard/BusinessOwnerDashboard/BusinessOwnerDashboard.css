@@ -767,11 +767,10 @@
     border-color: #2563eb;
 }
 
-.product-images-field__edit-button {
-    margin-top: 10px;
-}
-
-.product-images-field__angles-button {
+.product-images-field__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
     margin-top: 10px;
 }
 

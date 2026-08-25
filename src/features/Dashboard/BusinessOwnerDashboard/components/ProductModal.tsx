@@ -4,10 +4,12 @@ import type { ProductDraftProduct, ProductFormField } from "../types";
 import type useProductModal from "../hooks/ui/useProductModal";
 import type useVoiceProductDraft from "../hooks/ui/useVoiceProductDraft";
 import type useImageEditChat from "../hooks/ui/useImageEditChat";
+import type useMultiAngleImages from "../hooks/ui/useMultiAngleImages";
 import ProductImagesField from "./ProductImagesField";
 import ColorListField from "./ColorListField";
 import VoiceProductButton from "./VoiceProductButton";
 import ImageEditChatPanel from "./ImageEditChatPanel";
+import MultiAngleImagesModal from "./MultiAngleImagesModal";
 import useClickOutside from "../../../../hooks/useClickOutsideElementToClose";
 import { isoToDateInputValue } from "../hooks/ui/useProductFormState";
 
@@ -44,6 +46,8 @@ type ProductModalProps = {
     voiceDraft?: ReturnType<typeof useVoiceProductDraft>;
     /** Offered whenever there's at least one image, in both create and edit — unlike voiceDraft, touching up a photo makes sense either way. */
     imageEditChat?: ReturnType<typeof useImageEditChat>;
+    /** Same availability as imageEditChat — a second, more constrained one-shot image action offered alongside it. */
+    multiAngle?: ReturnType<typeof useMultiAngleImages>;
 };
 
 /** Renders the input that matches an optional field's declared value type. */
@@ -100,7 +104,7 @@ const MetadataField = ({
     );
 };
 
-const ProductModal = ({ modal, voiceDraft, imageEditChat }: ProductModalProps) => {
+const ProductModal = ({ modal, voiceDraft, imageEditChat, multiAngle }: ProductModalProps) => {
     const {
         isOpen,
         isEditing,
@@ -245,6 +249,7 @@ const ProductModal = ({ modal, voiceDraft, imageEditChat }: ProductModalProps) =
                                     onRemoveImage={removeImage}
                                     onSetMainImage={setMainImage}
                                     onEditImages={imageEditChat && !isVoiceDraftActive ? imageEditChat.open : undefined}
+                                    onGenerateAngles={multiAngle && !isVoiceDraftActive ? multiAngle.open : undefined}
                                     isSelectingForEdit={isImageEditOpen}
                                     selectedForEdit={imageEditChat?.selectedUrls}
                                     onToggleSelectForEdit={imageEditChat?.toggleSelect}
@@ -474,6 +479,7 @@ const ProductModal = ({ modal, voiceDraft, imageEditChat }: ProductModalProps) =
                 </div>
 
                 {imageEditChat && isImageEditOpen && <ImageEditChatPanel chat={imageEditChat} />}
+                {multiAngle && <MultiAngleImagesModal multiAngle={multiAngle} />}
             </div>
         </div>
     );

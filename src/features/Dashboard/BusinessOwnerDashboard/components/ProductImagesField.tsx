@@ -13,6 +13,8 @@ type ProductImagesFieldProps = {
     onSetMainImage: (url: string) => void;
     /** Absent while the AI chat is open — there's only one second card, and it's either "Fill with AI" or this. */
     onEditImages?: () => void;
+    /** Opens the "generate in multiple angles" modal — a separate one-shot action from the open-ended edit chat above. */
+    onGenerateAngles?: () => void;
     /** True once "Edit images" has been clicked: tiles become pickable instead of offering their normal actions. */
     isSelectingForEdit?: boolean;
     selectedForEdit?: Set<string>;
@@ -37,6 +39,7 @@ const ProductImagesField = ({
     onRemoveImage,
     onSetMainImage,
     onEditImages,
+    onGenerateAngles,
     isSelectingForEdit,
     selectedForEdit,
     onToggleSelectForEdit,
@@ -121,14 +124,28 @@ const ProductImagesField = ({
                 </span>
             )}
 
-            {onEditImages && !isSelectingForEdit && images.length > 0 && (
-                <button
-                    type="button"
-                    className="business-dashboard-button-secondary product-images-field__edit-button"
-                    onClick={onEditImages}
-                >
-                    ✨ Edit images
-                </button>
+            {!isSelectingForEdit && images.length > 0 && (
+                <div className="product-images-field__actions">
+                    {onEditImages && (
+                        <button
+                            type="button"
+                            className="business-dashboard-button-secondary product-images-field__edit-button"
+                            onClick={onEditImages}
+                        >
+                            ✨ Edit images
+                        </button>
+                    )}
+
+                    {onGenerateAngles && (
+                        <button
+                            type="button"
+                            className="business-dashboard-button-secondary product-images-field__angles-button"
+                            onClick={onGenerateAngles}
+                        >
+                            🔄 Generate in multiple angles
+                        </button>
+                    )}
+                </div>
             )}
         </div>
     );
