@@ -10,6 +10,15 @@ type TooltipProps = {
      * and modals clip overflow, so opening upward would get cut off.
      */
     placement?: "top" | "bottom";
+    /**
+     * Horizontal anchor. "center" (the default) straddles the trigger evenly on
+     * both sides — fine wherever the trigger has room either way, but a wide
+     * bubble bleeds past a clipping ancestor's edge (a modal's overflow: hidden)
+     * once the trigger sits close to that edge itself. "start"/"end" anchor the
+     * bubble to the trigger's own left/right edge instead, so it only ever grows
+     * away from the nearby edge rather than across it.
+     */
+    align?: "center" | "start" | "end";
 };
 
 /**
@@ -18,7 +27,7 @@ type TooltipProps = {
  * instantly on hover/focus, dismisses on blur/mouse-leave, and matches the app's
  * own visual language instead of the browser's.
  */
-const Tooltip = ({ content, children, placement = "bottom" }: TooltipProps) => {
+const Tooltip = ({ content, children, placement = "bottom", align = "center" }: TooltipProps) => {
     const [isVisible, setIsVisible] = useState(false);
 
     return (
@@ -32,7 +41,10 @@ const Tooltip = ({ content, children, placement = "bottom" }: TooltipProps) => {
             {children}
 
             {isVisible && (
-                <span className={`tooltip-bubble tooltip-bubble--${placement}`} role="tooltip">
+                <span
+                    className={`tooltip-bubble tooltip-bubble--${placement} tooltip-bubble--align-${align}`}
+                    role="tooltip"
+                >
                     {content}
                 </span>
             )}

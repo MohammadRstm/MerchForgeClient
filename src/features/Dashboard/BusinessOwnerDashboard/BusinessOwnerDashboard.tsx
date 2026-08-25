@@ -50,8 +50,7 @@ const BusinessOwnerDashboard = () => {
         productModal,
         productDetailModal,
         editFromDetail,
-        aiChat,
-        openAiChat,
+        voiceDraft,
         imageEditChat,
 
         productPendingDeletion,
@@ -156,7 +155,7 @@ const BusinessOwnerDashboard = () => {
                 deletingProductId={isDeletingProduct ? productPendingDeletion?.id : undefined}
             />
 
-            <ProductModal modal={productModal} onFillWithAi={openAiChat} chat={aiChat} imageEditChat={imageEditChat} />
+            <ProductModal modal={productModal} voiceDraft={voiceDraft} imageEditChat={imageEditChat} />
 
             <ProductDetailModal modal={productDetailModal} onEdit={editFromDetail} />
 

@@ -24,19 +24,6 @@ export const getProductDraftService = async (
     return productDraftSchema.parse(data);
 };
 
-export const sendProductDraftMessageService = async (
-    businessId: string,
-    draftId: string,
-    message: string
-): Promise<ProductDraft> => {
-    const { data } = await authenticatedApi.post(
-        apiRoutes.PRODUCT_DRAFT_MESSAGES(businessId, draftId),
-        { message }
-    );
-
-    return productDraftSchema.parse(data);
-};
-
 export const sendProductDraftVoiceService = async (
     businessId: string,
     draftId: string,

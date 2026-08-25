@@ -4,7 +4,6 @@ import {
     cancelProductDraftService,
     confirmProductDraftService,
     resolveProductDraftImageService,
-    sendProductDraftMessageService,
     sendProductDraftVoiceService,
     startProductDraftService,
 } from "../../../../../services/api/productDrafts.api";
@@ -30,15 +29,6 @@ const useProductDraft = (businessId: string, onDraftUpdated: (draft: ProductDraf
     const start = useMutation({
         mutationFn: () => startProductDraftService(businessId),
         onSuccess: onDraftUpdated,
-    });
-
-    const sendMessage = useMutation({
-        mutationFn: ({ draftId, message }: { draftId: string; message: string }) =>
-            sendProductDraftMessageService(businessId, draftId, message),
-        onSuccess: (draft) => {
-            onDraftUpdated(draft);
-            invalidateFeatureCredits();
-        },
     });
 
     const sendVoice = useMutation({
@@ -79,7 +69,7 @@ const useProductDraft = (businessId: string, onDraftUpdated: (draft: ProductDraf
         onSuccess: onDraftUpdated,
     });
 
-    return { start, sendMessage, sendVoice, attachImage, resolveImage, confirm, cancel };
+    return { start, sendVoice, attachImage, resolveImage, confirm, cancel };
 };
 
 export default useProductDraft;

@@ -4,6 +4,8 @@ type AiCreditBadgeProps = {
     creditsRemaining?: number;
     creditsGrantedTotal?: number;
     includedInPlan: boolean;
+    /** Forwarded to the tooltip. Defaults to centered; pass "start" when this badge sits close to a clipping ancestor's left edge (see Tooltip's own doc comment). */
+    tooltipAlign?: "center" | "start" | "end";
 };
 
 const SIZE = 15;
@@ -38,10 +40,15 @@ const ringColorForUsage = (usedFraction: number): string => {
  * "37% of your weekly limit" ring does — empty and green when fresh, sliding
  * through yellow and into dark red as the balance actually runs low.
  */
-const AiCreditBadge = ({ creditsRemaining, creditsGrantedTotal, includedInPlan }: AiCreditBadgeProps) => {
+const AiCreditBadge = ({
+    creditsRemaining,
+    creditsGrantedTotal,
+    includedInPlan,
+    tooltipAlign = "center",
+}: AiCreditBadgeProps) => {
     if (includedInPlan) {
         return (
-            <Tooltip content="Unlimited — included in your plan">
+            <Tooltip content="Unlimited — included in your plan" align={tooltipAlign}>
                 <span
                     className="ai-chat-card__credit-ring ai-chat-card__credit-ring--unlimited"
                     role="img"
@@ -61,7 +68,7 @@ const AiCreditBadge = ({ creditsRemaining, creditsGrantedTotal, includedInPlan }
     const usedFraction = Math.min(1, Math.max(0, (creditsGrantedTotal - creditsRemaining) / creditsGrantedTotal));
 
     return (
-        <Tooltip content={`${creditsRemaining} of ${creditsGrantedTotal} credits left`}>
+        <Tooltip content={`${creditsRemaining} of ${creditsGrantedTotal} credits left`} align={tooltipAlign}>
             <span
                 className="ai-chat-card__credit-ring"
                 role="img"
