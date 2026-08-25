@@ -31,7 +31,7 @@ const useProductModal = (businessId: string) => {
     // happens even with the modal closed, since this hook always runs.
     const fields = useMemo(() => productForm?.metadataFields ?? [], [productForm]);
 
-    const { values, errors, setField, setMetadataField, addImage, removeImage, setMainImage, replaceImage, maxImages, validate, toPayload } =
+    const { values, errors, setField, setMetadataField, addImage, removeImage, removeNonMainImages, setMainImage, replaceImage, maxImages, validate, toPayload } =
         useProductFormState(editingProductId ? editingProduct : undefined, fields);
 
     const { mutate: save, isPending: isSaving, error: saveErrorRaw, reset: resetSave } = useSaveProduct(businessId);
@@ -134,7 +134,9 @@ const useProductModal = (businessId: string) => {
         errors,
         setField,
         setMetadataField,
+        addImage,
         removeImage,
+        removeNonMainImages,
         setMainImage,
         replaceImage,
         maxImages,
