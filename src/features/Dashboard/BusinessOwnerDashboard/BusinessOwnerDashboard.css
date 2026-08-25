@@ -894,23 +894,10 @@
 
 /* ---------- AI chat ---------- */
 
-.product-modal__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    /* Leaves room for the modal's own close button in the top-right. */
-    padding-right: 28px;
-}
-
-.product-modal__ai-button {
-    white-space: nowrap;
-}
-
-/* Shared backdrop for the product form and, once "Fill with AI" is clicked, the
-   assistant beside it — two independent cards (each with its own header/body/
-   close button) rather than one wide dialog, so each genuinely reads as its own
-   modal. One backdrop and one click-outside region for the pair, though: two
+/* Shared backdrop for the product form and, whenever the image-edit panel is
+   open, the panel beside it — two independent cards (each with its own header/
+   body/close button) rather than one wide dialog, so each genuinely reads as its
+   own modal. One backdrop and one click-outside region for the pair, though: two
    separate backdrops would double-darken the page, and a click landing between
    the cards should dismiss both, not neither. */
 .product-ai-modals {
@@ -933,10 +920,6 @@
     gap: 12px;
     /* Leaves room for the modal's own close button in the top-right. */
     padding-right: 28px;
-}
-
-.product-modal__ai-button {
-    white-space: nowrap;
 }
 
 /* The assistant's own card. Grows in from nothing beside the form card, which —
@@ -1118,74 +1101,6 @@
     line-height: 1.6;
 }
 
-.ai-chat__image img,
-.ai-chat__image-compare img {
-    max-width: 100%;
-    border-radius: 8px;
-    border: 1px solid #e2e2e2;
-    display: block;
-}
-
-.ai-chat__image {
-    max-width: 180px;
-}
-
-.ai-chat__image-approval {
-    border: 1px solid #e2e2e2;
-    border-radius: 10px;
-    padding: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-/* Side by side so the owner is comparing, not remembering. */
-.ai-chat__image-compare {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-}
-
-.ai-chat__image-compare figure {
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.ai-chat__image-compare figcaption {
-    font-size: 12px;
-    color: #8a8a8a;
-    text-align: center;
-}
-
-.ai-chat__image-actions {
-    display: flex;
-    gap: 8px;
-}
-
-.ai-chat__composer {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.ai-chat__composer .business-dashboard-form-input {
-    flex: 1;
-}
-
-.ai-chat__composer .business-dashboard-button-ghost {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    padding: 0;
-    font-size: 16px;
-    flex-shrink: 0;
-}
-
-
 /* Pulses while recording so it is obvious the microphone is live. */
 .ai-chat__record--active {
     color: #dc2626;
@@ -1313,9 +1228,134 @@
     }
 }
 
+/* ---------- Voice product button (AI product creation entry point) ---------- */
+
+/* Floats bottom-right of the form card, clearing the footer bar rather than
+   overlapping it. Positioned relative to .product-form-card (which shares
+   .modal-container's position: relative), not .modal-body, so it stays put
+   regardless of how far the form is scrolled. Children stack bottom-to-top via
+   column-reverse: the button is always last in markup order but always drawn
+   at the bottom, with the pill/hint/controls appearing above it as they show up. */
+.voice-product-button {
+    position: absolute;
+    right: 20px;
+    bottom: 88px;
+    z-index: 2;
+
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: flex-end;
+    gap: 8px;
+
+    max-width: min(80vw, 320px);
+}
+
+.voice-product-button__fab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: none;
+
+    background: #2563eb;
+    color: #fff;
+    font-size: 20px;
+
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+    cursor: pointer;
+    transition: background-color 0.15s ease, transform 0.1s ease, opacity 0.15s ease;
+}
+
+.voice-product-button__fab:hover:not(:disabled) {
+    background: #1d4ed8;
+    transform: scale(1.04);
+}
+
+.voice-product-button__fab:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.voice-product-button__fab--recording {
+    background: #dc2626;
+    box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35);
+    animation: ai-chat-recording 1.2s ease-in-out infinite;
+}
+
+.voice-product-button__pill {
+    background: #fff;
+    border: 1px solid #ececec;
+    border-radius: 999px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    padding: 8px 14px;
+    margin: 0;
+    max-width: 100%;
+}
+
+/* The waveform/timer pill is wide by nature (a scrolling bar row); the
+   missing-fields hint and error pills wrap instead of stretching the same way. */
+p.voice-product-button__pill {
+    font-size: 13px;
+    white-space: normal;
+}
+
+.voice-product-button__status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+}
+
+.voice-product-button__controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border: 1px solid #ececec;
+    border-radius: 999px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    padding: 6px 10px;
+}
+
+.voice-product-button__discard {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: none;
+    color: #888;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.voice-product-button__discard:hover:not(:disabled) {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.voice-product-button__discard:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 @media (max-width: 560px) {
-    .ai-chat__image-compare {
-        grid-template-columns: 1fr;
+    .voice-product-button {
+        right: 14px;
+        bottom: 76px;
+    }
+
+    .voice-product-button__fab {
+        width: 46px;
+        height: 46px;
+        font-size: 18px;
     }
 }
 

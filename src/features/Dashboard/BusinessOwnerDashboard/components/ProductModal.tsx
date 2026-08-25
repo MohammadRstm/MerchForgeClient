@@ -2,11 +2,11 @@ import { useEffect, useRef } from "react";
 import Spinner from "../../../../components/LoadingSpinner/LoadingSpinner";
 import type { ProductDraftProduct, ProductFormField } from "../types";
 import type useProductModal from "../hooks/ui/useProductModal";
-import type useProductAiChat from "../hooks/ui/useProductAiChat";
+import type useVoiceProductDraft from "../hooks/ui/useVoiceProductDraft";
 import type useImageEditChat from "../hooks/ui/useImageEditChat";
 import ProductImagesField from "./ProductImagesField";
 import ColorListField from "./ColorListField";
-import AiChatPanel from "./AiChatPanel";
+import VoiceProductButton from "./VoiceProductButton";
 import ImageEditChatPanel from "./ImageEditChatPanel";
 import useClickOutside from "../../../../hooks/useClickOutsideElementToClose";
 import { isoToDateInputValue } from "../hooks/ui/useProductFormState";
@@ -39,12 +39,10 @@ type ProductModalProps = {
     modal: ReturnType<typeof useProductModal>;
     /**
      * Offered only when creating. Editing an existing product through a fresh
-     * conversation would create a second product rather than update this one.
+     * voice draft would create a second product rather than update this one.
      */
-    onFillWithAi?: () => void;
-    /** Present alongside onFillWithAi — its isOpen decides whether the AI card is showing. */
-    chat?: ReturnType<typeof useProductAiChat>;
-    /** Offered whenever there's at least one image, in both create and edit — unlike onFillWithAi, touching up a photo makes sense either way. */
+    voiceDraft?: ReturnType<typeof useVoiceProductDraft>;
+    /** Offered whenever there's at least one image, in both create and edit — unlike voiceDraft, touching up a photo makes sense either way. */
     imageEditChat?: ReturnType<typeof useImageEditChat>;
 };
 
@@ -102,7 +100,7 @@ const MetadataField = ({
     );
 };
 
-const ProductModal = ({ modal, onFillWithAi, chat, imageEditChat }: ProductModalProps) => {
+const ProductModal = ({ modal, voiceDraft, imageEditChat }: ProductModalProps) => {
     const {
         isOpen,
         isEditing,
@@ -127,18 +125,24 @@ const ProductModal = ({ modal, onFillWithAi, chat, imageEditChat }: ProductModal
     } = modal;
 
     const isPreparing = productFormLoading || editingProductLoading;
-    const isChatOpen = Boolean(chat?.isOpen);
+    const isVoiceDraftActive = Boolean(voiceDraft?.isActive);
     const isImageEditOpen = Boolean(imageEditChat?.isOpen);
-    // Confirming has its own "Creating…" state on the button, so the glow is
-    // reserved for genuinely waiting on the assistant's next turn.
-    const isAiThinking = isChatOpen && Boolean(chat?.isBusy) && !chat?.isConfirming;
+    // Confirming has its own "Creating…" state on the button, and the recording
+    // pill/thinking pill already show progress next to the mic button, so the
+    // card-wide glow is reserved for genuinely waiting on the assistant's next
+    // turn after a recording is sent.
+    const isAiThinking =
+        isVoiceDraftActive &&
+        Boolean(voiceDraft?.isBusy) &&
+        !voiceDraft?.isConfirming &&
+        !voiceDraft?.voice.isRecording;
 
     const wrapperRef = useRef<HTMLDivElement>(null);
 
-    // Cancelling the AI conversation is part of closing the pair while it's open —
+    // Cancelling the voice draft is part of closing the pair while it's active —
     // otherwise a draft would keep running in the background with no way back to it.
     const handleClose = () => {
-        if (chat?.isOpen) chat.cancel();
+        if (voiceDraft?.isActive) voiceDraft.cancel();
         if (imageEditChat?.isOpen) imageEditChat.close();
         close();
     };
@@ -146,11 +150,10 @@ const ProductModal = ({ modal, onFillWithAi, chat, imageEditChat }: ProductModal
     useClickOutside(wrapperRef, handleClose);
 
     // Mirrors the assistant's structured understanding into the real form fields
-    // as it arrives, so the owner watches the form fill in rather than only
-    // reading it off the chat's own "Product so far" preview. Only ever reveals
-    // values -- a field the AI hasn't reached yet (still null) is left exactly
-    // as the owner left it, never cleared.
-    const aiDraftProduct: ProductDraftProduct | undefined = chat?.draft?.draft ?? undefined;
+    // as it arrives, so the owner watches the form fill in as each recording is
+    // processed. Only ever reveals values -- a field the AI hasn't reached yet
+    // (still null) is left exactly as the owner left it, never cleared.
+    const aiDraftProduct: ProductDraftProduct | undefined = voiceDraft?.draft?.draft ?? undefined;
 
     useEffect(() => {
         if (!aiDraftProduct) return;
@@ -173,10 +176,10 @@ const ProductModal = ({ modal, onFillWithAi, chat, imageEditChat }: ProductModal
 
     // Confirming an AI draft and submitting the manual form both mean the same
     // thing — "this product is done" — so there is only ever one primary action.
-    // While the assistant is open it's wired to the draft's confirm instead of the
-    // plain form submit; the chat card itself offers no create action of its own.
-    const primaryLabel = isChatOpen
-        ? chat?.isConfirming
+    // While a voice draft is active it's wired to the draft's confirm instead of
+    // the plain form submit; the voice button itself offers no create action.
+    const primaryLabel = isVoiceDraftActive
+        ? voiceDraft?.isConfirming
             ? "Creating…"
             : "Create product"
         : isSaving
@@ -185,11 +188,11 @@ const ProductModal = ({ modal, onFillWithAi, chat, imageEditChat }: ProductModal
             ? "Save changes"
             : "Add product";
 
-    const primaryDisabled = isChatOpen
-        ? !chat?.draft?.canConfirm || chat?.isBusy
+    const primaryDisabled = isVoiceDraftActive
+        ? !voiceDraft?.draft?.canConfirm || voiceDraft?.isBusy
         : isSaving || isPreparing || imageUploading;
 
-    const handlePrimaryAction = isChatOpen ? chat?.confirm : submit;
+    const handlePrimaryAction = isVoiceDraftActive ? voiceDraft?.confirm : submit;
 
     return (
         <div className="modal-backdrop">
@@ -216,17 +219,6 @@ const ProductModal = ({ modal, onFillWithAi, chat, imageEditChat }: ProductModal
                     <div className="modal-header">
                         <div className="product-modal__header">
                             <h2>{isEditing ? "Edit product" : "Add product"}</h2>
-
-                            {!isEditing && onFillWithAi && !isChatOpen && !isImageEditOpen && (
-                                <button
-                                    type="button"
-                                    className="business-dashboard-button-secondary product-modal__ai-button"
-                                    onClick={onFillWithAi}
-                                    disabled={isPreparing}
-                                >
-                                    ✨ Fill with AI
-                                </button>
-                            )}
                         </div>
                     </div>
 
@@ -243,10 +235,16 @@ const ProductModal = ({ modal, onFillWithAi, chat, imageEditChat }: ProductModal
                                     isUploading={imageUploading}
                                     uploadError={imageUploadError}
                                     validationError={errors.images}
-                                    onAddImage={uploadImage}
+                                    onAddImage={(file) => {
+                                        uploadImage(file);
+                                        // Keeps a voice draft's own image in sync with whatever
+                                        // the owner uploads here, so canConfirm can actually turn
+                                        // true — see useVoiceProductDraft.attachImageIfFirst.
+                                        voiceDraft?.attachImageIfFirst(file);
+                                    }}
                                     onRemoveImage={removeImage}
                                     onSetMainImage={setMainImage}
-                                    onEditImages={imageEditChat && !isChatOpen ? imageEditChat.open : undefined}
+                                    onEditImages={imageEditChat && !isVoiceDraftActive ? imageEditChat.open : undefined}
                                     isSelectingForEdit={isImageEditOpen}
                                     selectedForEdit={imageEditChat?.selectedUrls}
                                     onToggleSelectForEdit={imageEditChat?.toggleSelect}
@@ -467,9 +465,12 @@ const ProductModal = ({ modal, onFillWithAi, chat, imageEditChat }: ProductModal
                             {primaryLabel}
                         </button>
                     </div>
+
+                    {!isEditing && voiceDraft && !isImageEditOpen && (
+                        <VoiceProductButton voiceDraft={voiceDraft} />
+                    )}
                 </div>
 
-                {chat && isChatOpen && <AiChatPanel chat={chat} />}
                 {imageEditChat && isImageEditOpen && <ImageEditChatPanel chat={imageEditChat} />}
             </div>
         </div>

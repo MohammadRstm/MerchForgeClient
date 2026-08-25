@@ -9,7 +9,7 @@ import useProductDetailModal from "./ui/useProductDetailModal";
 import useMemberModal from "./ui/useMemberModal";
 import useWebsiteTemplateModal from "./ui/useWebsiteTemplateModal";
 import useFeatureCreditsModal from "./ui/useFeatureCreditsModal";
-import useProductAiChat from "./ui/useProductAiChat";
+import useVoiceProductDraft from "./ui/useVoiceProductDraft";
 import useImageEditChat from "./ui/useImageEditChat";
 import useDeleteProduct from "./data/useDeleteProduct";
 import { useState } from "react";
@@ -59,20 +59,11 @@ const useBusinessOwnerDashboardPage = () => {
         productModal.openForEdit(productId);
     };
 
-    const aiChat = useProductAiChat(businessId, () => {
+    const voiceDraft = useVoiceProductDraft(businessId, () => {
         // The AI flow created the product itself, so the manual modal - if it was the
         // route in - has nothing left to submit.
         productModal.close();
     });
-
-    /**
-     * Opens the assistant alongside the still-open form rather than replacing it —
-     * the two are rendered as panes of the same modal (see ProductModal), so the
-     * owner keeps the fields in view while talking to the AI.
-     */
-    const openAiChat = () => {
-        aiChat.open();
-    };
 
     // Each replacement swaps one form image in place — the edited result taking the
     // exact spot (and isMain state) the original occupied, not a new gallery entry.
@@ -112,8 +103,7 @@ const useBusinessOwnerDashboardPage = () => {
         productModal,
         productDetailModal,
         editFromDetail,
-        aiChat,
-        openAiChat,
+        voiceDraft,
         imageEditChat,
 
         productPendingDeletion,

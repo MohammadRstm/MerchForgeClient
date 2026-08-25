@@ -1,0 +1,175 @@
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import type { ProductDraft } from "../types";
+import VoiceProductButton from "./VoiceProductButton";
+
+// The component renders from the hook's return value alone, so it's supplied as a
+// plain object rather than being run - what is under test is that state maps to
+// the right UI, not how that state was produced.
+type VoiceDraft = Parameters<typeof VoiceProductButton>[0]["voiceDraft"];
+
+const draft = (overrides: Partial<ProductDraft> = {}): ProductDraft => ({
+    id: "11111111-1111-4111-8111-111111111111",
+    status: "CollectingInformation",
+    messages: [],
+    draft: null,
+    missingFields: [],
+    originalImageUrl: null,
+    processedImageUrl: null,
+    imageModificationPrompt: null,
+    canConfirm: false,
+    productId: null,
+    ...overrides,
+});
+
+const voiceDraft = (overrides: Partial<VoiceDraft> = {}): VoiceDraft =>
+    ({
+        isActive: false,
+        start: vi.fn(),
+        close: vi.fn(),
+        cancel: vi.fn(),
+        draft: undefined,
+        isStarting: false,
+        isBusy: false,
+        isConfirming: false,
+        error: undefined,
+        creditsRemaining: undefined,
+        creditsGrantedTotal: undefined,
+        includedInPlan: false,
+        attachImageIfFirst: vi.fn(),
+        resolveImage: vi.fn(),
+        confirm: vi.fn(),
+        voice: {
+            isSupported: true,
+            isRecording: false,
+            error: undefined,
+            waveform: [],
+            elapsedMs: 0,
+            start: vi.fn(),
+            stop: vi.fn(),
+        },
+        ...overrides,
+    }) as VoiceDraft;
+
+describe("VoiceProductButton", () => {
+    it("renders an idle mic button before any draft exists", () => {
+        render(<VoiceProductButton voiceDraft={voiceDraft()} />);
+
+        expect(screen.getByRole("button", { name: /describe your product with your voice/i })).toBeTruthy();
+    });
+
+    it("starts a draft on first press", () => {
+        const start = vi.fn();
+
+        render(<VoiceProductButton voiceDraft={voiceDraft({ start })} />);
+
+        screen.getByRole("button", { name: /describe your product with your voice/i }).click();
+
+        expect(start).toHaveBeenCalledOnce();
+    });
+
+    it("begins another recording instead of restarting the draft once one is active", () => {
+        const start = vi.fn();
+        const voiceStart = vi.fn();
+
+        render(
+            <VoiceProductButton
+                voiceDraft={voiceDraft({
+                    isActive: true,
+                    draft: draft(),
+                    start,
+                    voice: { isSupported: true, isRecording: false, error: undefined, waveform: [], elapsedMs: 0, start: voiceStart, stop: vi.fn() },
+                })}
+            />
+        );
+
+        screen.getByRole("button", { name: /describe your product with your voice/i }).click();
+
+        expect(voiceStart).toHaveBeenCalledOnce();
+        expect(start).not.toHaveBeenCalled();
+    });
+
+    it("stops recording on press while recording", () => {
+        const stop = vi.fn();
+
+        render(
+            <VoiceProductButton
+                voiceDraft={voiceDraft({
+                    isActive: true,
+                    draft: draft(),
+                    voice: { isSupported: true, isRecording: true, error: undefined, waveform: [0.2, 0.5], elapsedMs: 3200, start: vi.fn(), stop },
+                })}
+            />
+        );
+
+        screen.getByRole("button", { name: /stop recording/i }).click();
+
+        expect(stop).toHaveBeenCalledOnce();
+    });
+
+    it("shows the waveform pill while recording", () => {
+        render(
+            <VoiceProductButton
+                voiceDraft={voiceDraft({
+                    isActive: true,
+                    draft: draft(),
+                    voice: { isSupported: true, isRecording: true, error: undefined, waveform: [0.1, 0.4, 0.9], elapsedMs: 5000, start: vi.fn(), stop: vi.fn() },
+                })}
+            />
+        );
+
+        expect(screen.getByText("0:05")).toBeTruthy();
+    });
+
+    it("lists what is still missing, in human terms rather than the raw field names", () => {
+        render(
+            <VoiceProductButton
+                voiceDraft={voiceDraft({
+                    isActive: true,
+                    draft: draft({ missingFields: ["price", "metadata.colors"] }),
+                })}
+            />
+        );
+
+        const text = screen.getByText(/still needed/i).textContent;
+        expect(text).toContain("Price, Colors");
+        expect(text).not.toContain("metadata");
+    });
+
+    it("discarding the draft calls cancel", () => {
+        const cancel = vi.fn();
+
+        render(
+            <VoiceProductButton
+                voiceDraft={voiceDraft({ isActive: true, draft: draft(), cancel })}
+            />
+        );
+
+        screen.getByRole("button", { name: /discard ai draft/i }).click();
+
+        expect(cancel).toHaveBeenCalledOnce();
+    });
+
+    it("disables the button when the browser cannot record", () => {
+        render(
+            <VoiceProductButton
+                voiceDraft={voiceDraft({
+                    voice: { isSupported: false, isRecording: false, error: undefined, waveform: [], elapsedMs: 0, start: vi.fn(), stop: vi.fn() },
+                })}
+            />
+        );
+
+        const button = screen.getByRole("button", { name: /describe your product with your voice/i });
+        expect(button.hasAttribute("disabled")).toBe(true);
+    });
+
+    it("surfaces an error to the owner", () => {
+        render(
+            <VoiceProductButton
+                voiceDraft={voiceDraft({ isActive: true, draft: draft(), error: "Couldn't send that recording." })}
+            />
+        );
+
+        expect(screen.getByRole("alert").textContent).toContain("Couldn't send that recording.");
+    });
+});

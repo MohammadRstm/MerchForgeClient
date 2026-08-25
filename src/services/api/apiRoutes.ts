@@ -39,7 +39,6 @@ export const apiRoutes = {
     /** AI PRODUCT DRAFTS */
     PRODUCT_DRAFTS : (businessId : string) => `/businesses/${businessId}/dashboard/product-drafts`,
     PRODUCT_DRAFT : (businessId : string, draftId : string) => `/businesses/${businessId}/dashboard/product-drafts/${draftId}`,
-    PRODUCT_DRAFT_MESSAGES : (businessId : string, draftId : string) => `/businesses/${businessId}/dashboard/product-drafts/${draftId}/messages`,
     PRODUCT_DRAFT_VOICE : (businessId : string, draftId : string) => `/businesses/${businessId}/dashboard/product-drafts/${draftId}/voice`,
     PRODUCT_DRAFT_IMAGE : (businessId : string, draftId : string) => `/businesses/${businessId}/dashboard/product-drafts/${draftId}/image`,
     PRODUCT_DRAFT_IMAGE_APPROVAL : (businessId : string, draftId : string) => `/businesses/${businessId}/dashboard/product-drafts/${draftId}/image-approval`,
