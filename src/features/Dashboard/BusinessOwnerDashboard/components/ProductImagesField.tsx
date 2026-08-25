@@ -1,6 +1,8 @@
+import { useState } from "react";
 import type { ProductFormImage } from "../types";
 import { resolveImageUrl } from "../utils/resolveImageUrl";
 import ProductImageDropzone from "./ProductImageDropzone";
+import ImageLightbox from "../../../../components/Lightbox/ImageLightbox";
 
 type ProductImagesFieldProps = {
     images: ProductFormImage[];
@@ -45,6 +47,8 @@ const ProductImagesField = ({
     onToggleSelectForEdit,
     processingImageUrl,
 }: ProductImagesFieldProps) => {
+    const [lightboxUrl, setLightboxUrl] = useState<string | undefined>(undefined);
+
     return (
         <div className="business-dashboard-form-field">
             <label className="business-dashboard-form-label">
@@ -78,7 +82,12 @@ const ProductImagesField = ({
                                 </svg>
                             )}
 
-                            <img src={resolveImageUrl(image.url)} alt="Product" className="product-image-tile__preview" />
+                            <img
+                                src={resolveImageUrl(image.url)}
+                                alt="Product"
+                                className="product-image-tile__preview"
+                                onClick={isSelectingForEdit ? undefined : () => setLightboxUrl(resolveImageUrl(image.url))}
+                            />
 
                             {image.isMain && <span className="business-dashboard-badge product-image-tile__badge">Main</span>}
 
@@ -147,6 +156,8 @@ const ProductImagesField = ({
                     )}
                 </div>
             )}
+
+            <ImageLightbox url={lightboxUrl} onClose={() => setLightboxUrl(undefined)} />
         </div>
     );
 };

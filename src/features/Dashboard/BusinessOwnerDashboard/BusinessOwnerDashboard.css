@@ -668,6 +668,7 @@
     height: 100%;
     object-fit: cover;
     display: block;
+    cursor: pointer;
 }
 
 .product-image-tile__badge {
@@ -906,6 +907,7 @@
     height: 100%;
     object-fit: cover;
     display: block;
+    cursor: pointer;
 }
 
 .product-detail__gallery-item .business-dashboard-badge {
