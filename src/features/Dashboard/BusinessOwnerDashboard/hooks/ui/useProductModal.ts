@@ -134,6 +134,7 @@ const useProductModal = (businessId: string) => {
         errors,
         setField,
         setMetadataField,
+        addImage,
         removeImage,
         setMainImage,
         replaceImage,

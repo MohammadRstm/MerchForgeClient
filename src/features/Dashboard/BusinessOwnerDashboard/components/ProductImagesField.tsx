@@ -1,6 +1,9 @@
+import { useState } from "react";
+import { FiEdit3 } from "react-icons/fi";
 import type { ProductFormImage } from "../types";
 import { resolveImageUrl } from "../utils/resolveImageUrl";
 import ProductImageDropzone from "./ProductImageDropzone";
+import ImageLightbox from "../../../../components/Lightbox/ImageLightbox";
 
 type ProductImagesFieldProps = {
     images: ProductFormImage[];
@@ -11,14 +14,14 @@ type ProductImagesFieldProps = {
     onAddImage: (file: File) => void;
     onRemoveImage: (url: string) => void;
     onSetMainImage: (url: string) => void;
-    /** Absent while the AI chat is open — there's only one second card, and it's either "Fill with AI" or this. */
-    onEditImages?: () => void;
-    /** True once "Edit images" has been clicked: tiles become pickable instead of offering their normal actions. */
+    /** Opens the image-tools menu (custom edit, angles, colors, background/enhance, suggest details). Absent while some other AI flow already owns the gallery's selection. */
+    onOpenImageTools?: () => void;
+    /** True while some flow (the edit chat, or a quick edit) has put the gallery into pick-images mode: tiles become pickable instead of offering their normal actions. */
     isSelectingForEdit?: boolean;
     selectedForEdit?: Set<string>;
     onToggleSelectForEdit?: (url: string) => void;
-    /** The one selected image an edit request is in flight for right now — others stay merely selected, still queued. */
-    processingImageUrl?: string;
+    /** Images a request is in flight for right now — others stay merely selected, still queued. More than one at once when edits run concurrently. */
+    processingImageUrls?: Set<string>;
 };
 
 /**
@@ -36,12 +39,14 @@ const ProductImagesField = ({
     onAddImage,
     onRemoveImage,
     onSetMainImage,
-    onEditImages,
+    onOpenImageTools,
     isSelectingForEdit,
     selectedForEdit,
     onToggleSelectForEdit,
-    processingImageUrl,
+    processingImageUrls,
 }: ProductImagesFieldProps) => {
+    const [lightboxUrl, setLightboxUrl] = useState<string | undefined>(undefined);
+
     return (
         <div className="business-dashboard-form-field">
             <label className="business-dashboard-form-label">
@@ -52,7 +57,7 @@ const ProductImagesField = ({
             <div className="product-images-grid">
                 {images.map((image) => {
                     const isSelected = selectedForEdit?.has(image.url) ?? false;
-                    const isProcessing = image.url === processingImageUrl;
+                    const isProcessing = processingImageUrls?.has(image.url) ?? false;
 
                     return (
                         <div
@@ -75,7 +80,12 @@ const ProductImagesField = ({
                                 </svg>
                             )}
 
-                            <img src={resolveImageUrl(image.url)} alt="Product" className="product-image-tile__preview" />
+                            <img
+                                src={resolveImageUrl(image.url)}
+                                alt="Product"
+                                className="product-image-tile__preview"
+                                onClick={isSelectingForEdit ? undefined : () => setLightboxUrl(resolveImageUrl(image.url))}
+                            />
 
                             {image.isMain && <span className="business-dashboard-badge product-image-tile__badge">Main</span>}
 
@@ -121,15 +131,17 @@ const ProductImagesField = ({
                 </span>
             )}
 
-            {onEditImages && !isSelectingForEdit && images.length > 0 && (
+            {onOpenImageTools && !isSelectingForEdit && images.length > 0 && (
                 <button
                     type="button"
                     className="business-dashboard-button-secondary product-images-field__edit-button"
-                    onClick={onEditImages}
+                    onClick={onOpenImageTools}
                 >
-                    ✨ Edit images
+                    <FiEdit3 aria-hidden="true" /> Edit images
                 </button>
             )}
+
+            <ImageLightbox url={lightboxUrl} onClose={() => setLightboxUrl(undefined)} />
         </div>
     );
 };

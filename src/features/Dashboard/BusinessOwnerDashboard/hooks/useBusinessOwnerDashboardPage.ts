@@ -11,6 +11,11 @@ import useWebsiteTemplateModal from "./ui/useWebsiteTemplateModal";
 import useFeatureCreditsModal from "./ui/useFeatureCreditsModal";
 import useVoiceProductDraft from "./ui/useVoiceProductDraft";
 import useImageEditChat from "./ui/useImageEditChat";
+import useMultiAngleImages from "./ui/useMultiAngleImages";
+import useColorImages from "./ui/useColorImages";
+import useQuickImageEdits from "./ui/useQuickImageEdits";
+import useSuggestProductDetails from "./ui/useSuggestProductDetails";
+import { getProductColors } from "../utils/getProductColors";
 import useDeleteProduct from "./data/useDeleteProduct";
 import { useState } from "react";
 import { ApiError } from "../../../../Error/ApiError";
@@ -73,6 +78,27 @@ const useBusinessOwnerDashboardPage = () => {
         }
     });
 
+    const multiAngle = useMultiAngleImages(businessId, {
+        images: productModal.values.images,
+        addImage: productModal.addImage,
+        replaceImage: productModal.replaceImage,
+    });
+
+    const colorImages = useColorImages(businessId, {
+        images: productModal.values.images,
+        colors: getProductColors(productModal.values, productModal.form),
+        addImage: productModal.addImage,
+        replaceImage: productModal.replaceImage,
+    });
+
+    const quickImageEdits = useQuickImageEdits(businessId, {
+        replaceImage: productModal.replaceImage,
+    });
+
+    const suggestDetails = useSuggestProductDetails(businessId, {
+        images: productModal.values.images,
+    });
+
     const [productPendingDeletion, setProductPendingDeletion] =
         useState<BusinessProductResponse | undefined>(undefined);
 
@@ -105,6 +131,10 @@ const useBusinessOwnerDashboardPage = () => {
         editFromDetail,
         voiceDraft,
         imageEditChat,
+        multiAngle,
+        colorImages,
+        quickImageEdits,
+        suggestDetails,
 
         productPendingDeletion,
         isDeletingProduct,

@@ -52,6 +52,10 @@ const BusinessOwnerDashboard = () => {
         editFromDetail,
         voiceDraft,
         imageEditChat,
+        multiAngle,
+        colorImages,
+        quickImageEdits,
+        suggestDetails,
 
         productPendingDeletion,
         isDeletingProduct,
@@ -155,7 +159,15 @@ const BusinessOwnerDashboard = () => {
                 deletingProductId={isDeletingProduct ? productPendingDeletion?.id : undefined}
             />
 
-            <ProductModal modal={productModal} voiceDraft={voiceDraft} imageEditChat={imageEditChat} />
+            <ProductModal
+                modal={productModal}
+                voiceDraft={voiceDraft}
+                imageEditChat={imageEditChat}
+                multiAngle={multiAngle}
+                colorImages={colorImages}
+                quickImageEdits={quickImageEdits}
+                suggestDetails={suggestDetails}
+            />
 
             <ProductDetailModal modal={productDetailModal} onEdit={editFromDetail} />
 

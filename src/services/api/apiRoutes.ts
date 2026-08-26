@@ -48,4 +48,7 @@ export const apiRoutes = {
     /** AI IMAGE EDITING */
     IMAGE_EDITS : (businessId : string) => `/businesses/${businessId}/dashboard/image-edits`,
 
+    /** AI IMAGE SUGGESTIONS ("suggest details from photo") */
+    IMAGE_SUGGESTIONS : (businessId : string) => `/businesses/${businessId}/dashboard/image-suggestions`,
+
 }

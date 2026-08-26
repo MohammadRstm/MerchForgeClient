@@ -1,39 +1,24 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Spinner from "../../../../components/LoadingSpinner/LoadingSpinner";
 import type { ProductDraftProduct, ProductFormField } from "../types";
 import type useProductModal from "../hooks/ui/useProductModal";
 import type useVoiceProductDraft from "../hooks/ui/useVoiceProductDraft";
 import type useImageEditChat from "../hooks/ui/useImageEditChat";
+import type useMultiAngleImages from "../hooks/ui/useMultiAngleImages";
+import type useColorImages from "../hooks/ui/useColorImages";
+import type useQuickImageEdits from "../hooks/ui/useQuickImageEdits";
+import type useSuggestProductDetails from "../hooks/ui/useSuggestProductDetails";
 import ProductImagesField from "./ProductImagesField";
 import ColorListField from "./ColorListField";
 import VoiceProductButton from "./VoiceProductButton";
 import ImageEditChatPanel from "./ImageEditChatPanel";
+import ImageToolsMenuModal from "./ImageToolsMenuModal";
+import MultiAngleImagesModal from "./MultiAngleImagesModal";
+import ColorImagesModal from "./ColorImagesModal";
+import QuickImageEditsPanel from "./QuickImageEditsPanel";
+import SuggestDetailsModal from "./SuggestDetailsModal";
 import useClickOutside from "../../../../hooks/useClickOutsideElementToClose";
-import { isoToDateInputValue } from "../hooks/ui/useProductFormState";
-
-/**
- * Only touches the metadata keys the assistant has actually mentioned. Looping
- * over the full field list (the way editing an existing product populates the
- * form) would blank out anything the owner already typed for a key the AI
- * hasn't reached yet — the draft only ever reveals fields, it never clears them.
- */
-const applyAiMetadataToForm = (
-    metadata: Record<string, unknown>,
-    fields: ProductFormField[],
-    setMetadataField: (key: string, value: string | boolean) => void
-) => {
-    for (const [key, raw] of Object.entries(metadata)) {
-        const field = fields.find((f) => f.key === key);
-        if (!field || raw == null) continue;
-
-        if (field.valueType === "Boolean") {
-            setMetadataField(key, raw === true);
-            continue;
-        }
-
-        setMetadataField(key, Array.isArray(raw) ? raw.join(", ") : String(raw));
-    }
-};
+import { applyAiDraftToForm } from "../utils/applyAiDraftToForm";
 
 type ProductModalProps = {
     modal: ReturnType<typeof useProductModal>;
@@ -42,8 +27,12 @@ type ProductModalProps = {
      * voice draft would create a second product rather than update this one.
      */
     voiceDraft?: ReturnType<typeof useVoiceProductDraft>;
-    /** Offered whenever there's at least one image, in both create and edit — unlike voiceDraft, touching up a photo makes sense either way. */
+    /** Every AI image action is reached through one "Edit images" button + menu — all five below are offered together whenever there's at least one image. */
     imageEditChat?: ReturnType<typeof useImageEditChat>;
+    multiAngle?: ReturnType<typeof useMultiAngleImages>;
+    colorImages?: ReturnType<typeof useColorImages>;
+    quickImageEdits?: ReturnType<typeof useQuickImageEdits>;
+    suggestDetails?: ReturnType<typeof useSuggestProductDetails>;
 };
 
 /** Renders the input that matches an optional field's declared value type. */
@@ -100,7 +89,15 @@ const MetadataField = ({
     );
 };
 
-const ProductModal = ({ modal, voiceDraft, imageEditChat }: ProductModalProps) => {
+const ProductModal = ({
+    modal,
+    voiceDraft,
+    imageEditChat,
+    multiAngle,
+    colorImages,
+    quickImageEdits,
+    suggestDetails,
+}: ProductModalProps) => {
     const {
         isOpen,
         isEditing,
@@ -137,6 +134,25 @@ const ProductModal = ({ modal, voiceDraft, imageEditChat }: ProductModalProps) =
         !voiceDraft?.isConfirming &&
         !voiceDraft?.voice.isRecording;
 
+    const [isImageToolsOpen, setIsImageToolsOpen] = useState(false);
+
+    // Only one flow ever owns the gallery's pick-images mode at a time — the
+    // custom edit chat or a quick edit (remove background/enhance) — since both
+    // are opened from the same menu and the menu itself closes before either one
+    // does. isSelecting, not isOpen: a quick edit keeps isOpen true through its
+    // results phase too, where the gallery is back to showing normal tiles.
+    const isQuickEditSelecting = Boolean(quickImageEdits?.isSelecting);
+    const isSelectingForEdit = isImageEditOpen || isQuickEditSelecting;
+    const selectedForEdit = isImageEditOpen ? imageEditChat?.selectedUrls : quickImageEdits?.selectedUrls;
+    const onToggleSelectForEdit = isImageEditOpen ? imageEditChat?.toggleSelect : quickImageEdits?.toggleSelect;
+    const processingImageUrls = isImageEditOpen
+        ? new Set(imageEditChat?.processingUrl ? [imageEditChat.processingUrl] : [])
+        : quickImageEdits?.processingImageUrls;
+
+    const canUseImageTools = Boolean(
+        imageEditChat && multiAngle && colorImages && quickImageEdits && suggestDetails
+    );
+
     const wrapperRef = useRef<HTMLDivElement>(null);
 
     // Cancelling the voice draft is part of closing the pair while it's active —
@@ -144,6 +160,8 @@ const ProductModal = ({ modal, voiceDraft, imageEditChat }: ProductModalProps) =
     const handleClose = () => {
         if (voiceDraft?.isActive) voiceDraft.cancel();
         if (imageEditChat?.isOpen) imageEditChat.close();
+        if (quickImageEdits?.isOpen) quickImageEdits.close();
+        if (suggestDetails?.isOpen) suggestDetails.close();
         close();
     };
 
@@ -158,18 +176,7 @@ const ProductModal = ({ modal, voiceDraft, imageEditChat }: ProductModalProps) =
     useEffect(() => {
         if (!aiDraftProduct) return;
 
-        if (aiDraftProduct.title != null) setField("title", aiDraftProduct.title);
-        if (aiDraftProduct.description != null) setField("description", aiDraftProduct.description);
-        if (aiDraftProduct.price != null) setField("price", String(aiDraftProduct.price));
-        if (aiDraftProduct.compareAtPrice != null) setField("compareAtPrice", String(aiDraftProduct.compareAtPrice));
-        if (aiDraftProduct.categoryId != null) setField("categoryId", aiDraftProduct.categoryId);
-        if (aiDraftProduct.sku != null) setField("sku", aiDraftProduct.sku);
-        if (aiDraftProduct.stockQuantity != null) setField("stockQuantity", String(aiDraftProduct.stockQuantity));
-        if (aiDraftProduct.tags.length > 0) setField("tags", aiDraftProduct.tags.join(", "));
-        if (aiDraftProduct.saleEndsAt != null) setField("saleEndsAt", isoToDateInputValue(aiDraftProduct.saleEndsAt));
-        if (aiDraftProduct.metadata != null) {
-            applyAiMetadataToForm(aiDraftProduct.metadata, form, setMetadataField);
-        }
+        applyAiDraftToForm(aiDraftProduct, form, { setField, setMetadataField });
     }, [aiDraftProduct, form, setField, setMetadataField]);
 
     if (!isOpen) return null;
@@ -244,11 +251,15 @@ const ProductModal = ({ modal, voiceDraft, imageEditChat }: ProductModalProps) =
                                     }}
                                     onRemoveImage={removeImage}
                                     onSetMainImage={setMainImage}
-                                    onEditImages={imageEditChat && !isVoiceDraftActive ? imageEditChat.open : undefined}
-                                    isSelectingForEdit={isImageEditOpen}
-                                    selectedForEdit={imageEditChat?.selectedUrls}
-                                    onToggleSelectForEdit={imageEditChat?.toggleSelect}
-                                    processingImageUrl={imageEditChat?.processingUrl}
+                                    onOpenImageTools={
+                                        canUseImageTools && !isVoiceDraftActive
+                                            ? () => setIsImageToolsOpen(true)
+                                            : undefined
+                                    }
+                                    isSelectingForEdit={isSelectingForEdit}
+                                    selectedForEdit={selectedForEdit}
+                                    onToggleSelectForEdit={onToggleSelectForEdit}
+                                    processingImageUrls={processingImageUrls}
                                 />
 
                                 <div className="business-dashboard-form-field">
@@ -473,7 +484,30 @@ const ProductModal = ({ modal, voiceDraft, imageEditChat }: ProductModalProps) =
                     </div>
                 </div>
 
+                {imageEditChat && multiAngle && colorImages && quickImageEdits && suggestDetails && (
+                    <ImageToolsMenuModal
+                        isOpen={isImageToolsOpen}
+                        onClose={() => setIsImageToolsOpen(false)}
+                        imageEditChat={imageEditChat}
+                        multiAngle={multiAngle}
+                        colorImages={colorImages}
+                        quickImageEdits={quickImageEdits}
+                        suggestDetails={suggestDetails}
+                    />
+                )}
+
                 {imageEditChat && isImageEditOpen && <ImageEditChatPanel chat={imageEditChat} />}
+                {multiAngle && <MultiAngleImagesModal multiAngle={multiAngle} />}
+                {colorImages && <ColorImagesModal colorImages={colorImages} />}
+                {quickImageEdits && <QuickImageEditsPanel quickEdits={quickImageEdits} />}
+                {suggestDetails && (
+                    <SuggestDetailsModal
+                        suggestDetails={suggestDetails}
+                        fields={form}
+                        setField={setField}
+                        setMetadataField={setMetadataField}
+                    />
+                )}
             </div>
         </div>
     );
