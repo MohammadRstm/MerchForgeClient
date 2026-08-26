@@ -1,5 +1,6 @@
 import Hero from './components/Hero/Hero';
 import Header from '../Header/Header';
+import ProofStrip from './components/ProofStrip/ProofStrip';
 import Statement from './components/Statement/Statement';
 import Showcase from './components/Showcase/Showcase';
 import WhoItsFor from './components/WhoItsFor/WhoItsFor';
@@ -16,6 +17,7 @@ export default function Home() {
       <Header />
       <main>
         <Hero />
+        <ProofStrip />
         <Statement />
         <Showcase />
         <WhoItsFor />
