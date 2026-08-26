@@ -1258,7 +1258,12 @@
         align-items: center;
     }
 
-    .product-form-card,
+    /* Only the paired layout (a side card open beside the form) needs to split
+       vertical space with a sibling. Unpaired, the form should get the full
+       height .modal-container's own max-height (85vh) already allows — this
+       used to apply unconditionally and crushed the form into a ~40vh sliver
+       on any narrow screen even when no side card was open at all. */
+    .product-ai-modals--paired .product-form-card,
     .ai-chat-card {
         max-height: 42vh;
     }

@@ -143,6 +143,11 @@ const ProductModal = ({
     // results phase too, where the gallery is back to showing normal tiles.
     const isQuickEditSelecting = Boolean(quickImageEdits?.isSelecting);
     const isSelectingForEdit = isImageEditOpen || isQuickEditSelecting;
+    // Whether a side card (the custom-edit chat, or a quick edit's progress
+    // panel) is currently rendered beside the form — the two share the
+    // ≤900px-viewport height cap below; the form alone should never be
+    // capped that low just because the window happens to be narrow.
+    const hasSidePanel = isImageEditOpen || Boolean(quickImageEdits?.isOpen);
     const selectedForEdit = isImageEditOpen ? imageEditChat?.selectedUrls : quickImageEdits?.selectedUrls;
     const onToggleSelectForEdit = isImageEditOpen ? imageEditChat?.toggleSelect : quickImageEdits?.toggleSelect;
     const processingImageUrls = isImageEditOpen
@@ -203,7 +208,10 @@ const ProductModal = ({
 
     return (
         <div className="modal-backdrop">
-            <div ref={wrapperRef} className="product-ai-modals">
+            <div
+                ref={wrapperRef}
+                className={`product-ai-modals${hasSidePanel ? " product-ai-modals--paired" : ""}`}
+            >
                 <div className="modal-container product-form-card">
                     {isAiThinking && (
                         // Traces the card's own border rather than anything inside it — a
