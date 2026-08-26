@@ -1,17 +1,24 @@
 .header {
-  --nav-bg: #ffffff;
-  --nav-text: #14161b;
-  --nav-text-secondary: #5b6270;
-  --nav-border: #dcdbd8;
-  --nav-accent: #ff9b00;
-  --nav-accent-mid: #ffaa00;
+  /* Thin aliases onto the shared .home tokens (Home.css) — Header sits inside
+     .home, so these resolve to the same palette every other section reads. */
+  --nav-bg: var(--mf-bg);
+  --nav-text: var(--mf-text);
+  --nav-text-secondary: var(--mf-text-secondary);
+  --nav-border: var(--mf-border);
+  --nav-accent: var(--mf-accent);
+  --nav-accent-mid: var(--mf-accent-mid);
 
   position: sticky;
   top: 0;
   z-index: 100;
   background: var(--nav-bg);
   border-bottom: 1px solid transparent;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+}
+
+.header--scrolled {
+  background: color-mix(in srgb, var(--nav-bg) 88%, transparent);
+  backdrop-filter: blur(10px);
 }
 
 .header--scrolled {
@@ -38,10 +45,10 @@
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
-  font-family: 'Inter', system-ui, sans-serif;
-  font-weight: 700;
-  font-size: 1.125rem;
-  letter-spacing: -0.01em;
+  font-family: var(--mf-display-font);
+  font-weight: 600;
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
   color: var(--nav-text);
   text-decoration: none;
   flex-shrink: 0;
@@ -128,8 +135,8 @@
   color: #1a1200;
   background: var(--nav-accent);
   text-decoration: none;
-  padding: 0.6rem 1.25rem;
-  border-radius: 8px;
+  padding: 0.65rem 1.4rem;
+  border-radius: 999px;
   transition: background-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
 }
 
@@ -231,7 +238,7 @@
   text-align: center;
   padding: 0.7rem;
   border: 1px solid var(--nav-border);
-  border-radius: 8px;
+  border-radius: 999px;
 }
 
 .header__cta--mobile {

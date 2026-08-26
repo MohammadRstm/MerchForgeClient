@@ -1,5 +1,13 @@
 import { useEffect, useState, type CSSProperties } from 'react';
+import Marquee from '../Marquee/Marquee';
 import './Hero.css';
+
+const PROOF_POINTS = [
+  'AI product creation from a photo and a voice note',
+  'Product photos generated in every angle and color',
+  'One catalog across Telegram, WhatsApp, and your website',
+  'Live in minutes, not weeks',
+];
 
 type ProductStatus = 'ready' | 'draft' | 'generating';
 
@@ -118,6 +126,10 @@ export default function Hero() {
             </ul>
           </div>
         </div>
+      </div>
+
+      <div className="hero__proof" style={withDelay(0.6)}>
+        <Marquee items={PROOF_POINTS} />
       </div>
     </section>
   );

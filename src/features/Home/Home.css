@@ -1,8 +1,33 @@
 .home {
+  /* Shared design tokens for the whole landing page — monochrome-first with
+     one sparing accent, matching eloqwnt.com's restrained palette rather
+     than the old warm-white/heavy-orange look. Every section's own CSS
+     reads these instead of redefining its own copy of the palette. */
+  --mf-bg: #e9ebec;
+  --mf-bg-raised: #ffffff;
+  --mf-text: #14161b;
+  --mf-text-secondary: #5b6270;
+  --mf-text-muted: #8a8f99;
+  --mf-border: #d6d8da;
+  --mf-accent: #ff9b00;
+  --mf-accent-mid: #ffaa00;
+  --mf-accent-tint: #fff4e0;
+
+  --mf-display-font: 'Fraunces', 'Times New Roman', serif;
+  --mf-body-font: 'Inter', system-ui, sans-serif;
+
+  /* eloqwnt uses a licensed display face at medium weight with tight
+     negative tracking; Fraunces (Google Fonts) gives the same editorial
+     mood without a licensing problem. */
+  --mf-display-weight: 500;
+  --mf-display-tracking: -0.02em;
+
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: #ffffff;
+  background: var(--mf-bg);
+  color: var(--mf-text);
+  font-family: var(--mf-body-font);
 }
 
 .home main {
@@ -14,5 +39,132 @@
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;
+  }
+}
+
+/* ---------- Shared section chrome, used by every landing section ---------- */
+
+.mf-section {
+  padding: clamp(4rem, 9vw, 7rem) clamp(1.25rem, 5vw, 3rem);
+}
+
+.mf-section__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.mf-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--mf-body-font);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--mf-text-secondary);
+  margin: 0 0 1rem;
+}
+
+.mf-eyebrow::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--mf-accent);
+  flex-shrink: 0;
+}
+
+.mf-headline {
+  font-family: var(--mf-display-font);
+  font-weight: var(--mf-display-weight);
+  letter-spacing: var(--mf-display-tracking);
+  line-height: 1.08;
+  color: var(--mf-text);
+  margin: 0 0 1.1rem;
+}
+
+.mf-subtext {
+  font-family: var(--mf-body-font);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: var(--mf-text-secondary);
+  max-width: 46ch;
+  margin: 0;
+}
+
+.mf-index {
+  font-family: var(--mf-display-font);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--mf-text-muted);
+  letter-spacing: 0.02em;
+}
+
+/* Fully-pill buttons, the one recurring interactive shape across the whole
+   redesign — filled with the accent for primary actions, outlined/plain
+   for secondary ones. */
+.mf-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--mf-body-font);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 999px;
+  padding: 0.8rem 1.6rem;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+
+.mf-btn--primary {
+  background: var(--mf-text);
+  color: #fff;
+}
+
+.mf-btn--primary:hover {
+  background: var(--mf-accent);
+  color: #1a1200;
+  transform: translateY(-1px);
+}
+
+.mf-btn--secondary {
+  background: transparent;
+  color: var(--mf-text);
+  border-color: var(--mf-border);
+}
+
+.mf-btn--secondary:hover {
+  border-color: var(--mf-text);
+  transform: translateY(-1px);
+}
+
+.mf-divider {
+  border: none;
+  border-top: 1px solid var(--mf-border);
+  margin: 0;
+}
+
+/* ---------- Shared scroll-reveal transition ---------- */
+
+.mf-reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.mf-reveal--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mf-reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 }
