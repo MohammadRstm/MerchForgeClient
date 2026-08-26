@@ -1,9 +1,9 @@
 .final-cta {
-  --fc-bg: #14161b;
+  --fc-bg: var(--mf-text);
   --fc-text: #ffffff;
   --fc-text-secondary: #b6bac2;
-  --fc-accent: #ff9b00;
-  --fc-accent-mid: #ffaa00;
+  --fc-accent: var(--mf-accent);
+  --fc-accent-mid: var(--mf-accent-mid);
 
   background: var(--fc-bg);
   padding: clamp(4rem, 9vw, 7.5rem) clamp(1.25rem, 5vw, 3rem);
@@ -16,11 +16,11 @@
 }
 
 .final-cta__headline {
-  font-family: 'Inter', system-ui, sans-serif;
-  font-weight: 700;
+  font-family: var(--mf-display-font);
+  font-weight: var(--mf-display-weight);
   font-size: clamp(2rem, 4vw, 2.875rem);
-  line-height: 1.2;
-  letter-spacing: -0.015em;
+  line-height: 1.15;
+  letter-spacing: var(--mf-display-tracking);
   color: var(--fc-text);
   margin: 0 0 1.25rem;
   opacity: 0;
@@ -32,7 +32,7 @@
 }
 
 .final-cta__subtext {
-  font-family: 'Roboto', system-ui, sans-serif;
+  font-family: var(--mf-body-font);
   font-size: 1.0625rem;
   line-height: 1.6;
   color: var(--fc-text-secondary);
@@ -61,12 +61,12 @@
 }
 
 .final-cta__btn {
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: var(--mf-body-font);
   font-size: 0.9375rem;
   font-weight: 600;
   text-decoration: none;
   padding: 0.85rem 1.75rem;
-  border-radius: 8px;
+  border-radius: 999px;
   transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease, border-color 0.18s ease;
 }
 

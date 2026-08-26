@@ -4,8 +4,9 @@ import Statement from './components/Statement/Statement';
 import Showcase from './components/Showcase/Showcase';
 import WhoItsFor from './components/WhoItsFor/WhoItsFor';
 import Services from './components/Services/Services';
-import FinalCTA from './components/FinalCTA/FinalCTA';
+import Faq from './components/Faq/Faq';
 import Pricing from './components/Pricing/Pricing';
+import FinalCTA from './components/FinalCTA/FinalCTA';
 import Footer from './components/Footer/Footer';
 import './Home.css';
 
@@ -19,6 +20,7 @@ export default function Home() {
         <Showcase />
         <WhoItsFor />
         <Services />
+        <Faq />
         <Pricing />
         <FinalCTA />
       </main>

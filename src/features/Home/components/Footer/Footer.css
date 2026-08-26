@@ -1,9 +1,9 @@
 .footer {
-  --ft-bg: #14161b;
+  --ft-bg: var(--mf-text);
   --ft-text: #ffffff;
   --ft-text-secondary: #8b8f98;
   --ft-border: rgba(255, 255, 255, 0.12);
-  --ft-accent: #ff9b00;
+  --ft-accent: var(--mf-accent);
 
   background: var(--ft-bg);
   border-top: 1px solid var(--ft-border);
@@ -29,15 +29,15 @@
 }
 
 .footer__logo {
-  font-family: 'Inter', system-ui, sans-serif;
-  font-weight: 700;
-  font-size: 1.125rem;
-  letter-spacing: -0.01em;
+  font-family: var(--mf-display-font);
+  font-weight: 600;
+  font-size: 1.25rem;
+  letter-spacing: var(--mf-display-tracking);
   color: var(--ft-text);
 }
 
 .footer__tagline {
-  font-family: 'Roboto', system-ui, sans-serif;
+  font-family: var(--mf-body-font);
   font-size: 0.9375rem;
   line-height: 1.5;
   color: var(--ft-text-secondary);
@@ -52,7 +52,7 @@
 }
 
 .footer__social-link {
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: var(--mf-body-font);
   font-size: 0.8125rem;
   font-weight: 500;
   color: var(--ft-text-secondary);
@@ -77,7 +77,7 @@
 }
 
 .footer__column-title {
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: var(--mf-body-font);
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.05em;
@@ -95,7 +95,7 @@
 }
 
 .footer__link {
-  font-family: 'Roboto', system-ui, sans-serif;
+  font-family: var(--mf-body-font);
   font-size: 0.9375rem;
   color: var(--ft-text);
   text-decoration: none;
@@ -122,7 +122,7 @@
 }
 
 .footer__copyright {
-  font-family: 'Roboto', system-ui, sans-serif;
+  font-family: var(--mf-body-font);
   font-size: 0.8125rem;
   color: var(--ft-text-secondary);
 }

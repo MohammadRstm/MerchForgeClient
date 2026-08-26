@@ -75,7 +75,7 @@ export default function Hero() {
             <a href="#get-started" className="hero__btn hero__btn--primary">
               Get Started
             </a>
-            <a href="#how-it-works" className="hero__btn hero__btn--secondary">
+            <a href="#services" className="hero__btn hero__btn--secondary">
               Explore Features
             </a>
           </div>

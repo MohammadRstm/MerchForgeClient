@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import './Pricing.css';
 
 interface Plan {
-  id: 'starter' | 'growth' | 'business';
+  id: 'standard' | 'premium' | 'custom';
   name: string;
   price?: string;
   cadence?: string;
@@ -10,42 +10,46 @@ interface Plan {
   features: string[];
   cta: string;
   highlighted?: boolean;
-  comingSoon?: boolean;
+  inert?: boolean;
 }
 
 const PLANS: Plan[] = [
   {
-    id: 'starter',
-    name: 'Starter',
-    price: '$50',
+    id: 'standard',
+    name: 'Standard',
+    price: '$100',
     cadence: '/ year',
-    tagline: 'Core tools to manage your catalog.',
-    features: ['Up to 50 products', 'Central product catalog', 'Core product management'],
+    tagline: 'A responsive website, managed for you.',
+    features: [
+      'Responsive website',
+      'Free NFC card for Google reviews',
+      'Website managed by MerchForge — contact us to add or edit products',
+    ],
     cta: 'Get Started',
   },
   {
-    id: 'growth',
-    name: 'Growth',
-    price: '$200',
+    id: 'premium',
+    name: 'Premium',
+    price: '$500',
     cadence: '/ year',
-    tagline: 'AI product creation and customer conversations.',
+    tagline: 'A fully self-managed store with AI built in.',
     features: [
-      'Up to 200 products',
-      'Telegram product creation',
-      'WhatsApp AI assistant',
-      'AI-powered product generation',
-      'AI usage allowance included',
+      'Fully responsive website, self-managed',
+      'Owner dashboard & central management system',
+      '200 image credits',
+      '300 voice-to-text credits',
+      'Free NFC card for Google reviews',
     ],
     cta: 'Get Started',
     highlighted: true,
   },
   {
-    id: 'business',
-    name: 'Business',
+    id: 'custom',
+    name: 'Custom',
     tagline: 'Higher volume and features built around your business.',
-    features: ['Custom product limits', 'Custom feature set', 'Priority support'],
-    cta: 'Talk to us',
-    comingSoon: true,
+    features: ['Custom limits', 'Custom feature set', 'Priority support'],
+    cta: 'Contact us',
+    inert: true,
   },
 ];
 
@@ -78,17 +82,17 @@ export default function Pricing() {
   return (
     <section
       ref={sectionRef}
-      className={`pricing${visible ? ' pricing--visible' : ''}`}
+      className={`pricing mf-section${visible ? ' pricing--visible' : ''}`}
       aria-label="Pricing"
       id="pricing"
     >
-      <div className="pricing__inner">
+      <div className="pricing__inner mf-section__inner">
         <div className="pricing__intro">
-          <p className="pricing__eyebrow">Pricing</p>
-          <h2 className="pricing__headline">Plans that grow with your store.</h2>
-          <p className="pricing__subtext">
-            Start with the essentials, add AI when you're ready — or talk to us about a plan
-            built around what you actually need.
+          <p className="mf-eyebrow">Pricing</p>
+          <h2 className="pricing__headline mf-headline">Plans that grow with your store.</h2>
+          <p className="mf-subtext pricing__subtext">
+            Start with a managed website, move to full self-service with AI when you're ready —
+            or talk to us about a plan built around what you actually need.
           </p>
         </div>
 
@@ -96,13 +100,10 @@ export default function Pricing() {
           {PLANS.map((plan, i) => (
             <article
               key={plan.id}
-              className={`pricing__card${plan.highlighted ? ' pricing__card--highlighted' : ''}${
-                plan.comingSoon ? ' pricing__card--soon' : ''
-              }`}
+              className={`pricing__card${plan.highlighted ? ' pricing__card--highlighted' : ''}`}
               style={withDelay(i * 0.12)}
             >
               {plan.highlighted && <span className="pricing__ribbon">Most popular</span>}
-              {plan.comingSoon && <span className="pricing__ribbon pricing__ribbon--soon">Coming soon</span>}
 
               <h3 className="pricing__name">{plan.name}</h3>
               <p className="pricing__tagline">{plan.tagline}</p>
@@ -129,12 +130,23 @@ export default function Pricing() {
                 ))}
               </ul>
 
-              <a
-                href={plan.comingSoon ? '#contact' : '#get-started'}
-                className={`pricing__cta${plan.highlighted ? ' pricing__cta--primary' : ''}`}
-              >
-                {plan.cta}
-              </a>
+              {plan.inert ? (
+                <button
+                  type="button"
+                  className="mf-btn mf-btn--secondary pricing__cta pricing__cta--inert"
+                  disabled
+                  title="Contact channel coming soon"
+                >
+                  {plan.cta}
+                </button>
+              ) : (
+                <a
+                  href="#get-started"
+                  className={`mf-btn pricing__cta ${plan.highlighted ? 'mf-btn--primary' : 'mf-btn--secondary'}`}
+                >
+                  {plan.cta}
+                </a>
+              )}
             </article>
           ))}
         </div>

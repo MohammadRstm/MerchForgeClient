@@ -43,7 +43,7 @@ export default function FinalCTA() {
           <Link to={routes.LOGIN} className="final-cta__btn final-cta__btn--primary">
             Get Started
           </Link>
-          <a href="#how-it-works" className="final-cta__btn final-cta__btn--secondary">
+          <a href="#services" className="final-cta__btn final-cta__btn--secondary">
             Explore MerchForge
           </a>
         </div>
