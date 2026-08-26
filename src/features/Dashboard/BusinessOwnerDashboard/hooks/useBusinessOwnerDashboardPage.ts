@@ -81,14 +81,14 @@ const useBusinessOwnerDashboardPage = () => {
     const multiAngle = useMultiAngleImages(businessId, {
         images: productModal.values.images,
         addImage: productModal.addImage,
-        removeNonMainImages: productModal.removeNonMainImages,
+        replaceImage: productModal.replaceImage,
     });
 
     const colorImages = useColorImages(businessId, {
         images: productModal.values.images,
         colors: getProductColors(productModal.values, productModal.form),
         addImage: productModal.addImage,
-        removeNonMainImages: productModal.removeNonMainImages,
+        replaceImage: productModal.replaceImage,
     });
 
     const quickImageEdits = useQuickImageEdits(businessId, {

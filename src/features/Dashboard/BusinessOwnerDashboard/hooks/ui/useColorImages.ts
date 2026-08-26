@@ -19,7 +19,7 @@ type UseColorImagesArgs = {
     /** The product's currently chosen colors, in order — same list ColorListField edits. */
     colors: string[];
     addImage: (image: Omit<ProductFormImage, "isMain">) => void;
-    removeNonMainImages: () => void;
+    replaceImage: (oldUrl: string, newUrl: string) => void;
 };
 
 /**
@@ -31,7 +31,7 @@ type UseColorImagesArgs = {
  */
 const useColorImages = (
     businessId: string,
-    { images, colors, addImage, removeNonMainImages }: UseColorImagesArgs
+    { images, colors, addImage, replaceImage }: UseColorImagesArgs
 ) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedColors, setSelectedColors] = useState<string[]>([]);
@@ -76,20 +76,31 @@ const useColorImages = (
         });
     };
 
-    /** Same concurrency model as useMultiAngleImages.generate — see there for the full explanation. */
+    /**
+     * Same concurrency model as useMultiAngleImages.generate, and the same
+     * nothing-is-ever-deleted sourcing: each requested color is paired, in order,
+     * with an already-existing non-main image (uploaded or previously generated),
+     * which is both the source Gemini recolors *and* the one replaced in place
+     * with the result. Once existing non-main images run out, remaining colors
+     * fall back to the main image as their source and are added as new images.
+     * See useMultiAngleImages for the full explanation — this mirrors it exactly.
+     */
     const generate = () => {
         if (!mainImage || selectedColors.length === 0 || isGenerating) return;
 
         const targets = selectedColors.slice(0, MAX_COLORS);
+        const nonMainImages = images.filter((image) => !image.isMain);
 
         setIsGenerating(true);
         setResults(targets.map((hex) => ({ hex, status: "pending" })));
 
-        let hasSwappedGallery = false;
         let settledCount = 0;
 
-        targets.forEach((hex) => {
-            editProductImageService(businessId, { imageUrl: mainImage.url, prompt: buildColorImagePrompt(hex) })
+        targets.forEach((hex, index) => {
+            const source = nonMainImages[index];
+            const sourceUrl = source?.url ?? mainImage.url;
+
+            editProductImageService(businessId, { imageUrl: sourceUrl, prompt: buildColorImagePrompt(hex) })
                 .then((job) => {
                     invalidateFeatureCredits();
 
@@ -97,12 +108,11 @@ const useColorImages = (
                         throw new Error("The AI didn't return an image.");
                     }
 
-                    if (!hasSwappedGallery) {
-                        hasSwappedGallery = true;
-                        removeNonMainImages();
+                    if (source) {
+                        replaceImage(source.url, job.outputImageUrl);
+                    } else {
+                        addImage({ url: job.outputImageUrl });
                     }
-
-                    addImage({ url: job.outputImageUrl });
 
                     setResults((prev) =>
                         prev?.map((result) =>

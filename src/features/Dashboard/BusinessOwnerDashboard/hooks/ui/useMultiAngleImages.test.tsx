@@ -46,15 +46,15 @@ const wrapper = ({ children }: { children: ReactNode }) => {
 
 const renderMultiAngle = (imagesOverride?: Parameters<typeof useMultiAngleImages>[1]["images"]) => {
     const addImage = vi.fn();
-    const removeNonMainImages = vi.fn();
+    const replaceImage = vi.fn();
     const images = imagesOverride ?? [{ url: MAIN_IMAGE_URL, isMain: true }];
 
     const { result, rerender } = renderHook(
-        () => useMultiAngleImages(BUSINESS_ID, { images, addImage, removeNonMainImages }),
+        () => useMultiAngleImages(BUSINESS_ID, { images, addImage, replaceImage }),
         { wrapper }
     );
 
-    return { result, rerender, addImage, removeNonMainImages };
+    return { result, rerender, addImage, replaceImage };
 };
 
 describe("useMultiAngleImages", () => {
@@ -146,17 +146,40 @@ describe("useMultiAngleImages", () => {
         expect(result.current.isGenerating).toBe(false);
     });
 
-    it("clears the non-main images once, right before the first successful result, and adds each result as it lands", async () => {
-        const front = deferred<ImageEditJob>();
-        const back = deferred<ImageEditJob>();
-
+    it("falls back to the main image and adds new images when there are no existing non-main images", async () => {
         vi.mocked(editProductImageService).mockImplementation((_businessId, payload) =>
-            payload.prompt?.includes("front") ? front.promise : back.promise
+            Promise.resolve(job({ outputImageUrl: `/uploads/${payload.prompt?.includes("front") ? "front" : "back"}.png` }))
         );
 
-        const { result, addImage, removeNonMainImages } = renderMultiAngle([
+        const { result, addImage, replaceImage } = renderMultiAngle([{ url: MAIN_IMAGE_URL, isMain: true }]);
+
+        act(() => result.current.open());
+        act(() => result.current.toggleAngle("front"));
+        act(() => result.current.toggleAngle("back"));
+        act(() => result.current.generate());
+
+        expect(editProductImageService).toHaveBeenCalledWith(
+            BUSINESS_ID,
+            expect.objectContaining({ imageUrl: MAIN_IMAGE_URL })
+        );
+
+        await waitFor(() => expect(result.current.isGenerating).toBe(false));
+
+        expect(addImage).toHaveBeenCalledWith({ url: "/uploads/front.png" });
+        expect(addImage).toHaveBeenCalledWith({ url: "/uploads/back.png" });
+        expect(replaceImage).not.toHaveBeenCalled();
+    });
+
+    it("reuses existing non-main images as sources and replaces each one in place, instead of removing anything", async () => {
+        const extraUrl = "/uploads/products/extra.png";
+
+        vi.mocked(editProductImageService).mockImplementation((_businessId, payload) =>
+            Promise.resolve(job({ outputImageUrl: `/uploads/${payload.prompt?.includes("front") ? "front" : "back"}.png` }))
+        );
+
+        const { result, addImage, replaceImage } = renderMultiAngle([
             { url: MAIN_IMAGE_URL, isMain: true },
-            { url: "/uploads/extra.png", isMain: false },
+            { url: extraUrl, isMain: false },
         ]);
 
         act(() => result.current.open());
@@ -164,23 +187,36 @@ describe("useMultiAngleImages", () => {
         act(() => result.current.toggleAngle("back"));
         act(() => result.current.generate());
 
-        expect(removeNonMainImages).not.toHaveBeenCalled();
+        // One angle reuses the existing non-main image as its source; the other,
+        // with nothing left to reuse, falls back to the main image.
+        expect(editProductImageService).toHaveBeenCalledWith(
+            BUSINESS_ID,
+            expect.objectContaining({ imageUrl: extraUrl })
+        );
+        expect(editProductImageService).toHaveBeenCalledWith(
+            BUSINESS_ID,
+            expect.objectContaining({ imageUrl: MAIN_IMAGE_URL })
+        );
 
-        act(() => back.resolve(job({ outputImageUrl: "/uploads/back.png" })));
-        await waitFor(() => expect(removeNonMainImages).toHaveBeenCalledTimes(1));
+        await waitFor(() => expect(result.current.isGenerating).toBe(false));
+
+        // The existing image is replaced in place by its own result, never removed.
+        expect(replaceImage).toHaveBeenCalledWith(extraUrl, "/uploads/front.png");
+        // The overflow angle (no existing image left to reuse) is added fresh.
         expect(addImage).toHaveBeenCalledWith({ url: "/uploads/back.png" });
-
-        act(() => front.resolve(job({ outputImageUrl: "/uploads/front.png" })));
-        await waitFor(() => expect(addImage).toHaveBeenCalledWith({ url: "/uploads/front.png" }));
-
-        // Only cleared once, not once per successful angle.
-        expect(removeNonMainImages).toHaveBeenCalledTimes(1);
     });
 
-    it("never touches the gallery when every angle fails", async () => {
-        vi.mocked(editProductImageService).mockRejectedValue(new Error("provider down"));
+    it("leaves an existing non-main image untouched when fewer angles are requested than images exist", async () => {
+        const usedUrl = "/uploads/products/used.png";
+        const untouchedUrl = "/uploads/products/untouched.png";
 
-        const { result, addImage, removeNonMainImages } = renderMultiAngle();
+        vi.mocked(editProductImageService).mockResolvedValue(job({ outputImageUrl: "/uploads/front.png" }));
+
+        const { result, replaceImage } = renderMultiAngle([
+            { url: MAIN_IMAGE_URL, isMain: true },
+            { url: usedUrl, isMain: false },
+            { url: untouchedUrl, isMain: false },
+        ]);
 
         act(() => result.current.open());
         act(() => result.current.toggleAngle("front"));
@@ -188,8 +224,28 @@ describe("useMultiAngleImages", () => {
 
         await waitFor(() => expect(result.current.isGenerating).toBe(false));
 
-        expect(removeNonMainImages).not.toHaveBeenCalled();
+        expect(editProductImageService).toHaveBeenCalledTimes(1);
+        expect(editProductImageService).toHaveBeenCalledWith(
+            BUSINESS_ID,
+            expect.objectContaining({ imageUrl: usedUrl })
+        );
+        expect(replaceImage).toHaveBeenCalledWith(usedUrl, "/uploads/front.png");
+        expect(replaceImage).not.toHaveBeenCalledWith(untouchedUrl, expect.anything());
+    });
+
+    it("never touches the gallery when every angle fails", async () => {
+        vi.mocked(editProductImageService).mockRejectedValue(new Error("provider down"));
+
+        const { result, addImage, replaceImage } = renderMultiAngle();
+
+        act(() => result.current.open());
+        act(() => result.current.toggleAngle("front"));
+        act(() => result.current.generate());
+
+        await waitFor(() => expect(result.current.isGenerating).toBe(false));
+
         expect(addImage).not.toHaveBeenCalled();
+        expect(replaceImage).not.toHaveBeenCalled();
         expect(result.current.results?.[0].status).toBe("error");
     });
 

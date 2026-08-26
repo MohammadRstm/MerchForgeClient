@@ -71,7 +71,7 @@ const ColorImagesModal = ({ colorImages }: ColorImagesModalProps) => {
                                     <p className="business-dashboard-form-hint">
                                         {needsPicking
                                             ? `This product has ${colors.length} colors — pick up to ${MAX_COLORS} to generate a photo for.`
-                                            : "The AI generates a new photo of your product's main image in each of these colors."}
+                                            : "The AI generates a new photo in each of these colors, reusing your product's existing images where possible and its main image otherwise."}
                                     </p>
 
                                     <div className="angle-picker-grid">

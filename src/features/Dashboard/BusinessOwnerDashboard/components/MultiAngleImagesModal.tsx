@@ -57,8 +57,8 @@ const MultiAngleImagesModal = ({ multiAngle }: MultiAngleImagesModalProps) => {
                     {isPicking ? (
                         <>
                             <p className="business-dashboard-form-hint">
-                                Pick up to {MAX_ANGLES} camera angles — the AI generates a new photo for each one from
-                                your product's main image. Any existing images besides the main one will be replaced.
+                                Pick up to {MAX_ANGLES} camera angles — the AI generates a new photo for each one,
+                                reusing your product's existing images where possible and its main image otherwise.
                             </p>
 
                             {!hasMainImage ? (

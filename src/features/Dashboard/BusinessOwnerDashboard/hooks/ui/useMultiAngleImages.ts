@@ -18,7 +18,7 @@ export type AngleResult = {
 type UseMultiAngleImagesArgs = {
     images: ProductFormImage[];
     addImage: (image: Omit<ProductFormImage, "isMain">) => void;
-    removeNonMainImages: () => void;
+    replaceImage: (oldUrl: string, newUrl: string) => void;
 };
 
 /**
@@ -26,8 +26,8 @@ type UseMultiAngleImagesArgs = {
  * no conversation, no history, nothing persisted beyond the resulting images.
  * Unlike the AI image-edit chat (which edits one image per selected photo,
  * sequentially, since each edit needs its own instruction to be composed as it
- * goes), every angle here uses the *same* source image and a fixed, preset
- * instruction, so all of them can be requested up front and run at the same time.
+ * goes), every angle here uses a fixed, preset instruction, so all of them can be
+ * requested up front and run at the same time.
  *
  * Deliberately calls editProductImageService directly rather than going through
  * useEditProductImage: that hook wraps ONE shared mutation, which only ever
@@ -36,7 +36,7 @@ type UseMultiAngleImagesArgs = {
  */
 const useMultiAngleImages = (
     businessId: string,
-    { images, addImage, removeNonMainImages }: UseMultiAngleImagesArgs
+    { images, addImage, replaceImage }: UseMultiAngleImagesArgs
 ) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
@@ -89,24 +89,34 @@ const useMultiAngleImages = (
      * updates only its own slot in `results` the moment *that* call settles, so
      * the first image back is shown immediately rather than waiting on however
      * many of the others (or however slow the slowest one is).
+     *
+     * Nothing is ever deleted. Each requested angle is paired, in order, with an
+     * already-existing non-main image (whether the owner uploaded it or a prior
+     * angle/color run generated it) — that image is both the source Gemini edits
+     * *and* the one that gets replaced in place with the result, so a photo
+     * already carrying a color or angle change keeps carrying it forward. Once
+     * existing non-main images run out, the remaining angles fall back to the
+     * main image as their source and their results are added as new images —
+     * the same "not enough images yet" behavior this always had. An existing
+     * non-main image beyond however many angles were requested is simply left
+     * alone; it wasn't needed as a source this time.
      */
     const generate = () => {
         if (!mainImage || selectedKeys.length === 0 || isGenerating) return;
 
         const angles = PRODUCT_IMAGE_ANGLES.filter((angle) => selectedKeys.includes(angle.key));
+        const nonMainImages = images.filter((image) => !image.isMain);
 
         setIsGenerating(true);
         setResults(angles.map((angle) => ({ key: angle.key, label: angle.label, status: "pending" })));
 
-        // Set once, right before the *first* successful angle is added — not
-        // eagerly before any call runs. If every angle fails (no credits left,
-        // the provider is down), the owner's existing gallery is never touched;
-        // only a call that actually produced a replacement earns the swap.
-        let hasSwappedGallery = false;
         let settledCount = 0;
 
-        angles.forEach((angle) => {
-            editProductImageService(businessId, { imageUrl: mainImage.url, prompt: angle.prompt })
+        angles.forEach((angle, index) => {
+            const source = nonMainImages[index];
+            const sourceUrl = source?.url ?? mainImage.url;
+
+            editProductImageService(businessId, { imageUrl: sourceUrl, prompt: angle.prompt })
                 .then((job) => {
                     invalidateFeatureCredits();
 
@@ -114,12 +124,11 @@ const useMultiAngleImages = (
                         throw new Error("The AI didn't return an image.");
                     }
 
-                    if (!hasSwappedGallery) {
-                        hasSwappedGallery = true;
-                        removeNonMainImages();
+                    if (source) {
+                        replaceImage(source.url, job.outputImageUrl);
+                    } else {
+                        addImage({ url: job.outputImageUrl });
                     }
-
-                    addImage({ url: job.outputImageUrl });
 
                     setResults((prev) =>
                         prev?.map((result) =>

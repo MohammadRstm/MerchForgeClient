@@ -197,19 +197,6 @@ const useProductFormState = (
         }));
     };
 
-    /**
-     * Drops every image except the main one — the multi-angle generation flow's
-     * "everything but the original gets replaced by the generated angles" rule.
-     * The main image itself is never touched, so there's always something in the
-     * gallery even if nothing has been generated yet.
-     */
-    const removeNonMainImages = () => {
-        setValues((prev) => ({
-            ...prev,
-            images: prev.images.filter((image) => image.isMain),
-        }));
-    };
-
     /** Swaps one image's url for another in place — the AI edit result replacing what was there, not a new gallery entry. isMain and position are untouched. */
     const replaceImage = (oldUrl: string, newUrl: string) => {
         setValues((prev) => ({
@@ -281,7 +268,6 @@ const useProductFormState = (
         setMetadataField,
         addImage,
         removeImage,
-        removeNonMainImages,
         setMainImage,
         replaceImage,
         maxImages: MAX_IMAGES,

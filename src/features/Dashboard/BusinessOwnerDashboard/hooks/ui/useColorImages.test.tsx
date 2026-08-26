@@ -49,15 +49,15 @@ const renderColorImages = (
     imagesOverride?: Parameters<typeof useColorImages>[1]["images"]
 ) => {
     const addImage = vi.fn();
-    const removeNonMainImages = vi.fn();
+    const replaceImage = vi.fn();
     const images = imagesOverride ?? [{ url: MAIN_IMAGE_URL, isMain: true }];
 
     const { result, rerender } = renderHook(
-        () => useColorImages(BUSINESS_ID, { images, colors, addImage, removeNonMainImages }),
+        () => useColorImages(BUSINESS_ID, { images, colors, addImage, replaceImage }),
         { wrapper }
     );
 
-    return { result, rerender, addImage, removeNonMainImages };
+    return { result, rerender, addImage, replaceImage };
 };
 
 describe("useColorImages", () => {
@@ -166,49 +166,106 @@ describe("useColorImages", () => {
         expect(result.current.isGenerating).toBe(false);
     });
 
-    it("clears the non-main images once, right before the first successful result, and adds each result as it lands", async () => {
-        const red = deferred<ImageEditJob>();
-        const blue = deferred<ImageEditJob>();
-
+    it("falls back to the main image and adds new images when there are no existing non-main images", async () => {
         vi.mocked(editProductImageService).mockImplementation((_businessId, payload) =>
-            payload.prompt?.includes("#FF0000") ? red.promise : blue.promise
+            Promise.resolve(job({ outputImageUrl: payload.prompt?.includes("#FF0000") ? "/uploads/red.png" : "/uploads/blue.png" }))
         );
 
-        const { result, addImage, removeNonMainImages } = renderColorImages(
+        const { result, addImage, replaceImage } = renderColorImages(
+            ["#FF0000", "#0000FF"],
+            [{ url: MAIN_IMAGE_URL, isMain: true }]
+        );
+
+        act(() => result.current.open());
+        act(() => result.current.generate());
+
+        expect(editProductImageService).toHaveBeenCalledWith(
+            BUSINESS_ID,
+            expect.objectContaining({ imageUrl: MAIN_IMAGE_URL })
+        );
+
+        await waitFor(() => expect(result.current.isGenerating).toBe(false));
+
+        expect(addImage).toHaveBeenCalledWith({ url: "/uploads/red.png" });
+        expect(addImage).toHaveBeenCalledWith({ url: "/uploads/blue.png" });
+        expect(replaceImage).not.toHaveBeenCalled();
+    });
+
+    it("reuses existing non-main images as sources and replaces each one in place, instead of removing anything", async () => {
+        const extraUrl = "/uploads/products/extra.png";
+
+        vi.mocked(editProductImageService).mockImplementation((_businessId, payload) =>
+            Promise.resolve(job({ outputImageUrl: payload.prompt?.includes("#FF0000") ? "/uploads/red.png" : "/uploads/blue.png" }))
+        );
+
+        const { result, addImage, replaceImage } = renderColorImages(
             ["#FF0000", "#0000FF"],
             [
                 { url: MAIN_IMAGE_URL, isMain: true },
-                { url: "/uploads/extra.png", isMain: false },
+                { url: extraUrl, isMain: false },
             ]
         );
 
         act(() => result.current.open());
         act(() => result.current.generate());
 
-        expect(removeNonMainImages).not.toHaveBeenCalled();
+        // One color reuses the existing non-main image as its source; the other,
+        // with nothing left to reuse, falls back to the main image.
+        expect(editProductImageService).toHaveBeenCalledWith(
+            BUSINESS_ID,
+            expect.objectContaining({ imageUrl: extraUrl })
+        );
+        expect(editProductImageService).toHaveBeenCalledWith(
+            BUSINESS_ID,
+            expect.objectContaining({ imageUrl: MAIN_IMAGE_URL })
+        );
 
-        act(() => blue.resolve(job({ outputImageUrl: "/uploads/blue.png" })));
-        await waitFor(() => expect(removeNonMainImages).toHaveBeenCalledTimes(1));
+        await waitFor(() => expect(result.current.isGenerating).toBe(false));
+
+        // The existing image is replaced in place by its own result, never removed.
+        expect(replaceImage).toHaveBeenCalledWith(extraUrl, "/uploads/red.png");
+        // The overflow color (no existing image left to reuse) is added fresh.
         expect(addImage).toHaveBeenCalledWith({ url: "/uploads/blue.png" });
-
-        act(() => red.resolve(job({ outputImageUrl: "/uploads/red.png" })));
-        await waitFor(() => expect(addImage).toHaveBeenCalledWith({ url: "/uploads/red.png" }));
-
-        expect(removeNonMainImages).toHaveBeenCalledTimes(1);
     });
 
-    it("never touches the gallery when every color fails", async () => {
-        vi.mocked(editProductImageService).mockRejectedValue(new Error("provider down"));
+    it("leaves an existing non-main image untouched when fewer colors are requested than images exist", async () => {
+        const usedUrl = "/uploads/products/used.png";
+        const untouchedUrl = "/uploads/products/untouched.png";
 
-        const { result, addImage, removeNonMainImages } = renderColorImages(["#FF0000"]);
+        vi.mocked(editProductImageService).mockResolvedValue(job({ outputImageUrl: "/uploads/red.png" }));
+
+        const { result, replaceImage } = renderColorImages(["#FF0000"], [
+            { url: MAIN_IMAGE_URL, isMain: true },
+            { url: usedUrl, isMain: false },
+            { url: untouchedUrl, isMain: false },
+        ]);
 
         act(() => result.current.open());
         act(() => result.current.generate());
 
         await waitFor(() => expect(result.current.isGenerating).toBe(false));
 
-        expect(removeNonMainImages).not.toHaveBeenCalled();
+        expect(editProductImageService).toHaveBeenCalledTimes(1);
+        expect(editProductImageService).toHaveBeenCalledWith(
+            BUSINESS_ID,
+            expect.objectContaining({ imageUrl: usedUrl })
+        );
+        expect(replaceImage).toHaveBeenCalledWith(usedUrl, "/uploads/red.png");
+        expect(replaceImage).not.toHaveBeenCalledWith(untouchedUrl, expect.anything());
+    });
+
+    it("never touches the gallery when every color fails", async () => {
+        vi.mocked(editProductImageService).mockRejectedValue(new Error("provider down"));
+
+        const { result, addImage, replaceImage } = renderColorImages(["#FF0000"]);
+
+        act(() => result.current.open());
+        act(() => result.current.generate());
+
+        await waitFor(() => expect(result.current.isGenerating).toBe(false));
+
         expect(addImage).not.toHaveBeenCalled();
+        expect(replaceImage).not.toHaveBeenCalled();
         expect(result.current.results?.[0].status).toBe("error");
     });
 
