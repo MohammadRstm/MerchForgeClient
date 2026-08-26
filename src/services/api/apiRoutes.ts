@@ -23,6 +23,13 @@ export const apiRoutes = {
     DASHBOARD_BUSINESSES : "/Dashboard/businesses",
     DASHBOARD_REVOKE_USER_SESSIONS : (userId : string) => `/Dashboard/users/${userId}/revoke-sessions`,
     DASHBOARD_WEBSITE_TEMPLATES : "/Dashboard/website-templates",
+    DASHBOARD_WEBSITE_TEMPLATE_VIDEO : "/Dashboard/website-templates/video",
+    DASHBOARD_WEBSITE_TEMPLATE : (templateId : string) => `/Dashboard/website-templates/${templateId}`,
+    DASHBOARD_WEBSITE_TEMPLATE_DEACTIVATE : (templateId : string) => `/Dashboard/website-templates/${templateId}/deactivate`,
+    DASHBOARD_WEBSITE_TEMPLATE_REQUESTS : "/Dashboard/website-template-requests",
+    DASHBOARD_WEBSITE_TEMPLATE_REQUEST : (requestId : string) => `/Dashboard/website-template-requests/${requestId}`,
+    DASHBOARD_WEBSITE_TEMPLATE_REQUEST_START_BUILD : (requestId : string) => `/Dashboard/website-template-requests/${requestId}/start-build`,
+    DASHBOARD_WEBSITE_TEMPLATE_REQUEST_CLOSE : (requestId : string) => `/Dashboard/website-template-requests/${requestId}/close`,
 
     /** BUSINESS DASHBOARD */
     BUSINESS_DASHBOARD_STATS : (businessId : string) => `/businesses/${businessId}/dashboard/stats`,
@@ -32,7 +39,8 @@ export const apiRoutes = {
     BUSINESS_DASHBOARD_PRODUCT_FORM : (businessId : string) => `/businesses/${businessId}/dashboard/product-form`,
     BUSINESS_DASHBOARD_PRODUCT : (businessId : string, productId : string) => `/businesses/${businessId}/dashboard/products/${productId}`,
     BUSINESS_DASHBOARD_PRODUCT_IMAGE : (businessId : string) => `/businesses/${businessId}/dashboard/products/image`,
-    BUSINESS_DASHBOARD_WEBSITE_TEMPLATE : (businessId : string) => `/businesses/${businessId}/dashboard/website-template`,
+    BUSINESS_DASHBOARD_WEBSITE_TEMPLATE_OPTIONS : (businessId : string) => `/businesses/${businessId}/dashboard/website-template-options`,
+    BUSINESS_DASHBOARD_WEBSITE_TEMPLATE_REQUESTS : (businessId : string) => `/businesses/${businessId}/dashboard/website-template-requests`,
     BUSINESS_DASHBOARD_FEATURES : (businessId : string) => `/businesses/${businessId}/dashboard/features`,
     BUSINESS_DASHBOARD_FEATURE_PURCHASES : (businessId : string) => `/businesses/${businessId}/dashboard/features/purchases`,
 

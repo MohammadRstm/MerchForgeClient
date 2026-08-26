@@ -7,6 +7,7 @@ import { routes } from "../config/routes";
 import Login from "../features/Auth/Login/Login";
 import AcceptInvitation from "../features/Auth/AcceptInvitation/AcceptInvitation";
 import DashboardPage from "../features/Dashboard/DashboardPage";
+import WebsiteTemplateSelectionPage from "../features/Dashboard/WebsiteTemplateRequest/WebsiteTemplateSelectionPage";
 import NotFound from "../features/NotFound/NotFound";
 
 const AppRoutes = () =>{
@@ -21,6 +22,7 @@ const AppRoutes = () =>{
                     <Route path={routes.LOGIN} element={<Login />} />
                     <Route element={<AuthenticatedRoutes />}>
                         <Route path={routes.DASHBOARD} element={<DashboardPage />} />
+                        <Route path={routes.CHOOSE_WEBSITE_TEMPLATE} element={<WebsiteTemplateSelectionPage />} />
                     </Route>
                 </Route>
 

@@ -2,11 +2,15 @@ import useDashboardStats from "./data/useDashboardStats";
 import useDashboardUsers from "./data/useDashboardUsers";
 import useDashboardBusinesses from "./data/useDashboardBusinesses";
 import useDashboardWebsiteTemplates from "./data/useDashboardWebsiteTemplates";
+import useDashboardWebsiteTemplateRequests from "./data/useDashboardWebsiteTemplateRequests";
 import useUsersTableState from "./ui/useUsersTableState";
 import useBusinessesTableState from "./ui/useBusinessesTableState";
+import useWebsiteTemplateRequestsTableState from "./ui/useWebsiteTemplateRequestsTableState";
 import useRevokeConfirmation from "./ui/useRevokeConfirmation";
 import useInviteBusinessOwnerForm from "./ui/useInviteBusinessOwnerForm";
 import useCreateWebsiteTemplateForm from "./ui/useCreateWebsiteTemplateForm";
+import useWebsiteTemplateRequestDetailModal from "./ui/useWebsiteTemplateRequestDetailModal";
+import useWebsiteTemplateDetailModal from "./ui/useWebsiteTemplateDetailModal";
 
 const useSuperAdminDashboardPage = () => {
     const {
@@ -38,9 +42,20 @@ const useSuperAdminDashboardPage = () => {
         isError: websiteTemplatesError,
     } = useDashboardWebsiteTemplates();
 
+    const websiteTemplateRequestsTable = useWebsiteTemplateRequestsTableState();
+
+    const {
+        data: websiteTemplateRequestsPage,
+        isLoading: websiteTemplateRequestsLoading,
+        isFetching: websiteTemplateRequestsFetching,
+        isError: websiteTemplateRequestsError,
+    } = useDashboardWebsiteTemplateRequests(websiteTemplateRequestsTable.query);
+
     const revokeConfirmation = useRevokeConfirmation();
     const inviteForm = useInviteBusinessOwnerForm();
     const createTemplateForm = useCreateWebsiteTemplateForm();
+    const websiteTemplateRequestDetailModal = useWebsiteTemplateRequestDetailModal();
+    const websiteTemplateDetailModal = useWebsiteTemplateDetailModal();
 
     return {
         stats,
@@ -63,9 +78,17 @@ const useSuperAdminDashboardPage = () => {
         websiteTemplatesLoading,
         websiteTemplatesError,
 
+        websiteTemplateRequestsPage,
+        websiteTemplateRequestsLoading,
+        websiteTemplateRequestsFetching,
+        websiteTemplateRequestsError,
+        websiteTemplateRequestsTable,
+
         revokeConfirmation,
         inviteForm,
         createTemplateForm,
+        websiteTemplateRequestDetailModal,
+        websiteTemplateDetailModal,
     };
 };
 

@@ -9,6 +9,9 @@ import useSuperAdminDashboardPage from "./hooks/useSuperAdminDashboardPage";
 import UsersTable from "./components/UsersTable";
 import BusinessesTable from "./components/BusinessesTable";
 import WebsiteTemplatesTable from "./components/WebsiteTemplatesTable";
+import WebsiteTemplateRequestsTable from "./components/WebsiteTemplateRequestsTable";
+import WebsiteTemplateRequestDetailModal from "./components/WebsiteTemplateRequestDetailModal";
+import WebsiteTemplateDetailModal from "./components/WebsiteTemplateDetailModal";
 import InviteBusinessOwnerModal from "./components/InviteBusinessOwnerModal";
 import CreateWebsiteTemplateModal from "./components/CreateWebsiteTemplateModal";
 
@@ -36,9 +39,17 @@ const SuperAdminDashboard = () => {
         websiteTemplatesLoading,
         websiteTemplatesError,
 
+        websiteTemplateRequestsPage,
+        websiteTemplateRequestsLoading,
+        websiteTemplateRequestsFetching,
+        websiteTemplateRequestsError,
+        websiteTemplateRequestsTable,
+
         revokeConfirmation,
         inviteForm,
         createTemplateForm,
+        websiteTemplateRequestDetailModal,
+        websiteTemplateDetailModal,
     } = useSuperAdminDashboardPage();
 
     return (
@@ -117,11 +128,25 @@ const SuperAdminDashboard = () => {
                 isLoading={websiteTemplatesLoading}
                 isError={websiteTemplatesError}
                 onAdd={createTemplateForm.open}
+                onOpen={websiteTemplateDetailModal.open}
+            />
+
+            <WebsiteTemplateRequestsTable
+                requestsPage={websiteTemplateRequestsPage}
+                isLoading={websiteTemplateRequestsLoading}
+                isFetching={websiteTemplateRequestsFetching}
+                isError={websiteTemplateRequestsError}
+                tableState={websiteTemplateRequestsTable}
+                onOpen={websiteTemplateRequestDetailModal.open}
             />
 
             <InviteBusinessOwnerModal form={inviteForm} />
 
             <CreateWebsiteTemplateModal form={createTemplateForm} />
+
+            <WebsiteTemplateRequestDetailModal modal={websiteTemplateRequestDetailModal} />
+
+            <WebsiteTemplateDetailModal modal={websiteTemplateDetailModal} />
 
             <Modal
                 isOpen={!!revokeConfirmation.pendingUser}

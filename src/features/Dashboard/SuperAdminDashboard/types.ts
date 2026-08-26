@@ -8,6 +8,13 @@ import type {
     businessOwnerInvitationResponseSchema,
     websiteTemplateResponseSchema,
     createWebsiteTemplateFormSchema,
+    updateWebsiteTemplateFormSchema,
+    websiteTemplateDetailSchema,
+    websiteTemplateBusinessSchema,
+    websiteTemplateRequestStatusSchema,
+    websiteTemplateRequestSummarySchema,
+    websiteTemplateRequestDetailSchema,
+    closeWebsiteTemplateRequestFormSchema,
 } from "./validation";
 
 export type DashboardStatsResponse = z.infer<typeof dashboardStatsResponseSchema>;
@@ -16,6 +23,23 @@ export type DashboardBusinessResponse = z.infer<typeof dashboardBusinessResponse
 export type RevokeUserSessionsResponse = z.infer<typeof revokeUserSessionsResponseSchema>;
 export type BusinessOwnerInvitationResponse = z.infer<typeof businessOwnerInvitationResponseSchema>;
 export type WebsiteTemplateResponse = z.infer<typeof websiteTemplateResponseSchema>;
+export type WebsiteTemplateBusiness = z.infer<typeof websiteTemplateBusinessSchema>;
+export type WebsiteTemplateDetail = z.infer<typeof websiteTemplateDetailSchema>;
+
+/** The coerced/validated shape submitted to the API for an edit — displayOrder is a real number here. */
+export type UpdateWebsiteTemplatePayload = z.infer<typeof updateWebsiteTemplateFormSchema>;
+
+/** The raw, string-backed shape the edit form's controlled inputs hold before validation. */
+export type UpdateWebsiteTemplateFormValues = {
+    label: string;
+    videoPreviewUrl: string;
+    previewWebsiteUrl: string;
+    displayOrder: string;
+};
+export type WebsiteTemplateRequestStatus = z.infer<typeof websiteTemplateRequestStatusSchema>;
+export type WebsiteTemplateRequestSummaryResponse = z.infer<typeof websiteTemplateRequestSummarySchema>;
+export type WebsiteTemplateRequestDetailResponse = z.infer<typeof websiteTemplateRequestDetailSchema>;
+export type CloseWebsiteTemplateRequestPayload = z.infer<typeof closeWebsiteTemplateRequestFormSchema>;
 
 /** The coerced/validated shape submitted to the API — displayOrder is a real number here. */
 export type CreateWebsiteTemplatePayload = z.infer<typeof createWebsiteTemplateFormSchema>;
@@ -26,6 +50,7 @@ export type CreateWebsiteTemplateFormValues = {
     name: string;
     label: string;
     videoPreviewUrl: string;
+    previewWebsiteUrl: string;
     displayOrder: string;
 };
 
@@ -44,5 +69,10 @@ export type UsersQueryParams = PagedQuery & {
 export type BusinessesQueryParams = PagedQuery & {
     search?: string;
     sortBy: BusinessesSortField;
+    sortDescending: boolean;
+};
+
+export type WebsiteTemplateRequestsQueryParams = PagedQuery & {
+    status?: WebsiteTemplateRequestStatus;
     sortDescending: boolean;
 };

@@ -8,4 +8,5 @@ export const routes = {
     ABOUTUS: "/aboutus",
     ACCEPT_INVITATION: "/accept-invitation",
     DASHBOARD: "/dashboard",
+    CHOOSE_WEBSITE_TEMPLATE: "/dashboard/website-template",
 };

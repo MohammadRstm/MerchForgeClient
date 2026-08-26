@@ -1,4 +1,6 @@
 import "./BusinessOwnerDashboard.css";
+import { useNavigate } from "react-router";
+import { routes } from "../../../config/routes";
 import Spinner from "../../../components/LoadingSpinner/LoadingSpinner";
 import StatCards from "../../../components/DashboardWidgets/StatCards";
 import BreakdownPieChart from "../../../components/DashboardWidgets/BreakdownPieChart";
@@ -14,7 +16,6 @@ import ProductDetailModal from "./components/ProductDetailModal";
 import DeleteProductModal from "./components/DeleteProductModal";
 import MemberModal from "./components/MemberModal";
 import MemberCredentialsModal from "./components/MemberCredentialsModal";
-import ChooseWebsiteTemplateModal from "./components/ChooseWebsiteTemplateModal";
 
 const currencyFormatter = new Intl.NumberFormat(undefined, {
     style: "currency",
@@ -39,7 +40,8 @@ const BusinessOwnerDashboard = () => {
         membersLoading,
         membersError,
         memberModal,
-        websiteTemplateModal,
+        websiteTemplateOptions,
+        websiteTemplateOptionsLoading,
 
         subscription,
         subscriptionLoading,
@@ -65,16 +67,35 @@ const BusinessOwnerDashboard = () => {
         cancelDeleteProduct,
     } = useBusinessOwnerDashboardPage();
 
+    const navigate = useNavigate();
+
     return (
         <main className="business-dashboard-page">
             <div className="business-dashboard-page-header">
                 <h1 className="business-dashboard-heading">{businessName || "Business"} Dashboard</h1>
 
-                {!websiteTemplateModal.isLoading && websiteTemplateModal.status?.chosen == null && (
-                    <button type="button" className="business-dashboard-button-primary" onClick={websiteTemplateModal.open}>
-                        Choose website template
-                    </button>
-                )}
+                <div className="business-dashboard-header-actions">
+                    {stats?.websiteUrl && (
+                        <a
+                            href={stats.websiteUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="business-dashboard-button-secondary"
+                        >
+                            View website
+                        </a>
+                    )}
+
+                    {!websiteTemplateOptionsLoading && websiteTemplateOptions && (
+                        <button
+                            type="button"
+                            className="business-dashboard-button-primary"
+                            onClick={() => navigate(routes.CHOOSE_WEBSITE_TEMPLATE)}
+                        >
+                            {websiteTemplateOptions.hasOpenRequest ? "View website request" : "Choose website template"}
+                        </button>
+                    )}
+                </div>
             </div>
 
             {statsLoading ? (
@@ -180,8 +201,6 @@ const BusinessOwnerDashboard = () => {
             />
 
             <MemberModal modal={memberModal} />
-
-            <ChooseWebsiteTemplateModal modal={websiteTemplateModal} />
 
             <FeatureCreditsModal modal={featureCreditsModal} />
 

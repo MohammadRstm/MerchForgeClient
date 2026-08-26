@@ -1,5 +1,6 @@
 import Modal from "../../../../components/Modal/Modal";
 import useDomains from "../../../Auth/AcceptInvitation/hooks/data/useDomains";
+import { resolveImageUrl } from "../../BusinessOwnerDashboard/utils/resolveImageUrl";
 import type useCreateWebsiteTemplateForm from "../hooks/ui/useCreateWebsiteTemplateForm";
 
 type CreateWebsiteTemplateModalProps = {
@@ -80,15 +81,42 @@ const CreateWebsiteTemplateModal = ({ form }: CreateWebsiteTemplateModalProps) =
 
                     <div>
                         <label className="dashboard-invite-label" htmlFor="template-video">
-                            Video preview URL
+                            Preview video
                         </label>
                         <input
                             id="template-video"
                             className="dashboard-invite-input"
+                            type="file"
+                            accept="video/mp4,video/webm"
+                            onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) form.uploadVideo(file);
+                                e.target.value = "";
+                            }}
+                            disabled={form.isPending || form.videoUploading}
+                        />
+                        {form.videoUploading && <p className="dashboard-modal-text">Uploading video...</p>}
+                        {form.values.videoPreviewUrl && !form.videoUploading && (
+                            <video
+                                src={resolveImageUrl(form.values.videoPreviewUrl)}
+                                controls
+                                muted
+                                className="dashboard-template-video-preview"
+                            />
+                        )}
+                    </div>
+
+                    <div>
+                        <label className="dashboard-invite-label" htmlFor="template-preview-website">
+                            Preview website URL
+                        </label>
+                        <input
+                            id="template-preview-website"
+                            className="dashboard-invite-input"
                             type="text"
-                            value={form.values.videoPreviewUrl}
-                            onChange={(e) => form.changeField("videoPreviewUrl", e.target.value)}
-                            placeholder="https://cdn.example.com/previews/fashion-02.mp4"
+                            value={form.values.previewWebsiteUrl}
+                            onChange={(e) => form.changeField("previewWebsiteUrl", e.target.value)}
+                            placeholder="https://fashion-02-demo.example.com (optional, opened by the Preview button)"
                             disabled={form.isPending}
                         />
                     </div>

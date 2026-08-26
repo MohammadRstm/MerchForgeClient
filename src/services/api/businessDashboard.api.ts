@@ -12,8 +12,8 @@ import {
     businessSubscriptionResponseSchema,
     productFormSchema,
     productImageUploadSchema,
-    businessWebsiteTemplateStatusSchema,
-    chosenWebsiteTemplateSchema,
+    websiteTemplateOptionsSchema,
+    websiteTemplateRequestSchema,
     featureCreditOverviewSchema,
     businessFeatureCreditSchema,
 } from "../../features/Dashboard/BusinessOwnerDashboard/validation";
@@ -145,20 +145,31 @@ export const deleteBusinessProductService = async (businessId: string, productId
     await authenticatedApi.delete(apiRoutes.BUSINESS_DASHBOARD_PRODUCT(businessId, productId));
 };
 
-// ---- website template ----
+// ---- website template requests ----
 
-export const getWebsiteTemplateStatusService = async (businessId: string) => {
-    const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_WEBSITE_TEMPLATE(businessId));
+export const getWebsiteTemplateOptionsService = async (businessId: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_WEBSITE_TEMPLATE_OPTIONS(businessId));
 
-    return businessWebsiteTemplateStatusSchema.parse(data);
+    return websiteTemplateOptionsSchema.parse(data);
 };
 
-export const chooseWebsiteTemplateService = async (businessId: string, websiteTemplateId: string) => {
-    const { data } = await authenticatedApi.post(apiRoutes.BUSINESS_DASHBOARD_WEBSITE_TEMPLATE(businessId), {
+export const getWebsiteTemplateRequestsService = async (businessId: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_WEBSITE_TEMPLATE_REQUESTS(businessId));
+
+    return z.array(websiteTemplateRequestSchema).parse(data);
+};
+
+export const createWebsiteTemplateRequestService = async (
+    businessId: string,
+    websiteTemplateId: string,
+    customizationNotes: string
+) => {
+    const { data } = await authenticatedApi.post(apiRoutes.BUSINESS_DASHBOARD_WEBSITE_TEMPLATE_REQUESTS(businessId), {
         websiteTemplateId,
+        customizationNotes,
     });
 
-    return chosenWebsiteTemplateSchema.parse(data);
+    return websiteTemplateRequestSchema.parse(data);
 };
 
 // ---- feature credits ----
