@@ -2,7 +2,7 @@ import Hero from './components/Hero/Hero';
 import Header from '../Header/Header';
 import ProofStrip from './components/ProofStrip/ProofStrip';
 import Statement from './components/Statement/Statement';
-import Showcase from './components/Showcase/Showcase';
+import Capabilities from './components/Capabilities/Capabilities';
 import WhoItsFor from './components/WhoItsFor/WhoItsFor';
 import Services from './components/Services/Services';
 import Faq from './components/Faq/Faq';
@@ -19,7 +19,7 @@ export default function Home() {
         <Hero />
         <ProofStrip />
         <Statement />
-        <Showcase />
+        <Capabilities />
         <WhoItsFor />
         <Services />
         <Faq />
