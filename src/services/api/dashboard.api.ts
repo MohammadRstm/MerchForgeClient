@@ -2,6 +2,7 @@ import type {
     BusinessesQueryParams,
     UsersQueryParams,
     CreateWebsiteTemplatePayload,
+    UpdateWebsiteTemplatePayload,
     WebsiteTemplateRequestsQueryParams,
     CloseWebsiteTemplateRequestPayload,
 } from "../../features/Dashboard/SuperAdminDashboard/types";
@@ -12,6 +13,8 @@ import {
     revokeUserSessionsResponseSchema,
     websiteTemplateResponseSchema,
     websiteTemplatesResponseSchema,
+    websiteTemplateDetailSchema,
+    uploadWebsiteTemplateVideoResponseSchema,
     websiteTemplateRequestsPageSchema,
     websiteTemplateRequestDetailSchema,
 } from "../../features/Dashboard/SuperAdminDashboard/validation";
@@ -56,6 +59,35 @@ export const getDashboardWebsiteTemplatesService = async () => {
 
 export const createWebsiteTemplateService = async (payload: CreateWebsiteTemplatePayload) => {
     const { data } = await authenticatedApi.post(apiRoutes.DASHBOARD_WEBSITE_TEMPLATES, payload);
+
+    return websiteTemplateResponseSchema.parse(data);
+};
+
+export const uploadWebsiteTemplateVideoService = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    // Content-Type is deliberately not set: the browser must generate it so the
+    // multipart boundary is included, and setting it by hand omits that.
+    const { data } = await authenticatedApi.post(apiRoutes.DASHBOARD_WEBSITE_TEMPLATE_VIDEO, formData);
+
+    return uploadWebsiteTemplateVideoResponseSchema.parse(data);
+};
+
+export const getWebsiteTemplateDetailService = async (templateId: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_WEBSITE_TEMPLATE(templateId));
+
+    return websiteTemplateDetailSchema.parse(data);
+};
+
+export const updateWebsiteTemplateService = async (templateId: string, payload: UpdateWebsiteTemplatePayload) => {
+    const { data } = await authenticatedApi.put(apiRoutes.DASHBOARD_WEBSITE_TEMPLATE(templateId), payload);
+
+    return websiteTemplateResponseSchema.parse(data);
+};
+
+export const deactivateWebsiteTemplateService = async (templateId: string) => {
+    const { data } = await authenticatedApi.post(apiRoutes.DASHBOARD_WEBSITE_TEMPLATE_DEACTIVATE(templateId));
 
     return websiteTemplateResponseSchema.parse(data);
 };

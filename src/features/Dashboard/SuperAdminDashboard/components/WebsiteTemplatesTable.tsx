@@ -6,9 +6,10 @@ type WebsiteTemplatesTableProps = {
     isLoading: boolean;
     isError: boolean;
     onAdd: () => void;
+    onOpen: (templateId: string) => void;
 };
 
-const WebsiteTemplatesTable = ({ templates, isLoading, isError, onAdd }: WebsiteTemplatesTableProps) => {
+const WebsiteTemplatesTable = ({ templates, isLoading, isError, onAdd, onOpen }: WebsiteTemplatesTableProps) => {
     return (
         <section className="dashboard-table-card">
             <div className="dashboard-table-header">
@@ -48,13 +49,22 @@ const WebsiteTemplatesTable = ({ templates, isLoading, isError, onAdd }: Website
 
                         <tbody>
                             {templates.map((template) => (
-                                <tr key={template.id}>
+                                <tr
+                                    key={template.id}
+                                    className="website-request-row"
+                                    onClick={() => onOpen(template.id)}
+                                >
                                     <td>{template.name}</td>
                                     <td>{template.label}</td>
                                     <td>{template.domainName}</td>
                                     <td>
                                         {template.previewWebsiteUrl ? (
-                                            <a href={template.previewWebsiteUrl} target="_blank" rel="noopener noreferrer">
+                                            <a
+                                                href={template.previewWebsiteUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                onClick={(e) => e.stopPropagation()}
+                                            >
                                                 View
                                             </a>
                                         ) : (

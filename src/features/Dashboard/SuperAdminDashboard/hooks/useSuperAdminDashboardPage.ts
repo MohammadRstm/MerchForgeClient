@@ -10,6 +10,7 @@ import useRevokeConfirmation from "./ui/useRevokeConfirmation";
 import useInviteBusinessOwnerForm from "./ui/useInviteBusinessOwnerForm";
 import useCreateWebsiteTemplateForm from "./ui/useCreateWebsiteTemplateForm";
 import useWebsiteTemplateRequestDetailModal from "./ui/useWebsiteTemplateRequestDetailModal";
+import useWebsiteTemplateDetailModal from "./ui/useWebsiteTemplateDetailModal";
 
 const useSuperAdminDashboardPage = () => {
     const {
@@ -54,6 +55,7 @@ const useSuperAdminDashboardPage = () => {
     const inviteForm = useInviteBusinessOwnerForm();
     const createTemplateForm = useCreateWebsiteTemplateForm();
     const websiteTemplateRequestDetailModal = useWebsiteTemplateRequestDetailModal();
+    const websiteTemplateDetailModal = useWebsiteTemplateDetailModal();
 
     return {
         stats,
@@ -86,6 +88,7 @@ const useSuperAdminDashboardPage = () => {
         inviteForm,
         createTemplateForm,
         websiteTemplateRequestDetailModal,
+        websiteTemplateDetailModal,
     };
 };
 

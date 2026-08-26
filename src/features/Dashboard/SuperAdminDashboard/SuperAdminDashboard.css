@@ -294,6 +294,41 @@
     font-size: 13px;
 }
 
+.dashboard-template-businesses-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 180px;
+    overflow-y: auto;
+}
+
+.dashboard-template-businesses-list li {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 6px 10px;
+    background: #f7f7f7;
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+.dashboard-template-businesses-list code {
+    color: #777;
+    font-size: 12px;
+}
+
+.dashboard-template-video-preview {
+    display: block;
+    width: 100%;
+    max-height: 220px;
+    margin-top: 8px;
+    border-radius: 6px;
+    background: #000;
+}
+
 /* Website Requests */
 
 .website-request-row {

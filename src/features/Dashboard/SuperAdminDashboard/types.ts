@@ -8,6 +8,9 @@ import type {
     businessOwnerInvitationResponseSchema,
     websiteTemplateResponseSchema,
     createWebsiteTemplateFormSchema,
+    updateWebsiteTemplateFormSchema,
+    websiteTemplateDetailSchema,
+    websiteTemplateBusinessSchema,
     websiteTemplateRequestStatusSchema,
     websiteTemplateRequestSummarySchema,
     websiteTemplateRequestDetailSchema,
@@ -20,6 +23,19 @@ export type DashboardBusinessResponse = z.infer<typeof dashboardBusinessResponse
 export type RevokeUserSessionsResponse = z.infer<typeof revokeUserSessionsResponseSchema>;
 export type BusinessOwnerInvitationResponse = z.infer<typeof businessOwnerInvitationResponseSchema>;
 export type WebsiteTemplateResponse = z.infer<typeof websiteTemplateResponseSchema>;
+export type WebsiteTemplateBusiness = z.infer<typeof websiteTemplateBusinessSchema>;
+export type WebsiteTemplateDetail = z.infer<typeof websiteTemplateDetailSchema>;
+
+/** The coerced/validated shape submitted to the API for an edit — displayOrder is a real number here. */
+export type UpdateWebsiteTemplatePayload = z.infer<typeof updateWebsiteTemplateFormSchema>;
+
+/** The raw, string-backed shape the edit form's controlled inputs hold before validation. */
+export type UpdateWebsiteTemplateFormValues = {
+    label: string;
+    videoPreviewUrl: string;
+    previewWebsiteUrl: string;
+    displayOrder: string;
+};
 export type WebsiteTemplateRequestStatus = z.infer<typeof websiteTemplateRequestStatusSchema>;
 export type WebsiteTemplateRequestSummaryResponse = z.infer<typeof websiteTemplateRequestSummarySchema>;
 export type WebsiteTemplateRequestDetailResponse = z.infer<typeof websiteTemplateRequestDetailSchema>;
