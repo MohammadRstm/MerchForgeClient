@@ -1,14 +1,14 @@
 import Hero from './components/Hero/Hero';
 import Header from '../Header/Header';
-import Problem from './components/Problem/Problem';
+import ProofStrip from './components/ProofStrip/ProofStrip';
+import Statement from './components/Statement/Statement';
+import Capabilities from './components/Capabilities/Capabilities';
+import ProductShowcase from './components/ProductShowcase/ProductShowcase';
 import HowItWorks from './components/HowItWorks/HowItWorks';
-import ProductManagement from './components/ProductManagement/ProductManagement';
-import AIProductCreation from './components/AiProductCreation/AiProductCreation';
-import WhyMerchForge from './components/WhyMerchForge/WhyMerchForge';
-import Integrations from './components/Integrations/Integrations';
-import AIServices from './components/AiServices/AiServices';
-import FinalCTA from './components/FinalCTA/FinalCTA';
+import MerchantBenefits from './components/MerchantBenefits/MerchantBenefits';
+import Faq from './components/Faq/Faq';
 import Pricing from './components/Pricing/Pricing';
+import FinalCTA from './components/FinalCTA/FinalCTA';
 import Footer from './components/Footer/Footer';
 import './Home.css';
 
@@ -18,14 +18,14 @@ export default function Home() {
       <Header />
       <main>
         <Hero />
-        <Problem />
+        <ProofStrip />
+        <Statement />
+        <Capabilities />
+        <ProductShowcase />
         <HowItWorks />
-        <AIProductCreation />
-        <AIServices />
-        <ProductManagement />
-        <Integrations />
+        <MerchantBenefits />
         <Pricing />
-        <WhyMerchForge />
+        <Faq />
         <FinalCTA />
       </main>
       <Footer />

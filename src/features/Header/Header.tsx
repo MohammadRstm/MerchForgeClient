@@ -11,13 +11,12 @@ interface NavLink {
     href: string;
 }
 
-// Every href must match an id actually rendered on the landing page — "#features"
-// and "#coming-soon" matched nothing, so those two nav items did nothing at all.
+// Every href must match an id actually rendered on the landing page.
 const NAV_LINKS: NavLink[] = [
-    { label: "Features", href: "#how-it-works" },
-    { label: "AI", href: "#ai" },
+    { label: "Features", href: "#capabilities" },
+    { label: "AI", href: "#showcase" },
     { label: "Pricing", href: "#pricing" },
-    { label: "Coming Soon", href: "#integrations" },
+    { label: "Coming Soon", href: "#capabilities" },
 ];
 
 const Header = () => {
@@ -67,7 +66,7 @@ const Header = () => {
 
                 <nav className="header__links" aria-label="Primary">
                     {NAV_LINKS.map((link) => (
-                        <a key={link.href} href={link.href} className="header__link">
+                        <a key={link.label} href={link.href} className="header__link">
                             {link.label}
                         </a>
                     ))}
@@ -117,7 +116,7 @@ const Header = () => {
             <div className="header__mobile" id="header-mobile-menu" hidden={!menuOpen}>
                 <nav className="header__mobile-links" aria-label="Mobile">
                     {NAV_LINKS.map((link) => (
-                        <a key={link.href} href={link.href} className="header__mobile-link" onClick={closeMenu}>
+                        <a key={link.label} href={link.href} className="header__mobile-link" onClick={closeMenu}>
                             {link.label}
                         </a>
                     ))}
