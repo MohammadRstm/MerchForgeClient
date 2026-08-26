@@ -9,7 +9,7 @@ const COLUMNS: FooterColumn[] = [
   {
     title: 'Product',
     links: [
-      { label: 'Features', href: '#services' },
+      { label: 'Features', href: '#capabilities' },
       { label: 'Pricing', href: '#pricing' },
       { label: 'AI', href: '#showcase' },
     ],

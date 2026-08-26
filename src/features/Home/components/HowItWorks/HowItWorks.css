@@ -1,0 +1,163 @@
+.how {
+  background: var(--mf-bg);
+}
+
+.how__inner {
+  max-width: 1160px;
+}
+
+.how__headline {
+  max-width: 20ch;
+  margin-bottom: clamp(3rem, 7vw, 4.5rem);
+}
+
+/* ---------- Connecting rail ---------- */
+
+.how__rail {
+  position: relative;
+  height: 1px;
+  background: var(--mf-border);
+  margin: 0 0 -1px;
+  transform: translateY(9px);
+}
+
+.how__rail-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--mf-accent);
+  width: 0;
+  transform-origin: left;
+}
+
+.how--visible .how__rail-fill {
+  animation: how-fill 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: 0.1s;
+}
+
+/* ---------- Steps ---------- */
+
+.how__steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: clamp(1rem, 3vw, 1.75rem);
+}
+
+.how__step {
+  position: relative;
+  padding-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+.how--visible .how__step {
+  animation: how-rise 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--delay, 0s);
+}
+
+.how__step-dot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: -9px;
+  border-radius: 50%;
+  background: var(--mf-bg-raised);
+  border: 2px solid var(--mf-border);
+  opacity: 0;
+  transform: scale(0.6);
+}
+
+.how--visible .how__step-dot {
+  animation: how-pop 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--delay, 0s);
+}
+
+.how__step-number {
+  font-size: 0.8125rem;
+}
+
+.how__step-title {
+  font-family: var(--mf-display-font);
+  font-weight: var(--mf-display-weight);
+  letter-spacing: var(--mf-display-tracking);
+  font-size: 1.125rem;
+  color: var(--mf-text);
+  margin: 0.15rem 0 0;
+}
+
+.how__step-description {
+  font-family: var(--mf-body-font);
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--mf-text-secondary);
+  margin: 0;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 860px) {
+  .how__rail {
+    display: none;
+  }
+
+  .how__steps {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 2rem;
+  }
+
+  .how__step {
+    padding-top: 0;
+  }
+
+  .how__step-dot {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .how__steps {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Keyframes ---------- */
+
+@keyframes how-fill {
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes how-rise {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes how-pop {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .how__rail-fill,
+  .how__step,
+  .how__step-dot {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    width: 100% !important;
+  }
+}

@@ -13,10 +13,10 @@ interface NavLink {
 
 // Every href must match an id actually rendered on the landing page.
 const NAV_LINKS: NavLink[] = [
-    { label: "Features", href: "#services" },
+    { label: "Features", href: "#capabilities" },
     { label: "AI", href: "#showcase" },
     { label: "Pricing", href: "#pricing" },
-    { label: "Coming Soon", href: "#services" },
+    { label: "Coming Soon", href: "#capabilities" },
 ];
 
 const Header = () => {
