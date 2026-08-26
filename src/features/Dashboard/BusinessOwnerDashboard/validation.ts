@@ -15,6 +15,7 @@ export const businessDashboardStatsResponseSchema = z.object({
     businessId: z.string().uuid(),
     businessName: z.string(),
     createdAt: z.iso.datetime(),
+    websiteUrl: z.string().nullable(),
 
     memberCount: z.number(),
     productCount: z.number(),

@@ -74,15 +74,28 @@ const BusinessOwnerDashboard = () => {
             <div className="business-dashboard-page-header">
                 <h1 className="business-dashboard-heading">{businessName || "Business"} Dashboard</h1>
 
-                {!websiteTemplateOptionsLoading && websiteTemplateOptions && (
-                    <button
-                        type="button"
-                        className="business-dashboard-button-primary"
-                        onClick={() => navigate(routes.CHOOSE_WEBSITE_TEMPLATE)}
-                    >
-                        {websiteTemplateOptions.hasOpenRequest ? "View website request" : "Choose website template"}
-                    </button>
-                )}
+                <div className="business-dashboard-header-actions">
+                    {stats?.websiteUrl && (
+                        <a
+                            href={stats.websiteUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="business-dashboard-button-secondary"
+                        >
+                            View website
+                        </a>
+                    )}
+
+                    {!websiteTemplateOptionsLoading && websiteTemplateOptions && (
+                        <button
+                            type="button"
+                            className="business-dashboard-button-primary"
+                            onClick={() => navigate(routes.CHOOSE_WEBSITE_TEMPLATE)}
+                        >
+                            {websiteTemplateOptions.hasOpenRequest ? "View website request" : "Choose website template"}
+                        </button>
+                    )}
+                </div>
             </div>
 
             {statsLoading ? (
