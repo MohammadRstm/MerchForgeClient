@@ -81,6 +81,7 @@ export const websiteTemplateResponseSchema = z.object({
     name: z.string(),
     label: z.string(),
     videoPreviewUrl: z.string(),
+    previewWebsiteUrl: z.string().nullable(),
     isActive: z.boolean(),
     displayOrder: z.number(),
     businessesUsingIt: z.number(),
@@ -109,8 +110,60 @@ export const createWebsiteTemplateFormSchema = z.object({
         .trim()
         .min(1, "Enter a video preview URL.")
         .max(500, "URL must be 500 characters or fewer."),
+    previewWebsiteUrl: z
+        .string()
+        .trim()
+        .max(500, "URL must be 500 characters or fewer.")
+        .optional(),
     displayOrder: z.coerce
         .number({ message: "Display order must be a number." })
         .int("Display order must be a whole number.")
         .min(0, "Display order must be zero or greater."),
+});
+
+// ---- website template requests ----
+
+export const websiteTemplateRequestStatusSchema = z.enum(["Pending", "InProgress", "Closed"]);
+
+export const websiteTemplateRequestSummarySchema = z.object({
+    id: z.string().uuid(),
+    businessId: z.string().uuid(),
+    businessName: z.string(),
+    ownerFullName: z.string(),
+    ownerEmail: z.string(),
+    templateLabel: z.string(),
+    domainName: z.string(),
+    status: websiteTemplateRequestStatusSchema,
+    createdAt: z.iso.datetime(),
+    finalWebsiteUrl: z.string().nullable(),
+});
+
+export const websiteTemplateRequestsPageSchema = pagedResultSchema(websiteTemplateRequestSummarySchema);
+
+export const websiteTemplateRequestDetailSchema = z.object({
+    id: z.string().uuid(),
+    businessId: z.string().uuid(),
+    businessName: z.string(),
+    ownerFullName: z.string(),
+    ownerEmail: z.string(),
+    websiteTemplateId: z.string().uuid(),
+    templateName: z.string(),
+    templateLabel: z.string(),
+    domainName: z.string(),
+    customizationNotes: z.string(),
+    status: websiteTemplateRequestStatusSchema,
+    createdAt: z.iso.datetime(),
+    buildStartedAt: z.iso.datetime().nullable(),
+    closedAt: z.iso.datetime().nullable(),
+    closedByFullName: z.string().nullable(),
+    finalWebsiteUrl: z.string().nullable(),
+});
+
+/** Mirrors the server's CloseWebsiteTemplateRequestRequestValidator so the form fails before the round trip. */
+export const closeWebsiteTemplateRequestFormSchema = z.object({
+    finalWebsiteUrl: z
+        .string()
+        .trim()
+        .min(1, "Enter the final website URL.")
+        .url("Enter a valid URL, including https://."),
 });

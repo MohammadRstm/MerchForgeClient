@@ -9,6 +9,8 @@ import useSuperAdminDashboardPage from "./hooks/useSuperAdminDashboardPage";
 import UsersTable from "./components/UsersTable";
 import BusinessesTable from "./components/BusinessesTable";
 import WebsiteTemplatesTable from "./components/WebsiteTemplatesTable";
+import WebsiteTemplateRequestsTable from "./components/WebsiteTemplateRequestsTable";
+import WebsiteTemplateRequestDetailModal from "./components/WebsiteTemplateRequestDetailModal";
 import InviteBusinessOwnerModal from "./components/InviteBusinessOwnerModal";
 import CreateWebsiteTemplateModal from "./components/CreateWebsiteTemplateModal";
 
@@ -36,9 +38,16 @@ const SuperAdminDashboard = () => {
         websiteTemplatesLoading,
         websiteTemplatesError,
 
+        websiteTemplateRequestsPage,
+        websiteTemplateRequestsLoading,
+        websiteTemplateRequestsFetching,
+        websiteTemplateRequestsError,
+        websiteTemplateRequestsTable,
+
         revokeConfirmation,
         inviteForm,
         createTemplateForm,
+        websiteTemplateRequestDetailModal,
     } = useSuperAdminDashboardPage();
 
     return (
@@ -119,9 +128,20 @@ const SuperAdminDashboard = () => {
                 onAdd={createTemplateForm.open}
             />
 
+            <WebsiteTemplateRequestsTable
+                requestsPage={websiteTemplateRequestsPage}
+                isLoading={websiteTemplateRequestsLoading}
+                isFetching={websiteTemplateRequestsFetching}
+                isError={websiteTemplateRequestsError}
+                tableState={websiteTemplateRequestsTable}
+                onOpen={websiteTemplateRequestDetailModal.open}
+            />
+
             <InviteBusinessOwnerModal form={inviteForm} />
 
             <CreateWebsiteTemplateModal form={createTemplateForm} />
+
+            <WebsiteTemplateRequestDetailModal modal={websiteTemplateRequestDetailModal} />
 
             <Modal
                 isOpen={!!revokeConfirmation.pendingUser}

@@ -8,6 +8,7 @@ const EMPTY_FORM: CreateWebsiteTemplateFormValues = {
     name: "",
     label: "",
     videoPreviewUrl: "",
+    previewWebsiteUrl: "",
     displayOrder: "0",
 };
 

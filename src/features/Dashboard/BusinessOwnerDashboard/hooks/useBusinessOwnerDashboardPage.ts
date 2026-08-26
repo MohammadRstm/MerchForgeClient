@@ -7,7 +7,7 @@ import useProductsTableState from "./ui/useProductsTableState";
 import useProductModal from "./ui/useProductModal";
 import useProductDetailModal from "./ui/useProductDetailModal";
 import useMemberModal from "./ui/useMemberModal";
-import useWebsiteTemplateModal from "./ui/useWebsiteTemplateModal";
+import useWebsiteTemplateOptions from "./data/useWebsiteTemplateOptions";
 import useFeatureCreditsModal from "./ui/useFeatureCreditsModal";
 import useVoiceProductDraft from "./ui/useVoiceProductDraft";
 import useImageEditChat from "./ui/useImageEditChat";
@@ -55,7 +55,10 @@ const useBusinessOwnerDashboardPage = () => {
     const productModal = useProductModal(businessId);
     const productDetailModal = useProductDetailModal(businessId);
     const memberModal = useMemberModal(businessId);
-    const websiteTemplateModal = useWebsiteTemplateModal(businessId);
+    const {
+        data: websiteTemplateOptions,
+        isLoading: websiteTemplateOptionsLoading,
+    } = useWebsiteTemplateOptions(businessId);
     const featureCreditsModal = useFeatureCreditsModal(businessId);
 
     /** Switches from viewing to editing the same product — the detail card is read-only, so an edit always starts a fresh trip through the form. */
@@ -162,7 +165,8 @@ const useBusinessOwnerDashboardPage = () => {
         membersLoading,
         membersError,
         memberModal,
-        websiteTemplateModal,
+        websiteTemplateOptions,
+        websiteTemplateOptionsLoading,
 
         subscription,
         subscriptionLoading,

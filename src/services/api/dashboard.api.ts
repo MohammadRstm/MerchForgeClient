@@ -2,6 +2,8 @@ import type {
     BusinessesQueryParams,
     UsersQueryParams,
     CreateWebsiteTemplatePayload,
+    WebsiteTemplateRequestsQueryParams,
+    CloseWebsiteTemplateRequestPayload,
 } from "../../features/Dashboard/SuperAdminDashboard/types";
 import {
     dashboardBusinessesPageSchema,
@@ -10,6 +12,8 @@ import {
     revokeUserSessionsResponseSchema,
     websiteTemplateResponseSchema,
     websiteTemplatesResponseSchema,
+    websiteTemplateRequestsPageSchema,
+    websiteTemplateRequestDetailSchema,
 } from "../../features/Dashboard/SuperAdminDashboard/validation";
 import { authenticatedApi } from "./api";
 import { apiRoutes } from "./apiRoutes";
@@ -54,4 +58,35 @@ export const createWebsiteTemplateService = async (payload: CreateWebsiteTemplat
     const { data } = await authenticatedApi.post(apiRoutes.DASHBOARD_WEBSITE_TEMPLATES, payload);
 
     return websiteTemplateResponseSchema.parse(data);
+};
+
+// ---- website template requests ----
+
+export const getDashboardWebsiteTemplateRequestsService = async (query: WebsiteTemplateRequestsQueryParams) => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_WEBSITE_TEMPLATE_REQUESTS, {
+        params: query,
+    });
+
+    return websiteTemplateRequestsPageSchema.parse(data);
+};
+
+export const getDashboardWebsiteTemplateRequestService = async (requestId: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_WEBSITE_TEMPLATE_REQUEST(requestId));
+
+    return websiteTemplateRequestDetailSchema.parse(data);
+};
+
+export const startWebsiteTemplateRequestBuildService = async (requestId: string) => {
+    const { data } = await authenticatedApi.post(apiRoutes.DASHBOARD_WEBSITE_TEMPLATE_REQUEST_START_BUILD(requestId));
+
+    return websiteTemplateRequestDetailSchema.parse(data);
+};
+
+export const closeWebsiteTemplateRequestService = async (
+    requestId: string,
+    payload: CloseWebsiteTemplateRequestPayload
+) => {
+    const { data } = await authenticatedApi.post(apiRoutes.DASHBOARD_WEBSITE_TEMPLATE_REQUEST_CLOSE(requestId), payload);
+
+    return websiteTemplateRequestDetailSchema.parse(data);
 };

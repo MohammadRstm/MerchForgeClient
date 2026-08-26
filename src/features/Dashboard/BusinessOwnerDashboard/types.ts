@@ -19,8 +19,9 @@ import type {
     productFormSchema,
     productValueTypeSchema,
     websiteTemplateOptionSchema,
-    chosenWebsiteTemplateSchema,
-    businessWebsiteTemplateStatusSchema,
+    websiteTemplateOptionsSchema,
+    websiteTemplateRequestSchema,
+    websiteTemplateRequestStatusSchema,
     featureCreditPackageSchema,
     featureCreditOverviewSchema,
     businessFeatureCreditSchema,
@@ -42,8 +43,9 @@ export type ProductFormField = z.infer<typeof productFormFieldSchema>;
 export type ProductValueType = z.infer<typeof productValueTypeSchema>;
 
 export type WebsiteTemplateOption = z.infer<typeof websiteTemplateOptionSchema>;
-export type ChosenWebsiteTemplate = z.infer<typeof chosenWebsiteTemplateSchema>;
-export type BusinessWebsiteTemplateStatus = z.infer<typeof businessWebsiteTemplateStatusSchema>;
+export type WebsiteTemplateOptions = z.infer<typeof websiteTemplateOptionsSchema>;
+export type WebsiteTemplateRequest = z.infer<typeof websiteTemplateRequestSchema>;
+export type WebsiteTemplateRequestStatus = z.infer<typeof websiteTemplateRequestStatusSchema>;
 
 export type FeatureCreditPackage = z.infer<typeof featureCreditPackageSchema>;
 export type FeatureCreditOverview = z.infer<typeof featureCreditOverviewSchema>;

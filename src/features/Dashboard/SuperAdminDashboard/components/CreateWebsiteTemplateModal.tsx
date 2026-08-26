@@ -94,6 +94,21 @@ const CreateWebsiteTemplateModal = ({ form }: CreateWebsiteTemplateModalProps) =
                     </div>
 
                     <div>
+                        <label className="dashboard-invite-label" htmlFor="template-preview-website">
+                            Preview website URL
+                        </label>
+                        <input
+                            id="template-preview-website"
+                            className="dashboard-invite-input"
+                            type="text"
+                            value={form.values.previewWebsiteUrl}
+                            onChange={(e) => form.changeField("previewWebsiteUrl", e.target.value)}
+                            placeholder="https://fashion-02-demo.example.com (optional, opened by the Preview button)"
+                            disabled={form.isPending}
+                        />
+                    </div>
+
+                    <div>
                         <label className="dashboard-invite-label" htmlFor="template-order">
                             Display order
                         </label>

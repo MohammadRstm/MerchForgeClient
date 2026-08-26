@@ -202,28 +202,37 @@ export const businessSubscriptionResponseSchema = z
     })
     .nullable();
 
-// ---- website template ----
+// ---- website template requests ----
 
 export const websiteTemplateOptionSchema = z.object({
     id: z.string().uuid(),
     name: z.string(),
     label: z.string(),
     videoPreviewUrl: z.string(),
+    previewWebsiteUrl: z.string().nullable(),
 });
 
-export const chosenWebsiteTemplateSchema = z.object({
-    id: z.string().uuid(),
-    name: z.string(),
-    label: z.string(),
-    videoPreviewUrl: z.string(),
-    chosenAt: z.iso.datetime(),
-});
-
-export const businessWebsiteTemplateStatusSchema = z.object({
+export const websiteTemplateOptionsSchema = z.object({
     businessDomainId: z.string().uuid(),
     domainName: z.string(),
-    chosen: chosenWebsiteTemplateSchema.nullable(),
-    available: z.array(websiteTemplateOptionSchema),
+    hasOpenRequest: z.boolean(),
+    templates: z.array(websiteTemplateOptionSchema),
+});
+
+export const websiteTemplateRequestStatusSchema = z.enum(["Pending", "InProgress", "Closed"]);
+
+export const websiteTemplateRequestSchema = z.object({
+    id: z.string().uuid(),
+    websiteTemplateId: z.string().uuid(),
+    templateName: z.string(),
+    templateLabel: z.string(),
+    domainName: z.string(),
+    customizationNotes: z.string(),
+    status: websiteTemplateRequestStatusSchema,
+    createdAt: z.iso.datetime(),
+    buildStartedAt: z.iso.datetime().nullable(),
+    closedAt: z.iso.datetime().nullable(),
+    finalWebsiteUrl: z.string().nullable(),
 });
 
 // ---- feature credits ----

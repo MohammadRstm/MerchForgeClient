@@ -39,6 +39,7 @@ const WebsiteTemplatesTable = ({ templates, isLoading, isError, onAdd }: Website
                                 <th>Name</th>
                                 <th>Label</th>
                                 <th>Domain</th>
+                                <th>Preview site</th>
                                 <th>Status</th>
                                 <th>Order</th>
                                 <th>Businesses Using It</th>
@@ -51,6 +52,15 @@ const WebsiteTemplatesTable = ({ templates, isLoading, isError, onAdd }: Website
                                     <td>{template.name}</td>
                                     <td>{template.label}</td>
                                     <td>{template.domainName}</td>
+                                    <td>
+                                        {template.previewWebsiteUrl ? (
+                                            <a href={template.previewWebsiteUrl} target="_blank" rel="noopener noreferrer">
+                                                View
+                                            </a>
+                                        ) : (
+                                            "—"
+                                        )}
+                                    </td>
                                     <td>{template.isActive ? "Active" : "Inactive"}</td>
                                     <td>{template.displayOrder}</td>
                                     <td>{template.businessesUsingIt}</td>
