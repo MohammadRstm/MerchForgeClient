@@ -1,11 +1,9 @@
 import Hero from './components/Hero/Hero';
 import Header from '../Header/Header';
 import Statement from './components/Statement/Statement';
-import HowItWorks from './components/HowItWorks/HowItWorks';
-import ProductManagement from './components/ProductManagement/ProductManagement';
 import Showcase from './components/Showcase/Showcase';
-import Integrations from './components/Integrations/Integrations';
-import AIServices from './components/AiServices/AiServices';
+import WhoItsFor from './components/WhoItsFor/WhoItsFor';
+import Services from './components/Services/Services';
 import FinalCTA from './components/FinalCTA/FinalCTA';
 import Pricing from './components/Pricing/Pricing';
 import Footer from './components/Footer/Footer';
@@ -19,10 +17,8 @@ export default function Home() {
         <Hero />
         <Statement />
         <Showcase />
-        <HowItWorks />
-        <AIServices />
-        <ProductManagement />
-        <Integrations />
+        <WhoItsFor />
+        <Services />
         <Pricing />
         <FinalCTA />
       </main>
