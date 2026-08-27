@@ -1,13 +1,16 @@
 import "./SuperAdminDashboard.css";
+import { useNavigate } from "react-router";
 import Spinner from "../../../components/LoadingSpinner/LoadingSpinner";
 import StatCards from "../../../components/DashboardWidgets/StatCards";
 import BreakdownPieChart from "../../../components/DashboardWidgets/BreakdownPieChart";
 import GrowthBarChart from "../../../components/DashboardWidgets/GrowthBarChart";
 import useAdminOverviewPage from "./hooks/useAdminOverviewPage";
 import InviteBusinessOwnerModal from "./components/InviteBusinessOwnerModal";
+import { buildAdminBusinessDetailRoute } from "../../../config/routes";
 
 const AdminOverviewPage = () => {
     const { stats, statsLoading, statsError, inviteForm } = useAdminOverviewPage();
+    const navigate = useNavigate();
 
     return (
         <main className="dashboard-page">
@@ -42,6 +45,7 @@ const AdminOverviewPage = () => {
                             { label: "Pending Invitations", value: stats.pendingInvitations },
                             { label: "Pending Website Requests", value: stats.pendingWebsiteTemplateRequests },
                             { label: "Completed Website Requests", value: stats.completedWebsiteTemplateRequests },
+                            { label: "Active Sessions", value: stats.activeSessionCount },
                         ]}
                     />
 
@@ -54,6 +58,14 @@ const AdminOverviewPage = () => {
                             title="Business Members by Role"
                             data={stats.businessUsersByRole.map((entry) => ({ label: entry.key, count: entry.count }))}
                         />
+                        <BreakdownPieChart
+                            title="Businesses by Domain"
+                            data={stats.businessesByDomain.map((entry) => ({ label: entry.key, count: entry.count }))}
+                        />
+                        <BreakdownPieChart
+                            title="Subscriptions by Status"
+                            data={stats.subscriptionsByStatus.map((entry) => ({ label: entry.key, count: entry.count }))}
+                        />
                         <GrowthBarChart title="Businesses Created (6mo)" data={stats.businessesOverTime} />
                         <GrowthBarChart
                             title="Products Created (6mo)"
@@ -61,6 +73,43 @@ const AdminOverviewPage = () => {
                             color="#3b82f6"
                         />
                     </div>
+
+                    {stats.recentBusinesses.length > 0 && (
+                        <section className="dashboard-table-card">
+                            <div className="dashboard-table-header">
+                                <h3>Recently created businesses</h3>
+                            </div>
+                            <div className="dashboard-table-wrapper">
+                                <table className="dashboard-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Business</th>
+                                            <th>Owner</th>
+                                            <th>Created</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {stats.recentBusinesses.map((business) => (
+                                            <tr
+                                                key={business.id}
+                                                className="dashboard-table-row--clickable"
+                                                onClick={() => navigate(buildAdminBusinessDetailRoute(business.id))}
+                                            >
+                                                <td>{business.name}</td>
+                                                <td>
+                                                    <div className="dashboard-owner-cell">
+                                                        <span>{business.ownerFullName}</span>
+                                                        <span className="dashboard-owner-email">{business.ownerEmail}</span>
+                                                    </div>
+                                                </td>
+                                                <td>{new Date(business.createdAt).toLocaleDateString()}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                    )}
                 </>
             )}
 

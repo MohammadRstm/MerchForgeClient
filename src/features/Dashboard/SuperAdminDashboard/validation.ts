@@ -16,6 +16,18 @@ export const timeSeriesPointSchema = z.object({
     count: z.number(),
 });
 
+export const dashboardBusinessResponseSchema = z.object({
+    id: z.string().uuid(),
+    name: z.string(),
+    ownerFullName: z.string(),
+    ownerEmail: z.string(),
+    memberCount: z.number(),
+    productCount: z.number(),
+    createdAt: z.iso.datetime(),
+});
+
+export const dashboardBusinessesPageSchema = pagedResultSchema(dashboardBusinessResponseSchema);
+
 export const dashboardStatsResponseSchema = z.object({
     totalUsers: z.number(),
     totalBusinesses: z.number(),
@@ -24,9 +36,14 @@ export const dashboardStatsResponseSchema = z.object({
     pendingInvitations: z.number(),
     pendingWebsiteTemplateRequests: z.number(),
     completedWebsiteTemplateRequests: z.number(),
+    activeSessionCount: z.number(),
 
     usersBySystemRole: z.array(keyCountSchema),
     businessUsersByRole: z.array(keyCountSchema),
+    businessesByDomain: z.array(keyCountSchema),
+    subscriptionsByStatus: z.array(keyCountSchema),
+
+    recentBusinesses: z.array(dashboardBusinessResponseSchema),
 
     businessesOverTime: z.array(timeSeriesPointSchema),
     productsOverTime: z.array(timeSeriesPointSchema),
@@ -45,18 +62,6 @@ export const dashboardUserResponseSchema = z.object({
 });
 
 export const dashboardUsersPageSchema = pagedResultSchema(dashboardUserResponseSchema);
-
-export const dashboardBusinessResponseSchema = z.object({
-    id: z.string().uuid(),
-    name: z.string(),
-    ownerFullName: z.string(),
-    ownerEmail: z.string(),
-    memberCount: z.number(),
-    productCount: z.number(),
-    createdAt: z.iso.datetime(),
-});
-
-export const dashboardBusinessesPageSchema = pagedResultSchema(dashboardBusinessResponseSchema);
 
 export const revokeUserSessionsResponseSchema = z.object({
     revokedSessionsCount: z.number(),

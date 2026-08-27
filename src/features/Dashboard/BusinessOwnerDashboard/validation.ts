@@ -11,6 +11,17 @@ export const timeSeriesPointSchema = z.object({
     count: z.number(),
 });
 
+export const businessProductResponseSchema = z.object({
+    id: z.string().uuid(),
+    title: z.string(),
+    category: z.string(),
+    price: z.number(),
+    compareAtPrice: z.number().nullable(),
+    imageUrl: z.string().nullable(),
+    stockQuantity: z.number().nullable(),
+    createdAt: z.iso.datetime(),
+});
+
 export const businessDashboardStatsResponseSchema = z.object({
     businessId: z.string().uuid(),
     businessName: z.string(),
@@ -24,23 +35,14 @@ export const businessDashboardStatsResponseSchema = z.object({
     averageProductPrice: z.number().nullable(),
     minProductPrice: z.number().nullable(),
     maxProductPrice: z.number().nullable(),
+    outOfStockProductCount: z.number(),
+    recentProducts: z.array(businessProductResponseSchema),
 
     productsByCategory: z.array(keyCountSchema),
     productDraftsByStatus: z.array(keyCountSchema),
     membersByRole: z.array(keyCountSchema),
 
     productsOverTime: z.array(timeSeriesPointSchema),
-});
-
-export const businessProductResponseSchema = z.object({
-    id: z.string().uuid(),
-    title: z.string(),
-    category: z.string(),
-    price: z.number(),
-    compareAtPrice: z.number().nullable(),
-    imageUrl: z.string().nullable(),
-    stockQuantity: z.number().nullable(),
-    createdAt: z.iso.datetime(),
 });
 
 export const businessProductsPageSchema = pagedResultSchema(businessProductResponseSchema);

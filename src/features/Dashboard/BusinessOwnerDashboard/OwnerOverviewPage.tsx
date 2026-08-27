@@ -6,6 +6,7 @@ import StatCards from "../../../components/DashboardWidgets/StatCards";
 import BreakdownPieChart from "../../../components/DashboardWidgets/BreakdownPieChart";
 import GrowthBarChart from "../../../components/DashboardWidgets/GrowthBarChart";
 import useOwnerOverviewPage from "./hooks/useOwnerOverviewPage";
+import { resolveImageUrl } from "./utils/resolveImageUrl";
 
 const currencyFormatter = new Intl.NumberFormat(undefined, {
     style: "currency",
@@ -21,6 +22,8 @@ const OwnerOverviewPage = () => {
         websiteTemplateOptions,
         websiteTemplateOptionsLoading,
         inProgressDraftCount,
+        subscription,
+        features,
     } = useOwnerOverviewPage();
 
     const navigate = useNavigate();
@@ -67,7 +70,7 @@ const OwnerOverviewPage = () => {
                 </p>
             ) : (
                 <>
-                    {needsAttention && (
+                    {(needsAttention || subscription || (features && features.length > 0)) && (
                         <section className="business-dashboard-table-card">
                             <div className="business-dashboard-table-header">
                                 <h3>Needs attention</h3>
@@ -83,6 +86,23 @@ const OwnerOverviewPage = () => {
                                         {inProgressDraftCount} product draft{inProgressDraftCount === 1 ? "" : "s"} in progress
                                     </span>
                                 )}
+                                {stats.outOfStockProductCount > 0 && (
+                                    <span className="business-dashboard-badge business-dashboard-badge--status-cancelled">
+                                        {stats.outOfStockProductCount} out of stock
+                                    </span>
+                                )}
+                                {subscription && (
+                                    <span
+                                        className={`business-dashboard-badge business-dashboard-badge--status-${subscription.status.toLowerCase()}`}
+                                    >
+                                        {subscription.planName} · {subscription.status}
+                                    </span>
+                                )}
+                                {features?.map((feature) => (
+                                    <span key={feature.featureKey} className="business-dashboard-badge">
+                                        {feature.creditsRemaining} {feature.featureName} credit{feature.creditsRemaining === 1 ? "" : "s"}
+                                    </span>
+                                ))}
                             </div>
                         </section>
                     )}
@@ -92,16 +112,52 @@ const OwnerOverviewPage = () => {
                             { label: "Team Members", value: stats.memberCount },
                             { label: "Total Products", value: stats.productCount },
                             { label: "Product Drafts", value: stats.productDraftCount },
+                            { label: "Out of Stock", value: stats.outOfStockProductCount },
                             {
-                                label: "Average Price",
+                                label: "Price Range",
                                 value:
-                                    stats.averageProductPrice != null
-                                        ? currencyFormatter.format(stats.averageProductPrice)
+                                    stats.minProductPrice != null && stats.maxProductPrice != null
+                                        ? `${currencyFormatter.format(stats.minProductPrice)} – ${currencyFormatter.format(stats.maxProductPrice)}`
                                         : "—",
                             },
                             { label: "Business Since", value: new Date(stats.createdAt).toLocaleDateString() },
                         ]}
                     />
+
+                    {stats.recentProducts.length > 0 && (
+                        <section className="business-dashboard-table-card">
+                            <div className="business-dashboard-table-header">
+                                <h3>Recently added products</h3>
+                            </div>
+                            <div className="business-dashboard-table-wrapper">
+                                <table className="business-dashboard-table">
+                                    <tbody>
+                                        {stats.recentProducts.map((product) => (
+                                            <tr key={product.id}>
+                                                <td>
+                                                    {product.imageUrl ? (
+                                                        <img
+                                                            src={resolveImageUrl(product.imageUrl)}
+                                                            alt=""
+                                                            className="business-dashboard-product-thumb"
+                                                        />
+                                                    ) : (
+                                                        <span className="business-dashboard-product-thumb-placeholder" aria-hidden="true">
+                                                            {product.title.charAt(0).toUpperCase()}
+                                                        </span>
+                                                    )}
+                                                </td>
+                                                <td>{product.title}</td>
+                                                <td>{product.category}</td>
+                                                <td>{currencyFormatter.format(product.price)}</td>
+                                                <td>{new Date(product.createdAt).toLocaleDateString()}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                    )}
 
                     <div className="widget-charts-grid">
                         <BreakdownPieChart
