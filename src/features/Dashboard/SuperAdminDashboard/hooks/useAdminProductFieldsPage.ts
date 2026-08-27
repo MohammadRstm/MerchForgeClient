@@ -54,8 +54,7 @@ const parseAllowedValues = (input: string) =>
         .filter((v) => v.length > 0);
 
 const useAdminProductFieldsPage = () => {
-    const [domainFilter, setDomainFilter] = useState<string | undefined>(undefined);
-    const { data: definitions, isLoading, isError } = useDashboardProductAttributes(domainFilter);
+    const { data: definitions, isLoading, isError } = useDashboardProductAttributes();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
@@ -67,9 +66,9 @@ const useAdminProductFieldsPage = () => {
     const { mutate: updateDefinition, isPending: isUpdating } = useUpdateProductAttributeDefinition();
     const { mutate: setActive, isPending: isTogglingActive } = useSetProductAttributeDefinitionActive();
 
-    const openCreate = () => {
+    const openCreate = (businessDomainId: string) => {
         setEditingId(null);
-        setCreateValues({ ...EMPTY_CREATE_VALUES, businessDomainId: domainFilter ?? "" });
+        setCreateValues({ ...EMPTY_CREATE_VALUES, businessDomainId });
         setErrors({});
         setIsModalOpen(true);
     };
@@ -157,8 +156,6 @@ const useAdminProductFieldsPage = () => {
     };
 
     return {
-        domainFilter,
-        setDomainFilter,
         definitions,
         isLoading,
         isError,
