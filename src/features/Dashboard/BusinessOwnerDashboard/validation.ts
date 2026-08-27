@@ -47,6 +47,35 @@ export const businessDashboardStatsResponseSchema = z.object({
 
 export const businessProductsPageSchema = pagedResultSchema(businessProductResponseSchema);
 
+// ---- inventory ----
+
+/** Mirrors the server's ProductStockStatus enum. Query-only, never persisted. */
+export const productStockStatusSchema = z.enum(["All", "Tracked", "Untracked", "InStock", "LowStock", "OutOfStock"]);
+
+export const stockMovementSchema = z.object({
+    id: z.string().uuid(),
+    productId: z.string().uuid(),
+    productTitle: z.string(),
+    amount: z.number(),
+    balanceAfter: z.number(),
+    reason: z.string().nullable(),
+    createdAt: z.iso.datetime(),
+});
+
+export const stockAdjustmentResponseSchema = z.object({
+    product: businessProductResponseSchema,
+    movement: stockMovementSchema,
+});
+
+export const inventorySummarySchema = z.object({
+    trackedProductCount: z.number(),
+    untrackedProductCount: z.number(),
+    totalUnitsInStock: z.number(),
+    outOfStockCount: z.number(),
+    lowStockCount: z.number(),
+    lowStockThreshold: z.number(),
+});
+
 export const productImageSchema = z.object({
     id: z.string().uuid(),
     url: z.string(),

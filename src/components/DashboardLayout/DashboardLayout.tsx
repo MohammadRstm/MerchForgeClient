@@ -8,6 +8,7 @@ import { routes } from "../../config/routes";
 const OWNER_NAV: DashboardNavItem[] = [
     { label: "Overview", to: routes.DASHBOARD, end: true },
     { label: "Products", to: routes.DASHBOARD_PRODUCTS },
+    { label: "Inventory", to: routes.DASHBOARD_INVENTORY },
     { label: "Website & Templates", to: routes.DASHBOARD_WEBSITE },
     { label: "Settings", to: routes.DASHBOARD_SETTINGS },
 ];

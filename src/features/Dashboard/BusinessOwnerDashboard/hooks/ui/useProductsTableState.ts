@@ -1,11 +1,14 @@
 import { useState } from "react";
 import useDebounce from "../../../../../hooks/useDebounce";
 import { INITIAL_PRODUCTS_QUERY, SEARCH_DEBOUNCE_MS } from "../../constants";
-import type { ProductSortField, ProductsQueryParams } from "../../types";
+import type { ProductSortField, ProductStockStatus, ProductsQueryParams } from "../../types";
 
 const useProductsTableState = () => {
     const [searchInput, setSearchInput] = useState("");
     const [category, setCategory] = useState<string | undefined>(undefined);
+    // Undefined (not "All") so the Products page, which never sets this, sends no
+    // stockStatus param at all — the same wire shape it always has.
+    const [stockStatus, setStockStatus] = useState<ProductStockStatus | undefined>(undefined);
     const [sortBy, setSortBy] = useState<ProductSortField>(INITIAL_PRODUCTS_QUERY.sortBy);
     const [sortDescending, setSortDescending] = useState(INITIAL_PRODUCTS_QUERY.sortDescending);
     const [page, setPage] = useState(INITIAL_PRODUCTS_QUERY.page);
@@ -20,6 +23,7 @@ const useProductsTableState = () => {
         pageSize: INITIAL_PRODUCTS_QUERY.pageSize,
         search: debouncedSearch.trim() || undefined,
         category,
+        stockStatus,
         sortBy,
         sortDescending,
     };
@@ -31,6 +35,11 @@ const useProductsTableState = () => {
 
     const handleCategoryChange = (value: string | undefined) => {
         setCategory(value);
+        setPage(1);
+    };
+
+    const handleStockStatusChange = (value: ProductStockStatus | undefined) => {
+        setStockStatus(value);
         setPage(1);
     };
 
@@ -46,6 +55,7 @@ const useProductsTableState = () => {
 
         handleSearchChange,
         handleCategoryChange,
+        handleStockStatusChange,
         handleSortChange,
         setPage,
     };
