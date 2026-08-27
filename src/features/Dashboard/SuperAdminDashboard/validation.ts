@@ -287,3 +287,49 @@ export const metadataShapeSchema = z.array(metadataShapeFieldSchema);
 export const updateMetadataShapeFieldSchema = metadataShapeFieldSchema.extend({
     displayOrder: z.number(),
 });
+
+// ---- product attribute definitions (domain field catalogue) ----
+
+export const productAttributeValueTypeSchema = z.enum(["Text", "Number", "Boolean", "TextList", "ColorList"]);
+
+export const productAttributeDefinitionResponseSchema = z.object({
+    id: z.string().uuid(),
+    businessDomainId: z.string().uuid(),
+    domainName: z.string(),
+    key: z.string(),
+    label: z.string(),
+    valueType: productAttributeValueTypeSchema,
+    isRequired: z.boolean(),
+    allowedValues: z.array(z.string()),
+    displayOrder: z.number(),
+    isActive: z.boolean(),
+    createdAt: z.iso.datetime(),
+});
+
+export const productAttributeDefinitionsSchema = z.array(productAttributeDefinitionResponseSchema);
+
+/** Mirrors the server's CreateProductAttributeDefinitionRequestValidator. */
+export const createProductAttributeDefinitionFormSchema = z.object({
+    businessDomainId: z.string().trim().min(1, "Select a domain."),
+    key: z
+        .string()
+        .trim()
+        .min(1, "Enter a key.")
+        .max(100, "Key must be 100 characters or fewer.")
+        .regex(/^[a-z][a-zA-Z0-9]*$/, "Start lowercase, letters and numbers only, e.g. 'countryOfOrigin'."),
+    label: z.string().trim().min(1, "Enter a label.").max(100, "Label must be 100 characters or fewer."),
+    valueType: productAttributeValueTypeSchema,
+    isRequired: z.boolean(),
+    // Comma-separated in the form; split/trimmed before this parses.
+    allowedValues: z.array(z.string().trim().min(1)),
+    displayOrder: z.coerce
+        .number({ message: "Display order must be a number." })
+        .int("Display order must be a whole number.")
+        .min(0, "Display order must be zero or greater."),
+});
+
+/** Mirrors the server's UpdateProductAttributeDefinitionRequestValidator. Domain/key are immutable, so not part of this form. */
+export const updateProductAttributeDefinitionFormSchema = createProductAttributeDefinitionFormSchema.omit({
+    businessDomainId: true,
+    key: true,
+});

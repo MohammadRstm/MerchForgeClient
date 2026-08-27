@@ -21,6 +21,7 @@ export const routes = {
     ADMIN_BUSINESS_DETAIL: "/admin/businesses/:businessId",
     ADMIN_WEBSITE_REQUESTS: "/admin/website-requests",
     ADMIN_TEMPLATES: "/admin/templates",
+    ADMIN_PRODUCT_FIELDS: "/admin/product-fields",
     ADMIN_USERS: "/admin/users",
 };
 

@@ -36,7 +36,7 @@ export const domainCategoriesSchema = z.array(domainCategorySchema);
 export const productAttributeSchema = z.object({
     key: z.string(),
     label: z.string(),
-    valueType: z.enum(["Text", "Number", "Boolean", "TextList"]),
+    valueType: z.enum(["Text", "Number", "Boolean", "TextList", "ColorList"]),
     displayOrder: z.number(),
 });
 

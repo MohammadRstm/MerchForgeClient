@@ -1,12 +1,23 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { useQuery } from "@tanstack/react-query";
 import useDashboardBusinessDetail from "./data/useDashboardBusinessDetail";
 import useRevokeBusinessSessions from "./data/useRevokeBusinessSessions";
 import useBusinessMetadataShape from "./data/useBusinessMetadataShape";
 import useUpdateBusinessMetadataShape from "./data/useUpdateBusinessMetadataShape";
-import { getDomainProductAttributesService } from "../../../../services/api/domains.api";
+import useDashboardProductAttributes from "./data/useDashboardProductAttributes";
 import type { UpdateMetadataShapeFieldPayload } from "../types";
+
+type FieldOverride = {
+    label: string;
+    isRequired: boolean;
+    allowedValuesInput: string;
+};
+
+const parseAllowedValues = (input: string) =>
+    input
+        .split(",")
+        .map((v) => v.trim())
+        .filter((v) => v.length > 0);
 
 const useAdminBusinessDetailPage = () => {
     const { businessId = "" } = useParams<{ businessId: string }>();
@@ -25,32 +36,73 @@ const useAdminBusinessDetailPage = () => {
 
     const { data: currentShape, isLoading: shapeLoading } = useBusinessMetadataShape(businessId, !!business);
 
-    const { data: catalogue, isLoading: catalogueLoading } = useQuery({
-        queryKey: ["domain-product-attributes", businessDomainId],
-        queryFn: () => getDomainProductAttributesService(businessDomainId!),
-        enabled: !!businessDomainId,
-    });
+    const {
+        data: allDefinitions,
+        isLoading: catalogueLoading,
+        isError: catalogueError,
+    } = useDashboardProductAttributes(businessDomainId);
 
-    // Starts null so the "which keys are checked" state can be seeded from the
-    // business's already-saved shape exactly once, the first time it loads.
-    const [selectedKeys, setSelectedKeys] = useState<Set<string> | null>(null);
+    // Retired fields aren't offered for new selection, but a business that already
+    // has one snapshotted still needs to see it (and be able to remove it) --
+    // otherwise an admin could never un-check a field whose definition was retired
+    // after this business picked it.
+    const catalogue = allDefinitions?.filter(
+        (d) => d.isActive || currentShape?.some((f) => f.key === d.key)
+    );
+
+    // Per included field's editable overrides, keyed by field key. Starts empty so
+    // it can be seeded from the business's already-saved shape exactly once.
+    const [fieldOverrides, setFieldOverrides] = useState<Map<string, FieldOverride> | null>(null);
 
     useEffect(() => {
-        if (currentShape && selectedKeys === null) {
-            setSelectedKeys(new Set(currentShape.map((field) => field.key)));
+        if (currentShape && fieldOverrides === null) {
+            const seeded = new Map<string, FieldOverride>();
+
+            for (const field of currentShape) {
+                seeded.set(field.key, {
+                    label: field.label,
+                    isRequired: field.isRequired,
+                    allowedValuesInput: field.allowedValues.join(", "),
+                });
+            }
+
+            setFieldOverrides(seeded);
         }
-    }, [currentShape, selectedKeys]);
+    }, [currentShape, fieldOverrides]);
 
     const toggleKey = (key: string) => {
-        setSelectedKeys((current) => {
-            const next = new Set(current ?? []);
+        setFieldOverrides((current) => {
+            const next = new Map(current ?? []);
 
             if (next.has(key)) {
                 next.delete(key);
-            } else {
-                next.add(key);
+                return next;
             }
 
+            // Newly-included: default from the catalogue's own definition rather
+            // than guessing at customization the admin hasn't specified yet.
+            const definition = catalogue?.find((d) => d.key === key);
+
+            next.set(key, {
+                label: definition?.label ?? key,
+                isRequired: definition?.isRequired ?? false,
+                allowedValuesInput: definition?.allowedValues.join(", ") ?? "",
+            });
+
+            return next;
+        });
+    };
+
+    const updateFieldOverride = <K extends keyof FieldOverride>(key: string, field: K, value: FieldOverride[K]) => {
+        setFieldOverrides((current) => {
+            const next = new Map(current ?? []);
+            const existing = next.get(key);
+
+            if (!existing) {
+                return next;
+            }
+
+            next.set(key, { ...existing, [field]: value });
             return next;
         });
     };
@@ -59,31 +111,24 @@ const useAdminBusinessDetailPage = () => {
         mutate: saveShape,
         isPending: isSavingShape,
         isSuccess: shapeSaved,
-        reset: resetShapeSave,
     } = useUpdateBusinessMetadataShape(businessId);
 
     const saveMetadataShape = () => {
-        if (!catalogue || !selectedKeys) {
+        if (!catalogue || !fieldOverrides) {
             return;
         }
 
-        // Fields already in the business's shape keep whatever label/required/
-        // allowed-values they already have; newly-checked fields start from the
-        // domain catalogue's defaults (free-form, not required) rather than
-        // guessing at customization the admin hasn't specified.
-        const existingByKey = new Map((currentShape ?? []).map((field) => [field.key, field]));
-
         const fields: UpdateMetadataShapeFieldPayload[] = catalogue
-            .filter((attribute) => selectedKeys.has(attribute.key))
+            .filter((attribute) => fieldOverrides.has(attribute.key))
             .map((attribute, index) => {
-                const existing = existingByKey.get(attribute.key);
+                const override = fieldOverrides.get(attribute.key)!;
 
                 return {
                     key: attribute.key,
-                    label: existing?.label ?? attribute.label,
+                    label: override.label.trim() || attribute.label,
                     valueType: attribute.valueType,
-                    isRequired: existing?.isRequired ?? false,
-                    allowedValues: existing?.allowedValues ?? [],
+                    isRequired: override.isRequired,
+                    allowedValues: parseAllowedValues(override.allowedValuesInput),
                     displayOrder: index,
                 };
             });
@@ -109,13 +154,14 @@ const useAdminBusinessDetailPage = () => {
 
         catalogue,
         catalogueLoading,
+        catalogueError,
         shapeLoading,
-        selectedKeys,
+        fieldOverrides,
         toggleKey,
+        updateFieldOverride,
         saveMetadataShape,
         isSavingShape,
         shapeSaved,
-        resetShapeSave,
     };
 };
 

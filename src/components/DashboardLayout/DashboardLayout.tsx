@@ -17,6 +17,7 @@ const ADMIN_NAV: DashboardNavItem[] = [
     { label: "Businesses", to: routes.ADMIN_BUSINESSES },
     { label: "Website Requests", to: routes.ADMIN_WEBSITE_REQUESTS },
     { label: "Templates", to: routes.ADMIN_TEMPLATES },
+    { label: "Product Fields", to: routes.ADMIN_PRODUCT_FIELDS },
     { label: "Users & Security", to: routes.ADMIN_USERS },
 ];
 

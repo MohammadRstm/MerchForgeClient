@@ -5,6 +5,9 @@ import type {
     UpdateWebsiteTemplatePayload,
     WebsiteTemplateRequestsQueryParams,
     CloseWebsiteTemplateRequestPayload,
+    UpdateMetadataShapeFieldPayload,
+    CreateProductAttributeDefinitionPayload,
+    UpdateProductAttributeDefinitionPayload,
 } from "../../features/Dashboard/SuperAdminDashboard/types";
 import {
     dashboardBusinessesPageSchema,
@@ -19,8 +22,9 @@ import {
     websiteTemplateRequestDetailSchema,
     businessDetailResponseSchema,
     metadataShapeSchema,
+    productAttributeDefinitionResponseSchema,
+    productAttributeDefinitionsSchema,
 } from "../../features/Dashboard/SuperAdminDashboard/validation";
-import type { UpdateMetadataShapeFieldPayload } from "../../features/Dashboard/SuperAdminDashboard/types";
 import { authenticatedApi } from "./api";
 import { apiRoutes } from "./apiRoutes";
 
@@ -83,6 +87,43 @@ export const updateBusinessMetadataShapeService = async (
     });
 
     return metadataShapeSchema.parse(data);
+};
+
+// ---- product attribute definitions (domain field catalogue) ----
+
+export const getDashboardProductAttributesService = async (businessDomainId?: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_PRODUCT_ATTRIBUTES, {
+        params: businessDomainId ? { businessDomainId } : undefined,
+    });
+
+    return productAttributeDefinitionsSchema.parse(data);
+};
+
+export const createProductAttributeDefinitionService = async (payload: CreateProductAttributeDefinitionPayload) => {
+    const { data } = await authenticatedApi.post(apiRoutes.DASHBOARD_PRODUCT_ATTRIBUTES, payload);
+
+    return productAttributeDefinitionResponseSchema.parse(data);
+};
+
+export const updateProductAttributeDefinitionService = async (
+    id: string,
+    payload: UpdateProductAttributeDefinitionPayload
+) => {
+    const { data } = await authenticatedApi.put(apiRoutes.DASHBOARD_PRODUCT_ATTRIBUTE(id), payload);
+
+    return productAttributeDefinitionResponseSchema.parse(data);
+};
+
+export const deactivateProductAttributeDefinitionService = async (id: string) => {
+    const { data } = await authenticatedApi.post(apiRoutes.DASHBOARD_PRODUCT_ATTRIBUTE_DEACTIVATE(id));
+
+    return productAttributeDefinitionResponseSchema.parse(data);
+};
+
+export const reactivateProductAttributeDefinitionService = async (id: string) => {
+    const { data } = await authenticatedApi.post(apiRoutes.DASHBOARD_PRODUCT_ATTRIBUTE_REACTIVATE(id));
+
+    return productAttributeDefinitionResponseSchema.parse(data);
 };
 
 export const getDashboardWebsiteTemplatesService = async () => {

@@ -18,6 +18,7 @@ import AdminBusinessesPage from "../features/Dashboard/SuperAdminDashboard/Admin
 import AdminBusinessDetailPage from "../features/Dashboard/SuperAdminDashboard/AdminBusinessDetailPage";
 import AdminWebsiteRequestsPage from "../features/Dashboard/SuperAdminDashboard/AdminWebsiteRequestsPage";
 import AdminTemplatesPage from "../features/Dashboard/SuperAdminDashboard/AdminTemplatesPage";
+import AdminProductFieldsPage from "../features/Dashboard/SuperAdminDashboard/AdminProductFieldsPage";
 import AdminUsersPage from "../features/Dashboard/SuperAdminDashboard/AdminUsersPage";
 import WebsiteTemplateSelectionPage from "../features/Dashboard/WebsiteTemplateRequest/WebsiteTemplateSelectionPage";
 import NotFound from "../features/NotFound/NotFound";
@@ -54,6 +55,7 @@ const AppRoutes = () =>{
                             <Route path="businesses/:businessId" element={<AdminBusinessDetailPage />} />
                             <Route path="website-requests" element={<AdminWebsiteRequestsPage />} />
                             <Route path="templates" element={<AdminTemplatesPage />} />
+                            <Route path="product-fields" element={<AdminProductFieldsPage />} />
                             <Route path="users" element={<AdminUsersPage />} />
                         </Route>
                     </Route>
