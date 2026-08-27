@@ -12,6 +12,7 @@ import DashboardLayout from "../components/DashboardLayout/DashboardLayout";
 import OwnerOverviewPage from "../features/Dashboard/BusinessOwnerDashboard/OwnerOverviewPage";
 import OwnerProductsPage from "../features/Dashboard/BusinessOwnerDashboard/OwnerProductsPage";
 import OwnerInventoryPage from "../features/Dashboard/BusinessOwnerDashboard/OwnerInventoryPage";
+import OwnerOrdersPage from "../features/Dashboard/BusinessOwnerDashboard/OwnerOrdersPage";
 import OwnerWebsitePage from "../features/Dashboard/BusinessOwnerDashboard/OwnerWebsitePage";
 import OwnerSettingsPage from "../features/Dashboard/BusinessOwnerDashboard/OwnerSettingsPage";
 import AdminOverviewPage from "../features/Dashboard/SuperAdminDashboard/AdminOverviewPage";
@@ -45,6 +46,7 @@ const AppRoutes = () =>{
                             <Route index element={<OwnerOverviewPage />} />
                             <Route path="products" element={<OwnerProductsPage />} />
                             <Route path="inventory" element={<OwnerInventoryPage />} />
+                            <Route path="orders" element={<OwnerOrdersPage />} />
                             <Route path="website" element={<OwnerWebsitePage />} />
                             <Route path="settings" element={<OwnerSettingsPage />} />
                         </Route>

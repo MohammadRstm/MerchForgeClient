@@ -91,6 +91,11 @@ const OwnerOverviewPage = () => {
                                         {stats.outOfStockProductCount} out of stock
                                     </span>
                                 )}
+                                {stats.pendingOrderCount > 0 && (
+                                    <span className="business-dashboard-badge business-dashboard-badge--status-trialing">
+                                        {stats.pendingOrderCount} order{stats.pendingOrderCount === 1 ? "" : "s"} pending
+                                    </span>
+                                )}
                                 {subscription && (
                                     <span
                                         className={`business-dashboard-badge business-dashboard-badge--status-${subscription.status.toLowerCase()}`}
@@ -113,6 +118,7 @@ const OwnerOverviewPage = () => {
                             { label: "Total Products", value: stats.productCount },
                             { label: "Product Drafts", value: stats.productDraftCount },
                             { label: "Out of Stock", value: stats.outOfStockProductCount },
+                            { label: "Orders", value: stats.orderCount },
                             {
                                 label: "Price Range",
                                 value:

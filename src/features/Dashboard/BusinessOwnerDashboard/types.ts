@@ -14,6 +14,11 @@ import type {
     stockMovementSchema,
     stockAdjustmentResponseSchema,
     inventorySummarySchema,
+    orderStatusSchema,
+    paymentStatusSchema,
+    businessOrderResponseSchema,
+    businessOrderItemResponseSchema,
+    businessOrderDetailResponseSchema,
     businessSubscriptionResponseSchema,
     productDraftMessageSchema,
     productDraftProductSchema,
@@ -111,3 +116,14 @@ export type ProductsQueryParams = PagedQuery & {
 export type StockMovement = z.infer<typeof stockMovementSchema>;
 export type StockAdjustmentResponse = z.infer<typeof stockAdjustmentResponseSchema>;
 export type InventorySummary = z.infer<typeof inventorySummarySchema>;
+
+export type OrderStatus = z.infer<typeof orderStatusSchema>;
+export type PaymentStatus = z.infer<typeof paymentStatusSchema>;
+export type BusinessOrderResponse = z.infer<typeof businessOrderResponseSchema>;
+export type BusinessOrderItem = z.infer<typeof businessOrderItemResponseSchema>;
+export type BusinessOrderDetail = z.infer<typeof businessOrderDetailResponseSchema>;
+
+export type OrdersQueryParams = PagedQuery & {
+    status?: OrderStatus;
+    search?: string;
+};
