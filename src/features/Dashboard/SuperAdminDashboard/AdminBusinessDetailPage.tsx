@@ -1,5 +1,5 @@
 import "./SuperAdminDashboard.css";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import Spinner from "../../../components/LoadingSpinner/LoadingSpinner";
 import StatCards from "../../../components/DashboardWidgets/StatCards";
 import Modal from "../../../components/Modal/Modal";
@@ -25,9 +25,11 @@ const AdminBusinessDetailPage = () => {
 
         catalogue,
         catalogueLoading,
+        catalogueError,
         shapeLoading,
-        selectedKeys,
+        fieldOverrides,
         toggleKey,
+        updateFieldOverride,
         saveMetadataShape,
         isSavingShape,
         shapeSaved,
@@ -245,36 +247,89 @@ const AdminBusinessDetailPage = () => {
             <section className="dashboard-table-card">
                 <div className="dashboard-table-header">
                     <h3>Product structure</h3>
+                    <Link to={routes.ADMIN_PRODUCT_FIELDS} className="dashboard-action-btn">
+                        Manage domain fields
+                    </Link>
                 </div>
 
                 {!business.businessDomainId ? (
                     <p className="dashboard-table-message">
                         This business has no domain set, so it has no metadata field catalogue yet.
                     </p>
-                ) : catalogueLoading || shapeLoading || !selectedKeys ? (
+                ) : catalogueLoading || shapeLoading || !fieldOverrides ? (
                     <div className="dashboard-table-loading">
                         <Spinner size={28} />
                     </div>
+                ) : catalogueError ? (
+                    <p className="dashboard-table-message dashboard-table-message--error">
+                        Failed to load this domain's product fields. Please try again.
+                    </p>
                 ) : !catalogue || catalogue.length === 0 ? (
-                    <p className="dashboard-table-message">This domain has no optional product fields defined.</p>
+                    <p className="dashboard-table-message">
+                        This domain has no optional product fields defined yet.{" "}
+                        <Link to={routes.ADMIN_PRODUCT_FIELDS}>Add one</Link>.
+                    </p>
                 ) : (
                     <>
                         <p className="dashboard-table-message" style={{ textAlign: "left", padding: 0, marginBottom: 12 }}>
-                            Choose which of this business's domain fields its products may use. Existing product data
-                            is never affected by this — it only changes what the product form asks for going forward.
+                            Choose which of this domain's fields this business's products may use, and customize each
+                            one for this business. Existing product data is never affected — this only changes what
+                            the product form asks for going forward. Need an entirely new field? Add it to the domain
+                            catalogue first.
                         </p>
                         <div className="metadata-shape-list">
-                            {catalogue.map((attribute) => (
-                                <label key={attribute.key} className="metadata-shape-item">
-                                    <input
-                                        type="checkbox"
-                                        checked={selectedKeys.has(attribute.key)}
-                                        onChange={() => toggleKey(attribute.key)}
-                                    />
-                                    {attribute.label}
-                                    <span className="metadata-shape-item-type">{attribute.valueType}</span>
-                                </label>
-                            ))}
+                            {catalogue.map((attribute) => {
+                                const override = fieldOverrides.get(attribute.key);
+                                const isIncluded = !!override;
+
+                                return (
+                                    <div key={attribute.id} className="metadata-shape-item metadata-shape-item--editable">
+                                        <label className="metadata-shape-item-toggle">
+                                            <input
+                                                type="checkbox"
+                                                checked={isIncluded}
+                                                onChange={() => toggleKey(attribute.key)}
+                                            />
+                                            <span className="metadata-shape-item-key">{attribute.key}</span>
+                                            <span className="metadata-shape-item-type">
+                                                {attribute.valueType}
+                                                {!attribute.isActive && " · retired"}
+                                            </span>
+                                        </label>
+
+                                        {isIncluded && (
+                                            <div className="metadata-shape-item-fields">
+                                                <input
+                                                    type="text"
+                                                    className="dashboard-invite-input"
+                                                    value={override.label}
+                                                    onChange={(e) => updateFieldOverride(attribute.key, "label", e.target.value)}
+                                                    placeholder="Label"
+                                                />
+                                                <input
+                                                    type="text"
+                                                    className="dashboard-invite-input"
+                                                    value={override.allowedValuesInput}
+                                                    onChange={(e) =>
+                                                        updateFieldOverride(attribute.key, "allowedValuesInput", e.target.value)
+                                                    }
+                                                    placeholder="Allowed values (comma-separated, optional)"
+                                                />
+                                                <label className="dashboard-invite-checkbox-row">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={override.isRequired}
+                                                        onChange={(e) =>
+                                                            updateFieldOverride(attribute.key, "isRequired", e.target.checked)
+                                                        }
+                                                    />
+                                                    Required
+                                                </label>
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
                         </div>
                         <button
                             type="button"

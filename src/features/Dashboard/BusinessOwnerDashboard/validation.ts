@@ -211,7 +211,7 @@ export const websiteTemplateOptionSchema = z.object({
     id: z.string().uuid(),
     name: z.string(),
     label: z.string(),
-    videoPreviewUrl: z.string(),
+    previewImageUrl: z.string(),
     previewWebsiteUrl: z.string().nullable(),
 });
 

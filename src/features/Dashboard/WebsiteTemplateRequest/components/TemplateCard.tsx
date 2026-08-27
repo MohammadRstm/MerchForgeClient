@@ -1,31 +1,21 @@
 import { useState } from "react";
 import type { WebsiteTemplateOption } from "../../BusinessOwnerDashboard/types";
+import { resolveImageUrl } from "../../BusinessOwnerDashboard/utils/resolveImageUrl";
 
 type TemplateCardProps = {
     template: WebsiteTemplateOption;
     onSelect: (template: WebsiteTemplateOption) => void;
 };
 
-/** Plays the preview on hover; falls back to a plain label if the video hasn't been uploaded yet (a template can exist before its recording does). */
-const VideoPreview = ({ src, label }: { src: string; label: string }) => {
+/** Falls back to a plain label if the preview image hasn't been uploaded yet (a template can exist before its screenshot does). */
+const ImagePreview = ({ src, label }: { src: string; label: string }) => {
     const [failed, setFailed] = useState(false);
 
     if (failed) {
-        return <span className="template-card__video-fallback">Preview coming soon</span>;
+        return <span className="template-card__image-fallback">Preview coming soon</span>;
     }
 
-    return (
-        <video
-            src={src}
-            muted
-            loop
-            playsInline
-            onError={() => setFailed(true)}
-            onMouseEnter={(e) => e.currentTarget.play().catch(() => {})}
-            onMouseLeave={(e) => e.currentTarget.pause()}
-            aria-label={`${label} preview`}
-        />
-    );
+    return <img src={resolveImageUrl(src)} onError={() => setFailed(true)} alt={`${label} preview`} />;
 };
 
 const TemplateCard = ({ template, onSelect }: TemplateCardProps) => {
@@ -39,8 +29,8 @@ const TemplateCard = ({ template, onSelect }: TemplateCardProps) => {
 
     return (
         <article className="template-card">
-            <div className="template-card__video">
-                <VideoPreview src={template.videoPreviewUrl} label={template.label} />
+            <div className="template-card__image">
+                <ImagePreview src={template.previewImageUrl} label={template.label} />
             </div>
 
             <div className="template-card__footer">

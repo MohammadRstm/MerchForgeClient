@@ -1,7 +1,7 @@
 import { useState } from "react";
 import useCreateWebsiteTemplate from "../data/useCreateWebsiteTemplate";
 import { createWebsiteTemplateFormSchema } from "../../validation";
-import { uploadWebsiteTemplateVideoService } from "../../../../../services/api/dashboard.api";
+import { uploadWebsiteTemplateImageService } from "../../../../../services/api/dashboard.api";
 import { ApiError } from "../../../../../Error/ApiError";
 import type { CreateWebsiteTemplateFormValues } from "../../types";
 
@@ -9,7 +9,7 @@ const EMPTY_FORM: CreateWebsiteTemplateFormValues = {
     businessDomainId: "",
     name: "",
     label: "",
-    videoPreviewUrl: "",
+    previewImageUrl: "",
     previewWebsiteUrl: "",
     displayOrder: "0",
 };
@@ -18,7 +18,7 @@ const useCreateWebsiteTemplateForm = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [values, setValues] = useState<CreateWebsiteTemplateFormValues>(EMPTY_FORM);
     const [error, setError] = useState<string | null>(null);
-    const [videoUploading, setVideoUploading] = useState(false);
+    const [imageUploading, setImageUploading] = useState(false);
 
     const { mutate: createTemplate, isPending } = useCreateWebsiteTemplate();
 
@@ -31,7 +31,7 @@ const useCreateWebsiteTemplateForm = () => {
     // Ignored while the request is in flight, so the modal cannot be dismissed out
     // from under a template that is already being created.
     const close = () => {
-        if (isPending || videoUploading) {
+        if (isPending || imageUploading) {
             return;
         }
 
@@ -49,20 +49,20 @@ const useCreateWebsiteTemplateForm = () => {
         }
     };
 
-    const uploadVideo = async (file: File) => {
-        setVideoUploading(true);
+    const uploadImage = async (file: File) => {
+        setImageUploading(true);
         setError(null);
 
         try {
-            const { videoUrl } = await uploadWebsiteTemplateVideoService(file);
-            changeField("videoPreviewUrl", videoUrl);
+            const { imageUrl } = await uploadWebsiteTemplateImageService(file);
+            changeField("previewImageUrl", imageUrl);
         } catch (err) {
-            // The server's message is specific and actionable ("Videos must be 200
-            // MB or smaller", "isn't a valid video of the type it claims to be"), so
+            // The server's message is specific and actionable ("Images must be 10
+            // MB or smaller", "isn't a valid image of the type it claims to be"), so
             // it's shown rather than replaced with a generic failure.
-            setError(err instanceof ApiError ? err.message : "Couldn't upload that video.");
+            setError(err instanceof ApiError ? err.message : "Couldn't upload that image.");
         } finally {
-            setVideoUploading(false);
+            setImageUploading(false);
         }
     };
 
@@ -87,12 +87,12 @@ const useCreateWebsiteTemplateForm = () => {
         values,
         error,
         isPending,
-        videoUploading,
+        imageUploading,
 
         open,
         close,
         changeField,
-        uploadVideo,
+        uploadImage,
         submit,
     };
 };

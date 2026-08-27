@@ -19,6 +19,10 @@ import type {
     businessDetailFeatureCreditSchema,
     metadataShapeFieldSchema,
     updateMetadataShapeFieldSchema,
+    productAttributeValueTypeSchema,
+    productAttributeDefinitionResponseSchema,
+    createProductAttributeDefinitionFormSchema,
+    updateProductAttributeDefinitionFormSchema,
 } from "./validation";
 
 export type DashboardStatsResponse = z.infer<typeof dashboardStatsResponseSchema>;
@@ -36,7 +40,7 @@ export type UpdateWebsiteTemplatePayload = z.infer<typeof updateWebsiteTemplateF
 /** The raw, string-backed shape the edit form's controlled inputs hold before validation. */
 export type UpdateWebsiteTemplateFormValues = {
     label: string;
-    videoPreviewUrl: string;
+    previewImageUrl: string;
     previewWebsiteUrl: string;
     displayOrder: string;
 };
@@ -53,7 +57,7 @@ export type CreateWebsiteTemplateFormValues = {
     businessDomainId: string;
     name: string;
     label: string;
-    videoPreviewUrl: string;
+    previewImageUrl: string;
     previewWebsiteUrl: string;
     displayOrder: string;
 };
@@ -85,3 +89,30 @@ export type BusinessDetailResponse = z.infer<typeof businessDetailResponseSchema
 export type BusinessDetailFeatureCredit = z.infer<typeof businessDetailFeatureCreditSchema>;
 export type MetadataShapeField = z.infer<typeof metadataShapeFieldSchema>;
 export type UpdateMetadataShapeFieldPayload = z.infer<typeof updateMetadataShapeFieldSchema>;
+
+export type ProductAttributeValueType = z.infer<typeof productAttributeValueTypeSchema>;
+export type ProductAttributeDefinition = z.infer<typeof productAttributeDefinitionResponseSchema>;
+
+/** The coerced/validated shape submitted to the API for a new field — displayOrder is a real number here. */
+export type CreateProductAttributeDefinitionPayload = z.infer<typeof createProductAttributeDefinitionFormSchema>;
+
+/** The raw, string-backed shape the create form's controlled inputs hold before validation. */
+export type CreateProductAttributeDefinitionFormValues = {
+    businessDomainId: string;
+    key: string;
+    label: string;
+    valueType: ProductAttributeValueType;
+    isRequired: boolean;
+    allowedValuesInput: string;
+    displayOrder: string;
+};
+
+export type UpdateProductAttributeDefinitionPayload = z.infer<typeof updateProductAttributeDefinitionFormSchema>;
+
+export type UpdateProductAttributeDefinitionFormValues = {
+    label: string;
+    valueType: ProductAttributeValueType;
+    isRequired: boolean;
+    allowedValuesInput: string;
+    displayOrder: string;
+};

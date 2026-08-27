@@ -17,14 +17,14 @@ const WebsiteTemplateDetailModal = ({ modal }: WebsiteTemplateDetailModalProps) 
         values,
         error,
         isUpdating,
-        videoUploading,
+        imageUploading,
         confirmingDelete,
         isDeleting,
         close,
         startEdit,
         cancelEdit,
         changeField,
-        uploadVideo,
+        uploadImage,
         submitEdit,
         requestDelete,
         cancelDelete,
@@ -74,28 +74,27 @@ const WebsiteTemplateDetailModal = ({ modal }: WebsiteTemplateDetailModalProps) 
                         </div>
 
                         <div>
-                            <label className="dashboard-invite-label" htmlFor="edit-template-video">
-                                Preview video
+                            <label className="dashboard-invite-label" htmlFor="edit-template-image">
+                                Preview image
                             </label>
                             <input
-                                id="edit-template-video"
+                                id="edit-template-image"
                                 className="dashboard-invite-input"
                                 type="file"
-                                accept="video/mp4,video/webm"
+                                accept="image/jpeg,image/png,image/gif,image/webp"
                                 onChange={(e) => {
                                     const file = e.target.files?.[0];
-                                    if (file) uploadVideo(file);
+                                    if (file) uploadImage(file);
                                     e.target.value = "";
                                 }}
-                                disabled={isUpdating || videoUploading}
+                                disabled={isUpdating || imageUploading}
                             />
-                            {videoUploading && <p className="dashboard-modal-text">Uploading video...</p>}
-                            {values.videoPreviewUrl && !videoUploading && (
-                                <video
-                                    src={resolveImageUrl(values.videoPreviewUrl)}
-                                    controls
-                                    muted
-                                    className="dashboard-template-video-preview"
+                            {imageUploading && <p className="dashboard-modal-text">Uploading image...</p>}
+                            {values.previewImageUrl && !imageUploading && (
+                                <img
+                                    src={resolveImageUrl(values.previewImageUrl)}
+                                    alt="Template preview"
+                                    className="dashboard-template-image-preview"
                                 />
                             )}
                         </div>
@@ -171,11 +170,10 @@ const WebsiteTemplateDetailModal = ({ modal }: WebsiteTemplateDetailModalProps) 
                             <dd>{new Date(template.createdAt).toLocaleString()}</dd>
                         </dl>
 
-                        <video
-                            src={resolveImageUrl(template.videoPreviewUrl)}
-                            controls
-                            muted
-                            className="dashboard-template-video-preview"
+                        <img
+                            src={resolveImageUrl(template.previewImageUrl)}
+                            alt={`${template.label} preview`}
+                            className="dashboard-template-image-preview"
                         />
 
                         <div className="website-request-detail__notes">
@@ -235,7 +233,7 @@ const WebsiteTemplateDetailModal = ({ modal }: WebsiteTemplateDetailModalProps) 
                             type="button"
                             className="dashboard-modal-primary-btn"
                             onClick={submitEdit}
-                            disabled={isUpdating || videoUploading}
+                            disabled={isUpdating || imageUploading}
                         >
                             {isUpdating ? "Saving..." : "Save changes"}
                         </button>

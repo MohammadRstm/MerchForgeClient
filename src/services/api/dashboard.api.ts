@@ -5,6 +5,9 @@ import type {
     UpdateWebsiteTemplatePayload,
     WebsiteTemplateRequestsQueryParams,
     CloseWebsiteTemplateRequestPayload,
+    UpdateMetadataShapeFieldPayload,
+    CreateProductAttributeDefinitionPayload,
+    UpdateProductAttributeDefinitionPayload,
 } from "../../features/Dashboard/SuperAdminDashboard/types";
 import {
     dashboardBusinessesPageSchema,
@@ -14,13 +17,14 @@ import {
     websiteTemplateResponseSchema,
     websiteTemplatesResponseSchema,
     websiteTemplateDetailSchema,
-    uploadWebsiteTemplateVideoResponseSchema,
+    uploadWebsiteTemplateImageResponseSchema,
     websiteTemplateRequestsPageSchema,
     websiteTemplateRequestDetailSchema,
     businessDetailResponseSchema,
     metadataShapeSchema,
+    productAttributeDefinitionResponseSchema,
+    productAttributeDefinitionsSchema,
 } from "../../features/Dashboard/SuperAdminDashboard/validation";
-import type { UpdateMetadataShapeFieldPayload } from "../../features/Dashboard/SuperAdminDashboard/types";
 import { authenticatedApi } from "./api";
 import { apiRoutes } from "./apiRoutes";
 
@@ -85,6 +89,43 @@ export const updateBusinessMetadataShapeService = async (
     return metadataShapeSchema.parse(data);
 };
 
+// ---- product attribute definitions (domain field catalogue) ----
+
+export const getDashboardProductAttributesService = async (businessDomainId?: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_PRODUCT_ATTRIBUTES, {
+        params: businessDomainId ? { businessDomainId } : undefined,
+    });
+
+    return productAttributeDefinitionsSchema.parse(data);
+};
+
+export const createProductAttributeDefinitionService = async (payload: CreateProductAttributeDefinitionPayload) => {
+    const { data } = await authenticatedApi.post(apiRoutes.DASHBOARD_PRODUCT_ATTRIBUTES, payload);
+
+    return productAttributeDefinitionResponseSchema.parse(data);
+};
+
+export const updateProductAttributeDefinitionService = async (
+    id: string,
+    payload: UpdateProductAttributeDefinitionPayload
+) => {
+    const { data } = await authenticatedApi.put(apiRoutes.DASHBOARD_PRODUCT_ATTRIBUTE(id), payload);
+
+    return productAttributeDefinitionResponseSchema.parse(data);
+};
+
+export const deactivateProductAttributeDefinitionService = async (id: string) => {
+    const { data } = await authenticatedApi.post(apiRoutes.DASHBOARD_PRODUCT_ATTRIBUTE_DEACTIVATE(id));
+
+    return productAttributeDefinitionResponseSchema.parse(data);
+};
+
+export const reactivateProductAttributeDefinitionService = async (id: string) => {
+    const { data } = await authenticatedApi.post(apiRoutes.DASHBOARD_PRODUCT_ATTRIBUTE_REACTIVATE(id));
+
+    return productAttributeDefinitionResponseSchema.parse(data);
+};
+
 export const getDashboardWebsiteTemplatesService = async () => {
     const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_WEBSITE_TEMPLATES);
 
@@ -97,15 +138,15 @@ export const createWebsiteTemplateService = async (payload: CreateWebsiteTemplat
     return websiteTemplateResponseSchema.parse(data);
 };
 
-export const uploadWebsiteTemplateVideoService = async (file: File) => {
+export const uploadWebsiteTemplateImageService = async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
 
     // Content-Type is deliberately not set: the browser must generate it so the
     // multipart boundary is included, and setting it by hand omits that.
-    const { data } = await authenticatedApi.post(apiRoutes.DASHBOARD_WEBSITE_TEMPLATE_VIDEO, formData);
+    const { data } = await authenticatedApi.post(apiRoutes.DASHBOARD_WEBSITE_TEMPLATE_IMAGE, formData);
 
-    return uploadWebsiteTemplateVideoResponseSchema.parse(data);
+    return uploadWebsiteTemplateImageResponseSchema.parse(data);
 };
 
 export const getWebsiteTemplateDetailService = async (templateId: string) => {

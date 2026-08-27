@@ -235,6 +235,36 @@
     color: #999;
 }
 
+.metadata-shape-item--editable {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+}
+
+.metadata-shape-item-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.metadata-shape-item-key {
+    font-weight: 600;
+}
+
+.metadata-shape-item-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 8px;
+    align-items: center;
+    padding-left: 26px;
+}
+
+.metadata-shape-item-fields .dashboard-invite-input {
+    padding: 6px 10px;
+    font-size: 13px;
+}
+
 .dashboard-session {
     color: #999;
     font-size: 13px;
@@ -363,6 +393,31 @@
     font-size: 13px;
 }
 
+.dashboard-invite-checkbox-row,
+.dashboard-invite-checkbox-row .dashboard-invite-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.product-fields-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.product-fields-inactive-row {
+    opacity: 0.55;
+}
+
+.dashboard-row-actions {
+    display: flex;
+    gap: 4px;
+}
+
 .dashboard-template-businesses-list {
     margin: 0;
     padding: 0;
@@ -389,13 +444,14 @@
     font-size: 12px;
 }
 
-.dashboard-template-video-preview {
+.dashboard-template-image-preview {
     display: block;
     width: 100%;
     max-height: 220px;
+    object-fit: contain;
     margin-top: 8px;
     border-radius: 6px;
-    background: #000;
+    background: #f0f0f0;
 }
 
 /* Website Requests */
