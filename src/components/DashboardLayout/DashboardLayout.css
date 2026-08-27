@@ -54,7 +54,9 @@
 }
 
 .dashboard-sidebar-link {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 10px;
     padding: 10px 12px;
     border-radius: 8px;
     font-size: 14px;
@@ -62,6 +64,22 @@
     color: #444;
     text-decoration: none;
     transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.dashboard-sidebar-link-icon {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    color: #8a8a8a;
+    transition: color 0.15s ease;
+}
+
+.dashboard-sidebar-link:hover .dashboard-sidebar-link-icon {
+    color: #1a1a1a;
+}
+
+.dashboard-sidebar-link--active .dashboard-sidebar-link-icon {
+    color: var(--dash-accent);
 }
 
 .dashboard-sidebar-link:hover {

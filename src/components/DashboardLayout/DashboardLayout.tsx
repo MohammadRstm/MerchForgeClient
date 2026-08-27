@@ -1,4 +1,16 @@
 import { Outlet } from "react-router";
+import {
+    FiHome,
+    FiBox,
+    FiArchive,
+    FiGlobe,
+    FiSettings,
+    FiBriefcase,
+    FiInbox,
+    FiLayout,
+    FiSliders,
+    FiUsers,
+} from "react-icons/fi";
 import "./DashboardLayout.css";
 import Sidebar, { type DashboardNavItem } from "./Sidebar";
 import DashboardTopBar from "./DashboardTopBar";
@@ -6,20 +18,20 @@ import useAuth from "../../context/Auth/useAuth";
 import { routes } from "../../config/routes";
 
 const OWNER_NAV: DashboardNavItem[] = [
-    { label: "Overview", to: routes.DASHBOARD, end: true },
-    { label: "Products", to: routes.DASHBOARD_PRODUCTS },
-    { label: "Inventory", to: routes.DASHBOARD_INVENTORY },
-    { label: "Website & Templates", to: routes.DASHBOARD_WEBSITE },
-    { label: "Settings", to: routes.DASHBOARD_SETTINGS },
+    { label: "Overview", to: routes.DASHBOARD, icon: FiHome, end: true },
+    { label: "Products", to: routes.DASHBOARD_PRODUCTS, icon: FiBox },
+    { label: "Inventory", to: routes.DASHBOARD_INVENTORY, icon: FiArchive },
+    { label: "Website & Templates", to: routes.DASHBOARD_WEBSITE, icon: FiGlobe },
+    { label: "Settings", to: routes.DASHBOARD_SETTINGS, icon: FiSettings },
 ];
 
 const ADMIN_NAV: DashboardNavItem[] = [
-    { label: "Overview", to: routes.ADMIN, end: true },
-    { label: "Businesses", to: routes.ADMIN_BUSINESSES },
-    { label: "Website Requests", to: routes.ADMIN_WEBSITE_REQUESTS },
-    { label: "Templates", to: routes.ADMIN_TEMPLATES },
-    { label: "Product Fields", to: routes.ADMIN_PRODUCT_FIELDS },
-    { label: "Users & Security", to: routes.ADMIN_USERS },
+    { label: "Overview", to: routes.ADMIN, icon: FiHome, end: true },
+    { label: "Businesses", to: routes.ADMIN_BUSINESSES, icon: FiBriefcase },
+    { label: "Website Requests", to: routes.ADMIN_WEBSITE_REQUESTS, icon: FiInbox },
+    { label: "Templates", to: routes.ADMIN_TEMPLATES, icon: FiLayout },
+    { label: "Product Fields", to: routes.ADMIN_PRODUCT_FIELDS, icon: FiSliders },
+    { label: "Users & Security", to: routes.ADMIN_USERS, icon: FiUsers },
 ];
 
 interface DashboardLayoutProps {

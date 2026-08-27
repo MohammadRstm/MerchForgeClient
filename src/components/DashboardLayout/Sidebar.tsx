@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router";
+import type { IconType } from "react-icons";
 import logo from "../../assets/logo.svg";
 import { routes } from "../../config/routes";
 
 export interface DashboardNavItem {
     label: string;
     to: string;
+    icon: IconType;
     end?: boolean;
 }
 
@@ -78,6 +80,7 @@ const Sidebar = ({ items }: SidebarProps) => {
                                 `dashboard-sidebar-link${isActive ? " dashboard-sidebar-link--active" : ""}`
                             }
                         >
+                            <item.icon className="dashboard-sidebar-link-icon" aria-hidden="true" />
                             {item.label}
                         </NavLink>
                     ))}
