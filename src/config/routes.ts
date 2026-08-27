@@ -7,6 +7,22 @@ export const routes = {
     HOME: "/",
     ABOUTUS: "/aboutus",
     ACCEPT_INVITATION: "/accept-invitation",
+
+    // Business owner dashboard
     DASHBOARD: "/dashboard",
-    CHOOSE_WEBSITE_TEMPLATE: "/dashboard/website-template",
+    DASHBOARD_PRODUCTS: "/dashboard/products",
+    DASHBOARD_WEBSITE: "/dashboard/website",
+    CHOOSE_WEBSITE_TEMPLATE: "/dashboard/website/choose",
+    DASHBOARD_SETTINGS: "/dashboard/settings",
+
+    // Super admin dashboard
+    ADMIN: "/admin",
+    ADMIN_BUSINESSES: "/admin/businesses",
+    ADMIN_BUSINESS_DETAIL: "/admin/businesses/:businessId",
+    ADMIN_WEBSITE_REQUESTS: "/admin/website-requests",
+    ADMIN_TEMPLATES: "/admin/templates",
+    ADMIN_USERS: "/admin/users",
 };
+
+export const buildAdminBusinessDetailRoute = (businessId: string) =>
+    `/admin/businesses/${businessId}`;

@@ -11,6 +11,7 @@ type BusinessesTableProps = {
     isFetching: boolean;
     isError: boolean;
     tableState: ReturnType<typeof useBusinessesTableState>;
+    onOpenBusiness: (businessId: string) => void;
 };
 
 const BusinessesTable = ({
@@ -19,6 +20,7 @@ const BusinessesTable = ({
     isFetching,
     isError,
     tableState,
+    onOpenBusiness,
 }: BusinessesTableProps) => {
     const { query, searchInput, handleSearchChange, handleSortChange, setPage } = tableState;
 
@@ -89,7 +91,19 @@ const BusinessesTable = ({
 
                         <tbody style={{ opacity: isFetching ? 0.6 : 1 }}>
                             {businessesPage.items.map((business) => (
-                                <tr key={business.id}>
+                                <tr
+                                    key={business.id}
+                                    className="dashboard-table-row--clickable"
+                                    onClick={() => onOpenBusiness(business.id)}
+                                    role="button"
+                                    tabIndex={0}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter" || e.key === " ") {
+                                            e.preventDefault();
+                                            onOpenBusiness(business.id);
+                                        }
+                                    }}
+                                >
                                     <td>{business.name}</td>
                                     <td>
                                         <div className="dashboard-owner-cell">

@@ -1,0 +1,80 @@
+import StockCell from "./StockCell";
+import type { BusinessProductResponse } from "../types";
+import { resolveImageUrl } from "../utils/resolveImageUrl";
+
+const currencyFormatter = new Intl.NumberFormat(undefined, {
+    style: "currency",
+    currency: "USD",
+});
+
+interface ProductCardProps {
+    product: BusinessProductResponse;
+    onView: (productId: string) => void;
+    onEdit: (productId: string) => void;
+    onDelete: (product: BusinessProductResponse) => void;
+    isDeleting: boolean;
+}
+
+const ProductCard = ({ product, onView, onEdit, onDelete, isDeleting }: ProductCardProps) => {
+    return (
+        <article
+            className="product-card"
+            onClick={() => onView(product.id)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    onView(product.id);
+                }
+            }}
+        >
+            <div className="product-card__image">
+                {product.imageUrl ? (
+                    <img src={resolveImageUrl(product.imageUrl)} alt="" />
+                ) : (
+                    <span className="product-card__image-placeholder" aria-hidden="true">
+                        {product.title.charAt(0).toUpperCase()}
+                    </span>
+                )}
+            </div>
+
+            <div className="product-card__body">
+                <div className="product-card__heading">
+                    <h4 className="product-card__title">{product.title}</h4>
+                    <span className="business-dashboard-badge">{product.category}</span>
+                </div>
+
+                <div className="product-card__price">
+                    <span className={product.compareAtPrice ? "product-price-current" : undefined}>
+                        {currencyFormatter.format(product.price)}
+                    </span>
+                    {product.compareAtPrice && (
+                        <span className="product-price-compare-at">
+                            {" "}
+                            {currencyFormatter.format(product.compareAtPrice)}
+                        </span>
+                    )}
+                </div>
+
+                <StockCell stockQuantity={product.stockQuantity} />
+            </div>
+
+            <div className="product-card__actions" onClick={(e) => e.stopPropagation()}>
+                <button type="button" className="business-dashboard-button-ghost" onClick={() => onEdit(product.id)}>
+                    Edit
+                </button>
+                <button
+                    type="button"
+                    className="business-dashboard-button-ghost business-dashboard-button-ghost--danger"
+                    onClick={() => onDelete(product)}
+                    disabled={isDeleting}
+                >
+                    {isDeleting ? "Deleting…" : "Delete"}
+                </button>
+            </div>
+        </article>
+    );
+};
+
+export default ProductCard;
