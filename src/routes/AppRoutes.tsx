@@ -13,7 +13,12 @@ import OwnerOverviewPage from "../features/Dashboard/BusinessOwnerDashboard/Owne
 import OwnerProductsPage from "../features/Dashboard/BusinessOwnerDashboard/OwnerProductsPage";
 import OwnerWebsitePage from "../features/Dashboard/BusinessOwnerDashboard/OwnerWebsitePage";
 import OwnerSettingsPage from "../features/Dashboard/BusinessOwnerDashboard/OwnerSettingsPage";
-import SuperAdminDashboard from "../features/Dashboard/SuperAdminDashboard/SuperAdminDashboard";
+import AdminOverviewPage from "../features/Dashboard/SuperAdminDashboard/AdminOverviewPage";
+import AdminBusinessesPage from "../features/Dashboard/SuperAdminDashboard/AdminBusinessesPage";
+import AdminBusinessDetailPage from "../features/Dashboard/SuperAdminDashboard/AdminBusinessDetailPage";
+import AdminWebsiteRequestsPage from "../features/Dashboard/SuperAdminDashboard/AdminWebsiteRequestsPage";
+import AdminTemplatesPage from "../features/Dashboard/SuperAdminDashboard/AdminTemplatesPage";
+import AdminUsersPage from "../features/Dashboard/SuperAdminDashboard/AdminUsersPage";
 import WebsiteTemplateSelectionPage from "../features/Dashboard/WebsiteTemplateRequest/WebsiteTemplateSelectionPage";
 import NotFound from "../features/NotFound/NotFound";
 
@@ -44,7 +49,12 @@ const AppRoutes = () =>{
                     </Route>
                     <Route element={<AdminRouteGuard />}>
                         <Route path={routes.ADMIN} element={<DashboardLayout role="admin" />}>
-                            <Route index element={<SuperAdminDashboard />} />
+                            <Route index element={<AdminOverviewPage />} />
+                            <Route path="businesses" element={<AdminBusinessesPage />} />
+                            <Route path="businesses/:businessId" element={<AdminBusinessDetailPage />} />
+                            <Route path="website-requests" element={<AdminWebsiteRequestsPage />} />
+                            <Route path="templates" element={<AdminTemplatesPage />} />
+                            <Route path="users" element={<AdminUsersPage />} />
                         </Route>
                     </Route>
                 </Route>

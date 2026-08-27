@@ -126,6 +126,14 @@
     text-transform: uppercase;
 }
 
+.dashboard-table-row--clickable {
+    cursor: pointer;
+}
+
+.dashboard-table-row--clickable:hover {
+    background: #fafafa;
+}
+
 .dashboard-you-tag {
     color: #999;
     font-size: 12px;
