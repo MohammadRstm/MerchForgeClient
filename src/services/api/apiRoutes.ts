@@ -30,7 +30,7 @@ export const apiRoutes = {
     DASHBOARD_PRODUCT_ATTRIBUTE_REACTIVATE : (id : string) => `/Dashboard/product-attributes/${id}/reactivate`,
     DASHBOARD_REVOKE_USER_SESSIONS : (userId : string) => `/Dashboard/users/${userId}/revoke-sessions`,
     DASHBOARD_WEBSITE_TEMPLATES : "/Dashboard/website-templates",
-    DASHBOARD_WEBSITE_TEMPLATE_VIDEO : "/Dashboard/website-templates/video",
+    DASHBOARD_WEBSITE_TEMPLATE_IMAGE : "/Dashboard/website-templates/image",
     DASHBOARD_WEBSITE_TEMPLATE : (templateId : string) => `/Dashboard/website-templates/${templateId}`,
     DASHBOARD_WEBSITE_TEMPLATE_DEACTIVATE : (templateId : string) => `/Dashboard/website-templates/${templateId}/deactivate`,
     DASHBOARD_WEBSITE_TEMPLATE_REQUESTS : "/Dashboard/website-template-requests",

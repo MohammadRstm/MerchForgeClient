@@ -80,28 +80,27 @@ const CreateWebsiteTemplateModal = ({ form }: CreateWebsiteTemplateModalProps) =
                     </div>
 
                     <div>
-                        <label className="dashboard-invite-label" htmlFor="template-video">
-                            Preview video
+                        <label className="dashboard-invite-label" htmlFor="template-image">
+                            Preview image
                         </label>
                         <input
-                            id="template-video"
+                            id="template-image"
                             className="dashboard-invite-input"
                             type="file"
-                            accept="video/mp4,video/webm"
+                            accept="image/jpeg,image/png,image/gif,image/webp"
                             onChange={(e) => {
                                 const file = e.target.files?.[0];
-                                if (file) form.uploadVideo(file);
+                                if (file) form.uploadImage(file);
                                 e.target.value = "";
                             }}
-                            disabled={form.isPending || form.videoUploading}
+                            disabled={form.isPending || form.imageUploading}
                         />
-                        {form.videoUploading && <p className="dashboard-modal-text">Uploading video...</p>}
-                        {form.values.videoPreviewUrl && !form.videoUploading && (
-                            <video
-                                src={resolveImageUrl(form.values.videoPreviewUrl)}
-                                controls
-                                muted
-                                className="dashboard-template-video-preview"
+                        {form.imageUploading && <p className="dashboard-modal-text">Uploading image...</p>}
+                        {form.values.previewImageUrl && !form.imageUploading && (
+                            <img
+                                src={resolveImageUrl(form.values.previewImageUrl)}
+                                alt="Template preview"
+                                className="dashboard-template-image-preview"
                             />
                         )}
                     </div>

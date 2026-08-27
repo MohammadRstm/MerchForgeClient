@@ -17,7 +17,7 @@ import {
     websiteTemplateResponseSchema,
     websiteTemplatesResponseSchema,
     websiteTemplateDetailSchema,
-    uploadWebsiteTemplateVideoResponseSchema,
+    uploadWebsiteTemplateImageResponseSchema,
     websiteTemplateRequestsPageSchema,
     websiteTemplateRequestDetailSchema,
     businessDetailResponseSchema,
@@ -138,15 +138,15 @@ export const createWebsiteTemplateService = async (payload: CreateWebsiteTemplat
     return websiteTemplateResponseSchema.parse(data);
 };
 
-export const uploadWebsiteTemplateVideoService = async (file: File) => {
+export const uploadWebsiteTemplateImageService = async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
 
     // Content-Type is deliberately not set: the browser must generate it so the
     // multipart boundary is included, and setting it by hand omits that.
-    const { data } = await authenticatedApi.post(apiRoutes.DASHBOARD_WEBSITE_TEMPLATE_VIDEO, formData);
+    const { data } = await authenticatedApi.post(apiRoutes.DASHBOARD_WEBSITE_TEMPLATE_IMAGE, formData);
 
-    return uploadWebsiteTemplateVideoResponseSchema.parse(data);
+    return uploadWebsiteTemplateImageResponseSchema.parse(data);
 };
 
 export const getWebsiteTemplateDetailService = async (templateId: string) => {

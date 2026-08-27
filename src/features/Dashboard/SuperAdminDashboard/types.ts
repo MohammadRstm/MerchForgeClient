@@ -40,7 +40,7 @@ export type UpdateWebsiteTemplatePayload = z.infer<typeof updateWebsiteTemplateF
 /** The raw, string-backed shape the edit form's controlled inputs hold before validation. */
 export type UpdateWebsiteTemplateFormValues = {
     label: string;
-    videoPreviewUrl: string;
+    previewImageUrl: string;
     previewWebsiteUrl: string;
     displayOrder: string;
 };
@@ -57,7 +57,7 @@ export type CreateWebsiteTemplateFormValues = {
     businessDomainId: string;
     name: string;
     label: string;
-    videoPreviewUrl: string;
+    previewImageUrl: string;
     previewWebsiteUrl: string;
     displayOrder: string;
 };

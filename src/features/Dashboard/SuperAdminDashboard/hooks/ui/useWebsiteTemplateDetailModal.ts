@@ -3,7 +3,7 @@ import useWebsiteTemplateDetail from "../data/useWebsiteTemplateDetail";
 import useUpdateWebsiteTemplate from "../data/useUpdateWebsiteTemplate";
 import useDeactivateWebsiteTemplate from "../data/useDeactivateWebsiteTemplate";
 import { updateWebsiteTemplateFormSchema } from "../../validation";
-import { uploadWebsiteTemplateVideoService } from "../../../../../services/api/dashboard.api";
+import { uploadWebsiteTemplateImageService } from "../../../../../services/api/dashboard.api";
 import { ApiError } from "../../../../../Error/ApiError";
 import type { UpdateWebsiteTemplateFormValues, WebsiteTemplateDetail } from "../../types";
 
@@ -11,7 +11,7 @@ type Mode = "view" | "edit";
 
 const toFormValues = (template: WebsiteTemplateDetail): UpdateWebsiteTemplateFormValues => ({
     label: template.label,
-    videoPreviewUrl: template.videoPreviewUrl,
+    previewImageUrl: template.previewImageUrl,
     previewWebsiteUrl: template.previewWebsiteUrl ?? "",
     displayOrder: String(template.displayOrder),
 });
@@ -25,7 +25,7 @@ const useWebsiteTemplateDetailModal = () => {
     const [mode, setMode] = useState<Mode>("view");
     const [values, setValues] = useState<UpdateWebsiteTemplateFormValues | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const [videoUploading, setVideoUploading] = useState(false);
+    const [imageUploading, setImageUploading] = useState(false);
     const [confirmingDelete, setConfirmingDelete] = useState(false);
 
     const { data: template, isLoading, isError } = useWebsiteTemplateDetail(selectedId);
@@ -41,7 +41,7 @@ const useWebsiteTemplateDetailModal = () => {
     };
 
     const close = () => {
-        if (isUpdating || isDeleting || videoUploading) {
+        if (isUpdating || isDeleting || imageUploading) {
             return;
         }
 
@@ -73,17 +73,17 @@ const useWebsiteTemplateDetailModal = () => {
         }
     };
 
-    const uploadVideo = async (file: File) => {
-        setVideoUploading(true);
+    const uploadImage = async (file: File) => {
+        setImageUploading(true);
         setError(null);
 
         try {
-            const { videoUrl } = await uploadWebsiteTemplateVideoService(file);
-            changeField("videoPreviewUrl", videoUrl);
+            const { imageUrl } = await uploadWebsiteTemplateImageService(file);
+            changeField("previewImageUrl", imageUrl);
         } catch (err) {
-            setError(err instanceof ApiError ? err.message : "Couldn't upload that video.");
+            setError(err instanceof ApiError ? err.message : "Couldn't upload that image.");
         } finally {
-            setVideoUploading(false);
+            setImageUploading(false);
         }
     };
 
@@ -127,7 +127,7 @@ const useWebsiteTemplateDetailModal = () => {
         values,
         error,
         isUpdating,
-        videoUploading,
+        imageUploading,
 
         confirmingDelete,
         isDeleting,
@@ -137,7 +137,7 @@ const useWebsiteTemplateDetailModal = () => {
         startEdit,
         cancelEdit,
         changeField,
-        uploadVideo,
+        uploadImage,
         submitEdit,
         requestDelete,
         cancelDelete,
