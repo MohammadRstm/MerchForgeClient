@@ -11,6 +11,7 @@ export const routes = {
     // Business owner dashboard
     DASHBOARD: "/dashboard",
     DASHBOARD_PRODUCTS: "/dashboard/products",
+    DASHBOARD_INVENTORY: "/dashboard/inventory",
     DASHBOARD_WEBSITE: "/dashboard/website",
     CHOOSE_WEBSITE_TEMPLATE: "/dashboard/website/choose",
     DASHBOARD_SETTINGS: "/dashboard/settings",

@@ -26,6 +26,10 @@ const WebsiteTemplateSelectionPage = () => {
 
     return (
         <main className="website-template-page">
+            <button type="button" className="website-template-page__back" onClick={backToDashboard}>
+                <span aria-hidden="true">←</span> Back to dashboard
+            </button>
+
             <h1 className="website-template-page__title">Choose Your Template</h1>
 
             {isLoading ? (

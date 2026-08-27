@@ -4,6 +4,25 @@
     padding: 48px 24px 64px;
 }
 
+.website-template-page__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 24px;
+    padding: 6px 4px;
+    border: none;
+    background: none;
+    color: #555;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color 0.15s ease;
+}
+
+.website-template-page__back:hover {
+    color: #2563eb;
+}
+
 .website-template-page__title {
     text-align: center;
     font-size: 32px;

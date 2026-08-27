@@ -16,6 +16,9 @@ import {
     websiteTemplateRequestSchema,
     featureCreditOverviewSchema,
     businessFeatureCreditSchema,
+    stockAdjustmentResponseSchema,
+    inventorySummarySchema,
+    stockMovementSchema,
 } from "../../features/Dashboard/BusinessOwnerDashboard/validation";
 import { authenticatedApi } from "./api";
 import { apiRoutes } from "./apiRoutes";
@@ -186,6 +189,43 @@ export const purchaseFeatureCreditsService = async (businessId: string, packageI
     });
 
     return businessFeatureCreditSchema.parse(data);
+};
+
+// ---- inventory ----
+
+/** Amount is signed: positive to add stock, negative to remove. */
+export const adjustProductStockService = async (
+    businessId: string,
+    productId: string,
+    amount: number,
+    reason?: string
+) => {
+    const { data } = await authenticatedApi.post(
+        apiRoutes.BUSINESS_DASHBOARD_STOCK_ADJUSTMENT(businessId, productId),
+        { amount, reason }
+    );
+
+    return stockAdjustmentResponseSchema.parse(data);
+};
+
+export const getInventorySummaryService = async (businessId: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_INVENTORY_SUMMARY(businessId));
+
+    return inventorySummarySchema.parse(data);
+};
+
+export const getStockMovementsService = async (businessId: string, take = 20) => {
+    const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_INVENTORY_MOVEMENTS(businessId), {
+        params: { take },
+    });
+
+    return z.array(stockMovementSchema).parse(data);
+};
+
+export const updateLowStockThresholdService = async (businessId: string, lowStockThreshold: number) => {
+    await authenticatedApi.put(apiRoutes.BUSINESS_DASHBOARD_LOW_STOCK_THRESHOLD(businessId), {
+        lowStockThreshold,
+    });
 };
 
 export const uploadProductImageService = async (businessId: string, file: File) => {

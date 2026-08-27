@@ -10,6 +10,10 @@ import type {
     businessProductDetailSchema,
     businessProductResponseSchema,
     productImageSchema,
+    productStockStatusSchema,
+    stockMovementSchema,
+    stockAdjustmentResponseSchema,
+    inventorySummarySchema,
     businessSubscriptionResponseSchema,
     productDraftMessageSchema,
     productDraftProductSchema,
@@ -94,9 +98,16 @@ export type ProductDraftProduct = z.infer<typeof productDraftProductSchema>;
 
 export type ProductSortField = "CreatedAt" | "Title" | "Price";
 
+export type ProductStockStatus = z.infer<typeof productStockStatusSchema>;
+
 export type ProductsQueryParams = PagedQuery & {
     search?: string;
     category?: string;
+    stockStatus?: ProductStockStatus;
     sortBy: ProductSortField;
     sortDescending: boolean;
 };
+
+export type StockMovement = z.infer<typeof stockMovementSchema>;
+export type StockAdjustmentResponse = z.infer<typeof stockAdjustmentResponseSchema>;
+export type InventorySummary = z.infer<typeof inventorySummarySchema>;

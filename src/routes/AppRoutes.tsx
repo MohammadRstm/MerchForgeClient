@@ -11,6 +11,7 @@ import AcceptInvitation from "../features/Auth/AcceptInvitation/AcceptInvitation
 import DashboardLayout from "../components/DashboardLayout/DashboardLayout";
 import OwnerOverviewPage from "../features/Dashboard/BusinessOwnerDashboard/OwnerOverviewPage";
 import OwnerProductsPage from "../features/Dashboard/BusinessOwnerDashboard/OwnerProductsPage";
+import OwnerInventoryPage from "../features/Dashboard/BusinessOwnerDashboard/OwnerInventoryPage";
 import OwnerWebsitePage from "../features/Dashboard/BusinessOwnerDashboard/OwnerWebsitePage";
 import OwnerSettingsPage from "../features/Dashboard/BusinessOwnerDashboard/OwnerSettingsPage";
 import AdminOverviewPage from "../features/Dashboard/SuperAdminDashboard/AdminOverviewPage";
@@ -43,6 +44,7 @@ const AppRoutes = () =>{
                         <Route path={routes.DASHBOARD} element={<DashboardLayout role="owner" />}>
                             <Route index element={<OwnerOverviewPage />} />
                             <Route path="products" element={<OwnerProductsPage />} />
+                            <Route path="inventory" element={<OwnerInventoryPage />} />
                             <Route path="website" element={<OwnerWebsitePage />} />
                             <Route path="settings" element={<OwnerSettingsPage />} />
                         </Route>
