@@ -17,7 +17,10 @@ import {
     uploadWebsiteTemplateVideoResponseSchema,
     websiteTemplateRequestsPageSchema,
     websiteTemplateRequestDetailSchema,
+    businessDetailResponseSchema,
+    metadataShapeSchema,
 } from "../../features/Dashboard/SuperAdminDashboard/validation";
+import type { UpdateMetadataShapeFieldPayload } from "../../features/Dashboard/SuperAdminDashboard/types";
 import { authenticatedApi } from "./api";
 import { apiRoutes } from "./apiRoutes";
 
@@ -49,6 +52,37 @@ export const revokeUserSessionsService = async (userId: string) => {
     );
 
     return revokeUserSessionsResponseSchema.parse(data);
+};
+
+export const getDashboardBusinessDetailService = async (businessId: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_BUSINESS_DETAIL(businessId));
+
+    return businessDetailResponseSchema.parse(data);
+};
+
+export const revokeBusinessSessionsService = async (businessId: string) => {
+    const { data } = await authenticatedApi.post(
+        apiRoutes.DASHBOARD_BUSINESS_REVOKE_SESSIONS(businessId)
+    );
+
+    return revokeUserSessionsResponseSchema.parse(data);
+};
+
+export const getBusinessMetadataShapeService = async (businessId: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_BUSINESS_METADATA_SHAPE(businessId));
+
+    return metadataShapeSchema.parse(data);
+};
+
+export const updateBusinessMetadataShapeService = async (
+    businessId: string,
+    fields: UpdateMetadataShapeFieldPayload[]
+) => {
+    const { data } = await authenticatedApi.put(apiRoutes.DASHBOARD_BUSINESS_METADATA_SHAPE(businessId), {
+        fields,
+    });
+
+    return metadataShapeSchema.parse(data);
 };
 
 export const getDashboardWebsiteTemplatesService = async () => {

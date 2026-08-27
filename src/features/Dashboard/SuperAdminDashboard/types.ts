@@ -15,6 +15,10 @@ import type {
     websiteTemplateRequestSummarySchema,
     websiteTemplateRequestDetailSchema,
     closeWebsiteTemplateRequestFormSchema,
+    businessDetailResponseSchema,
+    businessDetailFeatureCreditSchema,
+    metadataShapeFieldSchema,
+    updateMetadataShapeFieldSchema,
 } from "./validation";
 
 export type DashboardStatsResponse = z.infer<typeof dashboardStatsResponseSchema>;
@@ -76,3 +80,8 @@ export type WebsiteTemplateRequestsQueryParams = PagedQuery & {
     status?: WebsiteTemplateRequestStatus;
     sortDescending: boolean;
 };
+
+export type BusinessDetailResponse = z.infer<typeof businessDetailResponseSchema>;
+export type BusinessDetailFeatureCredit = z.infer<typeof businessDetailFeatureCreditSchema>;
+export type MetadataShapeField = z.infer<typeof metadataShapeFieldSchema>;
+export type UpdateMetadataShapeFieldPayload = z.infer<typeof updateMetadataShapeFieldSchema>;

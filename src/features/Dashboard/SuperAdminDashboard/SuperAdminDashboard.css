@@ -174,6 +174,67 @@
     color: #1d5fb8;
 }
 
+.dashboard-badge--owner {
+    background: #fdecea;
+    color: #d92d20;
+}
+
+.dashboard-badge--member {
+    background: #e8f3ff;
+    color: #1d5fb8;
+}
+
+/* ---------- Business detail page ---------- */
+
+.business-detail-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.business-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px 24px;
+    margin-bottom: 12px;
+}
+
+.business-detail-grid dt {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #777;
+    margin-bottom: 2px;
+}
+
+.business-detail-grid dd {
+    margin: 0;
+    font-size: 14px;
+    color: #1a1a1a;
+}
+
+.metadata-shape-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.metadata-shape-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border: 1px solid #e2e2e2;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.metadata-shape-item-type {
+    margin-left: auto;
+    font-size: 12px;
+    color: #999;
+}
+
 .dashboard-session {
     color: #999;
     font-size: 13px;

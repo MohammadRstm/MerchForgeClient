@@ -1,5 +1,10 @@
 import z from "zod";
 import { pagedResultSchema } from "../../../types/pagination";
+import {
+    businessMemberResponseSchema,
+    businessSubscriptionResponseSchema,
+    websiteTemplateRequestSchema,
+} from "../BusinessOwnerDashboard/validation";
 
 export const keyCountSchema = z.object({
     key: z.string(),
@@ -17,6 +22,8 @@ export const dashboardStatsResponseSchema = z.object({
     totalProducts: z.number(),
     totalProductDrafts: z.number(),
     pendingInvitations: z.number(),
+    pendingWebsiteTemplateRequests: z.number(),
+    completedWebsiteTemplateRequests: z.number(),
 
     usersBySystemRole: z.array(keyCountSchema),
     businessUsersByRole: z.array(keyCountSchema),
@@ -208,4 +215,70 @@ export const closeWebsiteTemplateRequestFormSchema = z.object({
         .trim()
         .min(1, "Enter the final website URL.")
         .url("Enter a valid URL, including https://."),
+});
+
+// ---- business detail ----
+
+export const businessDetailFeatureCreditSchema = z.object({
+    featureKey: z.string(),
+    featureName: z.string(),
+    creditsRemaining: z.number(),
+    creditsGrantedTotal: z.number(),
+});
+
+export const businessDetailResponseSchema = z.object({
+    id: z.string().uuid(),
+    name: z.string(),
+    description: z.string().nullable(),
+    logoUrl: z.string().nullable(),
+    currency: z.string(),
+    locale: z.string(),
+    contactEmail: z.string().nullable(),
+    contactPhone: z.string().nullable(),
+    businessDomainId: z.string().uuid().nullable(),
+    domainName: z.string().nullable(),
+    createdAt: z.iso.datetime(),
+
+    ownerUserId: z.string().uuid(),
+    ownerFullName: z.string(),
+    ownerEmail: z.string(),
+
+    members: z.array(businessMemberResponseSchema),
+
+    productCount: z.number(),
+    averageProductPrice: z.number().nullable(),
+    minProductPrice: z.number().nullable(),
+    maxProductPrice: z.number().nullable(),
+    productsByCategory: z.array(keyCountSchema),
+
+    productDraftCount: z.number(),
+    productDraftsByStatus: z.array(keyCountSchema),
+
+    websiteUrl: z.string().nullable(),
+    websiteTemplateId: z.string().uuid().nullable(),
+    websiteTemplateName: z.string().nullable(),
+    websiteTemplateLabel: z.string().nullable(),
+    websiteTemplateChosenAt: z.iso.datetime().nullable(),
+    websiteTemplateRequests: z.array(websiteTemplateRequestSchema),
+
+    subscription: businessSubscriptionResponseSchema,
+
+    featureCredits: z.array(businessDetailFeatureCreditSchema),
+});
+
+// ---- metadata shape ----
+
+export const metadataShapeFieldSchema = z.object({
+    key: z.string(),
+    label: z.string(),
+    valueType: z.string(),
+    isRequired: z.boolean(),
+    allowedValues: z.array(z.string()),
+});
+
+export const metadataShapeSchema = z.array(metadataShapeFieldSchema);
+
+/** The shape PUT /metadata-shape expects per field — adds displayOrder, which the GET response doesn't return. */
+export const updateMetadataShapeFieldSchema = metadataShapeFieldSchema.extend({
+    displayOrder: z.number(),
 });

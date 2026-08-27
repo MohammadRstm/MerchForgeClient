@@ -40,6 +40,8 @@ const AdminOverviewPage = () => {
                             { label: "Total Products", value: stats.totalProducts },
                             { label: "Product Drafts", value: stats.totalProductDrafts },
                             { label: "Pending Invitations", value: stats.pendingInvitations },
+                            { label: "Pending Website Requests", value: stats.pendingWebsiteTemplateRequests },
+                            { label: "Completed Website Requests", value: stats.completedWebsiteTemplateRequests },
                         ]}
                     />
 
