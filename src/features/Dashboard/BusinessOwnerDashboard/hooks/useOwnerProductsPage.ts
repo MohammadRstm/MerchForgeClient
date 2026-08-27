@@ -1,35 +1,28 @@
+import { useState } from "react";
 import useAuth from "../../../../context/Auth/useAuth";
 import useBusinessDashboardStats from "./data/useBusinessDashboardStats";
 import useBusinessProducts from "./data/useBusinessProducts";
-import useBusinessMembers from "./data/useBusinessMembers";
-import useBusinessSubscription from "./data/useBusinessSubscription";
 import useProductsTableState from "./ui/useProductsTableState";
 import useProductModal from "./ui/useProductModal";
 import useProductDetailModal from "./ui/useProductDetailModal";
-import useMemberModal from "./ui/useMemberModal";
-import useWebsiteTemplateOptions from "./data/useWebsiteTemplateOptions";
-import useFeatureCreditsModal from "./ui/useFeatureCreditsModal";
 import useVoiceProductDraft from "./ui/useVoiceProductDraft";
 import useImageEditChat from "./ui/useImageEditChat";
 import useMultiAngleImages from "./ui/useMultiAngleImages";
 import useColorImages from "./ui/useColorImages";
 import useQuickImageEdits from "./ui/useQuickImageEdits";
 import useSuggestProductDetails from "./ui/useSuggestProductDetails";
-import { getProductColors } from "../utils/getProductColors";
 import useDeleteProduct from "./data/useDeleteProduct";
-import { useState } from "react";
+import { getProductColors } from "../utils/getProductColors";
 import { ApiError } from "../../../../Error/ApiError";
 import type { BusinessProductResponse } from "../types";
 
-const useBusinessOwnerDashboardPage = () => {
+const useOwnerProductsPage = () => {
     const { session } = useAuth();
     const businessId = session?.business?.id ?? "";
 
-    const {
-        data: stats,
-        isLoading: statsLoading,
-        isError: statsError,
-    } = useBusinessDashboardStats(businessId);
+    // Category options for the filter dropdown come from the same breakdown the
+    // Overview page uses — no separate categories endpoint exists or is needed.
+    const { data: stats } = useBusinessDashboardStats(businessId);
 
     const productsTable = useProductsTableState();
 
@@ -40,41 +33,18 @@ const useBusinessOwnerDashboardPage = () => {
         isError: productsError,
     } = useBusinessProducts(businessId, productsTable.query);
 
-    const {
-        data: members,
-        isLoading: membersLoading,
-        isError: membersError,
-    } = useBusinessMembers(businessId);
-
-    const {
-        data: subscription,
-        isLoading: subscriptionLoading,
-        isError: subscriptionError,
-    } = useBusinessSubscription(businessId);
-
     const productModal = useProductModal(businessId);
     const productDetailModal = useProductDetailModal(businessId);
-    const memberModal = useMemberModal(businessId);
-    const {
-        data: websiteTemplateOptions,
-        isLoading: websiteTemplateOptionsLoading,
-    } = useWebsiteTemplateOptions(businessId);
-    const featureCreditsModal = useFeatureCreditsModal(businessId);
 
-    /** Switches from viewing to editing the same product — the detail card is read-only, so an edit always starts a fresh trip through the form. */
     const editFromDetail = (productId: string) => {
         productDetailModal.close();
         productModal.openForEdit(productId);
     };
 
     const voiceDraft = useVoiceProductDraft(businessId, () => {
-        // The AI flow created the product itself, so the manual modal - if it was the
-        // route in - has nothing left to submit.
         productModal.close();
     });
 
-    // Each replacement swaps one form image in place — the edited result taking the
-    // exact spot (and isMain state) the original occupied, not a new gallery entry.
     const imageEditChat = useImageEditChat(businessId, (replacements) => {
         for (const { oldUrl, newUrl } of replacements) {
             productModal.replaceImage(oldUrl, newUrl);
@@ -126,8 +96,13 @@ const useBusinessOwnerDashboardPage = () => {
     };
 
     return {
-        businessId,
-        businessName: session?.business?.name ?? "",
+        categories: stats?.productsByCategory.map((entry) => entry.key) ?? [],
+
+        productsPage,
+        productsLoading,
+        productsFetching,
+        productsError,
+        productsTable,
 
         productModal,
         productDetailModal,
@@ -150,30 +125,7 @@ const useBusinessOwnerDashboardPage = () => {
         requestDeleteProduct,
         confirmDeleteProduct,
         cancelDeleteProduct: () => setProductPendingDeletion(undefined),
-
-        stats,
-        statsLoading,
-        statsError,
-
-        productsPage,
-        productsLoading,
-        productsFetching,
-        productsError,
-        productsTable,
-
-        members,
-        membersLoading,
-        membersError,
-        memberModal,
-        websiteTemplateOptions,
-        websiteTemplateOptionsLoading,
-
-        subscription,
-        subscriptionLoading,
-        subscriptionError,
-
-        featureCreditsModal,
     };
 };
 
-export default useBusinessOwnerDashboardPage;
+export default useOwnerProductsPage;

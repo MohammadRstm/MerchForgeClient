@@ -60,7 +60,7 @@ const useWebsiteTemplateRequestPage = () => {
         );
     };
 
-    const backToDashboard = () => navigate(routes.DASHBOARD);
+    const backToDashboard = () => navigate(routes.DASHBOARD_WEBSITE);
 
     return {
         options,

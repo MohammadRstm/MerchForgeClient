@@ -9,7 +9,10 @@ import { routes } from "../config/routes";
 import Login from "../features/Auth/Login/Login";
 import AcceptInvitation from "../features/Auth/AcceptInvitation/AcceptInvitation";
 import DashboardLayout from "../components/DashboardLayout/DashboardLayout";
-import BusinessOwnerDashboard from "../features/Dashboard/BusinessOwnerDashboard/BusinessOwnerDashboard";
+import OwnerOverviewPage from "../features/Dashboard/BusinessOwnerDashboard/OwnerOverviewPage";
+import OwnerProductsPage from "../features/Dashboard/BusinessOwnerDashboard/OwnerProductsPage";
+import OwnerWebsitePage from "../features/Dashboard/BusinessOwnerDashboard/OwnerWebsitePage";
+import OwnerSettingsPage from "../features/Dashboard/BusinessOwnerDashboard/OwnerSettingsPage";
 import SuperAdminDashboard from "../features/Dashboard/SuperAdminDashboard/SuperAdminDashboard";
 import WebsiteTemplateSelectionPage from "../features/Dashboard/WebsiteTemplateRequest/WebsiteTemplateSelectionPage";
 import NotFound from "../features/NotFound/NotFound";
@@ -32,10 +35,10 @@ const AppRoutes = () =>{
                 <Route element={<AuthenticatedRoutes />}>
                     <Route element={<OwnerRouteGuard />}>
                         <Route path={routes.DASHBOARD} element={<DashboardLayout role="owner" />}>
-                            {/* Overview is still the full pre-redesign dashboard component for
-                                now; it gets decomposed into Overview/Products/Website/Settings
-                                pages in a follow-up commit, once this shell is verified. */}
-                            <Route index element={<BusinessOwnerDashboard />} />
+                            <Route index element={<OwnerOverviewPage />} />
+                            <Route path="products" element={<OwnerProductsPage />} />
+                            <Route path="website" element={<OwnerWebsitePage />} />
+                            <Route path="settings" element={<OwnerSettingsPage />} />
                         </Route>
                         <Route path={routes.CHOOSE_WEBSITE_TEMPLATE} element={<WebsiteTemplateSelectionPage />} />
                     </Route>
