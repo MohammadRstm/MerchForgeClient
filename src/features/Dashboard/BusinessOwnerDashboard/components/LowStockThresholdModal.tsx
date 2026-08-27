@@ -43,17 +43,20 @@ const LowStockThresholdModal = ({
                 <h2>Low stock threshold</h2>
             </Modal.Header>
 
-            <form onSubmit={handleSubmit}>
+            <form className="business-dashboard-form" onSubmit={handleSubmit} noValidate>
                 <Modal.Body>
-                    <p>
+                    <p className="business-dashboard-member-intro">
                         A tracked product counts as "low stock" once it has this many units or
                         fewer left.
                     </p>
 
-                    <fieldset>
-                        <label htmlFor="low-stock-threshold">Units</label>
+                    <div className="business-dashboard-form-field">
+                        <label className="business-dashboard-form-label" htmlFor="low-stock-threshold">
+                            Units
+                        </label>
                         <input
                             id="low-stock-threshold"
+                            className="business-dashboard-form-input"
                             type="number"
                             min="1"
                             step="1"
@@ -62,7 +65,7 @@ const LowStockThresholdModal = ({
                             autoFocus
                             required
                         />
-                    </fieldset>
+                    </div>
 
                     {error && (
                         <p className="business-dashboard-form-error" role="alert">

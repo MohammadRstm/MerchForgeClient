@@ -40,9 +40,18 @@ const OwnerInventoryPage = () => {
         <main className="business-dashboard-page">
             <div className="business-dashboard-page-header">
                 <h1 className="business-dashboard-heading">Inventory</h1>
+
+                <div className="business-dashboard-header-actions">
+                    <span className="business-dashboard-badge">
+                        Low stock threshold: {summary?.lowStockThreshold ?? "—"} units
+                    </span>
+                    <button type="button" className="business-dashboard-button-secondary" onClick={openThresholdModal}>
+                        Edit threshold
+                    </button>
+                </div>
             </div>
 
-            <InventorySummaryCards summary={summary} onEditThreshold={openThresholdModal} />
+            <InventorySummaryCards summary={summary} />
 
             <InventoryTable
                 productsPage={productsPage}

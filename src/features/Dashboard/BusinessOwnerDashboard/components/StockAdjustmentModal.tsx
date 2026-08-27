@@ -61,17 +61,20 @@ const StockAdjustmentModal = ({ product, mode, isSubmitting, error, onConfirm, o
                 </h2>
             </Modal.Header>
 
-            <form onSubmit={handleSubmit}>
+            <form className="business-dashboard-form" onSubmit={handleSubmit} noValidate>
                 <Modal.Body>
-                    <p>
+                    <p className="business-dashboard-member-intro">
                         Currently <strong>{product?.stockQuantity ?? "not tracked"}</strong>
                         {typeof product?.stockQuantity === "number" ? " in stock." : "."}
                     </p>
 
-                    <fieldset>
-                        <label htmlFor="stock-adjustment-quantity">Quantity to {mode}</label>
+                    <div className="business-dashboard-form-field">
+                        <label className="business-dashboard-form-label" htmlFor="stock-adjustment-quantity">
+                            Quantity to {mode}
+                        </label>
                         <input
                             id="stock-adjustment-quantity"
+                            className="business-dashboard-form-input"
                             type="number"
                             min="1"
                             step="1"
@@ -80,19 +83,22 @@ const StockAdjustmentModal = ({ product, mode, isSubmitting, error, onConfirm, o
                             autoFocus
                             required
                         />
-                    </fieldset>
+                    </div>
 
-                    <fieldset>
-                        <label htmlFor="stock-adjustment-reason">Reason (optional)</label>
+                    <div className="business-dashboard-form-field">
+                        <label className="business-dashboard-form-label" htmlFor="stock-adjustment-reason">
+                            Reason <span className="business-dashboard-form-optional">(optional)</span>
+                        </label>
                         <input
                             id="stock-adjustment-reason"
+                            className="business-dashboard-form-input"
                             type="text"
                             maxLength={255}
                             placeholder={mode === "add" ? "e.g. Restock delivery" : "e.g. Damaged units"}
                             value={reason}
                             onChange={(e) => setReason(e.target.value)}
                         />
-                    </fieldset>
+                    </div>
 
                     {error && (
                         <p className="business-dashboard-form-error" role="alert">
