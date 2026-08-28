@@ -9,6 +9,7 @@ import type {
     UpdateMetadataShapeFieldPayload,
     CreateProductAttributeDefinitionPayload,
     UpdateProductAttributeDefinitionPayload,
+    CreateWebsiteTemplateCustomizableComponentPayload,
 } from "../../features/Dashboard/SuperAdminDashboard/types";
 import {
     dashboardBusinessesPageSchema,
@@ -25,6 +26,8 @@ import {
     metadataShapeSchema,
     productAttributeDefinitionResponseSchema,
     productAttributeDefinitionsSchema,
+    websiteTemplateCustomizableComponentResponseSchema,
+    websiteTemplateCustomizableComponentsSchema,
     dashboardCustomersPageSchema,
     dashboardCustomerDetailResponseSchema,
 } from "../../features/Dashboard/SuperAdminDashboard/validation";
@@ -182,6 +185,50 @@ export const deactivateWebsiteTemplateService = async (templateId: string) => {
     const { data } = await authenticatedApi.post(apiRoutes.DASHBOARD_WEBSITE_TEMPLATE_DEACTIVATE(templateId));
 
     return websiteTemplateResponseSchema.parse(data);
+};
+
+// ---- website template customizable components (per-template capability catalogue) ----
+
+export const getWebsiteTemplateCustomizableComponentsService = async (websiteTemplateId: string) => {
+    const { data } = await authenticatedApi.get(
+        apiRoutes.DASHBOARD_WEBSITE_TEMPLATE_CUSTOMIZABLE_COMPONENTS(websiteTemplateId)
+    );
+
+    return websiteTemplateCustomizableComponentsSchema.parse(data);
+};
+
+export const createWebsiteTemplateCustomizableComponentService = async (
+    websiteTemplateId: string,
+    payload: CreateWebsiteTemplateCustomizableComponentPayload
+) => {
+    const { data } = await authenticatedApi.post(
+        apiRoutes.DASHBOARD_WEBSITE_TEMPLATE_CUSTOMIZABLE_COMPONENTS(websiteTemplateId),
+        payload
+    );
+
+    return websiteTemplateCustomizableComponentResponseSchema.parse(data);
+};
+
+export const deactivateWebsiteTemplateCustomizableComponentService = async (
+    websiteTemplateId: string,
+    id: string
+) => {
+    const { data } = await authenticatedApi.post(
+        apiRoutes.DASHBOARD_WEBSITE_TEMPLATE_CUSTOMIZABLE_COMPONENT_DEACTIVATE(websiteTemplateId, id)
+    );
+
+    return websiteTemplateCustomizableComponentResponseSchema.parse(data);
+};
+
+export const reactivateWebsiteTemplateCustomizableComponentService = async (
+    websiteTemplateId: string,
+    id: string
+) => {
+    const { data } = await authenticatedApi.post(
+        apiRoutes.DASHBOARD_WEBSITE_TEMPLATE_CUSTOMIZABLE_COMPONENT_REACTIVATE(websiteTemplateId, id)
+    );
+
+    return websiteTemplateCustomizableComponentResponseSchema.parse(data);
 };
 
 // ---- website template requests ----

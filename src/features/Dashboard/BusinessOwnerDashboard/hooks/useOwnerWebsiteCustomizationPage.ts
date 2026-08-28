@@ -1,4 +1,3 @@
-import { useState } from "react";
 import useAuth from "../../../../context/Auth/useAuth";
 import { ApiError } from "../../../../Error/ApiError";
 import useBusinessDashboardStats from "./data/useBusinessDashboardStats";
@@ -45,7 +44,6 @@ const useOwnerWebsiteCustomizationPage = () => {
         isPending: isPublishing,
         error: publishErrorRaw,
         reset: resetPublishError,
-        data: publishResult,
     } = usePublishWebsiteCustomization(businessId);
 
     const {
@@ -53,12 +51,9 @@ const useOwnerWebsiteCustomizationPage = () => {
         isPending: isRegeneratingPreviewToken,
     } = useRegenerateWebsiteCustomizationPreviewToken(businessId);
 
-    const [saveSucceededAt, setSaveSucceededAt] = useState<number | null>(null);
-
     const save = () => {
         resetSaveError();
-        setSaveSucceededAt(null);
-        saveDraft(form.toPayload(), { onSuccess: () => setSaveSucceededAt(Date.now()) });
+        saveDraft(form.toPayload());
     };
 
     const publishChanges = () => {
@@ -89,12 +84,10 @@ const useOwnerWebsiteCustomizationPage = () => {
 
         isSaving,
         saveError: toErrorMessage(saveErrorRaw, "Couldn't save your changes. Please try again."),
-        saveSucceeded: saveSucceededAt !== null,
         save,
 
         isPublishing,
         publishError: toErrorMessage(publishErrorRaw, "Couldn't publish your changes. Please try again."),
-        publishResult,
         publishChanges,
 
         isRegeneratingPreviewToken,

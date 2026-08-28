@@ -29,11 +29,9 @@ const OwnerWebsiteCustomizationPage = () => {
         form,
         isSaving,
         saveError,
-        saveSucceeded,
         save,
         isPublishing,
         publishError,
-        publishResult,
         publishChanges,
     } = useOwnerWebsiteCustomizationPage();
 
@@ -82,9 +80,6 @@ const OwnerWebsiteCustomizationPage = () => {
                 </div>
             </div>
 
-            {saveSucceeded && !isSaving && (
-                <p className="business-dashboard-form-success">Draft saved.</p>
-            )}
             {saveError && (
                 <p className="business-dashboard-form-error" role="alert">
                     {saveError}
@@ -93,13 +88,6 @@ const OwnerWebsiteCustomizationPage = () => {
             {publishError && (
                 <p className="business-dashboard-form-error" role="alert">
                     {publishError}
-                </p>
-            )}
-            {publishResult && !publishError && (
-                <p className="business-dashboard-form-success">
-                    Published{publishResult.droppedTemplateFieldKeys.length > 0 && (
-                        <> — these fields are no longer supported by your template and weren't published: {publishResult.droppedTemplateFieldKeys.join(", ")}.</>
-                    )}
                 </p>
             )}
             {!websiteUrl && (
