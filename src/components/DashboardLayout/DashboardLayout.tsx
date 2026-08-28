@@ -3,6 +3,7 @@ import {
     FiHome,
     FiBox,
     FiArchive,
+    FiShoppingCart,
     FiGlobe,
     FiSettings,
     FiBriefcase,
@@ -21,6 +22,7 @@ const OWNER_NAV: DashboardNavItem[] = [
     { label: "Overview", to: routes.DASHBOARD, icon: FiHome, end: true },
     { label: "Products", to: routes.DASHBOARD_PRODUCTS, icon: FiBox },
     { label: "Inventory", to: routes.DASHBOARD_INVENTORY, icon: FiArchive },
+    { label: "Orders", to: routes.DASHBOARD_ORDERS, icon: FiShoppingCart },
     { label: "Website & Templates", to: routes.DASHBOARD_WEBSITE, icon: FiGlobe },
     { label: "Settings", to: routes.DASHBOARD_SETTINGS, icon: FiSettings },
 ];

@@ -57,6 +57,12 @@ export const apiRoutes = {
     BUSINESS_DASHBOARD_INVENTORY_MOVEMENTS : (businessId : string) => `/businesses/${businessId}/dashboard/inventory/movements`,
     BUSINESS_DASHBOARD_LOW_STOCK_THRESHOLD : (businessId : string) => `/businesses/${businessId}/dashboard/inventory/low-stock-threshold`,
 
+    /** ORDERS */
+    BUSINESS_DASHBOARD_ORDERS : (businessId : string) => `/businesses/${businessId}/dashboard/orders`,
+    BUSINESS_DASHBOARD_ORDER : (businessId : string, orderId : string) => `/businesses/${businessId}/dashboard/orders/${orderId}`,
+    BUSINESS_DASHBOARD_ORDER_STATUS : (businessId : string, orderId : string) => `/businesses/${businessId}/dashboard/orders/${orderId}/status`,
+    BUSINESS_DASHBOARD_ORDER_PAYMENT_STATUS : (businessId : string, orderId : string) => `/businesses/${businessId}/dashboard/orders/${orderId}/payment-status`,
+
     /** AI PRODUCT DRAFTS */
     PRODUCT_DRAFTS : (businessId : string) => `/businesses/${businessId}/dashboard/product-drafts`,
     PRODUCT_DRAFT : (businessId : string, draftId : string) => `/businesses/${businessId}/dashboard/product-drafts/${draftId}`,

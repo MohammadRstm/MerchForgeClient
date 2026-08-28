@@ -36,6 +36,8 @@ export const businessDashboardStatsResponseSchema = z.object({
     minProductPrice: z.number().nullable(),
     maxProductPrice: z.number().nullable(),
     outOfStockProductCount: z.number(),
+    orderCount: z.number(),
+    pendingOrderCount: z.number(),
     recentProducts: z.array(businessProductResponseSchema),
 
     productsByCategory: z.array(keyCountSchema),
@@ -65,6 +67,59 @@ export const stockMovementSchema = z.object({
 export const stockAdjustmentResponseSchema = z.object({
     product: businessProductResponseSchema,
     movement: stockMovementSchema,
+});
+
+// ---- orders ----
+
+/** Mirrors the server's OrderStatus enum. Pending -> Confirmed | Cancelled; Confirmed -> Shipped | Cancelled; Shipped -> Delivered. Delivered/Cancelled are terminal. */
+export const orderStatusSchema = z.enum(["Pending", "Confirmed", "Shipped", "Delivered", "Cancelled"]);
+
+/** No payment gateway is connected yet — see UpdateOrderPaymentStatusRequest's server-side doc comment. */
+export const paymentStatusSchema = z.enum(["Pending", "Paid", "Refunded"]);
+
+export const businessOrderResponseSchema = z.object({
+    id: z.string().uuid(),
+    customerName: z.string(),
+    customerEmail: z.string(),
+    status: orderStatusSchema,
+    paymentStatus: paymentStatusSchema,
+    total: z.number(),
+    currency: z.string(),
+    itemCount: z.number(),
+    createdAt: z.iso.datetime(),
+});
+
+export const businessOrdersPageSchema = pagedResultSchema(businessOrderResponseSchema);
+
+export const businessOrderItemResponseSchema = z.object({
+    productId: z.string().uuid(),
+    productTitle: z.string(),
+    productImageUrl: z.string().nullable(),
+    unitPrice: z.number(),
+    quantity: z.number(),
+    lineTotal: z.number(),
+});
+
+export const businessOrderDetailResponseSchema = z.object({
+    id: z.string().uuid(),
+    customerName: z.string(),
+    customerEmail: z.string(),
+    customerPhone: z.string().nullable(),
+    shippingAddressLine1: z.string(),
+    shippingAddressLine2: z.string().nullable(),
+    shippingCity: z.string(),
+    shippingState: z.string().nullable(),
+    shippingPostalCode: z.string(),
+    shippingCountry: z.string(),
+    customerNotes: z.string().nullable(),
+    status: orderStatusSchema,
+    paymentStatus: paymentStatusSchema,
+    subtotal: z.number(),
+    total: z.number(),
+    currency: z.string(),
+    items: z.array(businessOrderItemResponseSchema),
+    createdAt: z.iso.datetime(),
+    updatedAt: z.iso.datetime(),
 });
 
 export const inventorySummarySchema = z.object({

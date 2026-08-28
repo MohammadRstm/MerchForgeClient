@@ -2,6 +2,9 @@ import z from "zod";
 import type {
     ProductsQueryParams,
     CreateBusinessMemberPayload,
+    OrdersQueryParams,
+    OrderStatus,
+    PaymentStatus,
 } from "../../features/Dashboard/BusinessOwnerDashboard/types";
 import {
     businessDashboardStatsResponseSchema,
@@ -19,6 +22,8 @@ import {
     stockAdjustmentResponseSchema,
     inventorySummarySchema,
     stockMovementSchema,
+    businessOrdersPageSchema,
+    businessOrderDetailResponseSchema,
 } from "../../features/Dashboard/BusinessOwnerDashboard/validation";
 import { authenticatedApi } from "./api";
 import { apiRoutes } from "./apiRoutes";
@@ -226,6 +231,43 @@ export const updateLowStockThresholdService = async (businessId: string, lowStoc
     await authenticatedApi.put(apiRoutes.BUSINESS_DASHBOARD_LOW_STOCK_THRESHOLD(businessId), {
         lowStockThreshold,
     });
+};
+
+// ---- orders ----
+
+export const getBusinessOrdersService = async (businessId: string, query: OrdersQueryParams) => {
+    const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_ORDERS(businessId), {
+        params: query,
+    });
+
+    return businessOrdersPageSchema.parse(data);
+};
+
+export const getBusinessOrderService = async (businessId: string, orderId: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_ORDER(businessId, orderId));
+
+    return businessOrderDetailResponseSchema.parse(data);
+};
+
+export const updateOrderStatusService = async (businessId: string, orderId: string, status: OrderStatus) => {
+    const { data } = await authenticatedApi.put(apiRoutes.BUSINESS_DASHBOARD_ORDER_STATUS(businessId, orderId), {
+        status,
+    });
+
+    return businessOrderDetailResponseSchema.parse(data);
+};
+
+export const updateOrderPaymentStatusService = async (
+    businessId: string,
+    orderId: string,
+    paymentStatus: PaymentStatus
+) => {
+    const { data } = await authenticatedApi.put(
+        apiRoutes.BUSINESS_DASHBOARD_ORDER_PAYMENT_STATUS(businessId, orderId),
+        { paymentStatus }
+    );
+
+    return businessOrderDetailResponseSchema.parse(data);
 };
 
 export const uploadProductImageService = async (businessId: string, file: File) => {
