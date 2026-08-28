@@ -1,0 +1,58 @@
+import type { SubscriptionPlanPayload } from "../../features/Dashboard/SuperAdminDashboard/types";
+import {
+    subscriptionPlanResponseSchema,
+    subscriptionPlansResponseSchema,
+    subscriptionPlanDetailResponseSchema,
+    featuresResponseSchema,
+} from "../../features/Dashboard/SuperAdminDashboard/validation";
+import { authenticatedApi, unAuthenticatedApi } from "./api";
+import { apiRoutes } from "./apiRoutes";
+
+export const getSubscriptionPlansService = async () => {
+    const { data } = await authenticatedApi.get(apiRoutes.SUBSCRIPTION_PLANS);
+
+    return subscriptionPlansResponseSchema.parse(data);
+};
+
+/** No auth — for the public landing/billing pages. */
+export const getPublicSubscriptionPlansService = async () => {
+    const { data } = await unAuthenticatedApi.get(apiRoutes.SUBSCRIPTION_PLANS_PUBLIC);
+
+    return subscriptionPlansResponseSchema.parse(data);
+};
+
+export const getSubscriptionPlanFeaturesService = async () => {
+    const { data } = await authenticatedApi.get(apiRoutes.SUBSCRIPTION_PLAN_FEATURES);
+
+    return featuresResponseSchema.parse(data);
+};
+
+export const getSubscriptionPlanDetailService = async (id: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.SUBSCRIPTION_PLAN(id));
+
+    return subscriptionPlanDetailResponseSchema.parse(data);
+};
+
+export const createSubscriptionPlanService = async (payload: SubscriptionPlanPayload) => {
+    const { data } = await authenticatedApi.post(apiRoutes.SUBSCRIPTION_PLANS, payload);
+
+    return subscriptionPlanResponseSchema.parse(data);
+};
+
+export const updateSubscriptionPlanService = async (id: string, payload: SubscriptionPlanPayload & { isActive: boolean }) => {
+    const { data } = await authenticatedApi.put(apiRoutes.SUBSCRIPTION_PLAN(id), payload);
+
+    return subscriptionPlanResponseSchema.parse(data);
+};
+
+export const deactivateSubscriptionPlanService = async (id: string) => {
+    const { data } = await authenticatedApi.post(apiRoutes.SUBSCRIPTION_PLAN_DEACTIVATE(id));
+
+    return subscriptionPlanResponseSchema.parse(data);
+};
+
+export const reactivateSubscriptionPlanService = async (id: string) => {
+    const { data } = await authenticatedApi.post(apiRoutes.SUBSCRIPTION_PLAN_REACTIVATE(id));
+
+    return subscriptionPlanResponseSchema.parse(data);
+};

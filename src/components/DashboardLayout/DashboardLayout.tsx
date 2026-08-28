@@ -12,6 +12,7 @@ import {
     FiSliders,
     FiUsers,
     FiUserCheck,
+    FiCreditCard,
 } from "react-icons/fi";
 import "./DashboardLayout.css";
 import Sidebar, { type DashboardNavItem } from "./Sidebar";
@@ -36,6 +37,7 @@ const ADMIN_NAV: DashboardNavItem[] = [
     { label: "Product Fields", to: routes.ADMIN_PRODUCT_FIELDS, icon: FiSliders },
     { label: "Users & Security", to: routes.ADMIN_USERS, icon: FiUsers },
     { label: "Customers", to: routes.ADMIN_CUSTOMERS, icon: FiUserCheck },
+    { label: "Plans", to: routes.ADMIN_PLANS, icon: FiCreditCard },
 ];
 
 interface DashboardLayoutProps {

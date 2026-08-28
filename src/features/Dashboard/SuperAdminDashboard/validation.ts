@@ -3,6 +3,7 @@ import { pagedResultSchema } from "../../../types/pagination";
 import {
     businessMemberResponseSchema,
     businessSubscriptionResponseSchema,
+    planFeatureItemSchema,
     websiteTemplateRequestSchema,
 } from "../BusinessOwnerDashboard/validation";
 
@@ -101,6 +102,57 @@ export const websiteTemplateResponseSchema = z.object({
 });
 
 export const websiteTemplatesResponseSchema = z.array(websiteTemplateResponseSchema);
+
+// ---- subscription plans ----
+
+export const subscriptionPlanResponseSchema = z.object({
+    id: z.string().uuid(),
+    name: z.string(),
+    description: z.string().nullable(),
+    price: z.number(),
+    currency: z.string(),
+    billingInterval: z.string(),
+    isActive: z.boolean(),
+    isCustom: z.boolean(),
+});
+
+export const subscriptionPlansResponseSchema = z.array(subscriptionPlanResponseSchema);
+
+export const subscriptionPlanDetailResponseSchema = subscriptionPlanResponseSchema.extend({
+    activeSubscriberCount: z.number(),
+    features: z.array(planFeatureItemSchema),
+});
+
+export const featureResponseSchema = z.object({
+    id: z.string().uuid(),
+    key: z.string(),
+    name: z.string(),
+    description: z.string().nullable(),
+    isActive: z.boolean(),
+});
+
+export const featuresResponseSchema = z.array(featureResponseSchema);
+
+/** Mirrors the server's CreateSubscriptionPlanRequestValidator/UpdateSubscriptionPlanRequestValidator so the form fails before the round trip. */
+export const subscriptionPlanFormSchema = z.object({
+    name: z.string().trim().min(1, "Enter a plan name.").max(100, "Name must be 100 characters or fewer."),
+    description: z.string().trim().max(500, "Description must be 500 characters or fewer.").optional(),
+    price: z.coerce
+        .number({ message: "Price must be a number." })
+        .min(0, "Price can't be negative."),
+    currency: z
+        .string()
+        .trim()
+        .length(3, "Use a 3-letter currency code, e.g. USD.")
+        .transform((value) => value.toUpperCase()),
+    billingInterval: z.enum(["Monthly", "Yearly"], { message: "Select a billing interval." }),
+    features: z.array(
+        z.object({
+            featureId: z.string().uuid(),
+            limit: z.number().int("Limit must be a whole number.").positive("Limit must be greater than zero.").nullable(),
+        })
+    ),
+});
 
 /** Mirrors the server's CreateWebsiteTemplateRequestValidator so the form fails before the round trip. */
 export const createWebsiteTemplateFormSchema = z.object({

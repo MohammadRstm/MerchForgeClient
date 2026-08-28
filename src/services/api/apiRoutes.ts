@@ -52,6 +52,14 @@ export const apiRoutes = {
     DASHBOARD_WEBSITE_TEMPLATE_REQUEST_START_BUILD : (requestId : string) => `/Dashboard/website-template-requests/${requestId}/start-build`,
     DASHBOARD_WEBSITE_TEMPLATE_REQUEST_CLOSE : (requestId : string) => `/Dashboard/website-template-requests/${requestId}/close`,
 
+    /** SUBSCRIPTION PLANS (SuperAdmin CRUD; /public needs no auth) */
+    SUBSCRIPTION_PLANS : "/subscription-plans",
+    SUBSCRIPTION_PLANS_PUBLIC : "/subscription-plans/public",
+    SUBSCRIPTION_PLAN_FEATURES : "/subscription-plans/features",
+    SUBSCRIPTION_PLAN : (id : string) => `/subscription-plans/${id}`,
+    SUBSCRIPTION_PLAN_DEACTIVATE : (id : string) => `/subscription-plans/${id}/deactivate`,
+    SUBSCRIPTION_PLAN_REACTIVATE : (id : string) => `/subscription-plans/${id}/reactivate`,
+
     /** BUSINESS DASHBOARD */
     BUSINESS_DASHBOARD_STATS : (businessId : string) => `/businesses/${businessId}/dashboard/stats`,
     BUSINESS_DASHBOARD_PRODUCTS : (businessId : string) => `/businesses/${businessId}/dashboard/products`,

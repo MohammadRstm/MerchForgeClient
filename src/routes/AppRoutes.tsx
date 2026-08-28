@@ -27,6 +27,7 @@ import AdminProductFieldsPage from "../features/Dashboard/SuperAdminDashboard/Ad
 import AdminUsersPage from "../features/Dashboard/SuperAdminDashboard/AdminUsersPage";
 import AdminCustomersPage from "../features/Dashboard/SuperAdminDashboard/AdminCustomersPage";
 import AdminCustomerDetailPage from "../features/Dashboard/SuperAdminDashboard/AdminCustomerDetailPage";
+import AdminPlansPage from "../features/Dashboard/SuperAdminDashboard/AdminPlansPage";
 import WebsiteTemplateSelectionPage from "../features/Dashboard/WebsiteTemplateRequest/WebsiteTemplateSelectionPage";
 import NotFound from "../features/NotFound/NotFound";
 
@@ -79,6 +80,7 @@ const AppRoutes = () =>{
                             <Route path="users" element={<AdminUsersPage />} />
                             <Route path="customers" element={<AdminCustomersPage />} />
                             <Route path="customers/:customerId" element={<AdminCustomerDetailPage />} />
+                            <Route path="plans" element={<AdminPlansPage />} />
                         </Route>
                     </Route>
                 </Route>

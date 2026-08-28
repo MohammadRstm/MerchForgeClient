@@ -28,6 +28,7 @@ export const routes = {
     ADMIN_USERS: "/admin/users",
     ADMIN_CUSTOMERS: "/admin/customers",
     ADMIN_CUSTOMER_DETAIL: "/admin/customers/:customerId",
+    ADMIN_PLANS: "/admin/plans",
 
     // Customer (shopper) identity — public, platform-hosted pages a storefront sends a
     // customer to for signup/login, and the hidden silent-renewal page. Entirely

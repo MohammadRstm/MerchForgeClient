@@ -29,6 +29,10 @@ import type {
     dashboardCustomerResponseSchema,
     dashboardCustomerDetailResponseSchema,
     customerBusinessOrderSummarySchema,
+    subscriptionPlanResponseSchema,
+    subscriptionPlanDetailResponseSchema,
+    featureResponseSchema,
+    subscriptionPlanFormSchema,
 } from "./validation";
 
 export type DashboardStatsResponse = z.infer<typeof dashboardStatsResponseSchema>;
@@ -66,6 +70,30 @@ export type CreateWebsiteTemplateFormValues = {
     previewImageUrl: string;
     previewWebsiteUrl: string;
     displayOrder: string;
+};
+
+// ---- subscription plans ----
+
+export type SubscriptionPlanResponse = z.infer<typeof subscriptionPlanResponseSchema>;
+export type SubscriptionPlanDetailResponse = z.infer<typeof subscriptionPlanDetailResponseSchema>;
+export type FeatureResponse = z.infer<typeof featureResponseSchema>;
+
+/** The coerced/validated shape submitted to the API — price is a real number, features carry real numeric/null limits. */
+export type SubscriptionPlanPayload = z.infer<typeof subscriptionPlanFormSchema>;
+
+/**
+ * The raw, string-backed shape the create/edit form's controlled inputs hold
+ * before validation. selectedFeatures maps a Feature's id to its limit input
+ * value ("" means unlimited) — a feature only appears here at all once its
+ * checkbox is checked, so Object.keys(selectedFeatures) is the checked set.
+ */
+export type SubscriptionPlanFormValues = {
+    name: string;
+    description: string;
+    price: string;
+    currency: string;
+    billingInterval: "Monthly" | "Yearly";
+    selectedFeatures: Record<string, string>;
 };
 
 export type UsersSortField = "CreatedAt" | "Name" | "Email";
