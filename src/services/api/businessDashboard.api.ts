@@ -5,6 +5,8 @@ import type {
     OrdersQueryParams,
     OrderStatus,
     PaymentStatus,
+    SocialLinksDto,
+    BusinessHoursDto,
 } from "../../features/Dashboard/BusinessOwnerDashboard/types";
 import {
     businessDashboardStatsResponseSchema,
@@ -24,6 +26,11 @@ import {
     stockMovementSchema,
     businessOrdersPageSchema,
     businessOrderDetailResponseSchema,
+    websiteTemplateCustomizableComponentSchema,
+    websiteCustomizationDraftResponseSchema,
+    publishWebsiteCustomizationResponseSchema,
+    regeneratePreviewTokenResponseSchema,
+    uploadWebsiteCustomizationImageResponseSchema,
 } from "../../features/Dashboard/BusinessOwnerDashboard/validation";
 import { authenticatedApi } from "./api";
 import { apiRoutes } from "./apiRoutes";
@@ -282,4 +289,93 @@ export const uploadProductImageService = async (businessId: string, file: File) 
     );
 
     return productImageUploadSchema.parse(data);
+};
+
+// ---- website customization ----
+
+/** Mirrors the server's WebsiteCustomizationImageKind enum. */
+export type WebsiteCustomizationImageKind = "Logo" | "Favicon" | "TemplateImage";
+
+/**
+ * A full replacement of the draft, matching the "always a complete snapshot, never a
+ * partial diff" contract the backend's BusinessWebsiteDraft keeps — every field is
+ * sent on every save. LogoUrl/FaviconUrl and any Image-typed template field are plain
+ * URL strings, already uploaded via uploadWebsiteCustomizationImageService before
+ * this is called.
+ */
+export type SaveWebsiteCustomizationDraftPayload = {
+    tagline: string | null;
+    description: string | null;
+    logoUrl: string | null;
+    faviconUrl: string | null;
+    contactEmail: string | null;
+    contactPhone: string | null;
+    whatsAppNumber: string | null;
+    addressLine1: string | null;
+    addressLine2: string | null;
+    city: string | null;
+    state: string | null;
+    postalCode: string | null;
+    country: string | null;
+    socialLinks: SocialLinksDto;
+    businessHours: BusinessHoursDto;
+    primaryColor: string | null;
+    templateFields: Record<string, unknown>;
+};
+
+export const getWebsiteCustomizationCatalogueService = async (businessId: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_WEBSITE_CUSTOMIZATION_CATALOGUE(businessId));
+
+    return z.array(websiteTemplateCustomizableComponentSchema).parse(data);
+};
+
+export const getWebsiteCustomizationDraftService = async (businessId: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_WEBSITE_CUSTOMIZATION_DRAFT(businessId));
+
+    return websiteCustomizationDraftResponseSchema.parse(data);
+};
+
+export const saveWebsiteCustomizationDraftService = async (
+    businessId: string,
+    payload: SaveWebsiteCustomizationDraftPayload
+) => {
+    const { data } = await authenticatedApi.put(
+        apiRoutes.BUSINESS_DASHBOARD_WEBSITE_CUSTOMIZATION_DRAFT(businessId),
+        payload
+    );
+
+    return websiteCustomizationDraftResponseSchema.parse(data);
+};
+
+export const publishWebsiteCustomizationService = async (businessId: string) => {
+    const { data } = await authenticatedApi.post(apiRoutes.BUSINESS_DASHBOARD_WEBSITE_CUSTOMIZATION_PUBLISH(businessId));
+
+    return publishWebsiteCustomizationResponseSchema.parse(data);
+};
+
+export const regenerateWebsiteCustomizationPreviewTokenService = async (businessId: string) => {
+    const { data } = await authenticatedApi.post(
+        apiRoutes.BUSINESS_DASHBOARD_WEBSITE_CUSTOMIZATION_PREVIEW_TOKEN_REGENERATE(businessId)
+    );
+
+    return regeneratePreviewTokenResponseSchema.parse(data);
+};
+
+export const uploadWebsiteCustomizationImageService = async (
+    businessId: string,
+    file: File,
+    kind: WebsiteCustomizationImageKind
+) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    // Content-Type is deliberately not set: the browser must generate it so the
+    // multipart boundary is included, and setting it by hand omits that.
+    const { data } = await authenticatedApi.post(
+        apiRoutes.BUSINESS_DASHBOARD_WEBSITE_CUSTOMIZATION_IMAGE(businessId),
+        formData,
+        { params: { kind } }
+    );
+
+    return uploadWebsiteCustomizationImageResponseSchema.parse(data);
 };

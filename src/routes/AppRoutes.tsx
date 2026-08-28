@@ -17,6 +17,7 @@ import OwnerProductsPage from "../features/Dashboard/BusinessOwnerDashboard/Owne
 import OwnerInventoryPage from "../features/Dashboard/BusinessOwnerDashboard/OwnerInventoryPage";
 import OwnerOrdersPage from "../features/Dashboard/BusinessOwnerDashboard/OwnerOrdersPage";
 import OwnerWebsitePage from "../features/Dashboard/BusinessOwnerDashboard/OwnerWebsitePage";
+import OwnerWebsiteCustomizationPage from "../features/Dashboard/BusinessOwnerDashboard/OwnerWebsiteCustomizationPage";
 import OwnerSettingsPage from "../features/Dashboard/BusinessOwnerDashboard/OwnerSettingsPage";
 import AdminOverviewPage from "../features/Dashboard/SuperAdminDashboard/AdminOverviewPage";
 import AdminBusinessesPage from "../features/Dashboard/SuperAdminDashboard/AdminBusinessesPage";
@@ -60,6 +61,7 @@ const AppRoutes = () =>{
                             <Route path="inventory" element={<OwnerInventoryPage />} />
                             <Route path="orders" element={<OwnerOrdersPage />} />
                             <Route path="website" element={<OwnerWebsitePage />} />
+                            <Route path="website/customize" element={<OwnerWebsiteCustomizationPage />} />
                             <Route path="settings" element={<OwnerSettingsPage />} />
                         </Route>
                         <Route path={routes.CHOOSE_WEBSITE_TEMPLATE} element={<WebsiteTemplateSelectionPage />} />

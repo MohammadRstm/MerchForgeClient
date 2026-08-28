@@ -61,6 +61,13 @@ export const apiRoutes = {
     BUSINESS_DASHBOARD_FEATURES : (businessId : string) => `/businesses/${businessId}/dashboard/features`,
     BUSINESS_DASHBOARD_FEATURE_PURCHASES : (businessId : string) => `/businesses/${businessId}/dashboard/features/purchases`,
 
+    /** WEBSITE CUSTOMIZATION */
+    BUSINESS_DASHBOARD_WEBSITE_CUSTOMIZATION_CATALOGUE : (businessId : string) => `/businesses/${businessId}/dashboard/website-customization/catalogue`,
+    BUSINESS_DASHBOARD_WEBSITE_CUSTOMIZATION_DRAFT : (businessId : string) => `/businesses/${businessId}/dashboard/website-customization/draft`,
+    BUSINESS_DASHBOARD_WEBSITE_CUSTOMIZATION_IMAGE : (businessId : string) => `/businesses/${businessId}/dashboard/website-customization/image`,
+    BUSINESS_DASHBOARD_WEBSITE_CUSTOMIZATION_PUBLISH : (businessId : string) => `/businesses/${businessId}/dashboard/website-customization/publish`,
+    BUSINESS_DASHBOARD_WEBSITE_CUSTOMIZATION_PREVIEW_TOKEN_REGENERATE : (businessId : string) => `/businesses/${businessId}/dashboard/website-customization/preview-token/regenerate`,
+
     /** INVENTORY */
     BUSINESS_DASHBOARD_STOCK_ADJUSTMENT : (businessId : string, productId : string) => `/businesses/${businessId}/dashboard/products/${productId}/stock-adjustments`,
     BUSINESS_DASHBOARD_INVENTORY_SUMMARY : (businessId : string) => `/businesses/${businessId}/dashboard/inventory/summary`,
