@@ -23,6 +23,9 @@ import type {
     productAttributeDefinitionResponseSchema,
     createProductAttributeDefinitionFormSchema,
     updateProductAttributeDefinitionFormSchema,
+    websiteCustomizableValueTypeSchema,
+    websiteTemplateCustomizableComponentResponseSchema,
+    createWebsiteTemplateCustomizableComponentFormSchema,
     dashboardCustomerResponseSchema,
     dashboardCustomerDetailResponseSchema,
     customerBusinessOrderSummarySchema,
@@ -119,6 +122,22 @@ export type UpdateProductAttributeDefinitionFormValues = {
     allowedValuesInput: string;
     displayOrder: string;
 };
+
+// ---- website template customizable components ----
+
+export type WebsiteCustomizableValueType = z.infer<typeof websiteCustomizableValueTypeSchema>;
+export type WebsiteTemplateCustomizableComponent = z.infer<typeof websiteTemplateCustomizableComponentResponseSchema>;
+
+/**
+ * The shape submitted to the API when a catalogue checkbox is checked —
+ * key/label/valueType/helpText come straight from the catalogue entry (see
+ * websiteCustomizableFieldCatalogue.ts), never typed by an admin, so there's no
+ * separate string-backed form-values type to convert from the way other admin forms
+ * have one.
+ */
+export type CreateWebsiteTemplateCustomizableComponentPayload = z.infer<
+    typeof createWebsiteTemplateCustomizableComponentFormSchema
+>;
 
 // ---- customers ----
 

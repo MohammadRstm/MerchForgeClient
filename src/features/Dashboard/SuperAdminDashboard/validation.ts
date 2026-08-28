@@ -334,6 +334,58 @@ export const updateProductAttributeDefinitionFormSchema = createProductAttribute
     key: true,
 });
 
+// ---- website template customizable components (per-template capability catalogue) ----
+
+/** Mirrors the server's WebsiteCustomizableValueType enum. Link is a labeled {text,url} pair (a CTA button); Url is a bare string — deliberately distinct types. */
+export const websiteCustomizableValueTypeSchema = z.enum([
+    "Text",
+    "Textarea",
+    "Image",
+    "Color",
+    "Url",
+    "Boolean",
+    "Number",
+    "Select",
+    "Link",
+]);
+
+export const websiteTemplateCustomizableComponentResponseSchema = z.object({
+    id: z.string().uuid(),
+    websiteTemplateId: z.string().uuid(),
+    key: z.string(),
+    label: z.string(),
+    valueType: websiteCustomizableValueTypeSchema,
+    isRequired: z.boolean(),
+    allowedValues: z.array(z.string()),
+    helpText: z.string().nullable(),
+    displayOrder: z.number(),
+    isActive: z.boolean(),
+    createdAt: z.iso.datetime(),
+});
+
+export const websiteTemplateCustomizableComponentsSchema = z.array(websiteTemplateCustomizableComponentResponseSchema);
+
+/** Mirrors the server's CreateWebsiteTemplateCustomizableComponentRequestValidator. WebsiteTemplateId isn't part of this form — it's the template the detail modal is already scoped to, threaded through as a route param, not user input. */
+export const createWebsiteTemplateCustomizableComponentFormSchema = z.object({
+    key: z
+        .string()
+        .trim()
+        .min(1, "Enter a key.")
+        .max(100, "Key must be 100 characters or fewer.")
+        .regex(/^[a-z][a-zA-Z0-9]*$/, "Start lowercase, letters and numbers only, e.g. 'heroImage'."),
+    label: z.string().trim().min(1, "Enter a label.").max(100, "Label must be 100 characters or fewer."),
+    valueType: websiteCustomizableValueTypeSchema,
+    isRequired: z.boolean(),
+    // Comma-separated in the form; split/trimmed before this parses. Only meaningful for Select.
+    allowedValues: z.array(z.string().trim().min(1)),
+    helpText: z.string().trim().max(255, "Help text must be 255 characters or fewer.").optional(),
+    displayOrder: z.coerce
+        .number({ message: "Display order must be a number." })
+        .int("Display order must be a whole number.")
+        .min(0, "Display order must be zero or greater."),
+});
+
+
 // ---- customers ----
 
 export const dashboardCustomerResponseSchema = z.object({

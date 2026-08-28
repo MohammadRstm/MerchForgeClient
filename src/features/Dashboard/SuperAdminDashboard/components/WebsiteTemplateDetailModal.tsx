@@ -2,10 +2,13 @@ import Modal from "../../../../components/Modal/Modal";
 import Spinner from "../../../../components/LoadingSpinner/LoadingSpinner";
 import { resolveImageUrl } from "../../BusinessOwnerDashboard/utils/resolveImageUrl";
 import type useWebsiteTemplateDetailModal from "../hooks/ui/useWebsiteTemplateDetailModal";
+import { WEBSITE_CUSTOMIZABLE_FIELD_CATALOGUE } from "../websiteCustomizableFieldCatalogue";
 
 type WebsiteTemplateDetailModalProps = {
     modal: ReturnType<typeof useWebsiteTemplateDetailModal>;
 };
+
+const CATALOGUE_CATEGORIES = [...new Set(WEBSITE_CUSTOMIZABLE_FIELD_CATALOGUE.map((entry) => entry.category))];
 
 const WebsiteTemplateDetailModal = ({ modal }: WebsiteTemplateDetailModalProps) => {
     const {
@@ -29,6 +32,12 @@ const WebsiteTemplateDetailModal = ({ modal }: WebsiteTemplateDetailModalProps) 
         requestDelete,
         cancelDelete,
         confirmDelete,
+
+        componentsLoading,
+        componentsError,
+        isFieldActive,
+        toggleCatalogueField,
+        isTogglingCatalogueField,
     } = modal;
 
     return (
@@ -190,6 +199,59 @@ const WebsiteTemplateDetailModal = ({ modal }: WebsiteTemplateDetailModalProps) 
                                         </li>
                                     ))}
                                 </ul>
+                            )}
+                        </div>
+
+                        <div className="website-request-detail__notes">
+                            <span className="website-request-detail__notes-label">Customizable fields</span>
+
+                            <p className="dashboard-table-message" style={{ textAlign: "left", padding: 0 }}>
+                                Check what this template's own storefront code actually reads from a business's
+                                saved customization values — inspect the template's source before checking a box,
+                                since nothing here changes the template's code itself.
+                            </p>
+
+                            {componentsLoading ? (
+                                <div className="dashboard-table-loading">
+                                    <Spinner size={24} />
+                                </div>
+                            ) : componentsError ? (
+                                <p className="dashboard-table-message dashboard-table-message--error">
+                                    Failed to load this template's customizable fields. Please try again.
+                                </p>
+                            ) : (
+                                <div className="website-template-field-catalogue">
+                                    {CATALOGUE_CATEGORIES.map((category) => (
+                                        <fieldset key={category} className="website-template-field-catalogue__group">
+                                            <legend>{category}</legend>
+                                            {WEBSITE_CUSTOMIZABLE_FIELD_CATALOGUE.filter((entry) => entry.category === category).map(
+                                                (entry) => (
+                                                    <label
+                                                        key={entry.key}
+                                                        className="website-template-field-catalogue__item"
+                                                        htmlFor={`field-${entry.key}`}
+                                                    >
+                                                        <input
+                                                            id={`field-${entry.key}`}
+                                                            type="checkbox"
+                                                            checked={isFieldActive(entry.key)}
+                                                            onChange={() => toggleCatalogueField(entry)}
+                                                            disabled={isTogglingCatalogueField}
+                                                        />
+                                                        <span>
+                                                            <span className="website-template-field-catalogue__label">
+                                                                {entry.label}
+                                                            </span>
+                                                            <span className="website-template-field-catalogue__description">
+                                                                {entry.description}
+                                                            </span>
+                                                        </span>
+                                                    </label>
+                                                )
+                                            )}
+                                        </fieldset>
+                                    ))}
+                                </div>
                             )}
                         </div>
 
