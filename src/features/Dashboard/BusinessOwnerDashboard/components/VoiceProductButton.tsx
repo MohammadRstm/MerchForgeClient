@@ -34,9 +34,8 @@ const VoiceProductButton = ({ voiceDraft }: VoiceProductButtonProps) => {
         isBusy,
         isConfirming,
         error,
-        creditsRemaining,
-        creditsGrantedTotal,
         includedInPlan,
+        outOfCredits,
         voice,
     } = voiceDraft;
 
@@ -58,7 +57,7 @@ const VoiceProductButton = ({ voiceDraft }: VoiceProductButtonProps) => {
         start();
     };
 
-    const disabled = !voice.isSupported || isFinished || (isBusy && !voice.isRecording);
+    const disabled = !voice.isSupported || isFinished || (isBusy && !voice.isRecording) || (!isActive && outOfCredits);
 
     return (
         <div className="voice-product-button">
@@ -70,8 +69,6 @@ const VoiceProductButton = ({ voiceDraft }: VoiceProductButtonProps) => {
                 {showCreditTracker && (
                     <div className="voice-product-button__pill voice-product-button__controls">
                         <AiCreditBadge
-                            creditsRemaining={creditsRemaining}
-                            creditsGrantedTotal={creditsGrantedTotal}
                             includedInPlan={includedInPlan}
                             tooltipAlign="start"
                         />
@@ -114,11 +111,13 @@ const VoiceProductButton = ({ voiceDraft }: VoiceProductButtonProps) => {
                 title={
                     !voice.isSupported
                         ? "Voice recording isn't supported in this browser."
-                        : voice.isRecording
-                          ? "Stop recording"
-                          : isThinking
-                            ? "Processing your recording…"
-                            : "Add product details with your voice"
+                        : !isActive && outOfCredits
+                          ? "Subscribe to a plan to use AI product creation."
+                          : voice.isRecording
+                            ? "Stop recording"
+                            : isThinking
+                              ? "Processing your recording…"
+                              : "Add product details with your voice"
                 }
             >
                 {voice.isRecording ? (

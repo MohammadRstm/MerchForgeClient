@@ -24,6 +24,7 @@ const colorImages = (overrides: Partial<ColorImages> = {}): ColorImages =>
         creditsRemaining: 10,
         creditsGrantedTotal: 10,
         includedInPlan: false,
+        outOfCredits: false,
         ...overrides,
     }) as ColorImages;
 
@@ -97,7 +98,7 @@ describe("ColorImagesModal", () => {
     });
 
     it("blocks generating when out of credits", () => {
-        render(<ColorImagesModal colorImages={colorImages({ creditsRemaining: 0 })} />);
+        render(<ColorImagesModal colorImages={colorImages({ outOfCredits: true })} />);
 
         expect(screen.getByText(/out of ai image-editing credits/i)).toBeTruthy();
         expect((screen.getByRole("button", { name: "Confirm" }) as HTMLButtonElement).disabled).toBe(true);

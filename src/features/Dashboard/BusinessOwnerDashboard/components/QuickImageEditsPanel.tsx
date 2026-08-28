@@ -28,6 +28,7 @@ const QuickImageEditsPanel = ({ quickEdits }: QuickImageEditsPanelProps) => {
         creditsRemaining,
         creditsGrantedTotal,
         includedInPlan,
+        outOfCredits,
     } = quickEdits;
 
     if (!isOpen || !actionKey) return null;
@@ -61,10 +62,15 @@ const QuickImageEditsPanel = ({ quickEdits }: QuickImageEditsPanelProps) => {
 
             <div className="ai-chat-card__body">
                 {isSelecting ? (
-                    <p className="image-edit-chat__selection-hint">
-                        {selectedUrls.size === 0
-                            ? "Select the image(s) to update below."
-                            : `${selectedUrls.size} image${selectedUrls.size === 1 ? "" : "s"} selected — ${selectedUrls.size} credit${selectedUrls.size === 1 ? "" : "s"} (1 per image).`}
+                    <p
+                        className={outOfCredits ? "business-dashboard-form-error" : "image-edit-chat__selection-hint"}
+                        role={outOfCredits ? "alert" : undefined}
+                    >
+                        {outOfCredits
+                            ? "You're out of AI image-editing credits. Buy more from Features to continue."
+                            : selectedUrls.size === 0
+                              ? "Select the image(s) to update below."
+                              : `${selectedUrls.size} image${selectedUrls.size === 1 ? "" : "s"} selected — ${selectedUrls.size} credit${selectedUrls.size === 1 ? "" : "s"} (1 per image).`}
                     </p>
                 ) : (
                     <ul className="quick-image-edits__progress">
@@ -91,7 +97,7 @@ const QuickImageEditsPanel = ({ quickEdits }: QuickImageEditsPanelProps) => {
                         type="button"
                         className="business-dashboard-button-primary"
                         onClick={confirm}
-                        disabled={selectedUrls.size === 0}
+                        disabled={selectedUrls.size === 0 || outOfCredits}
                     >
                         Confirm
                     </button>

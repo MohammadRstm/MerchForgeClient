@@ -47,6 +47,8 @@ const ImageToolsMenuModal = ({
         onClose();
     };
 
+    const outOfCreditsReason = "You're out of AI image-editing credits. Buy more from Features to continue.";
+
     const rows: MenuRow[] = [
         {
             key: "custom-edit",
@@ -54,6 +56,8 @@ const ImageToolsMenuModal = ({
             label: "Custom edit",
             description: "Describe any change in your own words.",
             onSelect: select(imageEditChat.open),
+            disabled: imageEditChat.outOfCredits,
+            disabledReason: outOfCreditsReason,
         },
         {
             key: "angles",
@@ -61,6 +65,8 @@ const ImageToolsMenuModal = ({
             label: "Generate in multiple angles",
             description: "AI photos of your product from different angles.",
             onSelect: select(multiAngle.open),
+            disabled: multiAngle.outOfCredits,
+            disabledReason: outOfCreditsReason,
         },
         {
             key: "colors",
@@ -68,8 +74,8 @@ const ImageToolsMenuModal = ({
             label: "Add images with colors",
             description: "AI photos of your product in its other colors.",
             onSelect: select(colorImages.open),
-            disabled: !colorImages.hasColors,
-            disabledReason: "Pick at least one product color first",
+            disabled: !colorImages.hasColors || colorImages.outOfCredits,
+            disabledReason: !colorImages.hasColors ? "Pick at least one product color first" : outOfCreditsReason,
         },
         {
             key: "remove-background",
@@ -77,6 +83,8 @@ const ImageToolsMenuModal = ({
             label: "Remove background",
             description: "Replace the background with a clean white studio backdrop.",
             onSelect: select(() => quickImageEdits.open("remove-background")),
+            disabled: quickImageEdits.outOfCredits,
+            disabledReason: outOfCreditsReason,
         },
         {
             key: "enhance-photo",
@@ -84,6 +92,8 @@ const ImageToolsMenuModal = ({
             label: "Enhance photo",
             description: "Improve lighting, sharpness, and color balance.",
             onSelect: select(() => quickImageEdits.open("enhance-photo")),
+            disabled: quickImageEdits.outOfCredits,
+            disabledReason: outOfCreditsReason,
         },
         {
             key: "suggest-details",
@@ -91,6 +101,8 @@ const ImageToolsMenuModal = ({
             label: "Suggest details from photo",
             description: "Let AI fill in the title, description, and more from your photo.",
             onSelect: select(suggestDetails.open),
+            disabled: suggestDetails.outOfCredits,
+            disabledReason: outOfCreditsReason,
         },
     ];
 

@@ -30,6 +30,7 @@ const ImageEditChatPanel = ({ chat }: ImageEditChatPanelProps) => {
         creditsRemaining,
         creditsGrantedTotal,
         includedInPlan,
+        outOfCredits,
     } = chat;
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -96,10 +97,15 @@ const ImageEditChatPanel = ({ chat }: ImageEditChatPanelProps) => {
                         <div ref={messagesEndRef} />
                     </div>
 
-                    <p className="image-edit-chat__selection-hint">
-                        {selectedUrls.size === 0
-                            ? "No images selected yet — click one or more below."
-                            : `${selectedUrls.size} image${selectedUrls.size === 1 ? "" : "s"} selected.`}
+                    <p
+                        className={outOfCredits ? "business-dashboard-form-error" : "image-edit-chat__selection-hint"}
+                        role={outOfCredits ? "alert" : undefined}
+                    >
+                        {outOfCredits
+                            ? "You're out of AI image-editing credits. Buy more from Features to continue."
+                            : selectedUrls.size === 0
+                              ? "No images selected yet — click one or more below."
+                              : `${selectedUrls.size} image${selectedUrls.size === 1 ? "" : "s"} selected.`}
                     </p>
 
                     {error && (
@@ -124,7 +130,7 @@ const ImageEditChatPanel = ({ chat }: ImageEditChatPanelProps) => {
                             voice.isRecording ? " ai-chat__record--active" : ""
                         }`}
                         onClick={voice.isRecording ? voice.stop : voice.start}
-                        disabled={isProcessing || selectedUrls.size === 0}
+                        disabled={isProcessing || selectedUrls.size === 0 || outOfCredits}
                         title={voice.isRecording ? "Stop recording" : "Record a voice message"}
                         aria-label={voice.isRecording ? "Stop recording" : "Record a voice message"}
                     >
@@ -156,7 +162,7 @@ const ImageEditChatPanel = ({ chat }: ImageEditChatPanelProps) => {
                                 sendMessage();
                             }
                         }}
-                        disabled={isProcessing || selectedUrls.size === 0}
+                        disabled={isProcessing || selectedUrls.size === 0 || outOfCredits}
                         aria-label="Edit instruction"
                     />
                 )}
@@ -165,7 +171,13 @@ const ImageEditChatPanel = ({ chat }: ImageEditChatPanelProps) => {
                     type="button"
                     className="business-dashboard-button-primary"
                     onClick={sendMessage}
-                    disabled={isProcessing || voice.isRecording || selectedUrls.size === 0 || !messageInput.trim()}
+                    disabled={
+                        isProcessing ||
+                        voice.isRecording ||
+                        selectedUrls.size === 0 ||
+                        !messageInput.trim() ||
+                        outOfCredits
+                    }
                     hidden={voice.isRecording}
                 >
                     Send

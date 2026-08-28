@@ -55,6 +55,7 @@ const useMultiAngleImages = (
         businessId,
         FEATURE_KEY_AI_IMAGE_EDITING
     );
+    const outOfCredits = !includedInPlan && creditsRemaining !== undefined && creditsRemaining <= 0;
 
     const mainImage = images.find((image) => image.isMain);
 
@@ -102,7 +103,7 @@ const useMultiAngleImages = (
      * alone; it wasn't needed as a source this time.
      */
     const generate = () => {
-        if (!mainImage || selectedKeys.length === 0 || isGenerating) return;
+        if (!mainImage || selectedKeys.length === 0 || isGenerating || outOfCredits) return;
 
         const angles = PRODUCT_IMAGE_ANGLES.filter((angle) => selectedKeys.includes(angle.key));
         const nonMainImages = images.filter((image) => !image.isMain);
@@ -174,6 +175,7 @@ const useMultiAngleImages = (
         creditsRemaining,
         creditsGrantedTotal,
         includedInPlan,
+        outOfCredits,
     };
 };
 

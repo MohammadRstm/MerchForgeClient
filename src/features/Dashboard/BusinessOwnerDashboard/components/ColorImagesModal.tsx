@@ -30,8 +30,8 @@ const ColorImagesModal = ({ colorImages }: ColorImagesModalProps) => {
         results,
         isGenerating,
         generate,
-        creditsRemaining,
         includedInPlan,
+        outOfCredits,
     } = colorImages;
 
     const [lightboxUrl, setLightboxUrl] = useState<string | undefined>(undefined);
@@ -39,8 +39,6 @@ const ColorImagesModal = ({ colorImages }: ColorImagesModalProps) => {
     const isPicking = !results;
     const settledCount = results?.filter((result) => result.status !== "pending").length ?? 0;
     const doneCount = results?.filter((result) => result.status === "done").length ?? 0;
-
-    const outOfCredits = !includedInPlan && creditsRemaining !== undefined && creditsRemaining <= 0;
 
     const costLabel = includedInPlan
         ? "Included in your plan."

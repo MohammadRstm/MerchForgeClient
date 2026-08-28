@@ -21,6 +21,7 @@ const OwnerWebsiteCustomizationPage = () => {
         businessId,
         websiteUrl,
         previewUrl,
+        hasAdvancedCustomization,
         catalogue,
         catalogueLoading,
         draft,
@@ -334,58 +335,72 @@ const OwnerWebsiteCustomizationPage = () => {
                         </div>
                     </section>
 
-                    <section className="business-dashboard-table-card">
-                        <div className="business-dashboard-table-header">
-                            <h3>Social links</h3>
-                        </div>
+                    {hasAdvancedCustomization ? (
+                        <>
+                            <section className="business-dashboard-table-card">
+                                <div className="business-dashboard-table-header">
+                                    <h3>Social links</h3>
+                                </div>
 
-                        <div className="business-dashboard-form">
-                            <div className="business-dashboard-form-row">
-                                {SOCIAL_PLATFORMS.map(({ key, label }) => (
-                                    <div className="business-dashboard-form-field" key={key}>
-                                        <label className="business-dashboard-form-label" htmlFor={`customization-social-${key}`}>
-                                            {label}
-                                            <span className="business-dashboard-form-optional"> (optional)</span>
-                                        </label>
-                                        <input
-                                            id={`customization-social-${key}`}
-                                            className="business-dashboard-form-input"
-                                            type="text"
-                                            placeholder="https://..."
-                                            value={form.values.socialLinks[key]}
-                                            onChange={(e) => form.setSocialLink(key, e.target.value)}
-                                        />
+                                <div className="business-dashboard-form">
+                                    <div className="business-dashboard-form-row">
+                                        {SOCIAL_PLATFORMS.map(({ key, label }) => (
+                                            <div className="business-dashboard-form-field" key={key}>
+                                                <label className="business-dashboard-form-label" htmlFor={`customization-social-${key}`}>
+                                                    {label}
+                                                    <span className="business-dashboard-form-optional"> (optional)</span>
+                                                </label>
+                                                <input
+                                                    id={`customization-social-${key}`}
+                                                    className="business-dashboard-form-input"
+                                                    type="text"
+                                                    placeholder="https://..."
+                                                    value={form.values.socialLinks[key]}
+                                                    onChange={(e) => form.setSocialLink(key, e.target.value)}
+                                                />
+                                            </div>
+                                        ))}
                                     </div>
-                                ))}
-                            </div>
-                        </div>
-                    </section>
+                                </div>
+                            </section>
 
-                    <section className="business-dashboard-table-card">
-                        <div className="business-dashboard-table-header">
-                            <h3>Business hours</h3>
-                        </div>
+                            <section className="business-dashboard-table-card">
+                                <div className="business-dashboard-table-header">
+                                    <h3>Business hours</h3>
+                                </div>
 
-                        <WebsiteCustomizationHoursField value={form.values.businessHours} onChange={form.setBusinessHoursDay} />
-                    </section>
+                                <WebsiteCustomizationHoursField value={form.values.businessHours} onChange={form.setBusinessHoursDay} />
+                            </section>
 
-                    {catalogue.length > 0 && (
+                            {catalogue.length > 0 && (
+                                <section className="business-dashboard-table-card">
+                                    <div className="business-dashboard-table-header">
+                                        <h3>Template customization</h3>
+                                    </div>
+
+                                    <div className="business-dashboard-form">
+                                        {catalogue.map((field) => (
+                                            <WebsiteCustomizationTemplateField
+                                                key={field.id}
+                                                businessId={businessId}
+                                                field={field}
+                                                value={form.values.templateFields[field.key] ?? ""}
+                                                onChange={(value) => form.setTemplateField(field.key, value)}
+                                            />
+                                        ))}
+                                    </div>
+                                </section>
+                            )}
+                        </>
+                    ) : (
                         <section className="business-dashboard-table-card">
                             <div className="business-dashboard-table-header">
-                                <h3>Template customization</h3>
+                                <h3>Social links, business hours & template fields</h3>
                             </div>
-
-                            <div className="business-dashboard-form">
-                                {catalogue.map((field) => (
-                                    <WebsiteCustomizationTemplateField
-                                        key={field.id}
-                                        businessId={businessId}
-                                        field={field}
-                                        value={form.values.templateFields[field.key] ?? ""}
-                                        onChange={(value) => form.setTemplateField(field.key, value)}
-                                    />
-                                ))}
-                            </div>
+                            <p className="business-dashboard-table-message">
+                                Upgrade to Growth or Pro to customize social links, business hours, and per-template
+                                storefront fields (hero image, promo banner, etc.).
+                            </p>
                         </section>
                     )}
                 </>

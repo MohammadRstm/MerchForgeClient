@@ -42,6 +42,7 @@ const useImageEditChat = (businessId: string, onImagesReplaced: (replacements: I
         businessId,
         FEATURE_KEY_AI_IMAGE_EDITING
     );
+    const outOfCredits = !includedInPlan && creditsRemaining !== undefined && creditsRemaining <= 0;
 
     const open = () => {
         setIsOpen(true);
@@ -96,6 +97,11 @@ const useImageEditChat = (businessId: string, onImagesReplaced: (replacements: I
         }
 
         if (!text && !audio) return;
+
+        if (outOfCredits) {
+            setError("You're out of AI image-editing credits. Buy more from Features to continue.");
+            return;
+        }
 
         setMessageInput("");
         setError(undefined);
@@ -205,6 +211,7 @@ const useImageEditChat = (businessId: string, onImagesReplaced: (replacements: I
         creditsRemaining,
         creditsGrantedTotal,
         includedInPlan,
+        outOfCredits,
     };
 };
 

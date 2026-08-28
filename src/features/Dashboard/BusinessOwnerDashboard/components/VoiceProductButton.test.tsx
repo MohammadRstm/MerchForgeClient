@@ -33,9 +33,8 @@ const voiceDraft = (overrides: Partial<VoiceDraft> = {}): VoiceDraft =>
         isBusy: false,
         isConfirming: false,
         error: undefined,
-        creditsRemaining: undefined,
-        creditsGrantedTotal: undefined,
         includedInPlan: false,
+        outOfCredits: false,
         attachImageIfFirst: vi.fn(),
         resolveImage: vi.fn(),
         confirm: vi.fn(),
@@ -167,14 +166,40 @@ describe("VoiceProductButton", () => {
         expect(button.hasAttribute("disabled")).toBe(true);
     });
 
+    it("disables the button when the business isn't entitled to AI product creation", () => {
+        const start = vi.fn();
+
+        render(<VoiceProductButton voiceDraft={voiceDraft({ start, outOfCredits: true })} />);
+
+        const button = screen.getByRole("button", { name: /add with/i });
+        expect(button.hasAttribute("disabled")).toBe(true);
+
+        button.click();
+        expect(start).not.toHaveBeenCalled();
+    });
+
+    it("does not block continuing an already-active draft even if entitlement is lost mid-session", () => {
+        render(
+            <VoiceProductButton
+                voiceDraft={voiceDraft({
+                    isActive: true,
+                    draft: draft(),
+                    outOfCredits: true,
+                    voice: { isSupported: true, isRecording: false, error: undefined, waveform: [], elapsedMs: 0, start: vi.fn(), stop: vi.fn(), cancel: vi.fn() },
+                })}
+            />
+        );
+
+        const button = screen.getByRole("button", { name: /add with/i });
+        expect(button.hasAttribute("disabled")).toBe(false);
+    });
+
     it("stacks the credit tracker above the audio tracker while recording", () => {
         const { container } = render(
             <VoiceProductButton
                 voiceDraft={voiceDraft({
                     isActive: true,
                     draft: draft(),
-                    creditsRemaining: 10,
-                    creditsGrantedTotal: 20,
                     voice: { isSupported: true, isRecording: true, error: undefined, waveform: [0.3], elapsedMs: 1000, start: vi.fn(), stop: vi.fn(), cancel: vi.fn() },
                 })}
             />

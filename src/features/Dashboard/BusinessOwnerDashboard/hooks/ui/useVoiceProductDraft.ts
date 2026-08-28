@@ -3,7 +3,7 @@ import { describeAiChatError } from "../../utils/describeAiChatError";
 import { FEATURE_KEY_AI_PRODUCT_GENERATION } from "../../constants/featureKeys";
 import type { ProductDraft } from "../../types";
 import useProductDraft from "../data/useProductDraft";
-import useFeatureCreditBalance from "../data/useFeatureCreditBalance";
+import useHasPlanFeature from "../data/useHasPlanFeature";
 import useVoiceRecorder from "./useVoiceRecorder";
 
 /**
@@ -22,10 +22,11 @@ const useVoiceProductDraft = (businessId: string, onProductCreated: () => void) 
 
     const describeError = describeAiChatError;
 
-    const { creditsRemaining, creditsGrantedTotal, includedInPlan } = useFeatureCreditBalance(
-        businessId,
-        FEATURE_KEY_AI_PRODUCT_GENERATION
-    );
+    // ai.product_generation is unlimited-by-plan-only now (no standalone credit
+    // purchase), so entitlement is a plain "does the active plan include it"
+    // check, not a credit balance.
+    const { hasFeature: includedInPlan } = useHasPlanFeature(businessId, FEATURE_KEY_AI_PRODUCT_GENERATION);
+    const outOfCredits = !includedInPlan;
 
     const draftApi = useProductDraft(businessId, (updated) => {
         setDraft(updated);
@@ -144,9 +145,8 @@ const useVoiceProductDraft = (businessId: string, onProductCreated: () => void) 
         isBusy,
         isConfirming: draftApi.confirm.isPending,
         error,
-        creditsRemaining,
-        creditsGrantedTotal,
         includedInPlan,
+        outOfCredits,
 
         attachImageIfFirst,
         resolveImage,
