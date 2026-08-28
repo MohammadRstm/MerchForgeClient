@@ -1,0 +1,157 @@
+/* Home.css's .mf-* utility classes (mf-btn, mf-section, mf-headline, ...) are
+   plain global selectors, safe to reuse here — but its design-token custom
+   properties are scoped to .home specifically, so this page redeclares the
+   same values under its own root class rather than inheriting nothing. */
+.plan-detail {
+  --mf-bg: #e9ebec;
+  --mf-bg-raised: #ffffff;
+  --mf-text: #14161b;
+  --mf-text-secondary: #5b6270;
+  --mf-text-muted: #8a8f99;
+  --mf-border: #d6d8da;
+  --mf-accent: #ff9b00;
+  --mf-accent-mid: #ffaa00;
+  --mf-accent-tint: #fff4e0;
+
+  --mf-display-font: 'Fraunces', 'Times New Roman', serif;
+  --mf-body-font: 'Inter', system-ui, sans-serif;
+  --mf-display-weight: 500;
+  --mf-display-tracking: -0.02em;
+
+  min-height: 100vh;
+  background: var(--mf-bg);
+  color: var(--mf-text);
+  font-family: var(--mf-body-font);
+}
+
+.plan-detail__inner {
+  max-width: 640px;
+}
+
+.plan-detail__loading,
+.plan-detail__error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 4rem 0;
+  text-align: center;
+}
+
+.plan-detail__error p {
+  font-family: var(--mf-body-font);
+  color: var(--mf-text-secondary);
+}
+
+.plan-detail__name {
+  font-size: clamp(2rem, 5vw, 2.75rem);
+}
+
+.plan-detail__tagline {
+  max-width: 46ch;
+}
+
+.plan-detail__price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin: 1.75rem 0 0.4rem;
+}
+
+.plan-detail__price {
+  font-family: var(--mf-display-font);
+  font-weight: var(--mf-display-weight);
+  font-size: 2.75rem;
+  letter-spacing: var(--mf-display-tracking);
+  color: var(--mf-text);
+}
+
+.plan-detail__cadence {
+  font-family: var(--mf-body-font);
+  font-size: 1rem;
+  color: var(--mf-text-secondary);
+}
+
+.plan-detail__alternate {
+  font-family: var(--mf-body-font);
+  font-size: 0.875rem;
+  color: var(--mf-text-muted);
+  margin: 0 0 2rem;
+}
+
+.plan-detail__cta {
+  margin-bottom: 3rem;
+}
+
+.plan-detail__features {
+  border-top: 1px solid var(--mf-border);
+  padding-top: 2rem;
+}
+
+.plan-detail__features-heading {
+  font-family: var(--mf-display-font);
+  font-weight: var(--mf-display-weight);
+  letter-spacing: var(--mf-display-tracking);
+  font-size: 1.25rem;
+  color: var(--mf-text);
+  margin: 0 0 1.5rem;
+}
+
+.plan-detail__no-features {
+  font-family: var(--mf-body-font);
+  color: var(--mf-text-secondary);
+}
+
+.plan-detail__features-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.plan-detail__feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.plan-detail__feature-check {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--mf-accent);
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+}
+
+.plan-detail__feature-name {
+  display: block;
+  font-family: var(--mf-body-font);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--mf-text);
+}
+
+.plan-detail__feature-description {
+  display: block;
+  font-family: var(--mf-body-font);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--mf-text-secondary);
+  margin-top: 0.2rem;
+}
+
+.plan-detail__back-link {
+  display: inline-block;
+  margin-top: 3rem;
+  font-family: var(--mf-body-font);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--mf-text-secondary);
+  text-decoration: none;
+}
+
+.plan-detail__back-link:hover {
+  color: var(--mf-text);
+}

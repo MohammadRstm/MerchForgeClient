@@ -13,6 +13,7 @@ import {
     FiUsers,
     FiUserCheck,
     FiCreditCard,
+    FiDollarSign,
 } from "react-icons/fi";
 import "./DashboardLayout.css";
 import Sidebar, { type DashboardNavItem } from "./Sidebar";
@@ -26,6 +27,7 @@ const OWNER_NAV: DashboardNavItem[] = [
     { label: "Inventory", to: routes.DASHBOARD_INVENTORY, icon: FiArchive },
     { label: "Orders", to: routes.DASHBOARD_ORDERS, icon: FiShoppingCart },
     { label: "Website & Templates", to: routes.DASHBOARD_WEBSITE, icon: FiGlobe },
+    { label: "Billing", to: routes.DASHBOARD_BILLING, icon: FiDollarSign },
     { label: "Settings", to: routes.DASHBOARD_SETTINGS, icon: FiSettings },
 ];
 

@@ -115,6 +115,15 @@ export const getBusinessSubscriptionService = async (businessId: string) => {
     return businessSubscriptionResponseSchema.parse(response.data);
 };
 
+/** Subscribes (or switches) the business to a plan — always replaces the current Active subscription immediately, no real payment gateway yet. */
+export const subscribeToPlanService = async (businessId: string, subscriptionPlanId: string) => {
+    const { data } = await authenticatedApi.post(apiRoutes.BUSINESS_DASHBOARD_SUBSCRIPTION(businessId), {
+        subscriptionPlanId,
+    });
+
+    return businessSubscriptionResponseSchema.parse(data);
+};
+
 // ---- product CRUD ----
 
 export const getProductFormService = async (businessId: string) => {

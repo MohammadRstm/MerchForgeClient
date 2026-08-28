@@ -272,6 +272,7 @@ export const createBusinessMemberFormSchema = z.object({
 export const planFeatureItemSchema = z.object({
     featureKey: z.string(),
     featureName: z.string(),
+    featureDescription: z.string().nullable(),
     limit: z.number().nullable(),
 });
 

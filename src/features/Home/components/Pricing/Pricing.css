@@ -110,6 +110,13 @@
   color: var(--mf-text-secondary);
 }
 
+.pricing__yearly-note {
+  font-family: var(--mf-body-font);
+  font-size: 0.8125rem;
+  color: var(--mf-text-muted);
+  margin: -1rem 0 1.5rem;
+}
+
 .pricing__features {
   list-style: none;
   margin: 0 0 1.75rem;

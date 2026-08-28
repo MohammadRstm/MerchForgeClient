@@ -1,4 +1,6 @@
+import { Link } from "react-router";
 import Spinner from "../../../../components/LoadingSpinner/LoadingSpinner";
+import { routes } from "../../../../config/routes";
 import type { BusinessSubscriptionResponse } from "../types";
 
 type SubscriptionCardProps = {
@@ -27,7 +29,8 @@ const SubscriptionCard = ({ subscription, isLoading, isError }: SubscriptionCard
                 </p>
             ) : !subscription ? (
                 <p className="business-dashboard-table-message">
-                    No subscription yet. Your business isn't on a plan.
+                    No subscription yet. Your business isn't on a plan.{" "}
+                    <Link to={routes.DASHBOARD_BILLING}>Choose a plan</Link>
                 </p>
             ) : (
                 <div className="business-dashboard-subscription">
@@ -48,7 +51,8 @@ const SubscriptionCard = ({ subscription, isLoading, isError }: SubscriptionCard
 
                     <p className="business-dashboard-subscription-period">
                         Current period: {new Date(subscription.currentPeriodStart).toLocaleDateString()} –{" "}
-                        {new Date(subscription.currentPeriodEnd).toLocaleDateString()}
+                        {new Date(subscription.currentPeriodEnd).toLocaleDateString()} ·{" "}
+                        <Link to={routes.DASHBOARD_BILLING}>Manage plan</Link>
                     </p>
 
                     {subscription.features.length > 0 && (

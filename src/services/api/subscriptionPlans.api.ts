@@ -1,3 +1,4 @@
+import z from "zod";
 import type { SubscriptionPlanPayload } from "../../features/Dashboard/SuperAdminDashboard/types";
 import {
     subscriptionPlanResponseSchema,
@@ -14,11 +15,13 @@ export const getSubscriptionPlansService = async () => {
     return subscriptionPlansResponseSchema.parse(data);
 };
 
-/** No auth — for the public landing/billing pages. */
+const publicSubscriptionPlansResponseSchema = z.array(subscriptionPlanDetailResponseSchema);
+
+/** No auth — includes each plan's features, for the public landing/billing pages. */
 export const getPublicSubscriptionPlansService = async () => {
     const { data } = await unAuthenticatedApi.get(apiRoutes.SUBSCRIPTION_PLANS_PUBLIC);
 
-    return subscriptionPlansResponseSchema.parse(data);
+    return publicSubscriptionPlansResponseSchema.parse(data);
 };
 
 export const getSubscriptionPlanFeaturesService = async () => {

@@ -16,21 +16,21 @@ const FAQS: FaqItem[] = [
   },
   {
     number: '02',
-    question: 'What does the Standard plan actually include?',
+    question: 'What does every plan include?',
     answer:
-      'A fully responsive website and a free NFC card customers can tap to leave a Google review. The website is managed by MerchForge — to add or edit products, you contact us rather than editing it yourself.',
+      'A fully responsive, self-managed website with an owner dashboard, unlimited AI product creation, and basic branding — your logo, favicon, brand color, and contact details on your storefront. Growth and Pro add more image-edit credits and unlock advanced customization: social links, business hours, and per-template storefront fields.',
   },
   {
     number: '03',
-    question: 'How do the image and voice-to-text credits work?',
+    question: 'How do image-edit credits work?',
     answer:
-      'Each credit covers one AI action — generating a product image in a new angle or color, or transcribing a voice note into product details. The Premium plan includes 200 image credits and 300 voice-to-text credits per year.',
+      'Each credit covers one AI image edit — generating a product photo in a new angle or color, or editing an existing photo. Credits reset every billing period and don’t roll over; Starter includes 40/month, Growth 150, and Pro 400. AI product creation itself is unlimited on every plan.',
   },
   {
     number: '04',
     question: 'Can I switch plans later?',
     answer:
-      "Yes. If you outgrow the Standard plan's managed website, you can move to Premium for self-managed control and AI credits — or talk to us about a Custom plan built around your business.",
+      'Yes — switching takes effect immediately from your dashboard’s Billing page, any time. Or talk to us about a custom plan built around your business.',
   },
   {
     number: '05',
