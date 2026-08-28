@@ -333,3 +333,41 @@ export const updateProductAttributeDefinitionFormSchema = createProductAttribute
     businessDomainId: true,
     key: true,
 });
+
+// ---- customers ----
+
+export const dashboardCustomerResponseSchema = z.object({
+    id: z.string().uuid(),
+    firstName: z.string(),
+    lastName: z.string(),
+    email: z.string(),
+    orderCount: z.number(),
+    createdAt: z.iso.datetime(),
+});
+
+export const dashboardCustomersPageSchema = pagedResultSchema(dashboardCustomerResponseSchema);
+
+export const customerBusinessOrderSummarySchema = z.object({
+    businessId: z.string().uuid(),
+    businessName: z.string(),
+    orderCount: z.number(),
+    totalSpent: z.number(),
+    currency: z.string(),
+});
+
+export const dashboardCustomerDetailResponseSchema = z.object({
+    id: z.string().uuid(),
+    firstName: z.string(),
+    lastName: z.string(),
+    email: z.string(),
+    phone: z.string().nullable(),
+    addressLine1: z.string().nullable(),
+    addressLine2: z.string().nullable(),
+    city: z.string().nullable(),
+    state: z.string().nullable(),
+    postalCode: z.string().nullable(),
+    country: z.string().nullable(),
+    createdAt: z.iso.datetime(),
+    updatedAt: z.iso.datetime(),
+    businesses: z.array(customerBusinessOrderSummarySchema),
+});

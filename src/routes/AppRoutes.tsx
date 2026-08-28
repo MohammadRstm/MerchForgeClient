@@ -8,6 +8,9 @@ import Home from "../features/Home/Home";
 import { routes } from "../config/routes";
 import Login from "../features/Auth/Login/Login";
 import AcceptInvitation from "../features/Auth/AcceptInvitation/AcceptInvitation";
+import CustomerLogin from "../features/CustomerAuth/CustomerLogin/CustomerLogin";
+import CustomerSignup from "../features/CustomerAuth/CustomerSignup/CustomerSignup";
+import CustomerSilent from "../features/CustomerAuth/CustomerSilent/CustomerSilent";
 import DashboardLayout from "../components/DashboardLayout/DashboardLayout";
 import OwnerOverviewPage from "../features/Dashboard/BusinessOwnerDashboard/OwnerOverviewPage";
 import OwnerProductsPage from "../features/Dashboard/BusinessOwnerDashboard/OwnerProductsPage";
@@ -22,6 +25,8 @@ import AdminWebsiteRequestsPage from "../features/Dashboard/SuperAdminDashboard/
 import AdminTemplatesPage from "../features/Dashboard/SuperAdminDashboard/AdminTemplatesPage";
 import AdminProductFieldsPage from "../features/Dashboard/SuperAdminDashboard/AdminProductFieldsPage";
 import AdminUsersPage from "../features/Dashboard/SuperAdminDashboard/AdminUsersPage";
+import AdminCustomersPage from "../features/Dashboard/SuperAdminDashboard/AdminCustomersPage";
+import AdminCustomerDetailPage from "../features/Dashboard/SuperAdminDashboard/AdminCustomerDetailPage";
 import WebsiteTemplateSelectionPage from "../features/Dashboard/WebsiteTemplateRequest/WebsiteTemplateSelectionPage";
 import NotFound from "../features/NotFound/NotFound";
 
@@ -35,7 +40,14 @@ const AppRoutes = () =>{
                 <Route element={<PagesWithHeaderLayout />}>
                     <Route path={routes.ACCEPT_INVITATION} element={<AcceptInvitation />} />
                     <Route path={routes.LOGIN} element={<Login />} />
+                    <Route path={routes.CUSTOMER_LOGIN} element={<CustomerLogin />} />
+                    <Route path={routes.CUSTOMER_SIGNUP} element={<CustomerSignup />} />
                 </Route>
+
+                {/* No layout at all: this page is never seen by a person — it's loaded in a
+                    hidden iframe or a flash-popup by the storefront SDK's silent-renewal
+                    chain, and it must stay as small/fast as possible. */}
+                <Route path={routes.CUSTOMER_SILENT} element={<CustomerSilent />} />
 
                 {/* Dashboard routes intentionally do not use PagesWithHeaderLayout — a SaaS
                     dashboard shouldn't sit under the marketing nav bar. DashboardLayout is
@@ -61,6 +73,8 @@ const AppRoutes = () =>{
                             <Route path="templates" element={<AdminTemplatesPage />} />
                             <Route path="product-fields" element={<AdminProductFieldsPage />} />
                             <Route path="users" element={<AdminUsersPage />} />
+                            <Route path="customers" element={<AdminCustomersPage />} />
+                            <Route path="customers/:customerId" element={<AdminCustomerDetailPage />} />
                         </Route>
                     </Route>
                 </Route>
