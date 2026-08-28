@@ -23,6 +23,9 @@ import type {
     productAttributeDefinitionResponseSchema,
     createProductAttributeDefinitionFormSchema,
     updateProductAttributeDefinitionFormSchema,
+    dashboardCustomerResponseSchema,
+    dashboardCustomerDetailResponseSchema,
+    customerBusinessOrderSummarySchema,
 } from "./validation";
 
 export type DashboardStatsResponse = z.infer<typeof dashboardStatsResponseSchema>;
@@ -115,4 +118,18 @@ export type UpdateProductAttributeDefinitionFormValues = {
     isRequired: boolean;
     allowedValuesInput: string;
     displayOrder: string;
+};
+
+// ---- customers ----
+
+export type DashboardCustomerResponse = z.infer<typeof dashboardCustomerResponseSchema>;
+export type CustomerBusinessOrderSummary = z.infer<typeof customerBusinessOrderSummarySchema>;
+export type DashboardCustomerDetailResponse = z.infer<typeof dashboardCustomerDetailResponseSchema>;
+
+export type CustomersSortField = "CreatedAt" | "Name" | "Email";
+
+export type CustomersQueryParams = PagedQuery & {
+    search?: string;
+    sortBy: CustomersSortField;
+    sortDescending: boolean;
 };

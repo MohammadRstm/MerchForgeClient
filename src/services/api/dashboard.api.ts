@@ -1,5 +1,6 @@
 import type {
     BusinessesQueryParams,
+    CustomersQueryParams,
     UsersQueryParams,
     CreateWebsiteTemplatePayload,
     UpdateWebsiteTemplatePayload,
@@ -24,6 +25,8 @@ import {
     metadataShapeSchema,
     productAttributeDefinitionResponseSchema,
     productAttributeDefinitionsSchema,
+    dashboardCustomersPageSchema,
+    dashboardCustomerDetailResponseSchema,
 } from "../../features/Dashboard/SuperAdminDashboard/validation";
 import { authenticatedApi } from "./api";
 import { apiRoutes } from "./apiRoutes";
@@ -48,6 +51,20 @@ export const getDashboardBusinessesService = async (query: BusinessesQueryParams
     });
 
     return dashboardBusinessesPageSchema.parse(data);
+};
+
+export const getDashboardCustomersService = async (query: CustomersQueryParams) => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_CUSTOMERS, {
+        params: query,
+    });
+
+    return dashboardCustomersPageSchema.parse(data);
+};
+
+export const getDashboardCustomerDetailService = async (customerId: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_CUSTOMER_DETAIL(customerId));
+
+    return dashboardCustomerDetailResponseSchema.parse(data);
 };
 
 export const revokeUserSessionsService = async (userId: string) => {

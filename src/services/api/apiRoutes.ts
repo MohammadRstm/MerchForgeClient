@@ -6,6 +6,14 @@ export const apiRoutes = {
     AUTH_REFRESH : "/Auth/refresh",
     AUTH_LOGOUT : "/Auth/logout",
 
+    /** CUSTOMER AUTH — the platform's own login/signup/silent-renewal pages. Refresh/
+     *  logout/exchange are deliberately not called from MerchForgeClient itself: refresh
+     *  is what /silent uses internally on the server, exchange is storefront-SDK-only,
+     *  and logout isn't exposed anywhere in this platform UI yet. */
+    CUSTOMER_AUTH_LOGIN : "/CustomerAuth/login",
+    CUSTOMER_AUTH_SIGNUP : "/CustomerAuth/signup",
+    CUSTOMER_AUTH_SILENT : "/CustomerAuth/silent",
+
     /** DOMAINS (public reference data, read during registration) */
     DOMAINS : "/domains",
     DOMAIN_CATEGORIES : (domainId : string) => `/domains/${domainId}/categories`,
@@ -29,6 +37,8 @@ export const apiRoutes = {
     DASHBOARD_PRODUCT_ATTRIBUTE_DEACTIVATE : (id : string) => `/Dashboard/product-attributes/${id}/deactivate`,
     DASHBOARD_PRODUCT_ATTRIBUTE_REACTIVATE : (id : string) => `/Dashboard/product-attributes/${id}/reactivate`,
     DASHBOARD_REVOKE_USER_SESSIONS : (userId : string) => `/Dashboard/users/${userId}/revoke-sessions`,
+    DASHBOARD_CUSTOMERS : "/Dashboard/customers",
+    DASHBOARD_CUSTOMER_DETAIL : (customerId : string) => `/Dashboard/customers/${customerId}`,
     DASHBOARD_WEBSITE_TEMPLATES : "/Dashboard/website-templates",
     DASHBOARD_WEBSITE_TEMPLATE_IMAGE : "/Dashboard/website-templates/image",
     DASHBOARD_WEBSITE_TEMPLATE : (templateId : string) => `/Dashboard/website-templates/${templateId}`,

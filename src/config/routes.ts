@@ -25,7 +25,20 @@ export const routes = {
     ADMIN_TEMPLATES: "/admin/templates",
     ADMIN_PRODUCT_FIELDS: "/admin/product-fields",
     ADMIN_USERS: "/admin/users",
+    ADMIN_CUSTOMERS: "/admin/customers",
+    ADMIN_CUSTOMER_DETAIL: "/admin/customers/:customerId",
+
+    // Customer (shopper) identity — public, platform-hosted pages a storefront sends a
+    // customer to for signup/login, and the hidden silent-renewal page. Entirely
+    // separate from the business-owner LOGIN above: distinct auth scheme, distinct
+    // session, no shared state.
+    CUSTOMER_LOGIN: "/customer/login",
+    CUSTOMER_SIGNUP: "/customer/signup",
+    CUSTOMER_SILENT: "/customer/silent",
 };
 
 export const buildAdminBusinessDetailRoute = (businessId: string) =>
     `/admin/businesses/${businessId}`;
+
+export const buildAdminCustomerDetailRoute = (customerId: string) =>
+    `/admin/customers/${customerId}`;
