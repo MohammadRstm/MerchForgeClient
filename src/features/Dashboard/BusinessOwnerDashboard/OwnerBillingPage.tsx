@@ -18,6 +18,11 @@ const OwnerBillingPage = () => {
         isSubscribing,
         pendingPlanId,
         isCurrentPlan,
+        confirmingCancel,
+        requestCancel,
+        cancelCancel,
+        confirmCancel,
+        isCancelling,
     } = useOwnerBillingPage();
 
     const isLoading = plansLoading || subscriptionLoading;
@@ -33,6 +38,58 @@ const OwnerBillingPage = () => {
                 <p className="business-dashboard-table-message business-dashboard-table-message--error">
                     Your subscription is {subscription.status.toLowerCase()}. Choose a plan below to reactivate.
                 </p>
+            )}
+
+            {subscription?.status === "Active" && (
+                <section className="business-dashboard-table-card">
+                    <div className="business-dashboard-table-header">
+                        <h3>Manage subscription</h3>
+                    </div>
+
+                    {subscription.cancelAtPeriodEnd ? (
+                        <p className="business-dashboard-table-message">
+                            Your plan won't renew — you'll keep full access until{" "}
+                            {new Date(subscription.currentPeriodEnd).toLocaleDateString()}. Choose a plan above any
+                            time to resume.
+                        </p>
+                    ) : confirmingCancel ? (
+                        <div className="business-dashboard-form">
+                            <p className="business-dashboard-form-error">
+                                Cancel your {subscription.planName} plan? You'll keep full access until{" "}
+                                {new Date(subscription.currentPeriodEnd).toLocaleDateString()}, then your website
+                                will be taken down.
+                            </p>
+                            <div className="business-dashboard-header-actions">
+                                <button
+                                    type="button"
+                                    className="business-dashboard-button-secondary"
+                                    onClick={cancelCancel}
+                                    disabled={isCancelling}
+                                >
+                                    Keep my plan
+                                </button>
+                                <button
+                                    type="button"
+                                    className="business-dashboard-button-primary"
+                                    onClick={confirmCancel}
+                                    disabled={isCancelling}
+                                >
+                                    {isCancelling ? "Cancelling..." : "Cancel plan"}
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        <>
+                            <p className="business-dashboard-form-hint">
+                                You're on the {subscription.planName} plan, renewing{" "}
+                                {new Date(subscription.currentPeriodEnd).toLocaleDateString()}.
+                            </p>
+                            <button type="button" className="business-dashboard-button-secondary" onClick={requestCancel}>
+                                Cancel plan
+                            </button>
+                        </>
+                    )}
+                </section>
             )}
 
             {isLoading ? (

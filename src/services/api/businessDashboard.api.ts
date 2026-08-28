@@ -124,6 +124,13 @@ export const subscribeToPlanService = async (businessId: string, subscriptionPla
     return businessSubscriptionResponseSchema.parse(data);
 };
 
+/** Marks the subscription to end at CurrentPeriodEnd instead of renewing — access continues uninterrupted until then. */
+export const cancelSubscriptionService = async (businessId: string) => {
+    const { data } = await authenticatedApi.post(apiRoutes.BUSINESS_DASHBOARD_SUBSCRIPTION_CANCEL(businessId));
+
+    return businessSubscriptionResponseSchema.parse(data);
+};
+
 // ---- product CRUD ----
 
 export const getProductFormService = async (businessId: string) => {

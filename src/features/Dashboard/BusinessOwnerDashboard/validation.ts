@@ -286,6 +286,7 @@ export const businessSubscriptionResponseSchema = z
         status: z.string(),
         currentPeriodStart: z.iso.datetime(),
         currentPeriodEnd: z.iso.datetime(),
+        cancelAtPeriodEnd: z.boolean(),
         features: z.array(planFeatureItemSchema),
     })
     .nullable();

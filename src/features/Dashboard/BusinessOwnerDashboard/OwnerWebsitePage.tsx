@@ -14,6 +14,7 @@ const STATUS_BADGE_CLASS: Record<WebsiteTemplateRequestStatus, string> = {
 const OwnerWebsitePage = () => {
     const {
         websiteUrl,
+        hasActiveSubscription,
         websiteTemplateOptions,
         websiteTemplateOptionsLoading,
         websiteTemplateOptionsError,
@@ -56,9 +57,18 @@ const OwnerWebsitePage = () => {
                         <button
                             type="button"
                             className="business-dashboard-button-primary"
-                            onClick={() => navigate(routes.CHOOSE_WEBSITE_TEMPLATE)}
+                            onClick={() =>
+                                navigate(
+                                    hasActiveSubscription ? routes.CHOOSE_WEBSITE_TEMPLATE : routes.DASHBOARD_BILLING
+                                )
+                            }
+                            title={hasActiveSubscription ? undefined : "Choose a plan first — a website needs an active subscription."}
                         >
-                            {hasOpenRequest ? "View website request" : "Choose website template"}
+                            {hasOpenRequest
+                                ? "View website request"
+                                : hasActiveSubscription
+                                  ? "Choose website template"
+                                  : "Choose a plan to build your website"}
                         </button>
                     )}
                 </div>
