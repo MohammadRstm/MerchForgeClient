@@ -1846,3 +1846,91 @@ p.voice-product-button__pill {
     color: #333;
     padding: 0 4px 4px;
 }
+
+/* ---------- Website customization ---------- */
+
+.business-dashboard-back-link {
+    display: inline-block;
+    font-size: 13px;
+    color: #6b6b6b;
+    text-decoration: none;
+    margin-bottom: 4px;
+}
+
+.business-dashboard-back-link:hover {
+    color: #2563eb;
+    text-decoration: underline;
+}
+
+.business-dashboard-form-success {
+    font-size: 13px;
+    color: #15803d;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin-bottom: 16px;
+}
+
+.website-customization-image-preview-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.website-customization-image-preview {
+    max-width: 120px;
+    max-height: 80px;
+    object-fit: contain;
+    border: 1px solid #e2e2e2;
+    border-radius: 6px;
+    background: #fafafa;
+}
+
+.website-customization-color-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.website-customization-color-row input[type="color"] {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 1px solid #e2e2e2;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.website-customization-color-row .business-dashboard-form-input {
+    flex: 1;
+}
+
+.website-customization-hours-field {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.website-customization-hours-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.website-customization-hours-day-label {
+    width: 90px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+}
+
+.website-customization-hours-row .business-dashboard-form-input {
+    width: auto;
+}
+
+.website-customization-hours-separator {
+    font-size: 13px;
+    color: #8a8a8a;
+}

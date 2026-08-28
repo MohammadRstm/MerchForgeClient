@@ -348,6 +348,99 @@ export const businessFeatureCreditSchema = z.object({
     creditsGrantedTotal: z.number(),
 });
 
+// ---- website customization ----
+
+export const socialLinksDtoSchema = z.object({
+    facebook: z.string().nullable(),
+    instagram: z.string().nullable(),
+    twitter: z.string().nullable(),
+    tikTok: z.string().nullable(),
+    youTube: z.string().nullable(),
+    linkedIn: z.string().nullable(),
+});
+
+const businessHoursDayDtoSchema = z
+    .object({
+        closed: z.boolean(),
+        open: z.string().nullable(),
+        close: z.string().nullable(),
+    })
+    .nullable();
+
+export const businessHoursDtoSchema = z.object({
+    monday: businessHoursDayDtoSchema,
+    tuesday: businessHoursDayDtoSchema,
+    wednesday: businessHoursDayDtoSchema,
+    thursday: businessHoursDayDtoSchema,
+    friday: businessHoursDayDtoSchema,
+    saturday: businessHoursDayDtoSchema,
+    sunday: businessHoursDayDtoSchema,
+});
+
+/** Mirrors the server's WebsiteCustomizableValueType enum. */
+export const websiteCustomizableValueTypeSchema = z.enum([
+    "Text",
+    "Textarea",
+    "Image",
+    "Color",
+    "Url",
+    "Boolean",
+    "Number",
+    "Select",
+    "Link",
+]);
+
+export const websiteTemplateCustomizableComponentSchema = z.object({
+    id: z.string().uuid(),
+    websiteTemplateId: z.string().uuid(),
+    key: z.string(),
+    label: z.string(),
+    valueType: websiteCustomizableValueTypeSchema,
+    isRequired: z.boolean(),
+    allowedValues: z.array(z.string()),
+    helpText: z.string().nullable(),
+    displayOrder: z.number(),
+    isActive: z.boolean(),
+});
+
+export const websiteCustomizationDraftResponseSchema = z.object({
+    tagline: z.string().nullable(),
+    description: z.string().nullable(),
+    logoUrl: z.string().nullable(),
+    faviconUrl: z.string().nullable(),
+    contactEmail: z.string().nullable(),
+    contactPhone: z.string().nullable(),
+    whatsAppNumber: z.string().nullable(),
+    addressLine1: z.string().nullable(),
+    addressLine2: z.string().nullable(),
+    city: z.string().nullable(),
+    state: z.string().nullable(),
+    postalCode: z.string().nullable(),
+    country: z.string().nullable(),
+    socialLinks: socialLinksDtoSchema,
+    businessHours: businessHoursDtoSchema,
+    primaryColor: z.string().nullable(),
+    // Opaque per-template values, keyed by that template's own catalogue keys —
+    // validated server-side against the current template's catalogue, not here.
+    templateFields: z.record(z.string(), z.unknown()),
+    updatedAt: z.iso.datetime(),
+    lastPublishedAt: z.iso.datetime().nullable(),
+    previewToken: z.string(),
+});
+
+export const publishWebsiteCustomizationResponseSchema = z.object({
+    droppedTemplateFieldKeys: z.array(z.string()),
+    publishedAt: z.iso.datetime(),
+});
+
+export const regeneratePreviewTokenResponseSchema = z.object({
+    previewToken: z.string(),
+});
+
+export const uploadWebsiteCustomizationImageResponseSchema = z.object({
+    imageUrl: z.string(),
+});
+
 // ---- AI image editing ----
 
 export const imageEditJobSchema = z.object({

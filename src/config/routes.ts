@@ -14,6 +14,7 @@ export const routes = {
     DASHBOARD_INVENTORY: "/dashboard/inventory",
     DASHBOARD_ORDERS: "/dashboard/orders",
     DASHBOARD_WEBSITE: "/dashboard/website",
+    DASHBOARD_WEBSITE_CUSTOMIZE: "/dashboard/website/customize",
     CHOOSE_WEBSITE_TEMPLATE: "/dashboard/website/choose",
     DASHBOARD_SETTINGS: "/dashboard/settings",
 

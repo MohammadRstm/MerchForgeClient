@@ -42,6 +42,16 @@ const OwnerWebsitePage = () => {
                         </a>
                     )}
 
+                    {websiteUrl && (
+                        <button
+                            type="button"
+                            className="business-dashboard-button-primary"
+                            onClick={() => navigate(routes.DASHBOARD_WEBSITE_CUSTOMIZE)}
+                        >
+                            Customize
+                        </button>
+                    )}
+
                     {!websiteTemplateOptionsLoading && websiteTemplateOptions && (
                         <button
                             type="button"

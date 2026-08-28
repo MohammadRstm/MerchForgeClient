@@ -35,6 +35,12 @@ import type {
     featureCreditOverviewSchema,
     businessFeatureCreditSchema,
     imageEditJobSchema,
+    socialLinksDtoSchema,
+    businessHoursDtoSchema,
+    websiteCustomizableValueTypeSchema,
+    websiteTemplateCustomizableComponentSchema,
+    websiteCustomizationDraftResponseSchema,
+    publishWebsiteCustomizationResponseSchema,
 } from "./validation";
 
 export type BusinessDashboardStatsResponse = z.infer<typeof businessDashboardStatsResponseSchema>;
@@ -126,4 +132,59 @@ export type BusinessOrderDetail = z.infer<typeof businessOrderDetailResponseSche
 export type OrdersQueryParams = PagedQuery & {
     status?: OrderStatus;
     search?: string;
+};
+
+// ---- website customization ----
+
+export type SocialLinksDto = z.infer<typeof socialLinksDtoSchema>;
+export type BusinessHoursDto = z.infer<typeof businessHoursDtoSchema>;
+export type WebsiteCustomizableValueType = z.infer<typeof websiteCustomizableValueTypeSchema>;
+export type WebsiteTemplateCustomizableComponent = z.infer<typeof websiteTemplateCustomizableComponentSchema>;
+export type WebsiteCustomizationDraft = z.infer<typeof websiteCustomizationDraftResponseSchema>;
+export type PublishWebsiteCustomizationResponse = z.infer<typeof publishWebsiteCustomizationResponseSchema>;
+
+export type WeekDay = "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday" | "sunday";
+
+export const WEEK_DAYS: WeekDay[] = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+
+/** Form representation of one day. `open`/`close` both blank and `closed` false means "not set" — distinct from explicitly closed — and is sent to the server as null. */
+export type WebsiteCustomizationHoursDayFormValue = {
+    closed: boolean;
+    open: string;
+    close: string;
+};
+
+/** A template field's edited value. Link is the one structured type (a labeled CTA button); every other type edits as a plain string or boolean. */
+export type WebsiteCustomizationTemplateFieldValue = string | boolean | { text: string; url: string };
+
+/**
+ * Customization form state. Every field is edited as a string/boolean the way inputs
+ * naturally produce them, converted to the draft save payload's real shape only on
+ * submit — same convention ProductFormValues already uses for product metadata.
+ */
+export type WebsiteCustomizationFormValues = {
+    tagline: string;
+    description: string;
+    logoUrl: string;
+    faviconUrl: string;
+    contactEmail: string;
+    contactPhone: string;
+    whatsAppNumber: string;
+    addressLine1: string;
+    addressLine2: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
+    socialLinks: {
+        facebook: string;
+        instagram: string;
+        twitter: string;
+        tikTok: string;
+        youTube: string;
+        linkedIn: string;
+    };
+    businessHours: Record<WeekDay, WebsiteCustomizationHoursDayFormValue>;
+    primaryColor: string;
+    templateFields: Record<string, WebsiteCustomizationTemplateFieldValue>;
 };

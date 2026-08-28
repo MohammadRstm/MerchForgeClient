@@ -10,13 +10,13 @@ import Login from "../features/Auth/Login/Login";
 import AcceptInvitation from "../features/Auth/AcceptInvitation/AcceptInvitation";
 import CustomerLogin from "../features/CustomerAuth/CustomerLogin/CustomerLogin";
 import CustomerSignup from "../features/CustomerAuth/CustomerSignup/CustomerSignup";
-import CustomerSilent from "../features/CustomerAuth/CustomerSilent/CustomerSilent";
 import DashboardLayout from "../components/DashboardLayout/DashboardLayout";
 import OwnerOverviewPage from "../features/Dashboard/BusinessOwnerDashboard/OwnerOverviewPage";
 import OwnerProductsPage from "../features/Dashboard/BusinessOwnerDashboard/OwnerProductsPage";
 import OwnerInventoryPage from "../features/Dashboard/BusinessOwnerDashboard/OwnerInventoryPage";
 import OwnerOrdersPage from "../features/Dashboard/BusinessOwnerDashboard/OwnerOrdersPage";
 import OwnerWebsitePage from "../features/Dashboard/BusinessOwnerDashboard/OwnerWebsitePage";
+import OwnerWebsiteCustomizationPage from "../features/Dashboard/BusinessOwnerDashboard/OwnerWebsiteCustomizationPage";
 import OwnerSettingsPage from "../features/Dashboard/BusinessOwnerDashboard/OwnerSettingsPage";
 import AdminOverviewPage from "../features/Dashboard/SuperAdminDashboard/AdminOverviewPage";
 import AdminBusinessesPage from "../features/Dashboard/SuperAdminDashboard/AdminBusinessesPage";
@@ -44,10 +44,13 @@ const AppRoutes = () =>{
                     <Route path={routes.CUSTOMER_SIGNUP} element={<CustomerSignup />} />
                 </Route>
 
-                {/* No layout at all: this page is never seen by a person — it's loaded in a
-                    hidden iframe or a flash-popup by the storefront SDK's silent-renewal
-                    chain, and it must stay as small/fast as possible. */}
-                <Route path={routes.CUSTOMER_SILENT} element={<CustomerSilent />} />
+                {/* routes.CUSTOMER_SILENT is NOT registered here — main.tsx renders it
+                    standalone, before AppProviders (AuthProvider, react-query) ever mounts.
+                    That page is loaded in a hidden iframe or flash-popup by every storefront
+                    on every page load regardless of customer login state; routing it through
+                    the normal app shell used to mount AuthProvider unconditionally too, which
+                    silently exercised the business owner's own session as a side effect. See
+                    main.tsx's comment for the full story. */}
 
                 {/* Dashboard routes intentionally do not use PagesWithHeaderLayout — a SaaS
                     dashboard shouldn't sit under the marketing nav bar. DashboardLayout is
@@ -60,6 +63,7 @@ const AppRoutes = () =>{
                             <Route path="inventory" element={<OwnerInventoryPage />} />
                             <Route path="orders" element={<OwnerOrdersPage />} />
                             <Route path="website" element={<OwnerWebsitePage />} />
+                            <Route path="website/customize" element={<OwnerWebsiteCustomizationPage />} />
                             <Route path="settings" element={<OwnerSettingsPage />} />
                         </Route>
                         <Route path={routes.CHOOSE_WEBSITE_TEMPLATE} element={<WebsiteTemplateSelectionPage />} />
