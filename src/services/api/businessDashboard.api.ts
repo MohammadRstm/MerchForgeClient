@@ -26,6 +26,9 @@ import {
     stockMovementSchema,
     businessOrdersPageSchema,
     businessOrderDetailResponseSchema,
+    orderStatsResponseSchema,
+    orderNoteResponseSchema,
+    orderStatusHistoryEntryResponseSchema,
     websiteTemplateCustomizableComponentSchema,
     websiteCustomizationDraftResponseSchema,
     publishWebsiteCustomizationResponseSchema,
@@ -278,6 +281,34 @@ export const updateOrderStatusService = async (businessId: string, orderId: stri
     });
 
     return businessOrderDetailResponseSchema.parse(data);
+};
+
+export const getOrderStatsService = async (businessId: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_ORDER_STATS(businessId));
+
+    return orderStatsResponseSchema.parse(data);
+};
+
+export const getOrderNotesService = async (businessId: string, orderId: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_ORDER_NOTES(businessId, orderId));
+
+    return z.array(orderNoteResponseSchema).parse(data);
+};
+
+export const createOrderNoteService = async (businessId: string, orderId: string, content: string) => {
+    const { data } = await authenticatedApi.post(apiRoutes.BUSINESS_DASHBOARD_ORDER_NOTES(businessId, orderId), {
+        content,
+    });
+
+    return orderNoteResponseSchema.parse(data);
+};
+
+export const getOrderStatusHistoryService = async (businessId: string, orderId: string) => {
+    const { data } = await authenticatedApi.get(
+        apiRoutes.BUSINESS_DASHBOARD_ORDER_STATUS_HISTORY(businessId, orderId)
+    );
+
+    return z.array(orderStatusHistoryEntryResponseSchema).parse(data);
 };
 
 export const updateOrderPaymentStatusService = async (

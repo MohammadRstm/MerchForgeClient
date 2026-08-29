@@ -1965,3 +1965,426 @@ p.voice-product-button__pill {
     font-size: 13px;
     color: #8a8a8a;
 }
+
+/* ---------- Orders page ---------- */
+
+.business-dashboard-page-subtitle {
+    margin: 4px 0 0;
+    font-size: 14px;
+    color: #777;
+}
+
+/* Needs attention */
+
+.needs-attention {
+    margin-bottom: 24px;
+}
+
+.needs-attention-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.needs-attention-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+    background: #fff8ec;
+    border: 1px solid #ffe4b5;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+/* Toolbar */
+
+.orders-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    padding: 0 0 12px;
+}
+
+.orders-toolbar-date-range {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #666;
+}
+
+.orders-toolbar-date-range .business-dashboard-form-input {
+    width: auto;
+    padding: 7px 10px;
+}
+
+/* Status tabs */
+
+.order-status-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 0 0 16px;
+    border-bottom: 1px solid #ececec;
+    margin-bottom: 16px;
+}
+
+.order-status-tab {
+    background: none;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #666;
+    cursor: pointer;
+}
+
+.order-status-tab:hover {
+    background: #f5f5f5;
+}
+
+.order-status-tab--active {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+/* Row / card actions menu */
+
+.order-row-actions {
+    position: relative;
+    display: inline-block;
+}
+
+.order-row-actions-menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 4px);
+    z-index: 20;
+
+    display: flex;
+    flex-direction: column;
+    min-width: 170px;
+
+    background: #fff;
+    border: 1px solid #e2e2e2;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .12);
+    padding: 6px;
+}
+
+.order-row-actions-menu button {
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #333;
+    cursor: pointer;
+}
+
+.order-row-actions-menu button:hover {
+    background: #f5f5f5;
+}
+
+.order-row-actions-menu-danger {
+    color: #dc2626 !important;
+}
+
+.order-row-actions-menu-danger:hover {
+    background: #fef2f2 !important;
+}
+
+/* Bulk actions bar */
+
+.bulk-actions-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+}
+
+.bulk-actions-count {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1d4ed8;
+}
+
+.bulk-actions-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+/* Table footer */
+
+.orders-table-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.orders-table-total {
+    font-size: 13px;
+    color: #777;
+}
+
+/* Responsive card list — hidden by default, shown below the table's breakpoint */
+
+.orders-card-list {
+    display: none;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.order-card {
+    border: 1px solid #e2e2e2;
+    border-radius: 10px;
+    padding: 12px;
+    cursor: pointer;
+}
+
+.order-card-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.order-card-ref {
+    font-weight: 600;
+    flex: 1;
+}
+
+.order-card-customer {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.order-card-meta {
+    font-size: 12px;
+    color: #8a8a8a;
+}
+
+.order-card-bottom {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #555;
+    margin-top: 8px;
+}
+
+.order-card-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 6px;
+}
+
+@media (max-width: 640px) {
+    .orders-table-wrapper {
+        display: none;
+    }
+
+    .orders-card-list {
+        display: flex;
+    }
+}
+
+/* Order detail drawer: timeline */
+
+.order-timeline {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.order-timeline-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    position: relative;
+    padding-bottom: 18px;
+    opacity: .45;
+}
+
+.order-timeline-step:last-child {
+    padding-bottom: 0;
+}
+
+.order-timeline-step::before {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 16px;
+    bottom: 0;
+    width: 2px;
+    background: #e2e2e2;
+}
+
+.order-timeline-step:last-child::before {
+    display: none;
+}
+
+.order-timeline-step--done {
+    opacity: 1;
+}
+
+.order-timeline-step--done::before {
+    background: #12875a;
+}
+
+.order-timeline-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #e2e2e2;
+    margin-top: 3px;
+    flex-shrink: 0;
+}
+
+.order-timeline-step--done .order-timeline-dot {
+    background: #12875a;
+}
+
+.order-timeline-step--cancelled .order-timeline-dot {
+    background: #d92d20;
+}
+
+.order-timeline-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.order-timeline-time {
+    font-size: 12px;
+    color: #8a8a8a;
+}
+
+.order-timeline-loading {
+    font-size: 12px;
+    color: #999;
+    margin-top: 4px;
+}
+
+/* Customer history + communication */
+
+.order-customer-history {
+    font-size: 12px;
+    color: #666;
+    margin: 6px 0 0;
+}
+
+.order-communication-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+/* Internal notes */
+
+.order-notes-section {
+    margin-bottom: 20px;
+}
+
+.order-notes-composer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 8px 0 12px;
+}
+
+.order-notes-composer .business-dashboard-button-secondary {
+    align-self: flex-end;
+}
+
+.order-notes-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.order-note {
+    padding: 10px 12px;
+    background: #fafafa;
+    border: 1px solid #ececec;
+    border-radius: 8px;
+}
+
+.order-note-content {
+    margin: 0 0 4px;
+    font-size: 14px;
+    white-space: pre-wrap;
+}
+
+.order-note-meta {
+    margin: 0;
+    font-size: 12px;
+    color: #8a8a8a;
+}
+
+/* Print — hidden on screen everywhere, shown only inside the browser's print output.
+   The classic "print just this element" trick: hide the whole document, then make
+   .print-only (and everything inside it) visible again, laid out to fill the page. */
+
+.print-only {
+    display: none;
+}
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    .print-only,
+    .print-only * {
+        visibility: visible;
+    }
+
+    .print-only {
+        display: block;
+        position: fixed;
+        inset: 0;
+        padding: 32px;
+    }
+}
+
+.order-print-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+}
+
+.order-print-table th,
+.order-print-table td {
+    text-align: left;
+    padding: 6px 8px;
+    border-bottom: 1px solid #ddd;
+}
+
+.order-print-total {
+    text-align: right;
+    font-weight: 700;
+    margin-top: 12px;
+}

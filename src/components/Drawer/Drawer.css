@@ -1,0 +1,50 @@
+.drawer-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .5);
+
+    display: flex;
+    justify-content: flex-end;
+
+    z-index: 1000;
+    animation: drawerFadeIn .2s ease;
+}
+
+.drawer-container {
+    position: relative;
+
+    width: min(92vw, 560px);
+    height: 100%;
+
+    background: #fff;
+    box-shadow: -8px 0 30px rgba(0, 0, 0, .18);
+
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+
+    animation: drawerSlideIn .25s ease;
+}
+
+.drawer-cancel-button {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+}
+
+@media (max-width: 640px) {
+    .drawer-container {
+        width: 100vw;
+    }
+}
+
+@keyframes drawerFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes drawerSlideIn {
+    from { transform: translateX(24px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}

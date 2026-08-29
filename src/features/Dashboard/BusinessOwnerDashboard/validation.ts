@@ -81,6 +81,7 @@ export const businessOrderResponseSchema = z.object({
     id: z.string().uuid(),
     customerName: z.string(),
     customerEmail: z.string(),
+    customerPhone: z.string().nullable(),
     status: orderStatusSchema,
     paymentStatus: paymentStatusSchema,
     total: z.number(),
@@ -102,6 +103,7 @@ export const businessOrderItemResponseSchema = z.object({
 
 export const businessOrderDetailResponseSchema = z.object({
     id: z.string().uuid(),
+    customerId: z.string().uuid().nullable(),
     customerName: z.string(),
     customerEmail: z.string(),
     customerPhone: z.string().nullable(),
@@ -120,6 +122,33 @@ export const businessOrderDetailResponseSchema = z.object({
     items: z.array(businessOrderItemResponseSchema),
     createdAt: z.iso.datetime(),
     updatedAt: z.iso.datetime(),
+    customerOrderCount: z.number().nullable(),
+    customerLastOrderAt: z.iso.datetime().nullable(),
+});
+
+export const orderStatsResponseSchema = z.object({
+    totalCount: z.number(),
+    pendingCount: z.number(),
+    confirmedCount: z.number(),
+    shippedCount: z.number(),
+    deliveredCount: z.number(),
+    cancelledCount: z.number(),
+    stalePendingCount: z.number(),
+    oldestPendingOrderCreatedAt: z.iso.datetime().nullable(),
+    recentlyCancelledCount: z.number(),
+});
+
+export const orderNoteResponseSchema = z.object({
+    id: z.string().uuid(),
+    content: z.string(),
+    createdByUserName: z.string(),
+    createdAt: z.iso.datetime(),
+});
+
+export const orderStatusHistoryEntryResponseSchema = z.object({
+    status: orderStatusSchema,
+    changedByUserName: z.string().nullable(),
+    createdAt: z.iso.datetime(),
 });
 
 export const inventorySummarySchema = z.object({

@@ -92,6 +92,9 @@ export const apiRoutes = {
     BUSINESS_DASHBOARD_ORDER : (businessId : string, orderId : string) => `/businesses/${businessId}/dashboard/orders/${orderId}`,
     BUSINESS_DASHBOARD_ORDER_STATUS : (businessId : string, orderId : string) => `/businesses/${businessId}/dashboard/orders/${orderId}/status`,
     BUSINESS_DASHBOARD_ORDER_PAYMENT_STATUS : (businessId : string, orderId : string) => `/businesses/${businessId}/dashboard/orders/${orderId}/payment-status`,
+    BUSINESS_DASHBOARD_ORDER_STATS : (businessId : string) => `/businesses/${businessId}/dashboard/orders/stats`,
+    BUSINESS_DASHBOARD_ORDER_NOTES : (businessId : string, orderId : string) => `/businesses/${businessId}/dashboard/orders/${orderId}/notes`,
+    BUSINESS_DASHBOARD_ORDER_STATUS_HISTORY : (businessId : string, orderId : string) => `/businesses/${businessId}/dashboard/orders/${orderId}/status-history`,
 
     /** AI PRODUCT DRAFTS */
     PRODUCT_DRAFTS : (businessId : string) => `/businesses/${businessId}/dashboard/product-drafts`,

@@ -19,6 +19,9 @@ import type {
     businessOrderResponseSchema,
     businessOrderItemResponseSchema,
     businessOrderDetailResponseSchema,
+    orderStatsResponseSchema,
+    orderNoteResponseSchema,
+    orderStatusHistoryEntryResponseSchema,
     businessSubscriptionResponseSchema,
     productDraftMessageSchema,
     productDraftProductSchema,
@@ -132,7 +135,18 @@ export type BusinessOrderDetail = z.infer<typeof businessOrderDetailResponseSche
 export type OrdersQueryParams = PagedQuery & {
     status?: OrderStatus;
     search?: string;
+    /** Inclusive, ISO datetime (UTC), start of the range. */
+    from?: string;
+    /** Inclusive, ISO datetime (UTC), end of the range. */
+    to?: string;
 };
+
+export type OrderStats = z.infer<typeof orderStatsResponseSchema>;
+export type OrderNote = z.infer<typeof orderNoteResponseSchema>;
+export type OrderStatusHistoryEntry = z.infer<typeof orderStatusHistoryEntryResponseSchema>;
+
+/** A named date-range preset for the orders toolbar's date filter. "custom" pairs with an explicit from/to picked by the owner. */
+export type OrderDateFilterPreset = "all" | "today" | "yesterday" | "last7" | "last30" | "custom";
 
 // ---- website customization ----
 

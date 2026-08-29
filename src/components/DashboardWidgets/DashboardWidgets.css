@@ -26,6 +26,34 @@
     color: #777;
 }
 
+.widget-stat-card--clickable {
+    cursor: pointer;
+    transition: border-color .15s, box-shadow .15s, transform .1s;
+}
+
+.widget-stat-card--clickable:hover {
+    border-color: #c7c7c7;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .06);
+}
+
+.widget-stat-card--clickable:active {
+    transform: scale(.98);
+}
+
+.widget-stat-card--clickable:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+}
+
+.widget-stat-card--active {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 1px #2563eb;
+}
+
+.widget-stat-card--active .widget-stat-card-value {
+    color: #2563eb;
+}
+
 .widget-charts-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
