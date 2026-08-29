@@ -1,16 +1,10 @@
 import type { TooltipContentProps } from "recharts";
-import type { AnalyticsMetric, OrderAnalyticsGranularity } from "../types";
-
-const currencyFormatter = new Intl.NumberFormat(undefined, { style: "currency", currency: "USD" });
-
-type TooltipPayloadPoint = {
-    period: string;
-    revenue: number;
-    orderCount: number;
-};
+import type { ChartMetricConfig, ChartPoint } from "../utils/chartMetrics";
+import type { OrderAnalyticsGranularity } from "../types";
 
 type AnalyticsTooltipProps = TooltipContentProps & {
-    metric: AnalyticsMetric;
+    activeKey: string;
+    metrics: ChartMetricConfig[];
     granularity: OrderAnalyticsGranularity;
 };
 
@@ -23,30 +17,29 @@ const formatPeriodHeading = (period: string, granularity: OrderAnalyticsGranular
 
 /**
  * Fully custom — not Recharts' default tooltip — so it reads as a MerchForge UI
- * element rather than a library widget. Always shows both metrics (the underlying
- * point already carries both), with whichever one is currently charted emphasized,
- * per the "adapt accordingly when the metric switches" requirement.
+ * element rather than a library widget. Renders one row per configured metric (only
+ * metrics the caller actually has data for), with whichever one is currently charted
+ * emphasized, per the "adapt accordingly when the metric switches" requirement.
  */
-const AnalyticsTooltip = ({ active, payload, metric, granularity }: AnalyticsTooltipProps) => {
+const AnalyticsTooltip = ({ active, payload, activeKey, metrics, granularity }: AnalyticsTooltipProps) => {
     if (!active || !payload || payload.length === 0) return null;
 
-    const point = payload[0].payload as TooltipPayloadPoint;
+    const point = payload[0].payload as ChartPoint;
 
     return (
         <div className="analytics-tooltip">
             <div className="analytics-tooltip-heading">{formatPeriodHeading(point.period, granularity)}</div>
 
-            <div className={`analytics-tooltip-row${metric === "revenue" ? " analytics-tooltip-row--active" : ""}`}>
-                <span className="analytics-tooltip-dot analytics-tooltip-dot--revenue" />
-                <span className="analytics-tooltip-label">Revenue</span>
-                <span className="analytics-tooltip-value">{currencyFormatter.format(point.revenue)}</span>
-            </div>
-
-            <div className={`analytics-tooltip-row${metric === "orders" ? " analytics-tooltip-row--active" : ""}`}>
-                <span className="analytics-tooltip-dot analytics-tooltip-dot--orders" />
-                <span className="analytics-tooltip-label">Orders</span>
-                <span className="analytics-tooltip-value">{point.orderCount}</span>
-            </div>
+            {metrics.map((metric) => (
+                <div
+                    key={metric.key}
+                    className={`analytics-tooltip-row${metric.key === activeKey ? " analytics-tooltip-row--active" : ""}`}
+                >
+                    <span className="analytics-tooltip-dot" style={{ background: metric.color }} />
+                    <span className="analytics-tooltip-label">{metric.label}</span>
+                    <span className="analytics-tooltip-value">{metric.formatValue(Number(point[metric.key] ?? 0))}</span>
+                </div>
+            ))}
         </div>
     );
 };

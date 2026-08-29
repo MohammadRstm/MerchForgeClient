@@ -26,6 +26,14 @@ import type {
     orderAnalyticsPointResponseSchema,
     orderAnalyticsPeriodTotalsResponseSchema,
     orderAnalyticsResponseSchema,
+    productCatalogOverviewResponseSchema,
+    productAnalyticsPointResponseSchema,
+    productAnalyticsPeriodTotalsResponseSchema,
+    productAllTimeTotalsResponseSchema,
+    productAnalyticsResponseSchema,
+    productPerformanceEntryResponseSchema,
+    categoryPerformanceEntryResponseSchema,
+    productPerformanceResponseSchema,
     businessSubscriptionResponseSchema,
     productDraftMessageSchema,
     productDraftProductSchema,
@@ -161,6 +169,17 @@ export type OrderAnalytics = z.infer<typeof orderAnalyticsResponseSchema>;
 export type AnalyticsRangePreset = "7d" | "30d" | "3m" | "6m" | "1y" | "custom";
 
 export type AnalyticsMetric = "revenue" | "orders";
+
+export type ProductCatalogOverview = z.infer<typeof productCatalogOverviewResponseSchema>;
+export type ProductAnalyticsPoint = z.infer<typeof productAnalyticsPointResponseSchema>;
+export type ProductAnalyticsPeriodTotals = z.infer<typeof productAnalyticsPeriodTotalsResponseSchema>;
+export type ProductAllTimeTotals = z.infer<typeof productAllTimeTotalsResponseSchema>;
+export type ProductAnalytics = z.infer<typeof productAnalyticsResponseSchema>;
+export type ProductPerformanceEntry = z.infer<typeof productPerformanceEntryResponseSchema>;
+export type CategoryPerformanceEntry = z.infer<typeof categoryPerformanceEntryResponseSchema>;
+export type ProductPerformance = z.infer<typeof productPerformanceResponseSchema>;
+
+export type ProductAnalyticsMetric = "revenue" | "unitsSold" | "orders";
 
 // ---- website customization ----
 

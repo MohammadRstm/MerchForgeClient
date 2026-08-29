@@ -1,21 +1,8 @@
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import type { DotProps } from "recharts";
 import AnalyticsTooltip from "./AnalyticsTooltip";
-import type { AnalyticsMetric, OrderAnalyticsGranularity, OrderAnalyticsPoint } from "../types";
-
-const METRIC_COLOR: Record<AnalyticsMetric, string> = {
-    revenue: "#ff9b00",
-    orders: "#3b82f6",
-};
-
-const compactCurrencyFormatter = new Intl.NumberFormat(undefined, {
-    style: "currency",
-    currency: "USD",
-    notation: "compact",
-    maximumFractionDigits: 1,
-});
-
-const compactNumberFormatter = new Intl.NumberFormat(undefined, { notation: "compact", maximumFractionDigits: 1 });
+import type { ChartMetricConfig, ChartPoint } from "../utils/chartMetrics";
+import type { OrderAnalyticsGranularity } from "../types";
 
 const formatXAxisTick = (period: string, granularity: OrderAnalyticsGranularity) => {
     const date = new Date(period);
@@ -38,23 +25,30 @@ const ActiveDot = (props: DotProps & { fill?: string }) => {
 };
 
 type AnalyticsChartProps = {
-    points: OrderAnalyticsPoint[];
-    metric: AnalyticsMetric;
+    points: ChartPoint[];
+    /** The metric actually plotted as the area/line. */
+    activeMetric: ChartMetricConfig;
+    /** Every metric shown in the hover tooltip — usually includes activeMetric plus its siblings. */
+    tooltipMetrics: ChartMetricConfig[];
     granularity: OrderAnalyticsGranularity;
+    height?: number;
 };
 
-const AnalyticsChart = ({ points, metric, granularity }: AnalyticsChartProps) => {
-    const color = METRIC_COLOR[metric];
-    const dataKey: keyof OrderAnalyticsPoint = metric === "revenue" ? "revenue" : "orderCount";
-    const gradientId = `analytics-gradient-${metric}`;
+/**
+ * One chart implementation shared by the Orders analytics section, the Products
+ * analytics section, and a single product's trend chart — which metric it plots and
+ * what the tooltip shows are the only things that differ between those three uses.
+ */
+const AnalyticsChart = ({ points, activeMetric, tooltipMetrics, granularity, height = 260 }: AnalyticsChartProps) => {
+    const gradientId = `analytics-gradient-${activeMetric.key}`;
 
     return (
-        <ResponsiveContainer width="100%" height={260}>
+        <ResponsiveContainer width="100%" height={height}>
             <AreaChart data={points} margin={{ top: 12, right: 12, left: 0, bottom: 0 }}>
                 <defs>
                     <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor={color} stopOpacity={0.32} />
-                        <stop offset="100%" stopColor={color} stopOpacity={0} />
+                        <stop offset="5%" stopColor={activeMetric.color} stopOpacity={0.32} />
+                        <stop offset="100%" stopColor={activeMetric.color} stopOpacity={0} />
                     </linearGradient>
                 </defs>
 
@@ -72,9 +66,7 @@ const AnalyticsChart = ({ points, metric, granularity }: AnalyticsChartProps) =>
                 />
 
                 <YAxis
-                    tickFormatter={(value: number) =>
-                        metric === "revenue" ? compactCurrencyFormatter.format(value) : compactNumberFormatter.format(value)
-                    }
+                    tickFormatter={(value: number) => activeMetric.formatValueCompact(value)}
                     axisLine={false}
                     tickLine={false}
                     fontSize={12}
@@ -84,18 +76,20 @@ const AnalyticsChart = ({ points, metric, granularity }: AnalyticsChartProps) =>
                 />
 
                 <Tooltip
-                    content={(props) => <AnalyticsTooltip {...props} metric={metric} granularity={granularity} />}
-                    cursor={{ stroke: color, strokeWidth: 1, strokeDasharray: "4 4" }}
+                    content={(props) => (
+                        <AnalyticsTooltip {...props} activeKey={activeMetric.key} metrics={tooltipMetrics} granularity={granularity} />
+                    )}
+                    cursor={{ stroke: activeMetric.color, strokeWidth: 1, strokeDasharray: "4 4" }}
                 />
 
                 <Area
                     type="monotone"
-                    dataKey={dataKey}
-                    stroke={color}
+                    dataKey={activeMetric.key}
+                    stroke={activeMetric.color}
                     strokeWidth={2.5}
                     fill={`url(#${gradientId})`}
                     dot={false}
-                    activeDot={<ActiveDot fill={color} />}
+                    activeDot={<ActiveDot fill={activeMetric.color} />}
                     isAnimationActive
                     animationDuration={500}
                     animationEasing="ease-out"

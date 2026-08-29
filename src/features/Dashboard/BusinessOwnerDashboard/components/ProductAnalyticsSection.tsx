@@ -1,21 +1,22 @@
 import Spinner from "../../../../components/LoadingSpinner/LoadingSpinner";
 import AnalyticsChart from "./AnalyticsChart";
 import ChangeIndicator from "./ChangeIndicator";
-import useOrdersAnalyticsSection from "../hooks/ui/useOrdersAnalyticsSection";
 import { ANALYTICS_RANGE_PRESETS } from "../utils/analyticsDateRange";
-import { currencyFormatter, numberFormatter, orderCountMetric, revenueMetric } from "../utils/chartMetrics";
+import { currencyFormatter, numberFormatter, orderCountMetric, revenueMetric, unitsSoldMetric } from "../utils/chartMetrics";
+import type useProductAnalyticsSection from "../hooks/ui/useProductAnalyticsSection";
 
 const REVENUE_METRIC = revenueMetric();
-const ORDERS_METRIC = orderCountMetric("Orders", "#3b82f6");
-const TOOLTIP_METRICS = [REVENUE_METRIC, ORDERS_METRIC];
+const UNITS_METRIC = unitsSoldMetric();
+const ORDERS_METRIC = orderCountMetric();
+const TOOLTIP_METRICS = [REVENUE_METRIC, UNITS_METRIC, ORDERS_METRIC];
+const METRIC_CONFIG = { revenue: REVENUE_METRIC, unitsSold: UNITS_METRIC, orders: ORDERS_METRIC };
 
-type OrdersAnalyticsSectionProps = {
-    businessId: string;
-    /** Store-wide, unaffected by the selected range — drives the "no order data yet" empty state. */
-    hasAnyOrders: boolean;
+type ProductAnalyticsSectionProps = {
+    state: ReturnType<typeof useProductAnalyticsSection>;
 };
 
-const OrdersAnalyticsSection = ({ businessId, hasAnyOrders }: OrdersAnalyticsSectionProps) => {
+/** The chart+summary+range-selector half of the Product Performance block — the ranking/distribution/insight sections around it all share this same state, lifted one level up so every section reflects the same selected range from one fetch. */
+const ProductAnalyticsSection = ({ state }: ProductAnalyticsSectionProps) => {
     const {
         rangePreset,
         changeRangePreset,
@@ -23,39 +24,25 @@ const OrdersAnalyticsSection = ({ businessId, hasAnyOrders }: OrdersAnalyticsSec
         customTo,
         setCustomFrom,
         setCustomTo,
+        isWaitingForCustomRange,
         metric,
         setMetric,
         analytics,
-        isLoading,
-        isFetching,
-        isError,
-        isWaitingForCustomRange,
-    } = useOrdersAnalyticsSection(businessId);
-
-    if (!hasAnyOrders) {
-        return (
-            <section className="business-dashboard-table-card analytics-section">
-                <div className="business-dashboard-table-header">
-                    <h3>Performance</h3>
-                </div>
-                <p className="business-dashboard-table-message">
-                    No order data yet
-                    <br />
-                    <span className="business-dashboard-form-hint">
-                        Once customers start placing orders, your performance analytics will appear here.
-                    </span>
-                </p>
-            </section>
-        );
-    }
+        analyticsLoading,
+        analyticsFetching,
+        analyticsError,
+    } = state;
 
     const hasPointsInRange = (analytics?.points.length ?? 0) > 0 && analytics!.currentPeriod.orderCount > 0;
-    const activeMetric = metric === "revenue" ? REVENUE_METRIC : ORDERS_METRIC;
+    const activeMetric = METRIC_CONFIG[metric];
 
     return (
         <section className="business-dashboard-table-card analytics-section">
             <div className="analytics-header">
-                <h3>Performance</h3>
+                <div>
+                    <h3>Product Performance</h3>
+                    <p className="analytics-header-hint">Analytics for the selected period — your catalog above shows everything.</p>
+                </div>
 
                 <div className="analytics-range-selector">
                     {ANALYTICS_RANGE_PRESETS.map((preset) => (
@@ -92,13 +79,13 @@ const OrdersAnalyticsSection = ({ businessId, hasAnyOrders }: OrdersAnalyticsSec
                 </div>
             )}
 
-            <div className="analytics-summary">
+            <div className="analytics-summary analytics-summary--triple">
                 <button
                     type="button"
                     className={`analytics-summary-block analytics-summary-block--revenue${metric === "revenue" ? " analytics-summary-block--active" : ""}`}
                     onClick={() => setMetric("revenue")}
                 >
-                    <span className="analytics-summary-label">Revenue</span>
+                    <span className="analytics-summary-label">Product Revenue</span>
                     <span className="analytics-summary-value">
                         {currencyFormatter.format(analytics?.currentPeriod.revenue ?? 0)}
                     </span>
@@ -107,7 +94,19 @@ const OrdersAnalyticsSection = ({ businessId, hasAnyOrders }: OrdersAnalyticsSec
 
                 <button
                     type="button"
-                    className={`analytics-summary-block analytics-summary-block--orders${metric === "orders" ? " analytics-summary-block--active" : ""}`}
+                    className={`analytics-summary-block analytics-summary-block--units${metric === "unitsSold" ? " analytics-summary-block--active" : ""}`}
+                    onClick={() => setMetric("unitsSold")}
+                >
+                    <span className="analytics-summary-label">Units Sold</span>
+                    <span className="analytics-summary-value">
+                        {numberFormatter.format(analytics?.currentPeriod.unitsSold ?? 0)}
+                    </span>
+                    <ChangeIndicator percent={analytics?.unitsSoldChangePercent ?? null} />
+                </button>
+
+                <button
+                    type="button"
+                    className={`analytics-summary-block analytics-summary-block--product-orders${metric === "orders" ? " analytics-summary-block--active" : ""}`}
                     onClick={() => setMetric("orders")}
                 >
                     <span className="analytics-summary-label">Orders</span>
@@ -118,19 +117,32 @@ const OrdersAnalyticsSection = ({ businessId, hasAnyOrders }: OrdersAnalyticsSec
                 </button>
             </div>
 
-            <div className="analytics-chart-area" style={{ opacity: isFetching && !isLoading ? 0.6 : 1 }}>
+            {analytics && analytics.currentPeriod.orderCount > 0 && (
+                <p className="analytics-secondary-stat">
+                    Average order product value:{" "}
+                    <strong>{currencyFormatter.format(analytics.currentPeriod.revenue / analytics.currentPeriod.orderCount)}</strong>
+                </p>
+            )}
+
+            <div className="analytics-chart-area" style={{ opacity: analyticsFetching && !analyticsLoading ? 0.6 : 1 }}>
                 {isWaitingForCustomRange ? (
                     <p className="business-dashboard-table-message">Choose both dates to see the custom range.</p>
-                ) : isLoading ? (
+                ) : analyticsLoading ? (
                     <div className="business-dashboard-table-loading">
                         <Spinner size={28} />
                     </div>
-                ) : isError ? (
+                ) : analyticsError ? (
                     <p className="business-dashboard-table-message business-dashboard-table-message--error">
-                        Failed to load analytics. Please try again.
+                        Unable to load product analytics. Try again.
                     </p>
                 ) : !hasPointsInRange ? (
-                    <p className="business-dashboard-table-message">No orders in the selected period.</p>
+                    <p className="business-dashboard-table-message">
+                        Your products are ready to sell
+                        <br />
+                        <span className="business-dashboard-form-hint">
+                            Once customers start placing orders, product performance data will appear here.
+                        </span>
+                    </p>
                 ) : (
                     <AnalyticsChart
                         points={analytics!.points}
@@ -144,4 +156,4 @@ const OrdersAnalyticsSection = ({ businessId, hasAnyOrders }: OrdersAnalyticsSec
     );
 };
 
-export default OrdersAnalyticsSection;
+export default ProductAnalyticsSection;

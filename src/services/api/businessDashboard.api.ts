@@ -30,6 +30,9 @@ import {
     orderNoteResponseSchema,
     orderStatusHistoryEntryResponseSchema,
     orderAnalyticsResponseSchema,
+    productCatalogOverviewResponseSchema,
+    productAnalyticsResponseSchema,
+    productPerformanceResponseSchema,
     websiteTemplateCustomizableComponentSchema,
     websiteCustomizationDraftResponseSchema,
     publishWebsiteCustomizationResponseSchema,
@@ -82,6 +85,28 @@ export const getBusinessProductsService = async (businessId: string, query: Prod
     });
 
     return businessProductsPageSchema.parse(data);
+};
+
+export const getProductCatalogOverviewService = async (businessId: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_PRODUCT_CATALOG_OVERVIEW(businessId));
+
+    return productCatalogOverviewResponseSchema.parse(data);
+};
+
+export const getProductAnalyticsService = async (businessId: string, from: string, to: string, productId?: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_PRODUCT_ANALYTICS(businessId), {
+        params: { from, to, productId },
+    });
+
+    return productAnalyticsResponseSchema.parse(data);
+};
+
+export const getProductPerformanceService = async (businessId: string, from: string, to: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_PRODUCT_PERFORMANCE(businessId), {
+        params: { from, to },
+    });
+
+    return productPerformanceResponseSchema.parse(data);
 };
 
 export const getBusinessMembersService = async (businessId: string) => {

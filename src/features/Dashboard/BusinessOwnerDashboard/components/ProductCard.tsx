@@ -1,21 +1,20 @@
 import StockCell from "./StockCell";
-import type { BusinessProductResponse } from "../types";
+import ChangeIndicator from "./ChangeIndicator";
+import { currencyFormatter, numberFormatter } from "../utils/chartMetrics";
+import type { BusinessProductResponse, ProductPerformanceEntry } from "../types";
 import { resolveImageUrl } from "../utils/resolveImageUrl";
-
-const currencyFormatter = new Intl.NumberFormat(undefined, {
-    style: "currency",
-    currency: "USD",
-});
 
 interface ProductCardProps {
     product: BusinessProductResponse;
+    /** Sales for the page's currently selected analytics period — undefined while that data is still loading. */
+    performance?: ProductPerformanceEntry;
     onView: (productId: string) => void;
     onEdit: (productId: string) => void;
     onDelete: (product: BusinessProductResponse) => void;
     isDeleting: boolean;
 }
 
-const ProductCard = ({ product, onView, onEdit, onDelete, isDeleting }: ProductCardProps) => {
+const ProductCard = ({ product, performance, onView, onEdit, onDelete, isDeleting }: ProductCardProps) => {
     return (
         <article
             className="product-card"
@@ -58,6 +57,14 @@ const ProductCard = ({ product, onView, onEdit, onDelete, isDeleting }: ProductC
                 </div>
 
                 <StockCell stockQuantity={product.stockQuantity} />
+
+                {performance && performance.unitsSold > 0 && (
+                    <div className="product-card__performance">
+                        <span>{numberFormatter.format(performance.unitsSold)} sold</span>
+                        <span>{currencyFormatter.format(performance.revenue)}</span>
+                        <ChangeIndicator percent={performance.unitsSoldChangePercent} suffix="" />
+                    </div>
+                )}
             </div>
 
             <div className="product-card__actions" onClick={(e) => e.stopPropagation()}>

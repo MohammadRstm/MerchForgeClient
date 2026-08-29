@@ -173,6 +173,75 @@ export const orderAnalyticsResponseSchema = z.object({
     orderCountChangePercent: z.number().nullable(),
 });
 
+// ---- product analytics ----
+
+export const productCatalogOverviewResponseSchema = z.object({
+    totalProducts: z.number(),
+    totalUnitsSold: z.number(),
+    productRevenue: z.number(),
+    averageProductPrice: z.number().nullable(),
+});
+
+export const productAnalyticsPointResponseSchema = z.object({
+    period: z.iso.datetime(),
+    revenue: z.number(),
+    unitsSold: z.number(),
+    orderCount: z.number(),
+});
+
+export const productAnalyticsPeriodTotalsResponseSchema = z.object({
+    revenue: z.number(),
+    unitsSold: z.number(),
+    orderCount: z.number(),
+});
+
+export const productAllTimeTotalsResponseSchema = z.object({
+    revenue: z.number(),
+    unitsSold: z.number(),
+    orderCount: z.number(),
+    averageUnitsPerOrder: z.number().nullable(),
+});
+
+export const productAnalyticsResponseSchema = z.object({
+    granularity: orderAnalyticsGranularitySchema,
+    points: z.array(productAnalyticsPointResponseSchema),
+    currentPeriod: productAnalyticsPeriodTotalsResponseSchema,
+    previousPeriod: productAnalyticsPeriodTotalsResponseSchema,
+    revenueChangePercent: z.number().nullable(),
+    unitsSoldChangePercent: z.number().nullable(),
+    orderCountChangePercent: z.number().nullable(),
+    allTime: productAllTimeTotalsResponseSchema.nullable(),
+});
+
+export const productPerformanceEntryResponseSchema = z.object({
+    productId: z.string().uuid(),
+    title: z.string(),
+    imageUrl: z.string().nullable(),
+    categoryName: z.string(),
+    price: z.number(),
+    unitsSold: z.number(),
+    revenue: z.number(),
+    orderCount: z.number(),
+    previousUnitsSold: z.number(),
+    previousRevenue: z.number(),
+    unitsSoldChangePercent: z.number().nullable(),
+    revenueChangePercent: z.number().nullable(),
+    createdAt: z.iso.datetime(),
+});
+
+export const categoryPerformanceEntryResponseSchema = z.object({
+    categoryName: z.string(),
+    productCount: z.number(),
+    unitsSold: z.number(),
+    revenue: z.number(),
+});
+
+export const productPerformanceResponseSchema = z.object({
+    products: z.array(productPerformanceEntryResponseSchema),
+    categories: z.array(categoryPerformanceEntryResponseSchema),
+    totalRevenue: z.number(),
+});
+
 export const inventorySummarySchema = z.object({
     trackedProductCount: z.number(),
     untrackedProductCount: z.number(),
