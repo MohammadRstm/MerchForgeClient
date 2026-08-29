@@ -1236,7 +1236,8 @@
     justify-content: center;
     border-radius: 50%;
     background: rgba(0, 0, 0, .55);
-    font-size: 15px;
+    color: #fff;
+    font-size: 16px;
     opacity: 0;
     transform: translateY(4px);
     transition: opacity .2s, transform .2s;

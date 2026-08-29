@@ -1,4 +1,5 @@
 import { Fragment, useState } from "react";
+import { FiZoomIn } from "react-icons/fi";
 import Modal from "../../../../components/Modal/Modal";
 import Spinner from "../../../../components/LoadingSpinner/LoadingSpinner";
 import ImageLightbox from "../../../../components/Lightbox/ImageLightbox";
@@ -68,7 +69,7 @@ const ProductDetailModal = ({ modal, onEdit }: ProductDetailModalProps) => {
                                         <img src={resolveImageUrl(activeImage.url)} alt={activeImage.altText ?? product.title} />
                                         {activeImage.isMain && <span className="business-dashboard-badge">Main</span>}
                                         <span className="product-detail__hero-zoom" aria-hidden="true">
-                                            🔍
+                                            <FiZoomIn />
                                         </span>
                                     </button>
 
