@@ -151,6 +151,28 @@ export const orderStatusHistoryEntryResponseSchema = z.object({
     createdAt: z.iso.datetime(),
 });
 
+export const orderAnalyticsGranularitySchema = z.enum(["Daily", "Monthly"]);
+
+export const orderAnalyticsPointResponseSchema = z.object({
+    period: z.iso.datetime(),
+    orderCount: z.number(),
+    revenue: z.number(),
+});
+
+export const orderAnalyticsPeriodTotalsResponseSchema = z.object({
+    orderCount: z.number(),
+    revenue: z.number(),
+});
+
+export const orderAnalyticsResponseSchema = z.object({
+    granularity: orderAnalyticsGranularitySchema,
+    points: z.array(orderAnalyticsPointResponseSchema),
+    currentPeriod: orderAnalyticsPeriodTotalsResponseSchema,
+    previousPeriod: orderAnalyticsPeriodTotalsResponseSchema,
+    revenueChangePercent: z.number().nullable(),
+    orderCountChangePercent: z.number().nullable(),
+});
+
 export const inventorySummarySchema = z.object({
     trackedProductCount: z.number(),
     untrackedProductCount: z.number(),

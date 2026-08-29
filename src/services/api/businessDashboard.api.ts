@@ -29,6 +29,7 @@ import {
     orderStatsResponseSchema,
     orderNoteResponseSchema,
     orderStatusHistoryEntryResponseSchema,
+    orderAnalyticsResponseSchema,
     websiteTemplateCustomizableComponentSchema,
     websiteCustomizationDraftResponseSchema,
     publishWebsiteCustomizationResponseSchema,
@@ -309,6 +310,14 @@ export const getOrderStatusHistoryService = async (businessId: string, orderId: 
     );
 
     return z.array(orderStatusHistoryEntryResponseSchema).parse(data);
+};
+
+export const getOrderAnalyticsService = async (businessId: string, from: string, to: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_ORDER_ANALYTICS(businessId), {
+        params: { from, to },
+    });
+
+    return orderAnalyticsResponseSchema.parse(data);
 };
 
 export const updateOrderPaymentStatusService = async (

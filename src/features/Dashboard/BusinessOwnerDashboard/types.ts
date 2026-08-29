@@ -22,6 +22,10 @@ import type {
     orderStatsResponseSchema,
     orderNoteResponseSchema,
     orderStatusHistoryEntryResponseSchema,
+    orderAnalyticsGranularitySchema,
+    orderAnalyticsPointResponseSchema,
+    orderAnalyticsPeriodTotalsResponseSchema,
+    orderAnalyticsResponseSchema,
     businessSubscriptionResponseSchema,
     productDraftMessageSchema,
     productDraftProductSchema,
@@ -147,6 +151,16 @@ export type OrderStatusHistoryEntry = z.infer<typeof orderStatusHistoryEntryResp
 
 /** A named date-range preset for the orders toolbar's date filter. "custom" pairs with an explicit from/to picked by the owner. */
 export type OrderDateFilterPreset = "all" | "today" | "yesterday" | "last7" | "last30" | "custom";
+
+export type OrderAnalyticsGranularity = z.infer<typeof orderAnalyticsGranularitySchema>;
+export type OrderAnalyticsPoint = z.infer<typeof orderAnalyticsPointResponseSchema>;
+export type OrderAnalyticsPeriodTotals = z.infer<typeof orderAnalyticsPeriodTotalsResponseSchema>;
+export type OrderAnalytics = z.infer<typeof orderAnalyticsResponseSchema>;
+
+/** A named range preset for the analytics chart. Distinct from OrderDateFilterPreset — the chart's presets are wider (up to 1 year) and drive chart aggregation, not the orders table filter. */
+export type AnalyticsRangePreset = "7d" | "30d" | "3m" | "6m" | "1y" | "custom";
+
+export type AnalyticsMetric = "revenue" | "orders";
 
 // ---- website customization ----
 

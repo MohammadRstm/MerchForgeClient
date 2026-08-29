@@ -3,6 +3,7 @@ import useAuth from "../../../context/Auth/useAuth";
 import useOwnerOrdersPage from "./hooks/useOwnerOrdersPage";
 import OrderStatCards from "./components/OrderStatCards";
 import NeedsAttention from "./components/NeedsAttention";
+import OrdersAnalyticsSection from "./components/OrdersAnalyticsSection";
 import OrdersToolbar from "./components/OrdersToolbar";
 import OrderStatusTabs from "./components/OrderStatusTabs";
 import BulkActionsBar from "./components/BulkActionsBar";
@@ -14,6 +15,7 @@ import { shortOrderRef } from "./utils/orderRef";
 
 const OwnerOrdersPage = () => {
     const { session } = useAuth();
+    const businessId = session?.business?.id ?? "";
     const businessName = session?.business?.name ?? "";
 
     const {
@@ -98,6 +100,8 @@ const OwnerOrdersPage = () => {
             <OrderStatCards stats={stats} activeStatus={ordersTable.query.status} onFilterByStatus={filterByStatus} />
 
             <NeedsAttention stats={stats} onViewPending={viewPendingOrders} />
+
+            <OrdersAnalyticsSection businessId={businessId} hasAnyOrders={(stats?.totalCount ?? 0) > 0} />
 
             <section className="business-dashboard-table-card">
                 <div className="business-dashboard-table-header">

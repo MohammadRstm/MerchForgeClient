@@ -95,6 +95,7 @@ export const apiRoutes = {
     BUSINESS_DASHBOARD_ORDER_STATS : (businessId : string) => `/businesses/${businessId}/dashboard/orders/stats`,
     BUSINESS_DASHBOARD_ORDER_NOTES : (businessId : string, orderId : string) => `/businesses/${businessId}/dashboard/orders/${orderId}/notes`,
     BUSINESS_DASHBOARD_ORDER_STATUS_HISTORY : (businessId : string, orderId : string) => `/businesses/${businessId}/dashboard/orders/${orderId}/status-history`,
+    BUSINESS_DASHBOARD_ORDER_ANALYTICS : (businessId : string) => `/businesses/${businessId}/dashboard/orders/analytics`,
 
     /** AI PRODUCT DRAFTS */
     PRODUCT_DRAFTS : (businessId : string) => `/businesses/${businessId}/dashboard/product-drafts`,
