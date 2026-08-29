@@ -1,10 +1,8 @@
-import { useState } from "react";
 import { useSearchParams } from "react-router";
 import useAuth from "../../../../context/Auth/useAuth";
 import usePublicSubscriptionPlans from "../../../Plans/hooks/usePublicSubscriptionPlans";
 import useBusinessSubscription from "./data/useBusinessSubscription";
 import useSubscribeToPlan from "./data/useSubscribeToPlan";
-import useCancelSubscription from "./data/useCancelSubscription";
 
 const useOwnerBillingPage = () => {
     const { session } = useAuth();
@@ -23,9 +21,6 @@ const useOwnerBillingPage = () => {
 
     const { mutate: subscribeMutate, isPending: isSubscribing, variables: pendingPlanId } = useSubscribeToPlan(businessId);
 
-    const [confirmingCancel, setConfirmingCancel] = useState(false);
-    const { mutate: cancelMutate, isPending: isCancelling } = useCancelSubscription(businessId);
-
     // BusinessSubscriptionResponse doesn't carry the plan's id, only its name/
     // interval — matching on those is the only correlation available, and is
     // safe given plan names are unique per billing interval in the seed data.
@@ -37,10 +32,6 @@ const useOwnerBillingPage = () => {
     };
 
     const subscribe = (planId: string) => subscribeMutate(planId);
-
-    const requestCancel = () => setConfirmingCancel(true);
-    const cancelCancel = () => setConfirmingCancel(false);
-    const confirmCancel = () => cancelMutate(undefined, { onSuccess: () => setConfirmingCancel(false) });
 
     return {
         plans,
@@ -57,12 +48,6 @@ const useOwnerBillingPage = () => {
         isSubscribing,
         pendingPlanId,
         isCurrentPlan,
-
-        confirmingCancel,
-        requestCancel,
-        cancelCancel,
-        confirmCancel,
-        isCancelling,
     };
 };
 

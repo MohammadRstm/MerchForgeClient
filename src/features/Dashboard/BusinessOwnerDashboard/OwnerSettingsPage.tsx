@@ -19,6 +19,12 @@ const OwnerSettingsPage = () => {
         subscriptionError,
 
         featureCreditsModal,
+
+        confirmingCancel,
+        requestCancel,
+        cancelCancel,
+        confirmCancel,
+        isCancelling,
     } = useOwnerSettingsPage();
 
     return (
@@ -32,6 +38,52 @@ const OwnerSettingsPage = () => {
                 isLoading={subscriptionLoading}
                 isError={subscriptionError}
             />
+
+            {subscription?.status === "Active" && (
+                <section className="business-dashboard-table-card">
+                    <div className="business-dashboard-table-header">
+                        <h3>Manage subscription</h3>
+                    </div>
+
+                    {subscription.cancelAtPeriodEnd ? (
+                        <p className="business-dashboard-table-message">
+                            Your plan won't renew — you'll keep full access until{" "}
+                            {new Date(subscription.currentPeriodEnd).toLocaleDateString()}. Choose a plan on the
+                            Billing page any time to resume.
+                        </p>
+                    ) : confirmingCancel ? (
+                        <div className="business-dashboard-form">
+                            <p className="business-dashboard-form-error">
+                                Cancel your {subscription.planName} plan? You'll keep full access until{" "}
+                                {new Date(subscription.currentPeriodEnd).toLocaleDateString()}, then your website
+                                will be taken down.
+                            </p>
+                            <div className="business-dashboard-header-actions">
+                                <button
+                                    type="button"
+                                    className="business-dashboard-button-secondary"
+                                    onClick={cancelCancel}
+                                    disabled={isCancelling}
+                                >
+                                    Keep my plan
+                                </button>
+                                <button
+                                    type="button"
+                                    className="business-dashboard-button-primary"
+                                    onClick={confirmCancel}
+                                    disabled={isCancelling}
+                                >
+                                    {isCancelling ? "Cancelling..." : "Cancel plan"}
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        <button type="button" className="business-dashboard-button-secondary" onClick={requestCancel}>
+                            Cancel plan
+                        </button>
+                    )}
+                </section>
+            )}
 
             <FeaturesCard
                 features={featureCreditsModal.features}

@@ -1,5 +1,7 @@
+import { Link } from "react-router";
 import "./BusinessOwnerDashboard.css";
 import Spinner from "../../../components/LoadingSpinner/LoadingSpinner";
+import { routes } from "../../../config/routes";
 import useOwnerBillingPage from "./hooks/useOwnerBillingPage";
 
 const currencyFormatter = (currency: string) =>
@@ -18,11 +20,6 @@ const OwnerBillingPage = () => {
         isSubscribing,
         pendingPlanId,
         isCurrentPlan,
-        confirmingCancel,
-        requestCancel,
-        cancelCancel,
-        confirmCancel,
-        isCancelling,
     } = useOwnerBillingPage();
 
     const isLoading = plansLoading || subscriptionLoading;
@@ -40,56 +37,20 @@ const OwnerBillingPage = () => {
                 </p>
             )}
 
-            {subscription?.status === "Active" && (
-                <section className="business-dashboard-table-card">
-                    <div className="business-dashboard-table-header">
-                        <h3>Manage subscription</h3>
-                    </div>
+            {subscription?.status === "Active" && !subscription.cancelAtPeriodEnd && (
+                <p className="business-dashboard-form-hint">
+                    You're on the {subscription.planName} plan, renewing{" "}
+                    {new Date(subscription.currentPeriodEnd).toLocaleDateString()}.{" "}
+                    <Link to={routes.DASHBOARD_SETTINGS}>Manage or cancel your plan in Settings</Link>.
+                </p>
+            )}
 
-                    {subscription.cancelAtPeriodEnd ? (
-                        <p className="business-dashboard-table-message">
-                            Your plan won't renew — you'll keep full access until{" "}
-                            {new Date(subscription.currentPeriodEnd).toLocaleDateString()}. Choose a plan above any
-                            time to resume.
-                        </p>
-                    ) : confirmingCancel ? (
-                        <div className="business-dashboard-form">
-                            <p className="business-dashboard-form-error">
-                                Cancel your {subscription.planName} plan? You'll keep full access until{" "}
-                                {new Date(subscription.currentPeriodEnd).toLocaleDateString()}, then your website
-                                will be taken down.
-                            </p>
-                            <div className="business-dashboard-header-actions">
-                                <button
-                                    type="button"
-                                    className="business-dashboard-button-secondary"
-                                    onClick={cancelCancel}
-                                    disabled={isCancelling}
-                                >
-                                    Keep my plan
-                                </button>
-                                <button
-                                    type="button"
-                                    className="business-dashboard-button-primary"
-                                    onClick={confirmCancel}
-                                    disabled={isCancelling}
-                                >
-                                    {isCancelling ? "Cancelling..." : "Cancel plan"}
-                                </button>
-                            </div>
-                        </div>
-                    ) : (
-                        <>
-                            <p className="business-dashboard-form-hint">
-                                You're on the {subscription.planName} plan, renewing{" "}
-                                {new Date(subscription.currentPeriodEnd).toLocaleDateString()}.
-                            </p>
-                            <button type="button" className="business-dashboard-button-secondary" onClick={requestCancel}>
-                                Cancel plan
-                            </button>
-                        </>
-                    )}
-                </section>
+            {subscription?.status === "Active" && subscription.cancelAtPeriodEnd && (
+                <p className="business-dashboard-table-message">
+                    Your plan won't renew — you'll keep full access until{" "}
+                    {new Date(subscription.currentPeriodEnd).toLocaleDateString()}. Choose a plan below any time to
+                    resume.
+                </p>
             )}
 
             {isLoading ? (
