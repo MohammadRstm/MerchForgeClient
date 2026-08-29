@@ -52,11 +52,20 @@ export const apiRoutes = {
     DASHBOARD_WEBSITE_TEMPLATE_REQUEST_START_BUILD : (requestId : string) => `/Dashboard/website-template-requests/${requestId}/start-build`,
     DASHBOARD_WEBSITE_TEMPLATE_REQUEST_CLOSE : (requestId : string) => `/Dashboard/website-template-requests/${requestId}/close`,
 
+    /** SUBSCRIPTION PLANS (SuperAdmin CRUD; /public needs no auth) */
+    SUBSCRIPTION_PLANS : "/subscription-plans",
+    SUBSCRIPTION_PLANS_PUBLIC : "/subscription-plans/public",
+    SUBSCRIPTION_PLAN_FEATURES : "/subscription-plans/features",
+    SUBSCRIPTION_PLAN : (id : string) => `/subscription-plans/${id}`,
+    SUBSCRIPTION_PLAN_DEACTIVATE : (id : string) => `/subscription-plans/${id}/deactivate`,
+    SUBSCRIPTION_PLAN_REACTIVATE : (id : string) => `/subscription-plans/${id}/reactivate`,
+
     /** BUSINESS DASHBOARD */
     BUSINESS_DASHBOARD_STATS : (businessId : string) => `/businesses/${businessId}/dashboard/stats`,
     BUSINESS_DASHBOARD_PRODUCTS : (businessId : string) => `/businesses/${businessId}/dashboard/products`,
     BUSINESS_DASHBOARD_MEMBERS : (businessId : string) => `/businesses/${businessId}/dashboard/members`,
     BUSINESS_DASHBOARD_SUBSCRIPTION : (businessId : string) => `/businesses/${businessId}/dashboard/subscription`,
+    BUSINESS_DASHBOARD_SUBSCRIPTION_CANCEL : (businessId : string) => `/businesses/${businessId}/dashboard/subscription/cancel`,
     BUSINESS_DASHBOARD_PRODUCT_FORM : (businessId : string) => `/businesses/${businessId}/dashboard/product-form`,
     BUSINESS_DASHBOARD_PRODUCT : (businessId : string, productId : string) => `/businesses/${businessId}/dashboard/products/${productId}`,
     BUSINESS_DASHBOARD_PRODUCT_IMAGE : (businessId : string) => `/businesses/${businessId}/dashboard/products/image`,

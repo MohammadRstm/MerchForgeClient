@@ -10,6 +10,7 @@ import Login from "../features/Auth/Login/Login";
 import AcceptInvitation from "../features/Auth/AcceptInvitation/AcceptInvitation";
 import CustomerLogin from "../features/CustomerAuth/CustomerLogin/CustomerLogin";
 import CustomerSignup from "../features/CustomerAuth/CustomerSignup/CustomerSignup";
+import PlanDetailPage from "../features/Plans/PlanDetailPage";
 import DashboardLayout from "../components/DashboardLayout/DashboardLayout";
 import OwnerOverviewPage from "../features/Dashboard/BusinessOwnerDashboard/OwnerOverviewPage";
 import OwnerProductsPage from "../features/Dashboard/BusinessOwnerDashboard/OwnerProductsPage";
@@ -18,6 +19,7 @@ import OwnerOrdersPage from "../features/Dashboard/BusinessOwnerDashboard/OwnerO
 import OwnerWebsitePage from "../features/Dashboard/BusinessOwnerDashboard/OwnerWebsitePage";
 import OwnerWebsiteCustomizationPage from "../features/Dashboard/BusinessOwnerDashboard/OwnerWebsiteCustomizationPage";
 import OwnerSettingsPage from "../features/Dashboard/BusinessOwnerDashboard/OwnerSettingsPage";
+import OwnerBillingPage from "../features/Dashboard/BusinessOwnerDashboard/OwnerBillingPage";
 import AdminOverviewPage from "../features/Dashboard/SuperAdminDashboard/AdminOverviewPage";
 import AdminBusinessesPage from "../features/Dashboard/SuperAdminDashboard/AdminBusinessesPage";
 import AdminBusinessDetailPage from "../features/Dashboard/SuperAdminDashboard/AdminBusinessDetailPage";
@@ -27,6 +29,7 @@ import AdminProductFieldsPage from "../features/Dashboard/SuperAdminDashboard/Ad
 import AdminUsersPage from "../features/Dashboard/SuperAdminDashboard/AdminUsersPage";
 import AdminCustomersPage from "../features/Dashboard/SuperAdminDashboard/AdminCustomersPage";
 import AdminCustomerDetailPage from "../features/Dashboard/SuperAdminDashboard/AdminCustomerDetailPage";
+import AdminPlansPage from "../features/Dashboard/SuperAdminDashboard/AdminPlansPage";
 import WebsiteTemplateSelectionPage from "../features/Dashboard/WebsiteTemplateRequest/WebsiteTemplateSelectionPage";
 import NotFound from "../features/NotFound/NotFound";
 
@@ -42,6 +45,7 @@ const AppRoutes = () =>{
                     <Route path={routes.LOGIN} element={<Login />} />
                     <Route path={routes.CUSTOMER_LOGIN} element={<CustomerLogin />} />
                     <Route path={routes.CUSTOMER_SIGNUP} element={<CustomerSignup />} />
+                    <Route path={routes.PLAN_DETAIL} element={<PlanDetailPage />} />
                 </Route>
 
                 {/* routes.CUSTOMER_SILENT is NOT registered here — main.tsx renders it
@@ -65,6 +69,7 @@ const AppRoutes = () =>{
                             <Route path="website" element={<OwnerWebsitePage />} />
                             <Route path="website/customize" element={<OwnerWebsiteCustomizationPage />} />
                             <Route path="settings" element={<OwnerSettingsPage />} />
+                            <Route path="billing" element={<OwnerBillingPage />} />
                         </Route>
                         <Route path={routes.CHOOSE_WEBSITE_TEMPLATE} element={<WebsiteTemplateSelectionPage />} />
                     </Route>
@@ -79,6 +84,7 @@ const AppRoutes = () =>{
                             <Route path="users" element={<AdminUsersPage />} />
                             <Route path="customers" element={<AdminCustomersPage />} />
                             <Route path="customers/:customerId" element={<AdminCustomerDetailPage />} />
+                            <Route path="plans" element={<AdminPlansPage />} />
                         </Route>
                     </Route>
                 </Route>

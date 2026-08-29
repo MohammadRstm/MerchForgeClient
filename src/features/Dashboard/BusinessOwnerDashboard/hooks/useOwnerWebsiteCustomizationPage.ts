@@ -1,6 +1,8 @@
 import useAuth from "../../../../context/Auth/useAuth";
 import { ApiError } from "../../../../Error/ApiError";
+import { FEATURE_KEY_WEBSITE_CUSTOMIZATION_ADVANCED } from "../constants/featureKeys";
 import useBusinessDashboardStats from "./data/useBusinessDashboardStats";
+import useHasPlanFeature from "./data/useHasPlanFeature";
 import useWebsiteCustomizationCatalogue from "./data/useWebsiteCustomizationCatalogue";
 import useWebsiteCustomizationDraft from "./data/useWebsiteCustomizationDraft";
 import useSaveWebsiteCustomizationDraft from "./data/useSaveWebsiteCustomizationDraft";
@@ -16,6 +18,11 @@ const useOwnerWebsiteCustomizationPage = () => {
     const businessId = session?.business?.id ?? "";
 
     const { data: stats } = useBusinessDashboardStats(businessId);
+
+    const { hasFeature: hasAdvancedCustomization } = useHasPlanFeature(
+        businessId,
+        FEATURE_KEY_WEBSITE_CUSTOMIZATION_ADVANCED
+    );
 
     const {
         data: catalogue,
@@ -71,6 +78,7 @@ const useOwnerWebsiteCustomizationPage = () => {
         businessId,
         websiteUrl,
         previewUrl,
+        hasAdvancedCustomization,
 
         catalogue: fields,
         catalogueLoading,

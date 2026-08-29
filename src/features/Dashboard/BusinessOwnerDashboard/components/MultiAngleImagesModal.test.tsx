@@ -21,6 +21,7 @@ const multiAngle = (overrides: Partial<MultiAngle> = {}): MultiAngle =>
         creditsRemaining: 10,
         creditsGrantedTotal: 10,
         includedInPlan: false,
+        outOfCredits: false,
         ...overrides,
     }) as MultiAngle;
 
@@ -75,7 +76,7 @@ describe("MultiAngleImagesModal", () => {
     it("blocks generating when out of credits", () => {
         render(
             <MultiAngleImagesModal
-                multiAngle={multiAngle({ selectedKeys: ["front"], creditsRemaining: 0 })}
+                multiAngle={multiAngle({ selectedKeys: ["front"], outOfCredits: true })}
             />
         );
 

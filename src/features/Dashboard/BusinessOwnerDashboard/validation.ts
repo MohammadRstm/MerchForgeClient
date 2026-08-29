@@ -272,6 +272,7 @@ export const createBusinessMemberFormSchema = z.object({
 export const planFeatureItemSchema = z.object({
     featureKey: z.string(),
     featureName: z.string(),
+    featureDescription: z.string().nullable(),
     limit: z.number().nullable(),
 });
 
@@ -285,6 +286,7 @@ export const businessSubscriptionResponseSchema = z
         status: z.string(),
         currentPeriodStart: z.iso.datetime(),
         currentPeriodEnd: z.iso.datetime(),
+        cancelAtPeriodEnd: z.boolean(),
         features: z.array(planFeatureItemSchema),
     })
     .nullable();

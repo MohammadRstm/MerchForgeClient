@@ -7,6 +7,7 @@ export const routes = {
     HOME: "/",
     ABOUTUS: "/aboutus",
     ACCEPT_INVITATION: "/accept-invitation",
+    PLAN_DETAIL: "/plans/:planId",
 
     // Business owner dashboard
     DASHBOARD: "/dashboard",
@@ -17,6 +18,7 @@ export const routes = {
     DASHBOARD_WEBSITE_CUSTOMIZE: "/dashboard/website/customize",
     CHOOSE_WEBSITE_TEMPLATE: "/dashboard/website/choose",
     DASHBOARD_SETTINGS: "/dashboard/settings",
+    DASHBOARD_BILLING: "/dashboard/billing",
 
     // Super admin dashboard
     ADMIN: "/admin",
@@ -28,6 +30,7 @@ export const routes = {
     ADMIN_USERS: "/admin/users",
     ADMIN_CUSTOMERS: "/admin/customers",
     ADMIN_CUSTOMER_DETAIL: "/admin/customers/:customerId",
+    ADMIN_PLANS: "/admin/plans",
 
     // Customer (shopper) identity — public, platform-hosted pages a storefront sends a
     // customer to for signup/login, and the hidden silent-renewal page. Entirely
@@ -40,6 +43,9 @@ export const routes = {
 
 export const buildAdminBusinessDetailRoute = (businessId: string) =>
     `/admin/businesses/${businessId}`;
+
+export const buildPlanDetailRoute = (planId: string) =>
+    `/plans/${planId}`;
 
 export const buildAdminCustomerDetailRoute = (customerId: string) =>
     `/admin/customers/${customerId}`;

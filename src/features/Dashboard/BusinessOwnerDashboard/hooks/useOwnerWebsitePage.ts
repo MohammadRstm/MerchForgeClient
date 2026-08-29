@@ -1,5 +1,6 @@
 import useAuth from "../../../../context/Auth/useAuth";
 import useBusinessDashboardStats from "./data/useBusinessDashboardStats";
+import useBusinessSubscription from "./data/useBusinessSubscription";
 import useWebsiteTemplateOptions from "./data/useWebsiteTemplateOptions";
 import useWebsiteTemplateRequests from "./data/useWebsiteTemplateRequests";
 
@@ -8,6 +9,8 @@ const useOwnerWebsitePage = () => {
     const businessId = session?.business?.id ?? "";
 
     const { data: stats } = useBusinessDashboardStats(businessId);
+    const { data: subscription } = useBusinessSubscription(businessId);
+    const hasActiveSubscription = subscription?.status === "Active";
 
     const {
         data: websiteTemplateOptions,
@@ -23,6 +26,7 @@ const useOwnerWebsitePage = () => {
 
     return {
         websiteUrl: stats?.websiteUrl ?? null,
+        hasActiveSubscription,
 
         websiteTemplateOptions,
         websiteTemplateOptionsLoading,

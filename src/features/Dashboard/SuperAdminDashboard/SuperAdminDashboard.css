@@ -643,3 +643,55 @@
     flex: 1;
     min-width: 220px;
 }
+
+/* Subscription plan features */
+
+.subscription-plan-feature-picker {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 320px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.subscription-plan-feature-picker__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.subscription-plan-feature-picker__item label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    cursor: pointer;
+    flex: 1;
+}
+
+.subscription-plan-feature-picker__item input[type="checkbox"] {
+    margin-top: 3px;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.subscription-plan-feature-picker__name {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+}
+
+.subscription-plan-feature-picker__description {
+    display: block;
+    font-size: 12px;
+    color: #8a8a8a;
+    margin-top: 2px;
+}
+
+.subscription-plan-feature-picker__limit {
+    width: 110px;
+    flex-shrink: 0;
+}

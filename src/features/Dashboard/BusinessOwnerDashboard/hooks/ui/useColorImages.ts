@@ -47,6 +47,7 @@ const useColorImages = (
         businessId,
         FEATURE_KEY_AI_IMAGE_EDITING
     );
+    const outOfCredits = !includedInPlan && creditsRemaining !== undefined && creditsRemaining <= 0;
 
     const mainImage = images.find((image) => image.isMain);
     const needsPicking = colors.length > MAX_COLORS;
@@ -86,7 +87,7 @@ const useColorImages = (
      * See useMultiAngleImages for the full explanation — this mirrors it exactly.
      */
     const generate = () => {
-        if (!mainImage || selectedColors.length === 0 || isGenerating) return;
+        if (!mainImage || selectedColors.length === 0 || isGenerating || outOfCredits) return;
 
         const targets = selectedColors.slice(0, MAX_COLORS);
         const nonMainImages = images.filter((image) => !image.isMain);
@@ -155,6 +156,7 @@ const useColorImages = (
         creditsRemaining,
         creditsGrantedTotal,
         includedInPlan,
+        outOfCredits,
     };
 };
 

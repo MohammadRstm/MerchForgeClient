@@ -66,6 +66,7 @@ const useSuggestProductDetails = (businessId: string, { images }: UseSuggestProd
         businessId,
         FEATURE_KEY_AI_IMAGE_EDITING
     );
+    const outOfCredits = !includedInPlan && creditsRemaining !== undefined && creditsRemaining <= 0;
 
     const mainImage = images.find((image) => image.isMain);
 
@@ -76,6 +77,12 @@ const useSuggestProductDetails = (businessId: string, { images }: UseSuggestProd
         setError(undefined);
 
         if (!mainImage) return;
+
+        if (outOfCredits) {
+            setError("You're out of AI image-editing credits. Buy more from Features to continue.");
+            setStatus("error");
+            return;
+        }
 
         setStatus("working");
 
@@ -138,6 +145,7 @@ const useSuggestProductDetails = (businessId: string, { images }: UseSuggestProd
         creditsRemaining,
         creditsGrantedTotal,
         includedInPlan,
+        outOfCredits,
     };
 };
 

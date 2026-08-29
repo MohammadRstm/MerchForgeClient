@@ -42,6 +42,7 @@ const useQuickImageEdits = (businessId: string, { replaceImage }: UseQuickImageE
         businessId,
         FEATURE_KEY_AI_IMAGE_EDITING
     );
+    const outOfCredits = !includedInPlan && creditsRemaining !== undefined && creditsRemaining <= 0;
 
     const open = (key: QuickImageEditKey) => {
         setActionKey(key);
@@ -72,7 +73,7 @@ const useQuickImageEdits = (businessId: string, { replaceImage }: UseQuickImageE
     };
 
     const confirm = () => {
-        if (!actionKey || selectedUrls.size === 0 || isGenerating) return;
+        if (!actionKey || selectedUrls.size === 0 || isGenerating || outOfCredits) return;
 
         const urls = Array.from(selectedUrls);
         const prompt = QUICK_IMAGE_EDIT_ACTIONS[actionKey].prompt;
@@ -135,6 +136,7 @@ const useQuickImageEdits = (businessId: string, { replaceImage }: UseQuickImageE
         creditsRemaining,
         creditsGrantedTotal,
         includedInPlan,
+        outOfCredits,
     };
 };
 
