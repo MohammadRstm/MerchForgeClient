@@ -1208,13 +1208,15 @@
 .product-detail__hero img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    /* contain, not cover — the whole product photo must stay visible; cropping to
+       fill a fixed-height box was cutting off parts of non-square images. */
+    object-fit: contain;
     display: block;
     transition: transform .3s ease;
 }
 
 .product-detail__hero:hover img {
-    transform: scale(1.035);
+    transform: scale(1.02);
 }
 
 .product-detail__hero .business-dashboard-badge {
