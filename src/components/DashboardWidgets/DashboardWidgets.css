@@ -10,20 +10,20 @@
     flex-direction: column;
     gap: 4px;
     padding: 20px;
-    border: 1px solid #e2e2e2;
+    border: 1px solid var(--dash-border, #e2e2e2);
     border-radius: 10px;
-    background: #fff;
+    background: var(--dash-surface, #fff);
 }
 
 .widget-stat-card-value {
     font-size: 28px;
     font-weight: 700;
-    color: #1a1a1a;
+    color: var(--dash-text-primary, #1a1a1a);
 }
 
 .widget-stat-card-label {
     font-size: 13px;
-    color: #777;
+    color: var(--dash-text-muted, #777);
 }
 
 .widget-stat-card--clickable {
@@ -32,7 +32,7 @@
 }
 
 .widget-stat-card--clickable:hover {
-    border-color: #c7c7c7;
+    border-color: var(--dash-border, #c7c7c7);
     box-shadow: 0 2px 8px rgba(0, 0, 0, .06);
 }
 
@@ -63,19 +63,19 @@
 
 .widget-chart-card {
     padding: 16px;
-    border: 1px solid #e2e2e2;
+    border: 1px solid var(--dash-border, #e2e2e2);
     border-radius: 10px;
-    background: #fff;
+    background: var(--dash-surface, #fff);
 }
 
 .widget-chart-title {
     margin: 0 0 12px;
     font-size: 15px;
-    color: #333;
+    color: var(--dash-text-secondary, #333);
 }
 
 .widget-chart-empty {
     text-align: center;
-    color: #999;
+    color: var(--dash-text-faintest, #999);
     padding: 48px 0;
 }

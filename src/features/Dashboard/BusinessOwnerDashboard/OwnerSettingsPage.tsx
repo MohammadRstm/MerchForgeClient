@@ -6,6 +6,7 @@ import FeaturesCard from "./components/FeaturesCard";
 import FeatureCreditsModal from "./components/FeatureCreditsModal";
 import MemberModal from "./components/MemberModal";
 import MemberCredentialsModal from "./components/MemberCredentialsModal";
+import ThemeToggle from "./components/ThemeToggle";
 
 const OwnerSettingsPage = () => {
     const {
@@ -26,6 +27,8 @@ const OwnerSettingsPage = () => {
             <div className="business-dashboard-page-header">
                 <h1 className="business-dashboard-heading">Settings</h1>
             </div>
+
+            <ThemeToggle />
 
             <SubscriptionCard
                 subscription={subscription}
