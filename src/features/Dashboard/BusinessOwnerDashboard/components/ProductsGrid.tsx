@@ -3,7 +3,7 @@ import Pagination from "../../../../components/Pagination/Pagination";
 import ProductCard from "./ProductCard";
 import type { PagedResult } from "../../../../types/pagination";
 import type useProductsTableState from "../hooks/ui/useProductsTableState";
-import type { BusinessProductResponse, ProductSortField } from "../types";
+import type { BusinessProductResponse, ProductPerformanceEntry, ProductSortField } from "../types";
 
 const SORT_OPTIONS: { field: ProductSortField; label: string }[] = [
     { field: "CreatedAt", label: "Date added" },
@@ -23,6 +23,8 @@ type ProductsGridProps = {
     onEditProduct: (productId: string) => void;
     onDeleteProduct: (product: BusinessProductResponse) => void;
     deletingProductId?: string;
+    /** Sales for the selected analytics period, keyed by product id — powers each card's subtle performance line. */
+    performanceByProductId?: Record<string, ProductPerformanceEntry>;
 };
 
 const ProductsGrid = ({
@@ -37,6 +39,7 @@ const ProductsGrid = ({
     onEditProduct,
     onDeleteProduct,
     deletingProductId,
+    performanceByProductId,
 }: ProductsGridProps) => {
     const { query, searchInput, handleSearchChange, handleCategoryChange, handleSortChange, setPage } = tableState;
 
@@ -110,6 +113,7 @@ const ProductsGrid = ({
                         <ProductCard
                             key={product.id}
                             product={product}
+                            performance={performanceByProductId?.[product.id]}
                             onView={onViewProduct}
                             onEdit={onEditProduct}
                             onDelete={onDeleteProduct}

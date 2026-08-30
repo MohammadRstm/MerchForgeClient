@@ -697,6 +697,11 @@
     margin-right: auto;
 }
 
+.color-swatch--readonly {
+    cursor: default;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .12);
+}
+
 /* ---------- Image dropzone ---------- */
 
 .product-image-field {
@@ -1183,39 +1188,100 @@
 
 .product-detail__gallery {
     display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.product-detail__hero {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 280px;
+    padding: 0;
+    border: 1px solid #ececec;
+    border-radius: 14px;
+    overflow: hidden;
+    cursor: zoom-in;
+    background: #fafafa;
+}
+
+.product-detail__hero img {
+    width: 100%;
+    height: 100%;
+    /* contain, not cover — the whole product photo must stay visible; cropping to
+       fill a fixed-height box was cutting off parts of non-square images. */
+    object-fit: contain;
+    display: block;
+    transition: transform .3s ease;
+}
+
+.product-detail__hero:hover img {
+    transform: scale(1.02);
+}
+
+.product-detail__hero .business-dashboard-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+.product-detail__hero-zoom {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, .55);
+    color: #fff;
+    font-size: 16px;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity .2s, transform .2s;
+}
+
+.product-detail__hero:hover .product-detail__hero-zoom {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.product-detail__thumbnails {
+    display: flex;
     gap: 8px;
     overflow-x: auto;
+    padding-bottom: 2px;
 }
 
-.product-detail__gallery-item {
-    position: relative;
+.product-detail__thumbnail {
     flex: 0 0 auto;
-    width: 96px;
-    height: 96px;
-    border-radius: 10px;
+    width: 60px;
+    height: 60px;
+    padding: 0;
+    border-radius: 8px;
     overflow: hidden;
-    border: 1px solid #e2e2e2;
+    border: 2px solid transparent;
+    cursor: pointer;
+    opacity: .65;
+    transition: opacity .15s, border-color .15s;
 }
 
-.product-detail__gallery-item--main {
+.product-detail__thumbnail:hover {
+    opacity: 1;
+}
+
+.product-detail__thumbnail--active {
+    opacity: 1;
     border-color: #2563eb;
-    box-shadow: 0 0 0 1px #2563eb;
 }
 
-.product-detail__gallery-item img {
+.product-detail__thumbnail img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
-    cursor: pointer;
-}
-
-.product-detail__gallery-item .business-dashboard-badge {
-    position: absolute;
-    top: 4px;
-    left: 4px;
-    font-size: 10px;
-    padding: 1px 6px;
 }
 
 .product-detail__row {
@@ -1231,27 +1297,53 @@
     color: #1a1a1a;
 }
 
+.product-detail__section {
+    padding-top: 4px;
+}
+
+.product-detail__section h3 {
+    margin: 0 0 6px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: #9a9a9a;
+}
+
 .product-detail__description {
+    margin: 0;
     color: #444;
-    line-height: 1.5;
+    line-height: 1.55;
     white-space: pre-wrap;
 }
 
 .product-detail__facts {
     display: grid;
     grid-template-columns: auto 1fr;
-    gap: 6px 16px;
+    gap: 10px 16px;
     margin: 0;
+    padding: 14px 16px;
+    background: #fafafa;
+    border: 1px solid #f0f0f0;
+    border-radius: 12px;
     font-size: 14px;
 }
 
 .product-detail__facts dt {
-    color: #777;
+    color: #8a8a8a;
+    font-weight: 500;
 }
 
 .product-detail__facts dd {
     margin: 0;
     color: #1a1a1a;
+    font-weight: 600;
+}
+
+.product-detail__colors {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
 }
 
 @media (max-width: 560px) {
@@ -1964,4 +2056,1929 @@ p.voice-product-button__pill {
 .website-customization-hours-separator {
     font-size: 13px;
     color: #8a8a8a;
+}
+
+/* ---------- Orders page ---------- */
+
+.business-dashboard-page-subtitle {
+    margin: 4px 0 0;
+    font-size: 14px;
+    color: #777;
+}
+
+/* Needs attention */
+
+.needs-attention {
+    margin-bottom: 24px;
+}
+
+.needs-attention-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.needs-attention-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+    background: #fff8ec;
+    border: 1px solid #ffe4b5;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+/* Attention cards (Products page) */
+
+.attention-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+}
+
+.attention-cards-grid--modal {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+
+.attention-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    background: #fff8ec;
+    border: 1px solid #ffe4b5;
+    border-radius: 10px;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.attention-card:hover {
+    border-color: #f5c563;
+    box-shadow: 0 2px 8px rgba(180, 130, 20, 0.12);
+}
+
+.attention-card__image {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ffe4b5;
+}
+
+.attention-card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.attention-card__image-placeholder {
+    font-size: 16px;
+    font-weight: 600;
+    color: #b25e00;
+}
+
+.attention-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.attention-card__title {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #1a1a1a;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.attention-card__category {
+    font-size: 11.5px;
+    color: #a37a2f;
+}
+
+.attention-card__reason {
+    font-size: 12px;
+    color: #b25e00;
+    margin-top: 2px;
+}
+
+.attention-show-more {
+    margin-top: 12px;
+}
+
+/* Toolbar */
+
+.orders-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    padding: 0 0 12px;
+}
+
+.orders-toolbar-date-range {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #666;
+}
+
+.orders-toolbar-date-range .business-dashboard-form-input {
+    width: auto;
+    padding: 7px 10px;
+}
+
+/* Status tabs */
+
+.order-status-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 0 0 16px;
+    border-bottom: 1px solid #ececec;
+    margin-bottom: 16px;
+}
+
+.order-status-tab {
+    background: none;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #666;
+    cursor: pointer;
+}
+
+.order-status-tab:hover {
+    background: #f5f5f5;
+}
+
+.order-status-tab--active {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+/* Row / card actions menu */
+
+.order-row-actions {
+    position: relative;
+    display: inline-block;
+}
+
+.order-row-actions-menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 4px);
+    z-index: 20;
+
+    display: flex;
+    flex-direction: column;
+    min-width: 170px;
+
+    background: #fff;
+    border: 1px solid #e2e2e2;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .12);
+    padding: 6px;
+}
+
+.order-row-actions-menu button {
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #333;
+    cursor: pointer;
+}
+
+.order-row-actions-menu button:hover {
+    background: #f5f5f5;
+}
+
+.order-row-actions-menu-danger {
+    color: #dc2626 !important;
+}
+
+.order-row-actions-menu-danger:hover {
+    background: #fef2f2 !important;
+}
+
+/* Bulk actions bar */
+
+.bulk-actions-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+}
+
+.bulk-actions-count {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1d4ed8;
+}
+
+.bulk-actions-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+/* Table footer */
+
+.orders-table-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.orders-table-total {
+    font-size: 13px;
+    color: #777;
+}
+
+/* Responsive card list — hidden by default, shown below the table's breakpoint */
+
+.orders-card-list {
+    display: none;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.order-card {
+    border: 1px solid #e2e2e2;
+    border-radius: 10px;
+    padding: 12px;
+    cursor: pointer;
+}
+
+.order-card-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.order-card-ref {
+    font-weight: 600;
+    flex: 1;
+}
+
+.order-card-customer {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.order-card-meta {
+    font-size: 12px;
+    color: #8a8a8a;
+}
+
+.order-card-bottom {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #555;
+    margin-top: 8px;
+}
+
+.order-card-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 6px;
+}
+
+@media (max-width: 640px) {
+    .orders-table-wrapper {
+        display: none;
+    }
+
+    .orders-card-list {
+        display: flex;
+    }
+}
+
+/* Order detail drawer: timeline */
+
+.order-timeline {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.order-timeline-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    position: relative;
+    padding-bottom: 18px;
+    opacity: .45;
+}
+
+.order-timeline-step:last-child {
+    padding-bottom: 0;
+}
+
+.order-timeline-step::before {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 16px;
+    bottom: 0;
+    width: 2px;
+    background: #e2e2e2;
+}
+
+.order-timeline-step:last-child::before {
+    display: none;
+}
+
+.order-timeline-step--done {
+    opacity: 1;
+}
+
+.order-timeline-step--done::before {
+    background: #12875a;
+}
+
+.order-timeline-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #e2e2e2;
+    margin-top: 3px;
+    flex-shrink: 0;
+}
+
+.order-timeline-step--done .order-timeline-dot {
+    background: #12875a;
+}
+
+.order-timeline-step--cancelled .order-timeline-dot {
+    background: #d92d20;
+}
+
+.order-timeline-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.order-timeline-time {
+    font-size: 12px;
+    color: #8a8a8a;
+}
+
+.order-timeline-loading {
+    font-size: 12px;
+    color: #999;
+    margin-top: 4px;
+}
+
+/* Customer history + communication */
+
+.order-customer-history {
+    font-size: 12px;
+    color: #666;
+    margin: 6px 0 0;
+}
+
+.order-communication-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+/* Internal notes */
+
+.order-notes-section {
+    margin-bottom: 20px;
+}
+
+.order-notes-composer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 8px 0 12px;
+}
+
+.order-notes-composer .business-dashboard-button-secondary {
+    align-self: flex-end;
+}
+
+.order-notes-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.order-note {
+    padding: 10px 12px;
+    background: #fafafa;
+    border: 1px solid #ececec;
+    border-radius: 8px;
+}
+
+.order-note-content {
+    margin: 0 0 4px;
+    font-size: 14px;
+    white-space: pre-wrap;
+}
+
+.order-note-meta {
+    margin: 0;
+    font-size: 12px;
+    color: #8a8a8a;
+}
+
+/* Print — hidden on screen everywhere, shown only inside the browser's print output.
+   The classic "print just this element" trick: hide the whole document, then make
+   .print-only (and everything inside it) visible again, laid out to fill the page. */
+
+.print-only {
+    display: none;
+}
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    .print-only,
+    .print-only * {
+        visibility: visible;
+    }
+
+    .print-only {
+        display: block;
+        position: fixed;
+        inset: 0;
+        padding: 32px;
+    }
+}
+
+.order-print-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+}
+
+.order-print-table th,
+.order-print-table td {
+    text-align: left;
+    padding: 6px 8px;
+    border-bottom: 1px solid #ddd;
+}
+
+.order-print-total {
+    text-align: right;
+    font-weight: 700;
+    margin-top: 12px;
+}
+
+/* ---------- Orders analytics ---------- */
+
+.analytics-section {
+    background: linear-gradient(180deg, #fffdfa 0%, #ffffff 45%);
+}
+
+.analytics-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 4px;
+}
+
+.analytics-range-selector {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    padding: 3px;
+    background: #f4f4f5;
+    border-radius: 9px;
+}
+
+.analytics-range-btn {
+    background: none;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 7px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #6b6b6b;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background .15s, color .15s, box-shadow .15s;
+}
+
+.analytics-range-btn:hover {
+    color: #333;
+}
+
+.analytics-range-btn--active {
+    background: #fff;
+    color: #1a1a1a;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .1);
+}
+
+.analytics-custom-range {
+    margin: 10px 0 0;
+}
+
+.analytics-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 18px 0 8px;
+}
+
+.analytics-summary-block {
+    flex: 1;
+    min-width: 180px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 14px 18px;
+    background: #fff;
+    border: 1px solid #ececec;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: border-color .15s, box-shadow .15s, transform .1s;
+}
+
+.analytics-summary-block:hover {
+    border-color: #ddd;
+}
+
+.analytics-summary-block:active {
+    transform: scale(.99);
+}
+
+.analytics-summary-block--active.analytics-summary-block--revenue {
+    border-color: #ff9b00;
+    box-shadow: 0 0 0 1px #ff9b00, 0 4px 16px rgba(255, 155, 0, .12);
+}
+
+.analytics-summary-block--active.analytics-summary-block--orders {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 1px #3b82f6, 0 4px 16px rgba(59, 130, 246, .12);
+}
+
+.analytics-summary-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: #9a9a9a;
+}
+
+.analytics-summary-block--active .analytics-summary-label {
+    color: #6b6b6b;
+}
+
+.analytics-summary-value {
+    font-size: 26px;
+    font-weight: 700;
+    color: #1a1a1a;
+    letter-spacing: -.01em;
+}
+
+.analytics-change {
+    font-size: 12.5px;
+    font-weight: 600;
+}
+
+.analytics-change--up {
+    color: #12875a;
+}
+
+.analytics-change--down {
+    color: #d92d20;
+}
+
+.analytics-chart-area {
+    margin-top: 4px;
+    transition: opacity .2s;
+}
+
+/* Custom tooltip — styled to read as part of MerchForge, not a library default. */
+
+.analytics-tooltip {
+    background: #1a1a1a;
+    color: #fff;
+    border-radius: 10px;
+    padding: 10px 14px;
+    min-width: 170px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .25);
+}
+
+.analytics-tooltip-heading {
+    font-size: 12px;
+    font-weight: 600;
+    color: #b8b8b8;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, .12);
+}
+
+.analytics-tooltip-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 3px 0;
+    font-size: 13px;
+    opacity: .65;
+}
+
+.analytics-tooltip-row--active {
+    opacity: 1;
+    font-weight: 700;
+}
+
+.analytics-tooltip-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.analytics-tooltip-dot--revenue {
+    background: #ff9b00;
+}
+
+.analytics-tooltip-dot--orders {
+    background: #3b82f6;
+}
+
+.analytics-tooltip-label {
+    flex: 1;
+    color: #d6d6d6;
+}
+
+.analytics-tooltip-value {
+    font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 640px) {
+    .analytics-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .analytics-range-selector {
+        overflow-x: auto;
+    }
+
+    .analytics-summary-block {
+        min-width: 0;
+    }
+
+    .analytics-summary-value {
+        font-size: 22px;
+    }
+}
+
+/* ---------- Product performance / intelligence ---------- */
+
+.analytics-header-hint {
+    margin: 2px 0 0;
+    font-size: 12.5px;
+    color: #9a9a9a;
+}
+
+.analytics-summary--triple {
+    gap: 10px;
+}
+
+.analytics-summary-block--active.analytics-summary-block--units {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 1px #3b82f6, 0 4px 16px rgba(59, 130, 246, .12);
+}
+
+.analytics-summary-block--active.analytics-summary-block--product-orders {
+    border-color: #a855f7;
+    box-shadow: 0 0 0 1px #a855f7, 0 4px 16px rgba(168, 85, 247, .12);
+}
+
+.analytics-secondary-stat {
+    margin: 10px 2px 4px;
+    font-size: 13px;
+    color: #6b6b6b;
+}
+
+.analytics-secondary-stat strong {
+    color: #1a1a1a;
+}
+
+.product-performance-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+    align-items: start;
+}
+
+/* Ranked product lists (Top Products / Best Sellers) */
+
+.product-ranking-card {
+    margin-bottom: 0;
+}
+
+.product-ranking-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.product-ranking-row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 8px;
+    background: none;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: left;
+    transition: background .15s;
+}
+
+.product-ranking-row:hover {
+    background: #f7f7f7;
+}
+
+.product-ranking-position {
+    width: 22px;
+    flex-shrink: 0;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: #b0b0b0;
+}
+
+.product-ranking-image {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: #f7f7f7;
+    border: 1px solid #ececec;
+}
+
+.product-ranking-image--placeholder {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #8a8a8a;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.product-ranking-body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-ranking-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.product-ranking-category {
+    font-size: 12px;
+    color: #9a9a9a;
+}
+
+.product-ranking-stats {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    font-size: 12.5px;
+    color: #8a8a8a;
+}
+
+.product-ranking-stat--emphasized {
+    color: #1a1a1a;
+    font-weight: 700;
+}
+
+/* Revenue distribution / category performance bars */
+
+.revenue-distribution-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.revenue-distribution-row {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 140px 1fr auto;
+    align-items: center;
+    gap: 14px;
+    padding: 6px 4px;
+    background: none;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: left;
+}
+
+.revenue-distribution-row:hover {
+    background: #f7f7f7;
+}
+
+.revenue-distribution-row--static {
+    cursor: default;
+    grid-template-columns: 200px 1fr auto;
+}
+
+.revenue-distribution-row--static:hover {
+    background: none;
+}
+
+.revenue-distribution-name {
+    display: flex;
+    flex-direction: column;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.category-performance-meta {
+    font-size: 11.5px;
+    font-weight: 500;
+    color: #9a9a9a;
+}
+
+.revenue-distribution-bar-track {
+    height: 10px;
+    border-radius: 6px;
+    background: #f2f2f2;
+    overflow: hidden;
+}
+
+.revenue-distribution-bar {
+    height: 100%;
+    border-radius: 6px;
+    background: linear-gradient(90deg, #ffb238, #ff9b00);
+    transition: width .5s ease-out;
+}
+
+.revenue-distribution-bar--secondary {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6);
+}
+
+.revenue-distribution-value {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #1a1a1a;
+    white-space: nowrap;
+}
+
+.revenue-distribution-share {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #9a9a9a;
+}
+
+.revenue-distribution-view-all {
+    margin-top: 12px;
+}
+
+/* Insights strip */
+
+.product-insights {
+    list-style: none;
+    margin: 0 0 24px;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+}
+
+.product-insight-card {
+    padding: 14px 16px;
+    background: linear-gradient(155deg, #fff9f0 0%, #ffffff 60%);
+    border: 1px solid #f3e6cf;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.product-insight-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: #d68a00;
+}
+
+.product-insight-text {
+    font-size: 13.5px;
+    line-height: 1.4;
+    color: #333;
+}
+
+/* Product card performance line */
+
+.product-card__performance {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px dashed #ececec;
+    font-size: 12px;
+    color: #8a8a8a;
+    flex-wrap: wrap;
+}
+
+/* Product detail modal — performance section */
+
+.product-detail__performance {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #ececec;
+}
+
+.product-detail__performance h3 {
+    margin: 0 0 12px;
+    font-size: 15px;
+}
+
+.product-detail__trend-toggle {
+    margin: 16px 0 10px;
+}
+
+@media (max-width: 900px) {
+    .product-performance-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .revenue-distribution-row,
+    .revenue-distribution-row--static {
+        grid-template-columns: 96px 1fr auto;
+        gap: 8px;
+    }
+
+    .product-ranking-stats {
+        align-items: flex-end;
+    }
+
+    .analytics-summary--triple {
+        flex-direction: column;
+    }
+}
+
+/* Inventory Health donut */
+
+.inventory-health-card {
+    margin-bottom: 24px;
+}
+
+.inventory-health-body {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    flex-wrap: wrap;
+}
+
+.inventory-health-chart {
+    position: relative;
+    flex: 0 0 220px;
+    width: 220px;
+}
+
+.inventory-health-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.inventory-health-center-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.inventory-health-center-label {
+    font-size: 12px;
+    color: #8a8a8a;
+}
+
+.inventory-health-legend {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+    min-width: 180px;
+}
+
+.inventory-health-legend li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13.5px;
+}
+
+.inventory-health-legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.inventory-health-legend-label {
+    flex: 1;
+    color: #4a4a4a;
+    font-weight: 500;
+}
+
+.inventory-health-legend-value {
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+/* Low Stock Alerts row (image + text inside a needs-attention-item) */
+
+.inventory-alert-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Inventory Risk summary strip */
+
+.inventory-risk-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid #ececec;
+}
+
+.inventory-risk-summary-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.inventory-risk-summary-count {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+/* Static (non-interactive) variant of a ranking row — used by Fastest Moving Products, which lists a forecast rather than linking anywhere */
+
+.product-ranking-row--static {
+    cursor: default;
+}
+
+.product-ranking-row--static:hover {
+    background: none;
+}
+
+/* ==================== Billing page ==================== */
+
+/* Current-plan hero */
+
+.billing-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: 32px;
+    padding: 32px;
+    margin-bottom: 24px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 55%, #2563eb 100%);
+    color: #fff;
+    flex-wrap: wrap;
+}
+
+.billing-hero--loading,
+.billing-hero--empty {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.billing-hero__main {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+    min-width: 260px;
+}
+
+.billing-hero__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.billing-hero__eyebrow {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.65);
+}
+
+.billing-hero__plan-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.billing-hero__plan-name {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+}
+
+.billing-hero__interval-badge {
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.16);
+    color: #fff;
+}
+
+.billing-hero__price {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.billing-hero__price-cadence {
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.7);
+    margin-left: 4px;
+}
+
+.billing-hero__renewal {
+    margin: 0;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.billing-hero__renewal--ending {
+    color: #fde68a;
+}
+
+.billing-hero__renewal strong {
+    color: #fff;
+}
+
+.billing-hero__features {
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 6px 16px;
+}
+
+.billing-hero__features li {
+    font-size: 13.5px;
+    color: rgba(255, 255, 255, 0.92);
+}
+
+.billing-hero__feature-check {
+    color: #4ade80;
+    margin-right: 6px;
+    font-weight: 700;
+}
+
+.billing-hero__feature-limit {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.billing-hero__actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+}
+
+.billing-hero__actions .business-dashboard-button-secondary {
+    background: #fff;
+    border-color: #fff;
+}
+
+.billing-hero__actions .business-dashboard-button-ghost {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.billing-hero__actions .business-dashboard-button-ghost:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+}
+
+.billing-hero__switch {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 6px;
+    padding: 20px 24px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    min-width: 220px;
+}
+
+.billing-hero__switch-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+}
+
+.billing-hero__switch-savings {
+    font-size: 12.5px;
+    color: #86efac;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.billing-hero__no-plan {
+    margin: 4px 0 0;
+    font-size: 26px;
+    font-weight: 800;
+}
+
+.billing-hero__no-plan-hint {
+    margin: 0;
+    max-width: 420px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Usage / limits */
+
+.usage-item {
+    padding: 16px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.usage-item:last-of-type {
+    border-bottom: none;
+}
+
+.usage-item__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.usage-item__name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.usage-item__figure {
+    font-size: 13px;
+    font-weight: 600;
+    color: #555;
+    font-variant-numeric: tabular-nums;
+}
+
+.usage-progress-track {
+    width: 100%;
+    height: 8px;
+    border-radius: 999px;
+    background: #eef0f2;
+    overflow: hidden;
+}
+
+.usage-progress-fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.5s ease-out;
+}
+
+.usage-progress-fill--default {
+    background: linear-gradient(90deg, #3b82f6, #2563eb);
+}
+
+.usage-progress-fill--warning {
+    background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+.usage-progress-fill--critical {
+    background: linear-gradient(90deg, #ef4444, #dc2626);
+}
+
+.usage-item__hint {
+    margin: 8px 0 0;
+    font-size: 12.5px;
+    color: #8a8a8a;
+}
+
+.usage-item__warning {
+    margin: 8px 0 0;
+    font-size: 12.5px;
+    color: #b25e00;
+    font-weight: 600;
+}
+
+.usage-item__warning--critical {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    color: #d92d20;
+}
+
+.usage-context-row {
+    display: flex;
+    align-items: baseline;
+    gap: 28px;
+    padding-top: 16px;
+    flex-wrap: wrap;
+}
+
+.usage-context-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.usage-context-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1a1a1a;
+    font-variant-numeric: tabular-nums;
+}
+
+.usage-context-label {
+    font-size: 12px;
+    color: #8a8a8a;
+}
+
+.usage-context-note {
+    margin: 0;
+    font-size: 12px;
+    color: #b0b0b0;
+    flex-basis: 100%;
+}
+
+/* Plans toggle + savings */
+
+.plan-toggle-savings {
+    font-weight: 500;
+}
+
+.plan-card-savings {
+    display: inline-block;
+    align-self: flex-start;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    background: #f0fdf4;
+    color: #12875a;
+}
+
+/* Feature comparison table */
+
+.plan-comparison-table th,
+.plan-comparison-table td {
+    text-align: center;
+}
+
+.plan-comparison-table th:first-child,
+.plan-comparison-table td:first-child {
+    text-align: left;
+}
+
+.plan-comparison-table__check {
+    font-variant-numeric: tabular-nums;
+    color: #333;
+}
+
+/* Payment & Billing (reserved for a future payment gateway) */
+
+.payment-billing-reserved {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.payment-billing-reserved__block {
+    padding: 16px;
+    border: 1px dashed #e2e2e2;
+    border-radius: 10px;
+    background: #fafafa;
+}
+
+.payment-billing-reserved__block h4 {
+    margin: 0 0 6px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #555;
+}
+
+.payment-billing-reserved__block .business-dashboard-table-message {
+    padding: 0;
+    text-align: left;
+}
+
+/* Subscription activity */
+
+.subscription-activity-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.subscription-activity-item {
+    display: flex;
+    gap: 16px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f5f5f5;
+    font-size: 13.5px;
+}
+
+.subscription-activity-item:last-child {
+    border-bottom: none;
+}
+
+.subscription-activity-date {
+    flex-shrink: 0;
+    width: 64px;
+    color: #8a8a8a;
+    font-weight: 600;
+}
+
+.subscription-activity-text {
+    color: #333;
+}
+
+/* Plan change confirmation modal */
+
+.plan-change-summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 16px 0;
+    padding: 14px 16px;
+    border-radius: 10px;
+    background: #f7f8fa;
+}
+
+.plan-change-summary > div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.plan-change-summary .business-dashboard-form-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #999;
+}
+
+.plan-change-payment-note {
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+@media (max-width: 720px) {
+    .billing-hero {
+        flex-direction: column;
+        padding: 24px;
+    }
+
+    .billing-hero__switch {
+        width: 100%;
+    }
+
+    .plan-change-summary {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .inventory-health-body {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .inventory-health-chart {
+        width: 100%;
+    }
+}
+
+/* ==================== Overview page ==================== */
+
+.overview-header {
+    margin-bottom: 20px;
+}
+
+.overview-header__row {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+/* KPI cards */
+
+.overview-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.overview-kpi-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 18px 20px;
+    background: #fff;
+    border: 1px solid #ececec;
+    border-radius: 12px;
+    animation: overview-card-in 0.4s ease both;
+}
+
+.overview-kpi-card__label {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #8a8a8a;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.overview-kpi-card__value {
+    font-size: 26px;
+    font-weight: 800;
+    color: #1a1a1a;
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+}
+
+.overview-kpi-card__value--empty {
+    color: #ccc;
+}
+
+@keyframes overview-card-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Revenue hero chart */
+
+.overview-revenue-chart {
+    margin-bottom: 24px;
+}
+
+.overview-revenue-chart__area {
+    margin-top: 8px;
+}
+
+/* Section "view more" links */
+
+.overview-section-link {
+    margin-top: 12px;
+    display: inline-block;
+}
+
+/* Orders requiring attention */
+
+.overview-order-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.overview-order-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+    background: #fff8ec;
+    border: 1px solid #ffe4b5;
+    border-radius: 8px;
+}
+
+.overview-order-row__main {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.overview-order-row__ref {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.overview-order-row__customer {
+    font-size: 12.5px;
+    color: #777;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.overview-order-row__meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.overview-order-row__amount {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+/* Inventory snapshot */
+
+.overview-inventory-snapshot__body {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.overview-inventory-snapshot__chart {
+    position: relative;
+    flex-shrink: 0;
+    width: 120px;
+    height: 120px;
+}
+
+.overview-inventory-snapshot__chart-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a1a1a;
+    pointer-events: none;
+}
+
+.overview-inventory-snapshot__legend {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 12.5px;
+    color: #555;
+}
+
+.overview-inventory-snapshot__legend li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.overview-inventory-snapshot__alerts {
+    list-style: none;
+    margin: 14px 0 0;
+    padding: 10px 0 0;
+    border-top: 1px solid #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.overview-inventory-snapshot__alerts li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #333;
+}
+
+.overview-inventory-snapshot__alert-stock {
+    font-weight: 600;
+    color: #b25e00;
+}
+
+/* Quick actions */
+
+.overview-quick-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.overview-quick-action {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 18px;
+    background: #fff;
+    border: 1px solid #ececec;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #1a1a1a;
+    cursor: pointer;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.overview-quick-action:hover {
+    border-color: #2563eb;
+    box-shadow: 0 2px 10px rgba(37, 99, 235, 0.1);
+    transform: translateY(-1px);
+}
+
+.overview-quick-action__icon {
+    display: inline-flex;
+    color: #2563eb;
+    font-size: 16px;
+}
+
+/* Billing notice */
+
+.overview-billing-notice {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1d4ed8;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Compact secondary row (Customers / Store Status) */
+
+.overview-compact-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.overview-compact-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.overview-compact-card__value {
+    font-size: 24px;
+    font-weight: 800;
+    color: #1a1a1a;
+    width: fit-content;
+}
+
+.overview-compact-card__note {
+    font-size: 12.5px;
+    color: #8a8a8a;
+}
+
+/* Empty state (brand-new store) */
+
+.overview-empty-state {
+    text-align: center;
+    padding: 48px 32px;
+}
+
+.overview-empty-state h2 {
+    margin: 0 0 8px;
+}
+
+.overview-empty-state .business-dashboard-header-actions {
+    justify-content: center;
+    margin-top: 16px;
+}
+
+@media (max-width: 900px) {
+    .overview-kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .overview-compact-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .overview-kpi-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .overview-header__row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .overview-inventory-snapshot__body {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .overview-billing-notice {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }

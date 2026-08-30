@@ -19,7 +19,30 @@ import type {
     businessOrderResponseSchema,
     businessOrderItemResponseSchema,
     businessOrderDetailResponseSchema,
+    orderStatsResponseSchema,
+    orderNoteResponseSchema,
+    orderStatusHistoryEntryResponseSchema,
+    orderAnalyticsGranularitySchema,
+    orderAnalyticsPointResponseSchema,
+    orderAnalyticsPeriodTotalsResponseSchema,
+    orderAnalyticsResponseSchema,
+    customerSnapshotResponseSchema,
+    productCatalogOverviewResponseSchema,
+    productAnalyticsPointResponseSchema,
+    productAnalyticsPeriodTotalsResponseSchema,
+    productAllTimeTotalsResponseSchema,
+    productAnalyticsResponseSchema,
+    productPerformanceEntryResponseSchema,
+    categoryPerformanceEntryResponseSchema,
+    productPerformanceResponseSchema,
+    inventoryAnalyticsPointResponseSchema,
+    inventoryAnalyticsPeriodTotalsResponseSchema,
+    inventoryAnalyticsResponseSchema,
+    inventoryProductPerformanceEntryResponseSchema,
+    inventoryCategoryPerformanceEntryResponseSchema,
+    inventoryPerformanceResponseSchema,
     businessSubscriptionResponseSchema,
+    subscriptionHistoryEntryResponseSchema,
     productDraftMessageSchema,
     productDraftProductSchema,
     productDraftSchema,
@@ -50,6 +73,7 @@ export type AssignableBusinessRole = z.infer<typeof assignableBusinessRoleSchema
 export type CreateBusinessMemberResponse = z.infer<typeof createBusinessMemberResponseSchema>;
 export type CreateBusinessMemberPayload = z.infer<typeof createBusinessMemberFormSchema>;
 export type BusinessSubscriptionResponse = z.infer<typeof businessSubscriptionResponseSchema>;
+export type SubscriptionHistoryEntry = z.infer<typeof subscriptionHistoryEntryResponseSchema>;
 
 export type BusinessProductDetail = z.infer<typeof businessProductDetailSchema>;
 export type BusinessProductImage = z.infer<typeof productImageSchema>;
@@ -107,7 +131,7 @@ export type ProductDraftMessage = z.infer<typeof productDraftMessageSchema>;
 export type ProductDraftStatus = z.infer<typeof productDraftStatusSchema>;
 export type ProductDraftProduct = z.infer<typeof productDraftProductSchema>;
 
-export type ProductSortField = "CreatedAt" | "Title" | "Price";
+export type ProductSortField = "CreatedAt" | "Title" | "Price" | "StockQuantity" | "UpdatedAt";
 
 export type ProductStockStatus = z.infer<typeof productStockStatusSchema>;
 
@@ -119,9 +143,25 @@ export type ProductsQueryParams = PagedQuery & {
     sortDescending: boolean;
 };
 
+/** The minimal shape StockAdjustmentModal actually needs — lets any inventory-intelligence list (low stock, dead stock, fast movers…) trigger an adjustment without carrying the full BusinessProductResponse. */
+export type StockAdjustmentProductRef = { id: string; title: string; stockQuantity: number | null };
+
 export type StockMovement = z.infer<typeof stockMovementSchema>;
 export type StockAdjustmentResponse = z.infer<typeof stockAdjustmentResponseSchema>;
 export type InventorySummary = z.infer<typeof inventorySummarySchema>;
+
+export type InventoryAnalyticsPoint = z.infer<typeof inventoryAnalyticsPointResponseSchema>;
+export type InventoryAnalyticsPeriodTotals = z.infer<typeof inventoryAnalyticsPeriodTotalsResponseSchema>;
+export type InventoryAnalytics = z.infer<typeof inventoryAnalyticsResponseSchema>;
+export type InventoryProductPerformanceEntry = z.infer<typeof inventoryProductPerformanceEntryResponseSchema>;
+export type InventoryCategoryPerformanceEntry = z.infer<typeof inventoryCategoryPerformanceEntryResponseSchema>;
+export type InventoryPerformance = z.infer<typeof inventoryPerformanceResponseSchema>;
+
+/** Which figure the Inventory Performance chart currently plots. */
+export type InventoryAnalyticsMetric = "unitsSold" | "stockAdded" | "stockRemoved";
+
+/** Deterministic restock-urgency bucket, derived client-side from stock/threshold/velocity — never AI-generated. */
+export type InventoryRiskLevel = "OutOfStock" | "Critical" | "Watch" | "Healthy";
 
 export type OrderStatus = z.infer<typeof orderStatusSchema>;
 export type PaymentStatus = z.infer<typeof paymentStatusSchema>;
@@ -132,7 +172,40 @@ export type BusinessOrderDetail = z.infer<typeof businessOrderDetailResponseSche
 export type OrdersQueryParams = PagedQuery & {
     status?: OrderStatus;
     search?: string;
+    /** Inclusive, ISO datetime (UTC), start of the range. */
+    from?: string;
+    /** Inclusive, ISO datetime (UTC), end of the range. */
+    to?: string;
 };
+
+export type OrderStats = z.infer<typeof orderStatsResponseSchema>;
+export type OrderNote = z.infer<typeof orderNoteResponseSchema>;
+export type OrderStatusHistoryEntry = z.infer<typeof orderStatusHistoryEntryResponseSchema>;
+
+/** A named date-range preset for the orders toolbar's date filter. "custom" pairs with an explicit from/to picked by the owner. */
+export type OrderDateFilterPreset = "all" | "today" | "yesterday" | "last7" | "last30" | "custom";
+
+export type OrderAnalyticsGranularity = z.infer<typeof orderAnalyticsGranularitySchema>;
+export type OrderAnalyticsPoint = z.infer<typeof orderAnalyticsPointResponseSchema>;
+export type OrderAnalyticsPeriodTotals = z.infer<typeof orderAnalyticsPeriodTotalsResponseSchema>;
+export type OrderAnalytics = z.infer<typeof orderAnalyticsResponseSchema>;
+export type CustomerSnapshot = z.infer<typeof customerSnapshotResponseSchema>;
+
+/** A named range preset for the analytics chart. Distinct from OrderDateFilterPreset — the chart's presets are wider (up to 1 year) and drive chart aggregation, not the orders table filter. */
+export type AnalyticsRangePreset = "7d" | "30d" | "3m" | "6m" | "1y" | "custom";
+
+export type AnalyticsMetric = "revenue" | "orders";
+
+export type ProductCatalogOverview = z.infer<typeof productCatalogOverviewResponseSchema>;
+export type ProductAnalyticsPoint = z.infer<typeof productAnalyticsPointResponseSchema>;
+export type ProductAnalyticsPeriodTotals = z.infer<typeof productAnalyticsPeriodTotalsResponseSchema>;
+export type ProductAllTimeTotals = z.infer<typeof productAllTimeTotalsResponseSchema>;
+export type ProductAnalytics = z.infer<typeof productAnalyticsResponseSchema>;
+export type ProductPerformanceEntry = z.infer<typeof productPerformanceEntryResponseSchema>;
+export type CategoryPerformanceEntry = z.infer<typeof categoryPerformanceEntryResponseSchema>;
+export type ProductPerformance = z.infer<typeof productPerformanceResponseSchema>;
+
+export type ProductAnalyticsMetric = "revenue" | "unitsSold" | "orders";
 
 // ---- website customization ----
 

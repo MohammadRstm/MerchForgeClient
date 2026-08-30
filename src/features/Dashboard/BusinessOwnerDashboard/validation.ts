@@ -19,7 +19,9 @@ export const businessProductResponseSchema = z.object({
     compareAtPrice: z.number().nullable(),
     imageUrl: z.string().nullable(),
     stockQuantity: z.number().nullable(),
+    sku: z.string().nullable(),
     createdAt: z.iso.datetime(),
+    updatedAt: z.iso.datetime(),
 });
 
 export const businessDashboardStatsResponseSchema = z.object({
@@ -81,6 +83,7 @@ export const businessOrderResponseSchema = z.object({
     id: z.string().uuid(),
     customerName: z.string(),
     customerEmail: z.string(),
+    customerPhone: z.string().nullable(),
     status: orderStatusSchema,
     paymentStatus: paymentStatusSchema,
     total: z.number(),
@@ -102,6 +105,7 @@ export const businessOrderItemResponseSchema = z.object({
 
 export const businessOrderDetailResponseSchema = z.object({
     id: z.string().uuid(),
+    customerId: z.string().uuid().nullable(),
     customerName: z.string(),
     customerEmail: z.string(),
     customerPhone: z.string().nullable(),
@@ -120,6 +124,129 @@ export const businessOrderDetailResponseSchema = z.object({
     items: z.array(businessOrderItemResponseSchema),
     createdAt: z.iso.datetime(),
     updatedAt: z.iso.datetime(),
+    customerOrderCount: z.number().nullable(),
+    customerLastOrderAt: z.iso.datetime().nullable(),
+});
+
+export const orderStatsResponseSchema = z.object({
+    totalCount: z.number(),
+    pendingCount: z.number(),
+    confirmedCount: z.number(),
+    shippedCount: z.number(),
+    deliveredCount: z.number(),
+    cancelledCount: z.number(),
+    stalePendingCount: z.number(),
+    oldestPendingOrderCreatedAt: z.iso.datetime().nullable(),
+    recentlyCancelledCount: z.number(),
+});
+
+export const orderNoteResponseSchema = z.object({
+    id: z.string().uuid(),
+    content: z.string(),
+    createdByUserName: z.string(),
+    createdAt: z.iso.datetime(),
+});
+
+export const orderStatusHistoryEntryResponseSchema = z.object({
+    status: orderStatusSchema,
+    changedByUserName: z.string().nullable(),
+    createdAt: z.iso.datetime(),
+});
+
+export const orderAnalyticsGranularitySchema = z.enum(["Daily", "Monthly"]);
+
+export const orderAnalyticsPointResponseSchema = z.object({
+    period: z.iso.datetime(),
+    orderCount: z.number(),
+    revenue: z.number(),
+});
+
+export const orderAnalyticsPeriodTotalsResponseSchema = z.object({
+    orderCount: z.number(),
+    revenue: z.number(),
+});
+
+export const orderAnalyticsResponseSchema = z.object({
+    granularity: orderAnalyticsGranularitySchema,
+    points: z.array(orderAnalyticsPointResponseSchema),
+    currentPeriod: orderAnalyticsPeriodTotalsResponseSchema,
+    previousPeriod: orderAnalyticsPeriodTotalsResponseSchema,
+    revenueChangePercent: z.number().nullable(),
+    orderCountChangePercent: z.number().nullable(),
+});
+
+export const customerSnapshotResponseSchema = z.object({
+    totalCustomers: z.number(),
+    newCustomersInPeriod: z.number(),
+});
+
+// ---- product analytics ----
+
+export const productCatalogOverviewResponseSchema = z.object({
+    totalProducts: z.number(),
+    totalUnitsSold: z.number(),
+    productRevenue: z.number(),
+    averageProductPrice: z.number().nullable(),
+});
+
+export const productAnalyticsPointResponseSchema = z.object({
+    period: z.iso.datetime(),
+    revenue: z.number(),
+    unitsSold: z.number(),
+    orderCount: z.number(),
+});
+
+export const productAnalyticsPeriodTotalsResponseSchema = z.object({
+    revenue: z.number(),
+    unitsSold: z.number(),
+    orderCount: z.number(),
+});
+
+export const productAllTimeTotalsResponseSchema = z.object({
+    revenue: z.number(),
+    unitsSold: z.number(),
+    orderCount: z.number(),
+    averageUnitsPerOrder: z.number().nullable(),
+});
+
+export const productAnalyticsResponseSchema = z.object({
+    granularity: orderAnalyticsGranularitySchema,
+    points: z.array(productAnalyticsPointResponseSchema),
+    currentPeriod: productAnalyticsPeriodTotalsResponseSchema,
+    previousPeriod: productAnalyticsPeriodTotalsResponseSchema,
+    revenueChangePercent: z.number().nullable(),
+    unitsSoldChangePercent: z.number().nullable(),
+    orderCountChangePercent: z.number().nullable(),
+    allTime: productAllTimeTotalsResponseSchema.nullable(),
+});
+
+export const productPerformanceEntryResponseSchema = z.object({
+    productId: z.string().uuid(),
+    title: z.string(),
+    imageUrl: z.string().nullable(),
+    categoryName: z.string(),
+    price: z.number(),
+    unitsSold: z.number(),
+    revenue: z.number(),
+    orderCount: z.number(),
+    previousUnitsSold: z.number(),
+    previousRevenue: z.number(),
+    unitsSoldChangePercent: z.number().nullable(),
+    revenueChangePercent: z.number().nullable(),
+    createdAt: z.iso.datetime(),
+});
+
+export const categoryPerformanceEntryResponseSchema = z.object({
+    categoryName: z.string(),
+    productCount: z.number(),
+    unitsSold: z.number(),
+    revenue: z.number(),
+});
+
+export const productPerformanceResponseSchema = z.object({
+    products: z.array(productPerformanceEntryResponseSchema),
+    categories: z.array(categoryPerformanceEntryResponseSchema),
+    totalRevenue: z.number(),
 });
 
 export const inventorySummarySchema = z.object({
@@ -129,6 +256,57 @@ export const inventorySummarySchema = z.object({
     outOfStockCount: z.number(),
     lowStockCount: z.number(),
     lowStockThreshold: z.number(),
+});
+
+// ---- inventory analytics/performance ----
+
+export const inventoryAnalyticsPointResponseSchema = z.object({
+    period: z.iso.datetime(),
+    unitsSold: z.number(),
+    stockAdded: z.number(),
+    stockRemoved: z.number(),
+});
+
+export const inventoryAnalyticsPeriodTotalsResponseSchema = z.object({
+    unitsSold: z.number(),
+    stockAdded: z.number(),
+    stockRemoved: z.number(),
+});
+
+export const inventoryAnalyticsResponseSchema = z.object({
+    granularity: orderAnalyticsGranularitySchema,
+    points: z.array(inventoryAnalyticsPointResponseSchema),
+    currentPeriod: inventoryAnalyticsPeriodTotalsResponseSchema,
+    previousPeriod: inventoryAnalyticsPeriodTotalsResponseSchema,
+    unitsSoldChangePercent: z.number().nullable(),
+});
+
+export const inventoryProductPerformanceEntryResponseSchema = z.object({
+    productId: z.string().uuid(),
+    title: z.string(),
+    imageUrl: z.string().nullable(),
+    categoryName: z.string(),
+    stockQuantity: z.number().nullable(),
+    unitsSold: z.number(),
+    revenue: z.number(),
+    lastSaleAt: z.iso.datetime().nullable(),
+    createdAt: z.iso.datetime(),
+});
+
+export const inventoryCategoryPerformanceEntryResponseSchema = z.object({
+    categoryName: z.string(),
+    trackedProductCount: z.number(),
+    untrackedProductCount: z.number(),
+    unitsInStock: z.number(),
+    unitsSold: z.number(),
+    revenue: z.number(),
+    lowStockCount: z.number(),
+    outOfStockCount: z.number(),
+});
+
+export const inventoryPerformanceResponseSchema = z.object({
+    products: z.array(inventoryProductPerformanceEntryResponseSchema),
+    categories: z.array(inventoryCategoryPerformanceEntryResponseSchema),
 });
 
 export const productImageSchema = z.object({
@@ -290,6 +468,19 @@ export const businessSubscriptionResponseSchema = z
         features: z.array(planFeatureItemSchema),
     })
     .nullable();
+
+export const subscriptionHistoryEntryResponseSchema = z.object({
+    id: z.string().uuid(),
+    planName: z.string(),
+    price: z.number(),
+    currency: z.string(),
+    billingInterval: z.string(),
+    status: z.string(),
+    currentPeriodStart: z.iso.datetime(),
+    currentPeriodEnd: z.iso.datetime(),
+    cancelAtPeriodEnd: z.boolean(),
+    createdAt: z.iso.datetime(),
+});
 
 // ---- website template requests ----
 

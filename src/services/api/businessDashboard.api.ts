@@ -24,8 +24,19 @@ import {
     stockAdjustmentResponseSchema,
     inventorySummarySchema,
     stockMovementSchema,
+    inventoryAnalyticsResponseSchema,
+    inventoryPerformanceResponseSchema,
+    subscriptionHistoryEntryResponseSchema,
+    customerSnapshotResponseSchema,
     businessOrdersPageSchema,
     businessOrderDetailResponseSchema,
+    orderStatsResponseSchema,
+    orderNoteResponseSchema,
+    orderStatusHistoryEntryResponseSchema,
+    orderAnalyticsResponseSchema,
+    productCatalogOverviewResponseSchema,
+    productAnalyticsResponseSchema,
+    productPerformanceResponseSchema,
     websiteTemplateCustomizableComponentSchema,
     websiteCustomizationDraftResponseSchema,
     publishWebsiteCustomizationResponseSchema,
@@ -80,6 +91,28 @@ export const getBusinessProductsService = async (businessId: string, query: Prod
     return businessProductsPageSchema.parse(data);
 };
 
+export const getProductCatalogOverviewService = async (businessId: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_PRODUCT_CATALOG_OVERVIEW(businessId));
+
+    return productCatalogOverviewResponseSchema.parse(data);
+};
+
+export const getProductAnalyticsService = async (businessId: string, from: string, to: string, productId?: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_PRODUCT_ANALYTICS(businessId), {
+        params: { from, to, productId },
+    });
+
+    return productAnalyticsResponseSchema.parse(data);
+};
+
+export const getProductPerformanceService = async (businessId: string, from: string, to: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_PRODUCT_PERFORMANCE(businessId), {
+        params: { from, to },
+    });
+
+    return productPerformanceResponseSchema.parse(data);
+};
+
 export const getBusinessMembersService = async (businessId: string) => {
     const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_MEMBERS(businessId));
 
@@ -129,6 +162,13 @@ export const cancelSubscriptionService = async (businessId: string) => {
     const { data } = await authenticatedApi.post(apiRoutes.BUSINESS_DASHBOARD_SUBSCRIPTION_CANCEL(businessId));
 
     return businessSubscriptionResponseSchema.parse(data);
+};
+
+/** Every plan this business has ever been on, newest first — read from the existing Subscription rows, not a separate history model. */
+export const getSubscriptionHistoryService = async (businessId: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_SUBSCRIPTION_HISTORY(businessId));
+
+    return z.array(subscriptionHistoryEntryResponseSchema).parse(data);
 };
 
 // ---- product CRUD ----
@@ -242,9 +282,9 @@ export const getInventorySummaryService = async (businessId: string) => {
     return inventorySummarySchema.parse(data);
 };
 
-export const getStockMovementsService = async (businessId: string, take = 20) => {
+export const getStockMovementsService = async (businessId: string, take = 20, productId?: string) => {
     const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_INVENTORY_MOVEMENTS(businessId), {
-        params: { take },
+        params: { take, productId },
     });
 
     return z.array(stockMovementSchema).parse(data);
@@ -254,6 +294,22 @@ export const updateLowStockThresholdService = async (businessId: string, lowStoc
     await authenticatedApi.put(apiRoutes.BUSINESS_DASHBOARD_LOW_STOCK_THRESHOLD(businessId), {
         lowStockThreshold,
     });
+};
+
+export const getInventoryAnalyticsService = async (businessId: string, from: string, to: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_INVENTORY_ANALYTICS(businessId), {
+        params: { from, to },
+    });
+
+    return inventoryAnalyticsResponseSchema.parse(data);
+};
+
+export const getInventoryPerformanceService = async (businessId: string, from: string, to: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_INVENTORY_PERFORMANCE(businessId), {
+        params: { from, to },
+    });
+
+    return inventoryPerformanceResponseSchema.parse(data);
 };
 
 // ---- orders ----
@@ -278,6 +334,50 @@ export const updateOrderStatusService = async (businessId: string, orderId: stri
     });
 
     return businessOrderDetailResponseSchema.parse(data);
+};
+
+export const getOrderStatsService = async (businessId: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_ORDER_STATS(businessId));
+
+    return orderStatsResponseSchema.parse(data);
+};
+
+export const getOrderNotesService = async (businessId: string, orderId: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_ORDER_NOTES(businessId, orderId));
+
+    return z.array(orderNoteResponseSchema).parse(data);
+};
+
+export const createOrderNoteService = async (businessId: string, orderId: string, content: string) => {
+    const { data } = await authenticatedApi.post(apiRoutes.BUSINESS_DASHBOARD_ORDER_NOTES(businessId, orderId), {
+        content,
+    });
+
+    return orderNoteResponseSchema.parse(data);
+};
+
+export const getOrderStatusHistoryService = async (businessId: string, orderId: string) => {
+    const { data } = await authenticatedApi.get(
+        apiRoutes.BUSINESS_DASHBOARD_ORDER_STATUS_HISTORY(businessId, orderId)
+    );
+
+    return z.array(orderStatusHistoryEntryResponseSchema).parse(data);
+};
+
+export const getOrderAnalyticsService = async (businessId: string, from: string, to: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_ORDER_ANALYTICS(businessId), {
+        params: { from, to },
+    });
+
+    return orderAnalyticsResponseSchema.parse(data);
+};
+
+export const getCustomerSnapshotService = async (businessId: string, from: string, to: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_CUSTOMER_SNAPSHOT(businessId), {
+        params: { from, to },
+    });
+
+    return customerSnapshotResponseSchema.parse(data);
 };
 
 export const updateOrderPaymentStatusService = async (

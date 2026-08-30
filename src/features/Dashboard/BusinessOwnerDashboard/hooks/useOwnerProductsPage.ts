@@ -12,6 +12,8 @@ import useColorImages from "./ui/useColorImages";
 import useQuickImageEdits from "./ui/useQuickImageEdits";
 import useSuggestProductDetails from "./ui/useSuggestProductDetails";
 import useDeleteProduct from "./data/useDeleteProduct";
+import useProductCatalogOverview from "./data/useProductCatalogOverview";
+import useProductAnalyticsSection from "./ui/useProductAnalyticsSection";
 import { getProductColors } from "../utils/getProductColors";
 import { ApiError } from "../../../../Error/ApiError";
 import type { BusinessProductResponse } from "../types";
@@ -33,8 +35,11 @@ const useOwnerProductsPage = () => {
         isError: productsError,
     } = useBusinessProducts(businessId, productsTable.query);
 
+    const { data: catalogOverview } = useProductCatalogOverview(businessId);
+    const productAnalytics = useProductAnalyticsSection(businessId);
+
     const productModal = useProductModal(businessId);
-    const productDetailModal = useProductDetailModal(businessId);
+    const productDetailModal = useProductDetailModal(businessId, productAnalytics.from, productAnalytics.to);
 
     const editFromDetail = (productId: string) => {
         productDetailModal.close();
@@ -97,6 +102,9 @@ const useOwnerProductsPage = () => {
 
     return {
         categories: stats?.productsByCategory.map((entry) => entry.key) ?? [],
+
+        catalogOverview,
+        productAnalytics,
 
         productsPage,
         productsLoading,

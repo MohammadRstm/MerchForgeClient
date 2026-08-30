@@ -1,66 +1,45 @@
 import Spinner from "../../../../components/LoadingSpinner/LoadingSpinner";
 import Pagination from "../../../../components/Pagination/Pagination";
-import { orderStatusBadgeClass, paymentStatusBadgeClass } from "../utils/orderStatusBadge";
+import OrderRowActionsMenu from "./OrderRowActionsMenu";
+import { orderStatusBadgeClass } from "../utils/orderStatusBadge";
+import { shortOrderRef } from "../utils/orderRef";
 import type { PagedResult } from "../../../../types/pagination";
 import type useOrdersTableState from "../hooks/ui/useOrdersTableState";
+import type useOrderSelection from "../hooks/ui/useOrderSelection";
 import type { BusinessOrderResponse, OrderStatus } from "../types";
 
 const currencyFormatter = new Intl.NumberFormat(undefined, { style: "currency", currency: "USD" });
-
-const STATUS_TABS: { value: OrderStatus | undefined; label: string }[] = [
-    { value: undefined, label: "All" },
-    { value: "Pending", label: "Pending" },
-    { value: "Confirmed", label: "Confirmed" },
-    { value: "Shipped", label: "Shipped" },
-    { value: "Delivered", label: "Delivered" },
-    { value: "Cancelled", label: "Cancelled" },
-];
 
 type OrdersTableProps = {
     ordersPage?: PagedResult<BusinessOrderResponse>;
     isLoading: boolean;
     isFetching: boolean;
     isError: boolean;
+    hasActiveFilters: boolean;
     tableState: ReturnType<typeof useOrdersTableState>;
+    selection: ReturnType<typeof useOrderSelection>;
     onViewOrder: (orderId: string) => void;
+    onChangeStatus: (orderId: string, status: OrderStatus) => void;
+    onRequestCancel: (orderId: string) => void;
 };
 
-const OrdersTable = ({ ordersPage, isLoading, isFetching, isError, tableState, onViewOrder }: OrdersTableProps) => {
-    const { query, searchInput, handleSearchChange, handleStatusChange, setPage } = tableState;
+const OrdersTable = ({
+    ordersPage,
+    isLoading,
+    isFetching,
+    isError,
+    hasActiveFilters,
+    tableState,
+    selection,
+    onViewOrder,
+    onChangeStatus,
+    onRequestCancel,
+}: OrdersTableProps) => {
+    const { setPage } = tableState;
+    const items = ordersPage?.items ?? [];
 
     return (
         <section className="business-dashboard-table-card">
-            <div className="business-dashboard-table-header">
-                <h3>Orders</h3>
-
-                <div className="business-dashboard-table-controls">
-                    <input
-                        type="text"
-                        className="business-dashboard-search-input"
-                        placeholder="Search by customer name or email..."
-                        value={searchInput}
-                        onChange={(e) => handleSearchChange(e.target.value)}
-                    />
-                </div>
-            </div>
-
-            <div className="business-dashboard-table-controls" style={{ padding: "0 0 12px" }}>
-                {STATUS_TABS.map((tab) => (
-                    <button
-                        key={tab.label}
-                        type="button"
-                        className={
-                            query.status === tab.value
-                                ? "business-dashboard-button-primary"
-                                : "business-dashboard-button-secondary"
-                        }
-                        onClick={() => handleStatusChange(tab.value)}
-                    >
-                        {tab.label}
-                    </button>
-                ))}
-            </div>
-
             {isLoading ? (
                 <div className="business-dashboard-table-loading">
                     <Spinner size={28} />
@@ -69,50 +48,124 @@ const OrdersTable = ({ ordersPage, isLoading, isFetching, isError, tableState, o
                 <p className="business-dashboard-table-message business-dashboard-table-message--error">
                     Failed to load orders. Please try again.
                 </p>
-            ) : !ordersPage || ordersPage.items.length === 0 ? (
+            ) : items.length === 0 ? (
                 <p className="business-dashboard-table-message">
-                    {query.search || query.status ? "No orders match your search or filters." : "No orders yet."}
+                    {hasActiveFilters ? "No orders found. Try changing your search or filters." : "No orders yet. Orders placed through your store will appear here."}
                 </p>
             ) : (
-                <div className="business-dashboard-table-wrapper" style={{ opacity: isFetching ? 0.6 : 1 }}>
-                    <table className="business-dashboard-table">
-                        <thead>
-                            <tr>
-                                <th>Customer</th>
-                                <th>Items</th>
-                                <th>Total</th>
-                                <th>Status</th>
-                                <th>Payment</th>
-                                <th>Placed</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            {ordersPage.items.map((order) => (
-                                <tr key={order.id} onClick={() => onViewOrder(order.id)} style={{ cursor: "pointer" }}>
-                                    <td>
-                                        <div>{order.customerName}</div>
-                                        <div style={{ fontSize: 12, color: "#8a8a8a" }}>{order.customerEmail}</div>
-                                    </td>
-                                    <td>{order.itemCount}</td>
-                                    <td>{currencyFormatter.format(order.total)}</td>
-                                    <td>
-                                        <span className={orderStatusBadgeClass(order.status)}>{order.status}</span>
-                                    </td>
-                                    <td>
-                                        <span className={paymentStatusBadgeClass(order.paymentStatus)}>
-                                            {order.paymentStatus}
-                                        </span>
-                                    </td>
-                                    <td>{new Date(order.createdAt).toLocaleDateString()}</td>
+                <>
+                    <div className="business-dashboard-table-wrapper orders-table-wrapper" style={{ opacity: isFetching ? 0.6 : 1 }}>
+                        <table className="business-dashboard-table">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <input
+                                            type="checkbox"
+                                            aria-label="Select all orders on this page"
+                                            checked={selection.isAllSelected}
+                                            onChange={selection.toggleAll}
+                                        />
+                                    </th>
+                                    <th>Order</th>
+                                    <th>Customer</th>
+                                    <th>Items</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th></th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+
+                            <tbody>
+                                {items.map((order) => (
+                                    <tr
+                                        key={order.id}
+                                        className="business-dashboard-table-row--clickable"
+                                        onClick={() => onViewOrder(order.id)}
+                                    >
+                                        <td onClick={(e) => e.stopPropagation()}>
+                                            <input
+                                                type="checkbox"
+                                                aria-label={`Select order ${shortOrderRef(order.id)}`}
+                                                checked={selection.selectedIds.has(order.id)}
+                                                onChange={() => selection.toggle(order.id)}
+                                            />
+                                        </td>
+                                        <td>{shortOrderRef(order.id)}</td>
+                                        <td>
+                                            <div>{order.customerName}</div>
+                                            <div style={{ fontSize: 12, color: "#8a8a8a" }}>
+                                                {order.customerPhone ?? order.customerEmail}
+                                            </div>
+                                        </td>
+                                        <td>{order.itemCount} item{order.itemCount === 1 ? "" : "s"}</td>
+                                        <td>{currencyFormatter.format(order.total)}</td>
+                                        <td>
+                                            <span className={orderStatusBadgeClass(order.status)}>{order.status}</span>
+                                        </td>
+                                        <td>{new Date(order.createdAt).toLocaleDateString()}</td>
+                                        <td onClick={(e) => e.stopPropagation()}>
+                                            <OrderRowActionsMenu
+                                                order={order}
+                                                onView={() => onViewOrder(order.id)}
+                                                onChangeStatus={(status) => onChangeStatus(order.id, status)}
+                                                onCancel={() => onRequestCancel(order.id)}
+                                            />
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <ul className="orders-card-list">
+                        {items.map((order) => (
+                            <li
+                                key={order.id}
+                                className="order-card"
+                                onClick={() => onViewOrder(order.id)}
+                            >
+                                <div className="order-card-top">
+                                    <input
+                                        type="checkbox"
+                                        aria-label={`Select order ${shortOrderRef(order.id)}`}
+                                        checked={selection.selectedIds.has(order.id)}
+                                        onClick={(e) => e.stopPropagation()}
+                                        onChange={() => selection.toggle(order.id)}
+                                    />
+                                    <span className="order-card-ref">{shortOrderRef(order.id)}</span>
+                                    <span className={orderStatusBadgeClass(order.status)}>{order.status}</span>
+                                </div>
+
+                                <div className="order-card-customer">{order.customerName}</div>
+                                {order.customerPhone && <div className="order-card-meta">{order.customerPhone}</div>}
+
+                                <div className="order-card-bottom">
+                                    <span>{order.itemCount} item{order.itemCount === 1 ? "" : "s"}</span>
+                                    <span>{currencyFormatter.format(order.total)}</span>
+                                    <span>{new Date(order.createdAt).toLocaleDateString()}</span>
+                                </div>
+
+                                <div className="order-card-actions" onClick={(e) => e.stopPropagation()}>
+                                    <OrderRowActionsMenu
+                                        order={order}
+                                        onView={() => onViewOrder(order.id)}
+                                        onChangeStatus={(status) => onChangeStatus(order.id, status)}
+                                        onCancel={() => onRequestCancel(order.id)}
+                                    />
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </>
             )}
 
-            <Pagination page={ordersPage?.page ?? 1} totalPages={ordersPage?.totalPages ?? 0} onPageChange={setPage} />
+            <div className="orders-table-footer">
+                {ordersPage && ordersPage.totalCount > 0 && (
+                    <span className="orders-table-total">{ordersPage.totalCount} result{ordersPage.totalCount === 1 ? "" : "s"}</span>
+                )}
+                <Pagination page={ordersPage?.page ?? 1} totalPages={ordersPage?.totalPages ?? 0} onPageChange={setPage} />
+            </div>
         </section>
     );
 };

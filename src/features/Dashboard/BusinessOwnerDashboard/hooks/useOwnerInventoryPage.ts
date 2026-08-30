@@ -1,16 +1,19 @@
 import { useState } from "react";
 import useAuth from "../../../../context/Auth/useAuth";
+import useBusinessDashboardStats from "./data/useBusinessDashboardStats";
 import useBusinessProducts from "./data/useBusinessProducts";
 import useInventorySummary from "./data/useInventorySummary";
 import useStockMovements from "./data/useStockMovements";
 import useAdjustStock from "./data/useAdjustStock";
 import useUpdateLowStockThreshold from "./data/useUpdateLowStockThreshold";
 import useProductsTableState from "./ui/useProductsTableState";
+import useInventoryAnalyticsSection from "./ui/useInventoryAnalyticsSection";
+import useExportInventory from "./ui/useExportInventory";
 import { ApiError } from "../../../../Error/ApiError";
-import type { BusinessProductResponse } from "../types";
+import type { ProductStockStatus, StockAdjustmentProductRef } from "../types";
 
 type AdjustmentTarget = {
-    product: BusinessProductResponse;
+    product: StockAdjustmentProductRef;
     mode: "add" | "remove";
 };
 
@@ -20,6 +23,10 @@ const toErrorMessage = (error: unknown, fallback: string) =>
 const useOwnerInventoryPage = () => {
     const { session } = useAuth();
     const businessId = session?.business?.id ?? "";
+
+    // Category options for the filter dropdown come from the same breakdown the
+    // Overview/Products pages use — no separate categories endpoint exists or is needed.
+    const { data: stats } = useBusinessDashboardStats(businessId);
 
     const productsTable = useProductsTableState();
 
@@ -42,6 +49,24 @@ const useOwnerInventoryPage = () => {
         isError: movementsError,
     } = useStockMovements(businessId);
 
+    const inventoryAnalytics = useInventoryAnalyticsSection(businessId);
+
+    const salesByProductId = (inventoryAnalytics.performance?.products ?? []).reduce<Record<string, number>>(
+        (map, entry) => {
+            map[entry.productId] = entry.unitsSold;
+            return map;
+        },
+        {}
+    );
+
+    const { exportFiltered, isExporting } = useExportInventory(businessId);
+
+    const exportInventory = () => exportFiltered(productsTable.query, "inventory");
+
+    const filterByStatus = (status: ProductStockStatus | undefined) => {
+        productsTable.handleStockStatusChange(status);
+    };
+
     const {
         mutate: adjustStock,
         isPending: isAdjustingStock,
@@ -59,12 +84,12 @@ const useOwnerInventoryPage = () => {
     const [adjustmentTarget, setAdjustmentTarget] = useState<AdjustmentTarget | undefined>(undefined);
     const [thresholdModalOpen, setThresholdModalOpen] = useState(false);
 
-    const openAddStock = (product: BusinessProductResponse) => {
+    const openAddStock = (product: StockAdjustmentProductRef) => {
         resetAdjustStockError();
         setAdjustmentTarget({ product, mode: "add" });
     };
 
-    const openRemoveStock = (product: BusinessProductResponse) => {
+    const openRemoveStock = (product: StockAdjustmentProductRef) => {
         resetAdjustStockError();
         setAdjustmentTarget({ product, mode: "remove" });
     };
@@ -94,11 +119,18 @@ const useOwnerInventoryPage = () => {
     };
 
     return {
+        categories: stats?.productsByCategory.map((entry) => entry.key) ?? [],
+
         productsPage,
         productsLoading,
         productsFetching,
         productsError,
         productsTable,
+        salesByProductId,
+        filterByStatus,
+
+        exportInventory,
+        isExporting,
 
         summary,
         summaryLoading,
@@ -107,6 +139,8 @@ const useOwnerInventoryPage = () => {
         movements,
         movementsLoading,
         movementsError,
+
+        inventoryAnalytics,
 
         adjustmentTarget,
         isAdjustingStock,

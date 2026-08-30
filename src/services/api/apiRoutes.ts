@@ -66,9 +66,13 @@ export const apiRoutes = {
     BUSINESS_DASHBOARD_MEMBERS : (businessId : string) => `/businesses/${businessId}/dashboard/members`,
     BUSINESS_DASHBOARD_SUBSCRIPTION : (businessId : string) => `/businesses/${businessId}/dashboard/subscription`,
     BUSINESS_DASHBOARD_SUBSCRIPTION_CANCEL : (businessId : string) => `/businesses/${businessId}/dashboard/subscription/cancel`,
+    BUSINESS_DASHBOARD_SUBSCRIPTION_HISTORY : (businessId : string) => `/businesses/${businessId}/dashboard/subscription/history`,
     BUSINESS_DASHBOARD_PRODUCT_FORM : (businessId : string) => `/businesses/${businessId}/dashboard/product-form`,
     BUSINESS_DASHBOARD_PRODUCT : (businessId : string, productId : string) => `/businesses/${businessId}/dashboard/products/${productId}`,
     BUSINESS_DASHBOARD_PRODUCT_IMAGE : (businessId : string) => `/businesses/${businessId}/dashboard/products/image`,
+    BUSINESS_DASHBOARD_PRODUCT_CATALOG_OVERVIEW : (businessId : string) => `/businesses/${businessId}/dashboard/products/analytics/overview`,
+    BUSINESS_DASHBOARD_PRODUCT_ANALYTICS : (businessId : string) => `/businesses/${businessId}/dashboard/products/analytics`,
+    BUSINESS_DASHBOARD_PRODUCT_PERFORMANCE : (businessId : string) => `/businesses/${businessId}/dashboard/products/performance`,
     BUSINESS_DASHBOARD_WEBSITE_TEMPLATE_OPTIONS : (businessId : string) => `/businesses/${businessId}/dashboard/website-template-options`,
     BUSINESS_DASHBOARD_WEBSITE_TEMPLATE_REQUESTS : (businessId : string) => `/businesses/${businessId}/dashboard/website-template-requests`,
     BUSINESS_DASHBOARD_FEATURES : (businessId : string) => `/businesses/${businessId}/dashboard/features`,
@@ -86,12 +90,19 @@ export const apiRoutes = {
     BUSINESS_DASHBOARD_INVENTORY_SUMMARY : (businessId : string) => `/businesses/${businessId}/dashboard/inventory/summary`,
     BUSINESS_DASHBOARD_INVENTORY_MOVEMENTS : (businessId : string) => `/businesses/${businessId}/dashboard/inventory/movements`,
     BUSINESS_DASHBOARD_LOW_STOCK_THRESHOLD : (businessId : string) => `/businesses/${businessId}/dashboard/inventory/low-stock-threshold`,
+    BUSINESS_DASHBOARD_INVENTORY_ANALYTICS : (businessId : string) => `/businesses/${businessId}/dashboard/inventory/analytics`,
+    BUSINESS_DASHBOARD_INVENTORY_PERFORMANCE : (businessId : string) => `/businesses/${businessId}/dashboard/inventory/performance`,
 
     /** ORDERS */
     BUSINESS_DASHBOARD_ORDERS : (businessId : string) => `/businesses/${businessId}/dashboard/orders`,
     BUSINESS_DASHBOARD_ORDER : (businessId : string, orderId : string) => `/businesses/${businessId}/dashboard/orders/${orderId}`,
     BUSINESS_DASHBOARD_ORDER_STATUS : (businessId : string, orderId : string) => `/businesses/${businessId}/dashboard/orders/${orderId}/status`,
     BUSINESS_DASHBOARD_ORDER_PAYMENT_STATUS : (businessId : string, orderId : string) => `/businesses/${businessId}/dashboard/orders/${orderId}/payment-status`,
+    BUSINESS_DASHBOARD_ORDER_STATS : (businessId : string) => `/businesses/${businessId}/dashboard/orders/stats`,
+    BUSINESS_DASHBOARD_ORDER_NOTES : (businessId : string, orderId : string) => `/businesses/${businessId}/dashboard/orders/${orderId}/notes`,
+    BUSINESS_DASHBOARD_ORDER_STATUS_HISTORY : (businessId : string, orderId : string) => `/businesses/${businessId}/dashboard/orders/${orderId}/status-history`,
+    BUSINESS_DASHBOARD_ORDER_ANALYTICS : (businessId : string) => `/businesses/${businessId}/dashboard/orders/analytics`,
+    BUSINESS_DASHBOARD_CUSTOMER_SNAPSHOT : (businessId : string) => `/businesses/${businessId}/dashboard/customers/snapshot`,
 
     /** AI PRODUCT DRAFTS */
     PRODUCT_DRAFTS : (businessId : string) => `/businesses/${businessId}/dashboard/product-drafts`,
