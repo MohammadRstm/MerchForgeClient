@@ -2093,6 +2093,92 @@ p.voice-product-button__pill {
     font-size: 14px;
 }
 
+/* Attention cards (Products page) */
+
+.attention-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+}
+
+.attention-cards-grid--modal {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+
+.attention-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    background: #fff8ec;
+    border: 1px solid #ffe4b5;
+    border-radius: 10px;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.attention-card:hover {
+    border-color: #f5c563;
+    box-shadow: 0 2px 8px rgba(180, 130, 20, 0.12);
+}
+
+.attention-card__image {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ffe4b5;
+}
+
+.attention-card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.attention-card__image-placeholder {
+    font-size: 16px;
+    font-weight: 600;
+    color: #b25e00;
+}
+
+.attention-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.attention-card__title {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #1a1a1a;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.attention-card__category {
+    font-size: 11.5px;
+    color: #a37a2f;
+}
+
+.attention-card__reason {
+    font-size: 12px;
+    color: #b25e00;
+    margin-top: 2px;
+}
+
+.attention-show-more {
+    margin-top: 12px;
+}
+
 /* Toolbar */
 
 .orders-toolbar {
@@ -3565,5 +3651,334 @@ p.voice-product-button__pill {
 
     .inventory-health-chart {
         width: 100%;
+    }
+}
+
+/* ==================== Overview page ==================== */
+
+.overview-header {
+    margin-bottom: 20px;
+}
+
+.overview-header__row {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+/* KPI cards */
+
+.overview-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.overview-kpi-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 18px 20px;
+    background: #fff;
+    border: 1px solid #ececec;
+    border-radius: 12px;
+    animation: overview-card-in 0.4s ease both;
+}
+
+.overview-kpi-card__label {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #8a8a8a;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.overview-kpi-card__value {
+    font-size: 26px;
+    font-weight: 800;
+    color: #1a1a1a;
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+}
+
+.overview-kpi-card__value--empty {
+    color: #ccc;
+}
+
+@keyframes overview-card-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Revenue hero chart */
+
+.overview-revenue-chart {
+    margin-bottom: 24px;
+}
+
+.overview-revenue-chart__area {
+    margin-top: 8px;
+}
+
+/* Section "view more" links */
+
+.overview-section-link {
+    margin-top: 12px;
+    display: inline-block;
+}
+
+/* Orders requiring attention */
+
+.overview-order-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.overview-order-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+    background: #fff8ec;
+    border: 1px solid #ffe4b5;
+    border-radius: 8px;
+}
+
+.overview-order-row__main {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.overview-order-row__ref {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.overview-order-row__customer {
+    font-size: 12.5px;
+    color: #777;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.overview-order-row__meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.overview-order-row__amount {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+/* Inventory snapshot */
+
+.overview-inventory-snapshot__body {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.overview-inventory-snapshot__chart {
+    position: relative;
+    flex-shrink: 0;
+    width: 120px;
+    height: 120px;
+}
+
+.overview-inventory-snapshot__chart-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a1a1a;
+    pointer-events: none;
+}
+
+.overview-inventory-snapshot__legend {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 12.5px;
+    color: #555;
+}
+
+.overview-inventory-snapshot__legend li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.overview-inventory-snapshot__alerts {
+    list-style: none;
+    margin: 14px 0 0;
+    padding: 10px 0 0;
+    border-top: 1px solid #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.overview-inventory-snapshot__alerts li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #333;
+}
+
+.overview-inventory-snapshot__alert-stock {
+    font-weight: 600;
+    color: #b25e00;
+}
+
+/* Quick actions */
+
+.overview-quick-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.overview-quick-action {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 18px;
+    background: #fff;
+    border: 1px solid #ececec;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #1a1a1a;
+    cursor: pointer;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.overview-quick-action:hover {
+    border-color: #2563eb;
+    box-shadow: 0 2px 10px rgba(37, 99, 235, 0.1);
+    transform: translateY(-1px);
+}
+
+.overview-quick-action__icon {
+    display: inline-flex;
+    color: #2563eb;
+    font-size: 16px;
+}
+
+/* Billing notice */
+
+.overview-billing-notice {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1d4ed8;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Compact secondary row (Customers / Store Status) */
+
+.overview-compact-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.overview-compact-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.overview-compact-card__value {
+    font-size: 24px;
+    font-weight: 800;
+    color: #1a1a1a;
+    width: fit-content;
+}
+
+.overview-compact-card__note {
+    font-size: 12.5px;
+    color: #8a8a8a;
+}
+
+/* Empty state (brand-new store) */
+
+.overview-empty-state {
+    text-align: center;
+    padding: 48px 32px;
+}
+
+.overview-empty-state h2 {
+    margin: 0 0 8px;
+}
+
+.overview-empty-state .business-dashboard-header-actions {
+    justify-content: center;
+    margin-top: 16px;
+}
+
+@media (max-width: 900px) {
+    .overview-kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .overview-compact-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .overview-kpi-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .overview-header__row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .overview-inventory-snapshot__body {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .overview-billing-notice {
+        flex-direction: column;
+        align-items: flex-start;
     }
 }

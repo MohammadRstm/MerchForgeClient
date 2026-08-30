@@ -175,6 +175,11 @@ export const orderAnalyticsResponseSchema = z.object({
     orderCountChangePercent: z.number().nullable(),
 });
 
+export const customerSnapshotResponseSchema = z.object({
+    totalCustomers: z.number(),
+    newCustomersInPeriod: z.number(),
+});
+
 // ---- product analytics ----
 
 export const productCatalogOverviewResponseSchema = z.object({

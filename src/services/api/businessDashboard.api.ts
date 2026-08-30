@@ -27,6 +27,7 @@ import {
     inventoryAnalyticsResponseSchema,
     inventoryPerformanceResponseSchema,
     subscriptionHistoryEntryResponseSchema,
+    customerSnapshotResponseSchema,
     businessOrdersPageSchema,
     businessOrderDetailResponseSchema,
     orderStatsResponseSchema,
@@ -369,6 +370,14 @@ export const getOrderAnalyticsService = async (businessId: string, from: string,
     });
 
     return orderAnalyticsResponseSchema.parse(data);
+};
+
+export const getCustomerSnapshotService = async (businessId: string, from: string, to: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_CUSTOMER_SNAPSHOT(businessId), {
+        params: { from, to },
+    });
+
+    return customerSnapshotResponseSchema.parse(data);
 };
 
 export const updateOrderPaymentStatusService = async (

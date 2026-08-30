@@ -26,6 +26,7 @@ import type {
     orderAnalyticsPointResponseSchema,
     orderAnalyticsPeriodTotalsResponseSchema,
     orderAnalyticsResponseSchema,
+    customerSnapshotResponseSchema,
     productCatalogOverviewResponseSchema,
     productAnalyticsPointResponseSchema,
     productAnalyticsPeriodTotalsResponseSchema,
@@ -188,6 +189,7 @@ export type OrderAnalyticsGranularity = z.infer<typeof orderAnalyticsGranularity
 export type OrderAnalyticsPoint = z.infer<typeof orderAnalyticsPointResponseSchema>;
 export type OrderAnalyticsPeriodTotals = z.infer<typeof orderAnalyticsPeriodTotalsResponseSchema>;
 export type OrderAnalytics = z.infer<typeof orderAnalyticsResponseSchema>;
+export type CustomerSnapshot = z.infer<typeof customerSnapshotResponseSchema>;
 
 /** A named range preset for the analytics chart. Distinct from OrderDateFilterPreset — the chart's presets are wider (up to 1 year) and drive chart aggregation, not the orders table filter. */
 export type AnalyticsRangePreset = "7d" | "30d" | "3m" | "6m" | "1y" | "custom";

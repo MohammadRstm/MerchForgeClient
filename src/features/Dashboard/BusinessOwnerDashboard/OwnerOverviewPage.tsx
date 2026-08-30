@@ -1,188 +1,176 @@
 import "./BusinessOwnerDashboard.css";
-import { useNavigate } from "react-router";
-import { routes } from "../../../config/routes";
-import Spinner from "../../../components/LoadingSpinner/LoadingSpinner";
-import StatCards from "../../../components/DashboardWidgets/StatCards";
-import BreakdownPieChart from "../../../components/DashboardWidgets/BreakdownPieChart";
-import GrowthBarChart from "../../../components/DashboardWidgets/GrowthBarChart";
 import useOwnerOverviewPage from "./hooks/useOwnerOverviewPage";
-import { resolveImageUrl } from "./utils/resolveImageUrl";
-
-const currencyFormatter = new Intl.NumberFormat(undefined, {
-    style: "currency",
-    currency: "USD",
-});
+import OverviewHeader from "./components/OverviewHeader";
+import OverviewEmptyState from "./components/OverviewEmptyState";
+import BillingNotice from "./components/BillingNotice";
+import OverviewKpiCards from "./components/OverviewKpiCards";
+import RevenueOverviewChart from "./components/RevenueOverviewChart";
+import OrdersRequiringAttention from "./components/OrdersRequiringAttention";
+import InventorySnapshot from "./components/InventorySnapshot";
+import QuickActions from "./components/QuickActions";
+import TopProductsSnapshot from "./components/TopProductsSnapshot";
+import RecentOrdersSnapshot from "./components/RecentOrdersSnapshot";
+import CategorySalesSnapshot from "./components/CategorySalesSnapshot";
+import StoreInsights from "./components/StoreInsights";
+import CustomerSnapshotCard from "./components/CustomerSnapshotCard";
+import StoreStatusCard from "./components/StoreStatusCard";
+import Spinner from "../../../components/LoadingSpinner/LoadingSpinner";
 
 const OwnerOverviewPage = () => {
     const {
+        greeting,
+        ownerFirstName,
         businessName,
+
+        rangePreset,
+        changeRangePreset,
+        customFrom,
+        customTo,
+        setCustomFrom,
+        setCustomTo,
+        isWaitingForCustomRange,
+        rangePresets,
+
         stats,
         statsLoading,
         statsError,
-        websiteTemplateOptions,
-        websiteTemplateOptionsLoading,
-        inProgressDraftCount,
-        subscription,
-        features,
+
+        chartMetric,
+        setChartMetric,
+        orderAnalytics,
+        orderAnalyticsLoading,
+        orderAnalyticsFetching,
+        orderAnalyticsError,
+
+        revenue,
+        orderCount,
+        aov,
+        aovChangePercent,
+        revenueChangePercent,
+        orderCountChangePercent,
+        productsSold,
+        productsSoldChangePercent,
+
+        topProducts,
+        topCategories,
+        productPerformanceLoading,
+        productPerformanceError,
+
+        inventorySummary,
+        inventorySummaryLoading,
+        inventorySummaryError,
+        attentionProducts,
+
+        pendingOrders,
+        pendingOrdersTotal,
+        pendingOrdersLoading,
+        pendingOrdersError,
+
+        recentOrders,
+        recentOrdersLoading,
+        recentOrdersError,
+
+        customerSnapshot,
+        customerSnapshotLoading,
+        customerSnapshotError,
+
+        billingNotice,
+        insights,
+
+        hasWebsite,
+        websiteUrl,
     } = useOwnerOverviewPage();
 
-    const navigate = useNavigate();
-
-    const hasOpenWebsiteRequest = !!websiteTemplateOptions?.hasOpenRequest;
-    const needsAttention = hasOpenWebsiteRequest || inProgressDraftCount > 0;
+    const isNewStore = !statsLoading && !statsError && (stats?.productCount ?? 0) === 0;
 
     return (
-        <main className="business-dashboard-page">
-            <div className="business-dashboard-page-header">
-                <h1 className="business-dashboard-heading">{businessName || "Business"} Overview</h1>
-
-                <div className="business-dashboard-header-actions">
-                    {stats?.websiteUrl && (
-                        <a
-                            href={stats.websiteUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="business-dashboard-button-secondary"
-                        >
-                            View website
-                        </a>
-                    )}
-
-                    {!websiteTemplateOptionsLoading && websiteTemplateOptions && (
-                        <button
-                            type="button"
-                            className="business-dashboard-button-primary"
-                            onClick={() => navigate(routes.DASHBOARD_WEBSITE)}
-                        >
-                            {hasOpenWebsiteRequest ? "View website request" : "Choose website template"}
-                        </button>
-                    )}
-                </div>
-            </div>
+        <main className="business-dashboard-page overview-page">
+            <OverviewHeader
+                greeting={greeting}
+                ownerFirstName={ownerFirstName}
+                businessName={businessName}
+                rangePreset={rangePreset}
+                rangePresets={rangePresets}
+                onChangeRangePreset={changeRangePreset}
+                customFrom={customFrom}
+                customTo={customTo}
+                onCustomFromChange={setCustomFrom}
+                onCustomToChange={setCustomTo}
+            />
 
             {statsLoading ? (
                 <div className="business-dashboard-stats-loading">
                     <Spinner size={32} />
                 </div>
-            ) : statsError || !stats ? (
+            ) : statsError ? (
                 <p className="business-dashboard-table-message business-dashboard-table-message--error">
-                    Failed to load business statistics. Please try again.
+                    Unable to load your store overview. Please try again.
                 </p>
+            ) : isNewStore ? (
+                <OverviewEmptyState />
             ) : (
                 <>
-                    {(needsAttention || subscription || (features && features.length > 0)) && (
-                        <section className="business-dashboard-table-card">
-                            <div className="business-dashboard-table-header">
-                                <h3>Needs attention</h3>
-                            </div>
-                            <div className="business-dashboard-header-actions">
-                                {hasOpenWebsiteRequest && (
-                                    <span className="business-dashboard-badge business-dashboard-badge--status-trialing">
-                                        Website request in progress
-                                    </span>
-                                )}
-                                {inProgressDraftCount > 0 && (
-                                    <span className="business-dashboard-badge business-dashboard-badge--status-trialing">
-                                        {inProgressDraftCount} product draft{inProgressDraftCount === 1 ? "" : "s"} in progress
-                                    </span>
-                                )}
-                                {stats.outOfStockProductCount > 0 && (
-                                    <span className="business-dashboard-badge business-dashboard-badge--status-cancelled">
-                                        {stats.outOfStockProductCount} out of stock
-                                    </span>
-                                )}
-                                {stats.pendingOrderCount > 0 && (
-                                    <span className="business-dashboard-badge business-dashboard-badge--status-trialing">
-                                        {stats.pendingOrderCount} order{stats.pendingOrderCount === 1 ? "" : "s"} pending
-                                    </span>
-                                )}
-                                {subscription && (
-                                    <span
-                                        className={`business-dashboard-badge business-dashboard-badge--status-${subscription.status.toLowerCase()}`}
-                                    >
-                                        {subscription.planName} · {subscription.status}
-                                    </span>
-                                )}
-                                {features?.map((feature) => (
-                                    <span key={feature.featureKey} className="business-dashboard-badge">
-                                        {feature.creditsRemaining} {feature.featureName} credit{feature.creditsRemaining === 1 ? "" : "s"}
-                                    </span>
-                                ))}
-                            </div>
-                        </section>
-                    )}
+                    <BillingNotice message={billingNotice} />
 
-                    <StatCards
-                        cards={[
-                            { label: "Team Members", value: stats.memberCount },
-                            { label: "Total Products", value: stats.productCount },
-                            { label: "Product Drafts", value: stats.productDraftCount },
-                            { label: "Out of Stock", value: stats.outOfStockProductCount },
-                            { label: "Orders", value: stats.orderCount },
-                            {
-                                label: "Price Range",
-                                value:
-                                    stats.minProductPrice != null && stats.maxProductPrice != null
-                                        ? `${currencyFormatter.format(stats.minProductPrice)} – ${currencyFormatter.format(stats.maxProductPrice)}`
-                                        : "—",
-                            },
-                            { label: "Business Since", value: new Date(stats.createdAt).toLocaleDateString() },
-                        ]}
+                    <OverviewKpiCards
+                        revenue={revenue}
+                        revenueChangePercent={revenueChangePercent}
+                        orderCount={orderCount}
+                        orderCountChangePercent={orderCountChangePercent}
+                        aov={aov}
+                        aovChangePercent={aovChangePercent}
+                        productsSold={productsSold}
+                        productsSoldChangePercent={productsSoldChangePercent}
                     />
 
-                    {stats.recentProducts.length > 0 && (
-                        <section className="business-dashboard-table-card">
-                            <div className="business-dashboard-table-header">
-                                <h3>Recently added products</h3>
-                            </div>
-                            <div className="business-dashboard-table-wrapper">
-                                <table className="business-dashboard-table">
-                                    <tbody>
-                                        {stats.recentProducts.map((product) => (
-                                            <tr key={product.id}>
-                                                <td>
-                                                    {product.imageUrl ? (
-                                                        <img
-                                                            src={resolveImageUrl(product.imageUrl)}
-                                                            alt=""
-                                                            className="business-dashboard-product-thumb"
-                                                        />
-                                                    ) : (
-                                                        <span className="business-dashboard-product-thumb-placeholder" aria-hidden="true">
-                                                            {product.title.charAt(0).toUpperCase()}
-                                                        </span>
-                                                    )}
-                                                </td>
-                                                <td>{product.title}</td>
-                                                <td>{product.category}</td>
-                                                <td>{currencyFormatter.format(product.price)}</td>
-                                                <td>{new Date(product.createdAt).toLocaleDateString()}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </section>
-                    )}
+                    <RevenueOverviewChart
+                        analytics={orderAnalytics}
+                        isLoading={orderAnalyticsLoading}
+                        isFetching={orderAnalyticsFetching}
+                        isError={orderAnalyticsError}
+                        isWaitingForCustomRange={isWaitingForCustomRange}
+                        metric={chartMetric}
+                        onChangeMetric={setChartMetric}
+                    />
 
-                    <div className="widget-charts-grid">
-                        <BreakdownPieChart
-                            title="Products by Category"
-                            data={stats.productsByCategory.map((entry) => ({ label: entry.key, count: entry.count }))}
+                    <div className="product-performance-row">
+                        <OrdersRequiringAttention
+                            orders={pendingOrders}
+                            totalPending={pendingOrdersTotal}
+                            isLoading={pendingOrdersLoading}
+                            isError={pendingOrdersError}
                         />
-                        <BreakdownPieChart
-                            title="Team by Role"
-                            data={stats.membersByRole.map((entry) => ({ label: entry.key, count: entry.count }))}
+                        <InventorySnapshot
+                            summary={inventorySummary}
+                            isLoading={inventorySummaryLoading}
+                            isError={inventorySummaryError}
+                            attentionProducts={attentionProducts}
                         />
-                        <BreakdownPieChart
-                            title="Product Drafts by Status"
-                            data={stats.productDraftsByStatus.map((entry) => ({ label: entry.key, count: entry.count }))}
+                    </div>
+
+                    <QuickActions />
+
+                    <div className="product-performance-row">
+                        <TopProductsSnapshot
+                            products={topProducts}
+                            isLoading={productPerformanceLoading}
+                            isError={productPerformanceError}
                         />
-                        <GrowthBarChart
-                            title="Products Added (6mo)"
-                            data={stats.productsOverTime}
-                            color="#3b82f6"
+                        <RecentOrdersSnapshot orders={recentOrders} isLoading={recentOrdersLoading} isError={recentOrdersError} />
+                    </div>
+
+                    <div className="product-performance-row">
+                        <CategorySalesSnapshot categories={topCategories} isLoading={productPerformanceLoading} />
+                        <StoreInsights insights={insights} />
+                    </div>
+
+                    <div className="overview-compact-row">
+                        <CustomerSnapshotCard
+                            snapshot={customerSnapshot}
+                            isLoading={customerSnapshotLoading}
+                            isError={customerSnapshotError}
                         />
+                        <StoreStatusCard hasWebsite={hasWebsite} websiteUrl={websiteUrl} />
                     </div>
                 </>
             )}
