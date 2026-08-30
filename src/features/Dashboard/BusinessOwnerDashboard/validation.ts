@@ -464,6 +464,19 @@ export const businessSubscriptionResponseSchema = z
     })
     .nullable();
 
+export const subscriptionHistoryEntryResponseSchema = z.object({
+    id: z.string().uuid(),
+    planName: z.string(),
+    price: z.number(),
+    currency: z.string(),
+    billingInterval: z.string(),
+    status: z.string(),
+    currentPeriodStart: z.iso.datetime(),
+    currentPeriodEnd: z.iso.datetime(),
+    cancelAtPeriodEnd: z.boolean(),
+    createdAt: z.iso.datetime(),
+});
+
 // ---- website template requests ----
 
 export const websiteTemplateOptionSchema = z.object({

@@ -41,6 +41,7 @@ import type {
     inventoryCategoryPerformanceEntryResponseSchema,
     inventoryPerformanceResponseSchema,
     businessSubscriptionResponseSchema,
+    subscriptionHistoryEntryResponseSchema,
     productDraftMessageSchema,
     productDraftProductSchema,
     productDraftSchema,
@@ -71,6 +72,7 @@ export type AssignableBusinessRole = z.infer<typeof assignableBusinessRoleSchema
 export type CreateBusinessMemberResponse = z.infer<typeof createBusinessMemberResponseSchema>;
 export type CreateBusinessMemberPayload = z.infer<typeof createBusinessMemberFormSchema>;
 export type BusinessSubscriptionResponse = z.infer<typeof businessSubscriptionResponseSchema>;
+export type SubscriptionHistoryEntry = z.infer<typeof subscriptionHistoryEntryResponseSchema>;
 
 export type BusinessProductDetail = z.infer<typeof businessProductDetailSchema>;
 export type BusinessProductImage = z.infer<typeof productImageSchema>;

@@ -26,6 +26,7 @@ import {
     stockMovementSchema,
     inventoryAnalyticsResponseSchema,
     inventoryPerformanceResponseSchema,
+    subscriptionHistoryEntryResponseSchema,
     businessOrdersPageSchema,
     businessOrderDetailResponseSchema,
     orderStatsResponseSchema,
@@ -160,6 +161,13 @@ export const cancelSubscriptionService = async (businessId: string) => {
     const { data } = await authenticatedApi.post(apiRoutes.BUSINESS_DASHBOARD_SUBSCRIPTION_CANCEL(businessId));
 
     return businessSubscriptionResponseSchema.parse(data);
+};
+
+/** Every plan this business has ever been on, newest first — read from the existing Subscription rows, not a separate history model. */
+export const getSubscriptionHistoryService = async (businessId: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_SUBSCRIPTION_HISTORY(businessId));
+
+    return z.array(subscriptionHistoryEntryResponseSchema).parse(data);
 };
 
 // ---- product CRUD ----
