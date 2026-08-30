@@ -19,7 +19,9 @@ export const businessProductResponseSchema = z.object({
     compareAtPrice: z.number().nullable(),
     imageUrl: z.string().nullable(),
     stockQuantity: z.number().nullable(),
+    sku: z.string().nullable(),
     createdAt: z.iso.datetime(),
+    updatedAt: z.iso.datetime(),
 });
 
 export const businessDashboardStatsResponseSchema = z.object({
@@ -249,6 +251,57 @@ export const inventorySummarySchema = z.object({
     outOfStockCount: z.number(),
     lowStockCount: z.number(),
     lowStockThreshold: z.number(),
+});
+
+// ---- inventory analytics/performance ----
+
+export const inventoryAnalyticsPointResponseSchema = z.object({
+    period: z.iso.datetime(),
+    unitsSold: z.number(),
+    stockAdded: z.number(),
+    stockRemoved: z.number(),
+});
+
+export const inventoryAnalyticsPeriodTotalsResponseSchema = z.object({
+    unitsSold: z.number(),
+    stockAdded: z.number(),
+    stockRemoved: z.number(),
+});
+
+export const inventoryAnalyticsResponseSchema = z.object({
+    granularity: orderAnalyticsGranularitySchema,
+    points: z.array(inventoryAnalyticsPointResponseSchema),
+    currentPeriod: inventoryAnalyticsPeriodTotalsResponseSchema,
+    previousPeriod: inventoryAnalyticsPeriodTotalsResponseSchema,
+    unitsSoldChangePercent: z.number().nullable(),
+});
+
+export const inventoryProductPerformanceEntryResponseSchema = z.object({
+    productId: z.string().uuid(),
+    title: z.string(),
+    imageUrl: z.string().nullable(),
+    categoryName: z.string(),
+    stockQuantity: z.number().nullable(),
+    unitsSold: z.number(),
+    revenue: z.number(),
+    lastSaleAt: z.iso.datetime().nullable(),
+    createdAt: z.iso.datetime(),
+});
+
+export const inventoryCategoryPerformanceEntryResponseSchema = z.object({
+    categoryName: z.string(),
+    trackedProductCount: z.number(),
+    untrackedProductCount: z.number(),
+    unitsInStock: z.number(),
+    unitsSold: z.number(),
+    revenue: z.number(),
+    lowStockCount: z.number(),
+    outOfStockCount: z.number(),
+});
+
+export const inventoryPerformanceResponseSchema = z.object({
+    products: z.array(inventoryProductPerformanceEntryResponseSchema),
+    categories: z.array(inventoryCategoryPerformanceEntryResponseSchema),
 });
 
 export const productImageSchema = z.object({

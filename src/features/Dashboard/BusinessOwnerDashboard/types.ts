@@ -34,6 +34,12 @@ import type {
     productPerformanceEntryResponseSchema,
     categoryPerformanceEntryResponseSchema,
     productPerformanceResponseSchema,
+    inventoryAnalyticsPointResponseSchema,
+    inventoryAnalyticsPeriodTotalsResponseSchema,
+    inventoryAnalyticsResponseSchema,
+    inventoryProductPerformanceEntryResponseSchema,
+    inventoryCategoryPerformanceEntryResponseSchema,
+    inventoryPerformanceResponseSchema,
     businessSubscriptionResponseSchema,
     productDraftMessageSchema,
     productDraftProductSchema,
@@ -122,7 +128,7 @@ export type ProductDraftMessage = z.infer<typeof productDraftMessageSchema>;
 export type ProductDraftStatus = z.infer<typeof productDraftStatusSchema>;
 export type ProductDraftProduct = z.infer<typeof productDraftProductSchema>;
 
-export type ProductSortField = "CreatedAt" | "Title" | "Price";
+export type ProductSortField = "CreatedAt" | "Title" | "Price" | "StockQuantity" | "UpdatedAt";
 
 export type ProductStockStatus = z.infer<typeof productStockStatusSchema>;
 
@@ -134,9 +140,25 @@ export type ProductsQueryParams = PagedQuery & {
     sortDescending: boolean;
 };
 
+/** The minimal shape StockAdjustmentModal actually needs — lets any inventory-intelligence list (low stock, dead stock, fast movers…) trigger an adjustment without carrying the full BusinessProductResponse. */
+export type StockAdjustmentProductRef = { id: string; title: string; stockQuantity: number | null };
+
 export type StockMovement = z.infer<typeof stockMovementSchema>;
 export type StockAdjustmentResponse = z.infer<typeof stockAdjustmentResponseSchema>;
 export type InventorySummary = z.infer<typeof inventorySummarySchema>;
+
+export type InventoryAnalyticsPoint = z.infer<typeof inventoryAnalyticsPointResponseSchema>;
+export type InventoryAnalyticsPeriodTotals = z.infer<typeof inventoryAnalyticsPeriodTotalsResponseSchema>;
+export type InventoryAnalytics = z.infer<typeof inventoryAnalyticsResponseSchema>;
+export type InventoryProductPerformanceEntry = z.infer<typeof inventoryProductPerformanceEntryResponseSchema>;
+export type InventoryCategoryPerformanceEntry = z.infer<typeof inventoryCategoryPerformanceEntryResponseSchema>;
+export type InventoryPerformance = z.infer<typeof inventoryPerformanceResponseSchema>;
+
+/** Which figure the Inventory Performance chart currently plots. */
+export type InventoryAnalyticsMetric = "unitsSold" | "stockAdded" | "stockRemoved";
+
+/** Deterministic restock-urgency bucket, derived client-side from stock/threshold/velocity — never AI-generated. */
+export type InventoryRiskLevel = "OutOfStock" | "Critical" | "Watch" | "Healthy";
 
 export type OrderStatus = z.infer<typeof orderStatusSchema>;
 export type PaymentStatus = z.infer<typeof paymentStatusSchema>;

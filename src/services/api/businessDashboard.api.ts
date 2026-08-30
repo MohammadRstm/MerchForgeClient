@@ -24,6 +24,8 @@ import {
     stockAdjustmentResponseSchema,
     inventorySummarySchema,
     stockMovementSchema,
+    inventoryAnalyticsResponseSchema,
+    inventoryPerformanceResponseSchema,
     businessOrdersPageSchema,
     businessOrderDetailResponseSchema,
     orderStatsResponseSchema,
@@ -271,9 +273,9 @@ export const getInventorySummaryService = async (businessId: string) => {
     return inventorySummarySchema.parse(data);
 };
 
-export const getStockMovementsService = async (businessId: string, take = 20) => {
+export const getStockMovementsService = async (businessId: string, take = 20, productId?: string) => {
     const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_INVENTORY_MOVEMENTS(businessId), {
-        params: { take },
+        params: { take, productId },
     });
 
     return z.array(stockMovementSchema).parse(data);
@@ -283,6 +285,22 @@ export const updateLowStockThresholdService = async (businessId: string, lowStoc
     await authenticatedApi.put(apiRoutes.BUSINESS_DASHBOARD_LOW_STOCK_THRESHOLD(businessId), {
         lowStockThreshold,
     });
+};
+
+export const getInventoryAnalyticsService = async (businessId: string, from: string, to: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_INVENTORY_ANALYTICS(businessId), {
+        params: { from, to },
+    });
+
+    return inventoryAnalyticsResponseSchema.parse(data);
+};
+
+export const getInventoryPerformanceService = async (businessId: string, from: string, to: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.BUSINESS_DASHBOARD_INVENTORY_PERFORMANCE(businessId), {
+        params: { from, to },
+    });
+
+    return inventoryPerformanceResponseSchema.parse(data);
 };
 
 // ---- orders ----

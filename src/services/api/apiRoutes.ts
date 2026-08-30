@@ -89,6 +89,8 @@ export const apiRoutes = {
     BUSINESS_DASHBOARD_INVENTORY_SUMMARY : (businessId : string) => `/businesses/${businessId}/dashboard/inventory/summary`,
     BUSINESS_DASHBOARD_INVENTORY_MOVEMENTS : (businessId : string) => `/businesses/${businessId}/dashboard/inventory/movements`,
     BUSINESS_DASHBOARD_LOW_STOCK_THRESHOLD : (businessId : string) => `/businesses/${businessId}/dashboard/inventory/low-stock-threshold`,
+    BUSINESS_DASHBOARD_INVENTORY_ANALYTICS : (businessId : string) => `/businesses/${businessId}/dashboard/inventory/analytics`,
+    BUSINESS_DASHBOARD_INVENTORY_PERFORMANCE : (businessId : string) => `/businesses/${businessId}/dashboard/inventory/performance`,
 
     /** ORDERS */
     BUSINESS_DASHBOARD_ORDERS : (businessId : string) => `/businesses/${businessId}/dashboard/orders`,

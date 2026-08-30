@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import Modal from "../../../../components/Modal/Modal";
-import type { BusinessProductResponse } from "../types";
+import type { StockAdjustmentProductRef } from "../types";
 
 type StockAdjustmentMode = "add" | "remove";
 
 type StockAdjustmentModalProps = {
-    product?: BusinessProductResponse;
+    product?: StockAdjustmentProductRef;
     mode: StockAdjustmentMode;
     isSubmitting: boolean;
     error?: string;
