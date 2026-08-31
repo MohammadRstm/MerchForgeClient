@@ -1,7 +1,6 @@
 import { Link } from "react-router";
 import logo from "./../../../assets/logo.svg";
 import { routes } from "./../../../config/routes";
-import Modal from "./../../../components/Modal/Modal";
 import "./AcceptInvitation.css";
 import useAcceptInvitationPage from "./hooks/useAcceptInvitationPage";
 
@@ -20,8 +19,6 @@ export default function AcceptInvitation() {
     acceptInvitationPending,
     acceptInvitationError,
     acceptInvitationSuccess,
-    rawPassword,
-    isPasswordModalOpen,
 
     domains,
     domainsLoading,
@@ -41,7 +38,6 @@ export default function AcceptInvitation() {
     removeNewCategory,
     toggleProductAttribute,
     handleNewCategoryInputChange,
-    closePasswordModal,
   } = useAcceptInvitationPage();
 
   if (isInvitationInvalid) {
@@ -77,30 +73,6 @@ export default function AcceptInvitation() {
             </Link>
           </div>
         </div>
-
-        <Modal isOpen={isPasswordModalOpen} onClose={closePasswordModal}>
-          <Modal.Header>
-            <h2>Save your password</h2>
-          </Modal.Header>
-          <Modal.Body>
-            <div>
-              <p className="invite__subtext">
-                This is your account password. For security reasons we can't show it to you
-                again, so save it somewhere safe before you continue.
-              </p>
-              <p className="invite__password">{rawPassword}</p>
-            </div>
-          </Modal.Body>
-          <Modal.Footer>
-            <button
-              type="button"
-              className="invite__submit"
-              onClick={closePasswordModal}
-            >
-              I've saved my password
-            </button>
-          </Modal.Footer>
-        </Modal>
       </main>
     );
   }
@@ -200,6 +172,52 @@ export default function AcceptInvitation() {
                 readOnly
               />
               <span className="invite__hint">This is the email your invitation was sent to.</span>
+            </div>
+
+            <div className="invite__row">
+              <div className="invite__field">
+                <label htmlFor="Password" className="invite__label">
+                  Password
+                </label>
+                <input
+                  id="Password"
+                  name="Password"
+                  type="password"
+                  autoComplete="new-password"
+                  className={`invite__input${errors.Password ? ' invite__input--error' : ''}`}
+                  value={acceptInvitationFormData.Password}
+                  onChange={handleChange}
+                  aria-invalid={Boolean(errors.Password)}
+                  aria-describedby={errors.Password ? 'Password-error' : undefined}
+                />
+                {errors.Password && (
+                  <span id="Password-error" className="invite__error" role="alert">
+                    {errors.Password}
+                  </span>
+                )}
+              </div>
+
+              <div className="invite__field">
+                <label htmlFor="ConfirmPassword" className="invite__label">
+                  Confirm password
+                </label>
+                <input
+                  id="ConfirmPassword"
+                  name="ConfirmPassword"
+                  type="password"
+                  autoComplete="new-password"
+                  className={`invite__input${errors.ConfirmPassword ? ' invite__input--error' : ''}`}
+                  value={acceptInvitationFormData.ConfirmPassword}
+                  onChange={handleChange}
+                  aria-invalid={Boolean(errors.ConfirmPassword)}
+                  aria-describedby={errors.ConfirmPassword ? 'ConfirmPassword-error' : undefined}
+                />
+                {errors.ConfirmPassword && (
+                  <span id="ConfirmPassword-error" className="invite__error" role="alert">
+                    {errors.ConfirmPassword}
+                  </span>
+                )}
+              </div>
             </div>
 
             <div className="invite__field">

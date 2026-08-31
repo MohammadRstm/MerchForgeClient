@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { BusinessOrderResponse } from "../../types";
 
 /**
@@ -9,7 +9,13 @@ import type { BusinessOrderResponse } from "../../types";
 const useOrderSelection = (items: BusinessOrderResponse[]) => {
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
-    useEffect(() => {
+    // Prunes stale ids when the page of orders changes. Adjusting state during
+    // render, per
+    // https://react.dev/reference/react/useState#storing-information-from-previous-renders,
+    // rather than in an effect, so this doesn't trigger an extra cascading render.
+    const [prevItems, setPrevItems] = useState(items);
+    if (items !== prevItems) {
+        setPrevItems(items);
         setSelectedIds((prev) => {
             if (prev.size === 0) return prev;
 
@@ -18,7 +24,7 @@ const useOrderSelection = (items: BusinessOrderResponse[]) => {
 
             return next.size === prev.size ? prev : next;
         });
-    }, [items]);
+    }
 
     const toggle = (orderId: string) => {
         setSelectedIds((prev) => {

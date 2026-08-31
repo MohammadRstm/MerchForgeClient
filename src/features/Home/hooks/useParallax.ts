@@ -42,5 +42,10 @@ export default function useParallax<T extends HTMLElement>(strength = 0.15) {
     };
   }, [strength]);
 
-  return { ref, offset };
+  // A plain tuple, not { ref, offset } - a returned object bundling a ref together
+  // with derived state gets the whole object treated as ref-shaped by the
+  // react-hooks/refs rule, which then flags every property read on it (including
+  // .offset, which is plain useState, not a ref) as an unsafe render-time ref
+  // access. Destructured array bindings don't carry that taint.
+  return [ref, offset] as const;
 }

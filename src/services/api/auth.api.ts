@@ -2,6 +2,8 @@ import type { LoginFormDataType, LoginResponse } from "../../features/Auth/Login
 import { loginResponseSchema } from "../../features/Auth/Login/validation";
 import type { AcceptInvitationFormDataType, AcceptInvitationResponse } from "../../features/Auth/AcceptInvitation/types";
 import { acceptInvitationResponseSchema } from "../../features/Auth/AcceptInvitation/validation";
+import type { AcceptMemberInvitationFormDataType, AcceptMemberInvitationResponse } from "../../features/Auth/AcceptMemberInvitation/types";
+import { acceptMemberInvitationResponseSchema } from "../../features/Auth/AcceptMemberInvitation/validation";
 import { unAuthenticatedApi } from "./api";
 import { apiRoutes } from "./apiRoutes";
 
@@ -21,6 +23,17 @@ export const acceptInvitationService = async (acceptInvitationFormData : AcceptI
     );
 
     return acceptInvitationResponseSchema.parse(data);
+}
+
+export const acceptMemberInvitationService = async (
+    acceptMemberInvitationFormData : AcceptMemberInvitationFormDataType
+) : Promise<AcceptMemberInvitationResponse> =>{
+    const { data } = await unAuthenticatedApi.post<AcceptMemberInvitationResponse>(
+        apiRoutes.AUTH_ACCEPT_MEMBER_INVITATION,
+        acceptMemberInvitationFormData
+    );
+
+    return acceptMemberInvitationResponseSchema.parse(data);
 }
 
 // The refresh token itself is never in this response — it's an HttpOnly cookie the

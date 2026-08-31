@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Modal from "../../../../components/Modal/Modal";
 
 type LowStockThresholdModalProps = {
@@ -20,12 +20,17 @@ const LowStockThresholdModal = ({
 }: LowStockThresholdModalProps) => {
     const [value, setValue] = useState(String(currentThreshold ?? ""));
 
-    // Re-seed the input from the latest known threshold each time the modal opens.
-    useEffect(() => {
-        if (isOpen) {
-            setValue(String(currentThreshold ?? ""));
-        }
-    }, [isOpen, currentThreshold]);
+    // Re-seed the input from the latest known threshold each time the modal opens
+    // (or the threshold changes while open). Adjusting state during render, per
+    // https://react.dev/reference/react/useState#storing-information-from-previous-renders,
+    // rather than in an effect, so this doesn't trigger an extra cascading render.
+    const [prevResetState, setPrevResetState] = useState({ isOpen, currentThreshold });
+    if (isOpen && (isOpen !== prevResetState.isOpen || currentThreshold !== prevResetState.currentThreshold)) {
+        setPrevResetState({ isOpen, currentThreshold });
+        setValue(String(currentThreshold ?? ""));
+    } else if (isOpen !== prevResetState.isOpen) {
+        setPrevResetState({ isOpen, currentThreshold });
+    }
 
     const parsed = Number(value);
     const isValid = value.trim() !== "" && Number.isInteger(parsed) && parsed >= 1;

@@ -115,7 +115,11 @@ const ProductAttributeDefinitionModal = ({ page }: ProductAttributeDefinitionMod
                             value={isEditing ? editValues.valueType : createValues.valueType}
                             onChange={(e) => {
                                 const value = e.target.value as ProductAttributeValueType;
-                                isEditing ? changeEdit("valueType", value) : changeCreate("valueType", value);
+                                if (isEditing) {
+                                    changeEdit("valueType", value);
+                                } else {
+                                    changeCreate("valueType", value);
+                                }
                             }}
                             disabled={isSaving}
                         >

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams } from "react-router";
 import useDashboardBusinessDetail from "./data/useDashboardBusinessDetail";
 import useRevokeBusinessSessions from "./data/useRevokeBusinessSessions";
@@ -54,21 +54,23 @@ const useAdminBusinessDetailPage = () => {
     // it can be seeded from the business's already-saved shape exactly once.
     const [fieldOverrides, setFieldOverrides] = useState<Map<string, FieldOverride> | null>(null);
 
-    useEffect(() => {
-        if (currentShape && fieldOverrides === null) {
-            const seeded = new Map<string, FieldOverride>();
+    // Seeded from the business's already-saved shape exactly once, guarded by
+    // fieldOverrides still being null. Adjusting state during render, per
+    // https://react.dev/reference/react/useState#storing-information-from-previous-renders,
+    // rather than in an effect, so this doesn't trigger an extra cascading render.
+    if (currentShape && fieldOverrides === null) {
+        const seeded = new Map<string, FieldOverride>();
 
-            for (const field of currentShape) {
-                seeded.set(field.key, {
-                    label: field.label,
-                    isRequired: field.isRequired,
-                    allowedValuesInput: field.allowedValues.join(", "),
-                });
-            }
-
-            setFieldOverrides(seeded);
+        for (const field of currentShape) {
+            seeded.set(field.key, {
+                label: field.label,
+                isRequired: field.isRequired,
+                allowedValuesInput: field.allowedValues.join(", "),
+            });
         }
-    }, [currentShape, fieldOverrides]);
+
+        setFieldOverrides(seeded);
+    }
 
     const toggleKey = (key: string) => {
         setFieldOverrides((current) => {

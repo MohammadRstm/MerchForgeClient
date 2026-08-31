@@ -421,10 +421,12 @@ export const businessMemberResponseSchema = z.object({
 /** The roles an owner may assign. Owner is deliberately absent — a business has one. */
 export const assignableBusinessRoleSchema = z.enum(["Admin", "Member"]);
 
-/** Creation echoes the member back, plus the one-time generated password. */
-export const createBusinessMemberResponseSchema = businessMemberResponseSchema.extend({
-    rawPassword: z.string(),
-});
+/**
+ * Creation echoes the member back. No password: the new member sets their own via
+ * an emailed invitation (see AcceptMemberInvitation), so there's nothing here that
+ * could ever be used to sign in on their behalf.
+ */
+export const createBusinessMemberResponseSchema = businessMemberResponseSchema;
 
 /** Mirrors the server's CreateBusinessMemberRequestValidator. */
 export const createBusinessMemberFormSchema = z.object({

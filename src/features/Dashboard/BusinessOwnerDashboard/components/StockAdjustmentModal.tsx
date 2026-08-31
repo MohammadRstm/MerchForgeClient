@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Modal from "../../../../components/Modal/Modal";
 import type { StockAdjustmentProductRef } from "../types";
 
@@ -31,14 +31,19 @@ const StockAdjustmentModal = ({ product, mode, isSubmitting, error, onConfirm, o
     // Reset on every open, not just on Cancel — this modal instance is reused across
     // products/modes rather than remounted, so a value left over from a successful
     // submit (which closes via the parent's onSuccess, bypassing handleClose) would
-    // otherwise still be sitting in the inputs next time it opens.
-    useEffect(() => {
-        if (isOpen) {
-            setQuantity("");
-            setReason("");
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isOpen, product?.id, mode]);
+    // otherwise still be sitting in the inputs next time it opens. Adjusting state
+    // during render, per
+    // https://react.dev/reference/react/useState#storing-information-from-previous-renders,
+    // rather than in an effect, so this doesn't trigger an extra cascading render.
+    const resetKey = `${isOpen}:${product?.id ?? ""}:${mode}`;
+    const [prevResetKey, setPrevResetKey] = useState(resetKey);
+    if (isOpen && resetKey !== prevResetKey) {
+        setPrevResetKey(resetKey);
+        setQuantity("");
+        setReason("");
+    } else if (resetKey !== prevResetKey) {
+        setPrevResetKey(resetKey);
+    }
 
     const handleClose = () => {
         setQuantity("");

@@ -1,5 +1,5 @@
 import type { FallbackProps } from "react-error-boundary";
-import "./ErrorFallback.css";
+import "./ErrorFallBack.css";
 
 const ErrorFallback = ({ resetErrorBoundary }: FallbackProps) => {
     return (

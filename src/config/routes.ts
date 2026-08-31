@@ -7,6 +7,7 @@ export const routes = {
     HOME: "/",
     ABOUTUS: "/aboutus",
     ACCEPT_INVITATION: "/accept-invitation",
+    ACCEPT_MEMBER_INVITATION: "/accept-member-invitation",
     PLAN_DETAIL: "/plans/:planId",
 
     // Business owner dashboard

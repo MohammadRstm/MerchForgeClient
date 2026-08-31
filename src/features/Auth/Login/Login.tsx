@@ -1,7 +1,8 @@
 import "./Login.css";
-import { Link } from "react-router";
+import { Link, Navigate } from "react-router";
 import Spinner from "../../../components/LoadingSpinner/LoadingSpinner";
 import useLoginPage from "./hooks/useLoginPage";
+import useAuth from "../../../context/Auth/useAuth";
 import { routes } from "../../../config/routes";
 
 const Login = () => {
@@ -14,7 +15,16 @@ const Login = () => {
         handleChange,
     } = useLoginPage();
 
-    console.log(errors);
+    const { isAuthenticated, isInitializing } = useAuth();
+
+    // An already-signed-in owner landing on /login (e.g. a stale bookmark, or
+    // browser back) should never see the form again — just take them straight
+    // in. Waiting on isInitializing avoids redirecting before the silent-refresh
+    // on page load has had a chance to resolve.
+    if (!isInitializing && isAuthenticated) {
+        return <Navigate to={routes.DASHBOARD} replace />;
+    }
+
     return (
         <main className="login-page">
             <form className="login-form" onSubmit={submit}>

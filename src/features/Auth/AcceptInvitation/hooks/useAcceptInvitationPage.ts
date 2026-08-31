@@ -8,12 +8,8 @@ import useDomains from "./data/useDomains";
 import useHandleAcceptInvitationForm from "./ui/useHandleAcceptInvitationForm";
 
 const useAcceptInvitationPage = () => {
-
-    const [isPasswordModalDismissed, setIsPasswordModalDismissed] = useState(false);
-
     const {
         mutate: submitInvitation,
-        data: acceptInvitationData,
         isPending: acceptInvitationPending,
         isError: acceptInvitationError,
         isSuccess: acceptInvitationSuccess,
@@ -76,8 +72,6 @@ const useAcceptInvitationPage = () => {
         submitInvitation(acceptInvitationFormData);
     };
 
-    const closePasswordModal = () => setIsPasswordModalDismissed(true);
-
     return {
         acceptInvitationFormData,
         errors,
@@ -85,8 +79,6 @@ const useAcceptInvitationPage = () => {
         acceptInvitationPending,
         acceptInvitationError,
         acceptInvitationSuccess,
-        rawPassword: acceptInvitationData?.rawPassword,
-        isPasswordModalOpen: acceptInvitationSuccess && !isPasswordModalDismissed,
 
         domains,
         domainsLoading,
@@ -106,7 +98,6 @@ const useAcceptInvitationPage = () => {
         removeNewCategory,
         toggleProductAttribute,
         handleNewCategoryInputChange,
-        closePasswordModal,
     };
 };
 
