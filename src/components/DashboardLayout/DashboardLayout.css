@@ -1,15 +1,85 @@
 .dashboard-shell {
+    /* Brand accent stays fixed across themes (works fine on both light and dark
+       surfaces) — only the soft highlight tint behind it needs a dark equivalent. */
     --dash-accent: #2563eb;
     --dash-accent-soft: #e8f0fe;
 
+    /* ---- Theme tokens: light defaults ---- */
+    --dash-bg-page: #f7f7f7;
+    --dash-surface: #ffffff;
+    --dash-surface-alt: #fafafa;
+    --dash-bg-hover: #f3f3f4;
+    --dash-border: #e2e2e2;
+    --dash-border-subtle: #f0f0f0;
+    --dash-text-primary: #1a1a1a;
+    --dash-text-secondary: #444444;
+    --dash-text-tertiary: #666666;
+    --dash-text-muted: #777777;
+    --dash-text-faint: #8a8a8a;
+    --dash-text-faintest: #999999;
+    --dash-success-text: #12875a;
+    --dash-warning-text: #b25e00;
+    --dash-danger-text: #d92d20;
+    --dash-info-text: #1d5fb8;
+    --dash-success-bg: #e6f7ee;
+    --dash-warning-bg: #fff4e5;
+    --dash-danger-bg: #fdecea;
+    --dash-info-bg: #e8f3ff;
+    --dash-attention-bg: #fff8ec;
+    --dash-attention-border: #ffe4b5;
+    --dash-info-border: #bfdbfe;
+    --dash-success-border: #bbf7d0;
+    --dash-shadow: rgba(20, 22, 27, 0.1);
+
     display: flex;
     min-height: 100vh;
-    background: #f7f7f8;
+    background: var(--dash-bg-page);
+    /* Headings/body text never set their own color — they inherit from <body>,
+       whose color comes from index.css's site-wide (non-dashboard-aware) tokens.
+       Setting it here, once, at the shell root means every heading and paragraph
+       inside the dashboard picks up the right shade in both themes without each
+       one needing its own color rule. */
+    color: var(--dash-text-primary);
 }
 
 .dashboard-shell--admin {
     --dash-accent: #0f4c81;
     --dash-accent-soft: #e6eef5;
+}
+
+/* ---- Theme tokens: dark overrides ---- */
+.dashboard-shell[data-theme="dark"] {
+    --dash-accent-soft: rgba(37, 99, 235, 0.18);
+
+    --dash-bg-page: #14161c;
+    --dash-surface: #1c1f28;
+    --dash-surface-alt: #232631;
+    --dash-bg-hover: #262a35;
+    --dash-border: #333748;
+    --dash-border-subtle: #2a2d38;
+    --dash-text-primary: #f2f3f5;
+    --dash-text-secondary: #d5d7dc;
+    --dash-text-tertiary: #a8acb5;
+    --dash-text-muted: #9096a1;
+    --dash-text-faint: #7d8290;
+    --dash-text-faintest: #6b7080;
+    --dash-success-text: #34d399;
+    --dash-warning-text: #fbbf24;
+    --dash-danger-text: #f87171;
+    --dash-info-text: #93c5fd;
+    --dash-success-bg: rgba(16, 185, 129, 0.16);
+    --dash-warning-bg: rgba(217, 119, 6, 0.18);
+    --dash-danger-bg: rgba(239, 68, 68, 0.16);
+    --dash-info-bg: rgba(59, 130, 246, 0.16);
+    --dash-attention-bg: rgba(217, 119, 6, 0.14);
+    --dash-attention-border: rgba(217, 119, 6, 0.35);
+    --dash-info-border: rgba(59, 130, 246, 0.35);
+    --dash-success-border: rgba(16, 185, 129, 0.35);
+    --dash-shadow: rgba(0, 0, 0, 0.45);
+}
+
+.dashboard-shell--admin[data-theme="dark"] {
+    --dash-accent-soft: rgba(56, 139, 217, 0.2);
 }
 
 /* ---------- Sidebar ---------- */
@@ -20,8 +90,8 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-    background: #fff;
-    border-right: 1px solid #e2e2e2;
+    background: var(--dash-surface, #fff);
+    border-right: 1px solid var(--dash-border, #e2e2e2);
     padding: 20px 16px;
     position: sticky;
     top: 0;
@@ -36,7 +106,7 @@
     font-family: var(--mf-display-font, inherit);
     font-weight: 600;
     font-size: 1.05rem;
-    color: #1a1a1a;
+    color: var(--dash-text-primary, #1a1a1a);
     text-decoration: none;
     padding: 4px 8px 20px;
 }
@@ -61,7 +131,7 @@
     border-radius: 8px;
     font-size: 14px;
     font-weight: 500;
-    color: #444;
+    color: var(--dash-text-secondary, #444);
     text-decoration: none;
     transition: background-color 0.15s ease, color 0.15s ease;
 }
@@ -70,12 +140,12 @@
     flex-shrink: 0;
     width: 18px;
     height: 18px;
-    color: #8a8a8a;
+    color: var(--dash-text-faint, #8a8a8a);
     transition: color 0.15s ease;
 }
 
 .dashboard-sidebar-link:hover .dashboard-sidebar-link-icon {
-    color: #1a1a1a;
+    color: var(--dash-text-primary, #1a1a1a);
 }
 
 .dashboard-sidebar-link--active .dashboard-sidebar-link-icon {
@@ -83,8 +153,8 @@
 }
 
 .dashboard-sidebar-link:hover {
-    background: #f3f3f4;
-    color: #1a1a1a;
+    background: var(--dash-bg-hover, #f3f3f4);
+    color: var(--dash-text-primary, #1a1a1a);
 }
 
 .dashboard-sidebar-link--active {
@@ -100,8 +170,8 @@
     gap: 5px;
     width: 36px;
     height: 36px;
-    background: #fff;
-    border: 1px solid #e2e2e2;
+    background: var(--dash-surface, #fff);
+    border: 1px solid var(--dash-border, #e2e2e2);
     border-radius: 8px;
     cursor: pointer;
     position: fixed;
@@ -114,7 +184,7 @@
     width: 18px;
     height: 2px;
     margin: 0 auto;
-    background: #333;
+    background: var(--dash-text-secondary, #333);
     border-radius: 2px;
 }
 
@@ -137,8 +207,8 @@
     justify-content: space-between;
     gap: 16px;
     padding: 14px 24px;
-    background: #fff;
-    border-bottom: 1px solid #e2e2e2;
+    background: var(--dash-surface, #fff);
+    border-bottom: 1px solid var(--dash-border, #e2e2e2);
     position: sticky;
     top: 0;
     z-index: 10;
@@ -147,7 +217,7 @@
 .dashboard-topbar-label {
     font-size: 15px;
     font-weight: 600;
-    color: #1a1a1a;
+    color: var(--dash-text-primary, #1a1a1a);
 }
 
 .dashboard-topbar-actions {
@@ -159,27 +229,27 @@
 .dashboard-topbar-link {
     font-size: 13px;
     font-weight: 500;
-    color: #777;
+    color: var(--dash-text-muted, #777);
     text-decoration: none;
 }
 
 .dashboard-topbar-link:hover {
-    color: #1a1a1a;
+    color: var(--dash-text-primary, #1a1a1a);
 }
 
 .dashboard-topbar-logout {
     font-size: 13px;
     font-weight: 600;
-    color: #444;
-    background: #f3f3f4;
-    border: 1px solid #e2e2e2;
+    color: var(--dash-text-secondary, #444);
+    background: var(--dash-bg-hover, #f3f3f4);
+    border: 1px solid var(--dash-border, #e2e2e2);
     border-radius: 6px;
     padding: 6px 12px;
     cursor: pointer;
 }
 
 .dashboard-topbar-logout:hover {
-    background: #eaeaea;
+    background: var(--dash-bg-hover, #eaeaea);
 }
 
 .dashboard-topbar-logout:disabled {
@@ -189,6 +259,13 @@
 
 .dashboard-shell-content {
     flex: 1;
+}
+
+/* A handful of inline links (e.g. SubscriptionCard's "Manage plan") render as a plain
+   <Link> with no class, which otherwise falls back to the browser's default anchor
+   blue — fine on white, unreadably dark against a dark card. */
+.dashboard-shell-content a:not([class]) {
+    color: var(--dash-accent);
 }
 
 /* ---------- Responsive ---------- */

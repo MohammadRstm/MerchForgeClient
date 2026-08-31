@@ -18,7 +18,7 @@
     width: min(90vw, 650px);
     max-height: 85vh;
 
-    background: #fff;
+    background: var(--dash-surface, #fff);
     border-radius: 16px;
 
     box-shadow:
@@ -50,8 +50,8 @@
     border: none;
     border-radius: 50%;
 
-    background: #f3f3f3;
-    color: #444;
+    background: var(--dash-bg-hover, #f3f3f3);
+    color: var(--dash-text-secondary, #444);
 
     font-size: 18px;
     font-weight: bold;
@@ -64,7 +64,7 @@
 }
 
 .modal-cancel-button:hover{
-    background: #e5e5e5;
+    background: var(--dash-border, #e5e5e5);
     transform: rotate(90deg);
 }
 
@@ -74,7 +74,7 @@
 
 .modal-header{
     padding: 24px 28px 16px;
-    border-bottom: 1px solid #ececec;
+    border-bottom: 1px solid var(--dash-border-subtle, #ececec);
 }
 
 .modal-header h2{
@@ -91,7 +91,7 @@
 
 .modal-footer{
     padding: 18px 28px;
-    border-top: 1px solid #ececec;
+    border-top: 1px solid var(--dash-border-subtle, #ececec);
 
     display: flex;
     justify-content: flex-end;

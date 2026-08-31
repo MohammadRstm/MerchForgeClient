@@ -19,6 +19,7 @@ import "./DashboardLayout.css";
 import Sidebar, { type DashboardNavItem } from "./Sidebar";
 import DashboardTopBar from "./DashboardTopBar";
 import useAuth from "../../context/Auth/useAuth";
+import useTheme from "../../context/Theme/useTheme";
 import { routes } from "../../config/routes";
 
 const OWNER_NAV: DashboardNavItem[] = [
@@ -51,13 +52,14 @@ interface DashboardLayoutProps {
 // the two roles stay visually distinguishable without duplicating the layout.
 const DashboardLayout = ({ role }: DashboardLayoutProps) => {
     const { session } = useAuth();
+    const { theme } = useTheme();
 
     const items = role === "owner" ? OWNER_NAV : ADMIN_NAV;
     const topBarLabel =
         role === "owner" ? session?.business?.name || "Business" : "Platform admin";
 
     return (
-        <div className={`dashboard-shell dashboard-shell--${role}`}>
+        <div className={`dashboard-shell dashboard-shell--${role}`} data-theme={theme}>
             <Sidebar items={items} />
             <div className="dashboard-shell-main">
                 <DashboardTopBar label={topBarLabel} />

@@ -7,7 +7,7 @@
 
 .dashboard-placeholder {
     text-align: center;
-    color: #555;
+    color: var(--dash-text-tertiary, #555);
 }
 
 .dashboard-placeholder h1 {
