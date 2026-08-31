@@ -30,6 +30,11 @@ import {
     websiteTemplateCustomizableComponentsSchema,
     dashboardCustomersPageSchema,
     dashboardCustomerDetailResponseSchema,
+    orderAnalyticsResponseSchema,
+    businessRecentOrdersSchema,
+    inventorySummarySchema,
+    productPerformanceResponseSchema,
+    customerSnapshotResponseSchema,
 } from "../../features/Dashboard/SuperAdminDashboard/validation";
 import { authenticatedApi } from "./api";
 import { apiRoutes } from "./apiRoutes";
@@ -90,6 +95,44 @@ export const revokeBusinessSessionsService = async (businessId: string) => {
     );
 
     return revokeUserSessionsResponseSchema.parse(data);
+};
+
+export const getBusinessOrderAnalyticsService = async (businessId: string, from: string, to: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_BUSINESS_ORDER_ANALYTICS(businessId), {
+        params: { from, to },
+    });
+
+    return orderAnalyticsResponseSchema.parse(data);
+};
+
+export const getBusinessRecentOrdersService = async (businessId: string, pageSize: number) => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_BUSINESS_RECENT_ORDERS(businessId), {
+        params: { pageSize },
+    });
+
+    return businessRecentOrdersSchema.parse(data);
+};
+
+export const getBusinessInventorySummaryService = async (businessId: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_BUSINESS_INVENTORY_SUMMARY(businessId));
+
+    return inventorySummarySchema.parse(data);
+};
+
+export const getBusinessProductPerformanceService = async (businessId: string, from: string, to: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_BUSINESS_PRODUCT_PERFORMANCE(businessId), {
+        params: { from, to },
+    });
+
+    return productPerformanceResponseSchema.parse(data);
+};
+
+export const getBusinessCustomerSnapshotService = async (businessId: string, from: string, to: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_BUSINESS_CUSTOMER_SNAPSHOT(businessId), {
+        params: { from, to },
+    });
+
+    return customerSnapshotResponseSchema.parse(data);
 };
 
 export const getBusinessMetadataShapeService = async (businessId: string) => {

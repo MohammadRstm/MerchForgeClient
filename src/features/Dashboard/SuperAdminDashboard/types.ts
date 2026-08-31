@@ -1,6 +1,8 @@
 import type z from "zod";
 import type { PagedQuery } from "../../../types/pagination";
+import type { FeatureCreditOverview } from "../BusinessOwnerDashboard/types";
 import type {
+    keyCountSchema,
     dashboardStatsResponseSchema,
     dashboardUserResponseSchema,
     dashboardBusinessResponseSchema,
@@ -16,7 +18,6 @@ import type {
     websiteTemplateRequestDetailSchema,
     closeWebsiteTemplateRequestFormSchema,
     businessDetailResponseSchema,
-    businessDetailFeatureCreditSchema,
     metadataShapeFieldSchema,
     updateMetadataShapeFieldSchema,
     productAttributeValueTypeSchema,
@@ -35,6 +36,7 @@ import type {
     subscriptionPlanFormSchema,
 } from "./validation";
 
+export type KeyCount = z.infer<typeof keyCountSchema>;
 export type DashboardStatsResponse = z.infer<typeof dashboardStatsResponseSchema>;
 export type DashboardUserResponse = z.infer<typeof dashboardUserResponseSchema>;
 export type DashboardBusinessResponse = z.infer<typeof dashboardBusinessResponseSchema>;
@@ -120,7 +122,7 @@ export type WebsiteTemplateRequestsQueryParams = PagedQuery & {
 };
 
 export type BusinessDetailResponse = z.infer<typeof businessDetailResponseSchema>;
-export type BusinessDetailFeatureCredit = z.infer<typeof businessDetailFeatureCreditSchema>;
+export type BusinessDetailFeatureCredit = FeatureCreditOverview;
 export type MetadataShapeField = z.infer<typeof metadataShapeFieldSchema>;
 export type UpdateMetadataShapeFieldPayload = z.infer<typeof updateMetadataShapeFieldSchema>;
 
@@ -177,6 +179,7 @@ export type CustomersSortField = "CreatedAt" | "Name" | "Email";
 
 export type CustomersQueryParams = PagedQuery & {
     search?: string;
+    businessId?: string;
     sortBy: CustomersSortField;
     sortDescending: boolean;
 };

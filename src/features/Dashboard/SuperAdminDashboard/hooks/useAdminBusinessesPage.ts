@@ -1,4 +1,5 @@
 import useDashboardBusinesses from "./data/useDashboardBusinesses";
+import useDashboardStats from "./data/useDashboardStats";
 import useBusinessesTableState from "./ui/useBusinessesTableState";
 
 const useAdminBusinessesPage = () => {
@@ -11,12 +12,21 @@ const useAdminBusinessesPage = () => {
         isError: businessesError,
     } = useDashboardBusinesses(businessesTable.query);
 
+    const {
+        data: stats,
+        isLoading: statsLoading,
+        isError: statsError,
+    } = useDashboardStats();
+
     return {
         businessesPage,
         businessesLoading,
         businessesFetching,
         businessesError,
         businessesTable,
+        stats,
+        statsLoading,
+        statsError,
     };
 };
 

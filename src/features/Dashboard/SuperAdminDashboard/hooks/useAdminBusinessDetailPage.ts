@@ -1,11 +1,23 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useParams } from "react-router";
 import useDashboardBusinessDetail from "./data/useDashboardBusinessDetail";
 import useRevokeBusinessSessions from "./data/useRevokeBusinessSessions";
 import useBusinessMetadataShape from "./data/useBusinessMetadataShape";
 import useUpdateBusinessMetadataShape from "./data/useUpdateBusinessMetadataShape";
 import useDashboardProductAttributes from "./data/useDashboardProductAttributes";
+import useBusinessOrderAnalytics from "./data/useBusinessOrderAnalytics";
+import useBusinessRecentOrders from "./data/useBusinessRecentOrders";
+import useBusinessInventorySummary from "./data/useBusinessInventorySummary";
+import useBusinessProductPerformance from "./data/useBusinessProductPerformance";
+import useBusinessCustomerSnapshot from "./data/useBusinessCustomerSnapshot";
+import { resolveAnalyticsDateRange, ANALYTICS_RANGE_PRESETS } from "../../BusinessOwnerDashboard/utils/analyticsDateRange";
+import type { AnalyticsRangePreset } from "../../BusinessOwnerDashboard/types";
 import type { UpdateMetadataShapeFieldPayload } from "../types";
+
+/** The plan calls for 7 Days | 30 Days | 3 Months | 1 Year only - no 6-month or custom range for this view. */
+const SALES_RANGE_PRESETS = ANALYTICS_RANGE_PRESETS.filter((p) =>
+    (["7d", "30d", "3m", "1y"] as AnalyticsRangePreset[]).includes(p.value)
+);
 
 type FieldOverride = {
     label: string;
@@ -23,6 +35,62 @@ const useAdminBusinessDetailPage = () => {
     const { businessId = "" } = useParams<{ businessId: string }>();
 
     const { data: business, isLoading, isError } = useDashboardBusinessDetail(businessId);
+
+    // Stable for the page's lifetime rather than re-evaluated every render, so the
+    // all-time KPI queries below don't refetch on every keystroke/state change
+    // elsewhere on the page.
+    const [now] = useState(() => new Date().toISOString());
+    const allTimeFrom = business?.createdAt ?? "";
+    const allTimeTo = now;
+
+    const [salesPreset, setSalesPreset] = useState<AnalyticsRangePreset>("30d");
+    const [salesMetric, setSalesMetric] = useState<"revenue" | "orders">("revenue");
+    const { from: salesFrom, to: salesTo } = useMemo(
+        () => resolveAnalyticsDateRange(salesPreset, "", ""),
+        [salesPreset]
+    );
+
+    const {
+        data: kpiOrderAnalytics,
+        isLoading: kpiOrderAnalyticsLoading,
+        isError: kpiOrderAnalyticsError,
+    } = useBusinessOrderAnalytics(businessId, allTimeFrom, allTimeTo);
+
+    const {
+        data: salesAnalytics,
+        isLoading: salesAnalyticsLoading,
+        isFetching: salesAnalyticsFetching,
+        isError: salesAnalyticsError,
+    } = useBusinessOrderAnalytics(businessId, salesFrom ?? "", salesTo ?? "");
+
+    const {
+        data: recentOrders,
+        isLoading: recentOrdersLoading,
+        isError: recentOrdersError,
+    } = useBusinessRecentOrders(businessId, 10);
+
+    const {
+        data: inventorySummary,
+        isLoading: inventorySummaryLoading,
+        isError: inventorySummaryError,
+    } = useBusinessInventorySummary(businessId);
+
+    const {
+        data: productPerformance,
+        isLoading: productPerformanceLoading,
+        isError: productPerformanceError,
+    } = useBusinessProductPerformance(businessId, allTimeFrom, allTimeTo);
+
+    const {
+        data: customerSnapshot,
+        isLoading: customerSnapshotLoading,
+        isError: customerSnapshotError,
+    } = useBusinessCustomerSnapshot(businessId, allTimeFrom, allTimeTo);
+
+    const topProducts = [...(productPerformance?.products ?? [])]
+        .filter((p) => p.revenue > 0)
+        .sort((a, b) => b.revenue - a.revenue)
+        .slice(0, 5);
 
     const [revokeConfirmOpen, setRevokeConfirmOpen] = useState(false);
     const {
@@ -143,6 +211,37 @@ const useAdminBusinessDetailPage = () => {
         business,
         isLoading,
         isError,
+
+        kpiOrderAnalytics,
+        kpiOrderAnalyticsLoading,
+        kpiOrderAnalyticsError,
+
+        salesPreset,
+        setSalesPreset,
+        salesPresets: SALES_RANGE_PRESETS,
+        salesMetric,
+        setSalesMetric,
+        salesAnalytics,
+        salesAnalyticsLoading,
+        salesAnalyticsFetching,
+        salesAnalyticsError,
+
+        recentOrders: recentOrders ?? [],
+        recentOrdersLoading,
+        recentOrdersError,
+
+        inventorySummary,
+        inventorySummaryLoading,
+        inventorySummaryError,
+
+        productPerformance,
+        topProducts,
+        productPerformanceLoading,
+        productPerformanceError,
+
+        customerSnapshot,
+        customerSnapshotLoading,
+        customerSnapshotError,
 
         revokeConfirmOpen,
         openRevokeConfirm: () => {

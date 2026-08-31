@@ -5,7 +5,25 @@ import {
     businessSubscriptionResponseSchema,
     planFeatureItemSchema,
     websiteTemplateRequestSchema,
+    businessOrderResponseSchema,
+    orderAnalyticsResponseSchema,
+    customerSnapshotResponseSchema,
+    productPerformanceResponseSchema,
+    inventorySummarySchema,
+    featureCreditOverviewSchema,
+    socialLinksDtoSchema,
+    businessHoursDtoSchema,
 } from "../BusinessOwnerDashboard/validation";
+
+export {
+    businessOrderResponseSchema,
+    orderAnalyticsResponseSchema,
+    customerSnapshotResponseSchema,
+    productPerformanceResponseSchema,
+    inventorySummarySchema,
+};
+
+export const businessRecentOrdersSchema = z.array(businessOrderResponseSchema);
 
 export const keyCountSchema = z.object({
     key: z.string(),
@@ -22,12 +40,27 @@ export const dashboardBusinessResponseSchema = z.object({
     name: z.string(),
     ownerFullName: z.string(),
     ownerEmail: z.string(),
+    domainName: z.string().nullable(),
     memberCount: z.number(),
     productCount: z.number(),
+    orderCount: z.number(),
+    recordedRevenue: z.number(),
+    revenueCurrency: z.string(),
+    lastOrderAt: z.iso.datetime().nullable(),
+    planName: z.string().nullable(),
+    billingInterval: z.string().nullable(),
+    subscriptionStatus: z.string().nullable(),
     createdAt: z.iso.datetime(),
 });
 
 export const dashboardBusinessesPageSchema = pagedResultSchema(dashboardBusinessResponseSchema);
+
+/** Recorded order totals for one currency — see the server's CurrencyTotalResponse doc comment for why platform revenue is grouped, not summed. */
+export const currencyTotalSchema = z.object({
+    currency: z.string(),
+    total: z.number(),
+    orderCount: z.number(),
+});
 
 export const dashboardStatsResponseSchema = z.object({
     totalUsers: z.number(),
@@ -38,6 +71,9 @@ export const dashboardStatsResponseSchema = z.object({
     pendingWebsiteTemplateRequests: z.number(),
     completedWebsiteTemplateRequests: z.number(),
     activeSessionCount: z.number(),
+    totalOrders: z.number(),
+    businessesAddedRecently: z.number(),
+    recordedOrderRevenue: z.array(currencyTotalSchema),
 
     usersBySystemRole: z.array(keyCountSchema),
     businessUsersByRole: z.array(keyCountSchema),
@@ -276,13 +312,6 @@ export const closeWebsiteTemplateRequestFormSchema = z.object({
 
 // ---- business detail ----
 
-export const businessDetailFeatureCreditSchema = z.object({
-    featureKey: z.string(),
-    featureName: z.string(),
-    creditsRemaining: z.number(),
-    creditsGrantedTotal: z.number(),
-});
-
 export const businessDetailResponseSchema = z.object({
     id: z.string().uuid(),
     name: z.string(),
@@ -292,6 +321,17 @@ export const businessDetailResponseSchema = z.object({
     locale: z.string(),
     contactEmail: z.string().nullable(),
     contactPhone: z.string().nullable(),
+    tagline: z.string().nullable(),
+    whatsAppNumber: z.string().nullable(),
+    addressLine1: z.string().nullable(),
+    addressLine2: z.string().nullable(),
+    city: z.string().nullable(),
+    state: z.string().nullable(),
+    postalCode: z.string().nullable(),
+    country: z.string().nullable(),
+    socialLinks: socialLinksDtoSchema.nullable(),
+    businessHours: businessHoursDtoSchema.nullable(),
+    primaryColor: z.string().nullable(),
     businessDomainId: z.string().uuid().nullable(),
     domainName: z.string().nullable(),
     createdAt: z.iso.datetime(),
@@ -319,8 +359,9 @@ export const businessDetailResponseSchema = z.object({
     websiteTemplateRequests: z.array(websiteTemplateRequestSchema),
 
     subscription: businessSubscriptionResponseSchema,
+    activeSubscriberCountForPlan: z.number().nullable(),
 
-    featureCredits: z.array(businessDetailFeatureCreditSchema),
+    featureCredits: z.array(featureCreditOverviewSchema),
 });
 
 // ---- metadata shape ----

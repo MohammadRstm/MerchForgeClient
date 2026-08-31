@@ -1,9 +1,17 @@
 import { useState } from "react";
+import { useSearchParams } from "react-router";
 import useDebounce from "../../../../../hooks/useDebounce";
 import { INITIAL_CUSTOMERS_QUERY, SEARCH_DEBOUNCE_MS } from "../../constants";
 import type { CustomersQueryParams, CustomersSortField } from "../../types";
 
 const useCustomersTableState = () => {
+    // Optional deep-link filter from the Business Detail page's Customers
+    // cross-link (?businessId=...) - absent on a normal visit, so the page's
+    // default behavior is unchanged.
+    const [searchParams] = useSearchParams();
+    const businessId = searchParams.get("businessId") ?? undefined;
+    const businessName = searchParams.get("businessName") ?? undefined;
+
     const [searchInput, setSearchInput] = useState("");
     const [sortBy, setSortBy] = useState<CustomersSortField>(INITIAL_CUSTOMERS_QUERY.sortBy);
     const [sortDescending, setSortDescending] = useState(INITIAL_CUSTOMERS_QUERY.sortDescending);
@@ -18,6 +26,7 @@ const useCustomersTableState = () => {
         page,
         pageSize: INITIAL_CUSTOMERS_QUERY.pageSize,
         search: debouncedSearch.trim() || undefined,
+        businessId,
         sortBy,
         sortDescending,
     };
@@ -36,6 +45,8 @@ const useCustomersTableState = () => {
     return {
         query,
         searchInput,
+        businessId,
+        businessName,
 
         handleSearchChange,
         handleSortChange,
