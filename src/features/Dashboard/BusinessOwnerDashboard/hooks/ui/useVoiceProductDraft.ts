@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { describeAiChatError } from "../../utils/describeAiChatError";
 import { FEATURE_KEY_AI_PRODUCT_GENERATION } from "../../constants/featureKeys";
 import type { ProductDraft } from "../../types";
@@ -42,7 +42,9 @@ const useVoiceProductDraft = (businessId: string, onProductCreated: () => void) 
     // render, so by the time the recording actually finishes it always reads the
     // latest draft rather than whichever one existed when recording began.
     const draftRef = useRef(draft);
-    draftRef.current = draft;
+    useEffect(() => {
+        draftRef.current = draft;
+    });
 
     const voice = useVoiceRecorder((audio) => {
         const currentDraft = draftRef.current;

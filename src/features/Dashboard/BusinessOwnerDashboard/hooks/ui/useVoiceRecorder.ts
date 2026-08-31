@@ -179,7 +179,6 @@ const useVoiceRecorder = (onRecorded: (audio: Blob) => void) => {
                 recorderRef.current.stop();
             }
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return { isSupported, isRecording, error, start, stop, cancel, waveform, elapsedMs };

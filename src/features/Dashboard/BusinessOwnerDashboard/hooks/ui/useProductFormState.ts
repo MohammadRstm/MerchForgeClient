@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import type { SaveProductPayload } from "../../../../../services/api/businessDashboard.api";
 import type {
     BusinessProductDetail,
@@ -117,8 +117,13 @@ const useProductFormState = (
     const [errors, setErrors] = useState<ProductFormErrors>({});
 
     // Repopulates when the modal switches between create and edit, or once an
-    // edited product finishes loading.
-    useEffect(() => {
+    // edited product finishes loading. Adjusting state during render, per
+    // https://react.dev/reference/react/useState#storing-information-from-previous-renders,
+    // rather than in an effect, so this doesn't trigger an extra cascading render.
+    const [prevSync, setPrevSync] = useState({ editingProduct, fields });
+    if (editingProduct !== prevSync.editingProduct || fields !== prevSync.fields) {
+        setPrevSync({ editingProduct, fields });
+
         if (editingProduct) {
             setValues({
                 title: editingProduct.title,
@@ -146,7 +151,7 @@ const useProductFormState = (
         }
 
         setErrors({});
-    }, [editingProduct, fields]);
+    }
 
     // Stable across renders (empty deps -- both only ever touch the setState
     // setters, which React itself guarantees are stable) so effects elsewhere,

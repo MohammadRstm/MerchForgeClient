@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import type { SaveWebsiteCustomizationDraftPayload } from "../../../../../services/api/businessDashboard.api";
 import {
     WEEK_DAYS,
@@ -161,12 +161,17 @@ const useWebsiteCustomizationFormState = (
 
     // Repopulates whenever the draft or the current template's catalogue changes —
     // a template switch (elsewhere in the dashboard) means an entirely different set
-    // of template-field keys the next time this page loads.
-    useEffect(() => {
+    // of template-field keys the next time this page loads. Adjusting state during
+    // render, per
+    // https://react.dev/reference/react/useState#storing-information-from-previous-renders,
+    // rather than in an effect, so this doesn't trigger an extra cascading render.
+    const [prevSync, setPrevSync] = useState({ draft, fields });
+    if (draft !== prevSync.draft || fields !== prevSync.fields) {
+        setPrevSync({ draft, fields });
         if (draft) {
             setValues(draftToFormValues(draft, fields));
         }
-    }, [draft, fields]);
+    }
 
     const setField = useCallback(
         <K extends keyof Omit<WebsiteCustomizationFormValues, "socialLinks" | "businessHours" | "templateFields">>(

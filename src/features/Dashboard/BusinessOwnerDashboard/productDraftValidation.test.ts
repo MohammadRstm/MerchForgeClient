@@ -96,6 +96,7 @@ describe("productDraftSchema", () => {
     });
 
     it("rejects a response missing canConfirm, which gates product creation", () => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { canConfirm: _omitted, ...withoutCanConfirm } = valid;
 
         expect(() => productDraftSchema.parse(withoutCanConfirm)).toThrow();
