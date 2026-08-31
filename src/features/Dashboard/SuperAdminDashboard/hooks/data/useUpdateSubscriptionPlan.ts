@@ -13,6 +13,8 @@ const useUpdateSubscriptionPlan = (planId: string) => {
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ["dashboard", "subscription-plans"] });
             queryClient.invalidateQueries({ queryKey: ["dashboard", "subscription-plan", planId] });
+            queryClient.invalidateQueries({ queryKey: ["dashboard", "subscription-plan-groups"] });
+            queryClient.invalidateQueries({ queryKey: ["dashboard", "subscriptions"] });
 
             notify.success(`Plan "${data.name}" updated.`);
         },

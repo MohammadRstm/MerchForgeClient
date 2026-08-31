@@ -34,6 +34,13 @@ import type {
     subscriptionPlanDetailResponseSchema,
     featureResponseSchema,
     subscriptionPlanFormSchema,
+    subscriptionPlanGroupSchema,
+    subscriptionPlanGroupIntervalSchema,
+    planSubscriptionStatsSchema,
+    subscriptionStatusSchema,
+    adminSubscriptionListItemSchema,
+    recentSubscriptionActivityEntrySchema,
+    changeSubscriptionFormSchema,
 } from "./validation";
 
 export type KeyCount = z.infer<typeof keyCountSchema>;
@@ -96,6 +103,29 @@ export type SubscriptionPlanFormValues = {
     currency: string;
     billingInterval: "Monthly" | "Yearly";
     selectedFeatures: Record<string, string>;
+};
+
+export type SubscriptionPlanGroup = z.infer<typeof subscriptionPlanGroupSchema>;
+export type SubscriptionPlanGroupInterval = z.infer<typeof subscriptionPlanGroupIntervalSchema>;
+export type PlanSubscriptionStats = z.infer<typeof planSubscriptionStatsSchema>;
+
+// ---- subscriptions (platform-wide Subscriptions tab) ----
+
+export type SubscriptionStatus = z.infer<typeof subscriptionStatusSchema>;
+export type AdminSubscriptionListItem = z.infer<typeof adminSubscriptionListItemSchema>;
+export type RecentSubscriptionActivityEntry = z.infer<typeof recentSubscriptionActivityEntrySchema>;
+export type ChangeSubscriptionPayload = z.infer<typeof changeSubscriptionFormSchema>;
+
+export type SubscriptionsSortField = "CreatedAt" | "BusinessName" | "PlanName" | "CurrentPeriodEnd";
+
+export type SubscriptionsQueryParams = PagedQuery & {
+    search?: string;
+    planId?: string;
+    planName?: string;
+    billingInterval?: "Monthly" | "Yearly";
+    status?: SubscriptionStatus;
+    sortBy: SubscriptionsSortField;
+    sortDescending: boolean;
 };
 
 export type UsersSortField = "CreatedAt" | "Name" | "Email";

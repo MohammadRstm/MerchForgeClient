@@ -65,6 +65,16 @@ export const apiRoutes = {
     SUBSCRIPTION_PLAN : (id : string) => `/subscription-plans/${id}`,
     SUBSCRIPTION_PLAN_DEACTIVATE : (id : string) => `/subscription-plans/${id}/deactivate`,
     SUBSCRIPTION_PLAN_REACTIVATE : (id : string) => `/subscription-plans/${id}/reactivate`,
+    SUBSCRIPTION_PLAN_GROUPS : "/subscription-plans/groups",
+    SUBSCRIPTION_PLAN_DISTRIBUTION : "/subscription-plans/distribution",
+    SUBSCRIPTION_PLAN_STATS : "/subscription-plans/stats",
+
+    /** DASHBOARD — subscriptions (platform-wide, Subscriptions tab) */
+    DASHBOARD_SUBSCRIPTIONS : "/Dashboard/subscriptions",
+    DASHBOARD_SUBSCRIPTIONS_RECENT_ACTIVITY : "/Dashboard/subscriptions/recent-activity",
+    DASHBOARD_BUSINESS_SUBSCRIPTION_HISTORY : (businessId : string) => `/Dashboard/businesses/${businessId}/subscription/history`,
+    DASHBOARD_BUSINESS_SUBSCRIPTION_CHANGE : (businessId : string) => `/Dashboard/businesses/${businessId}/subscription/change`,
+    DASHBOARD_BUSINESS_SUBSCRIPTION_CANCEL : (businessId : string) => `/Dashboard/businesses/${businessId}/subscription/cancel`,
 
     /** BUSINESS DASHBOARD */
     BUSINESS_DASHBOARD_STATS : (businessId : string) => `/businesses/${businessId}/dashboard/stats`,

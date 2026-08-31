@@ -1,6 +1,7 @@
 import type {
     BusinessesQueryParams,
     CustomersQueryParams,
+    SubscriptionsQueryParams,
     SystemRoleFilter,
     UsersQueryParams,
     WebsiteTemplateRequestsQueryParams,
@@ -29,6 +30,13 @@ export const INITIAL_WEBSITE_TEMPLATE_REQUESTS_QUERY: WebsiteTemplateRequestsQue
 };
 
 export const INITIAL_CUSTOMERS_QUERY: CustomersQueryParams = {
+    page: 1,
+    pageSize: DEFAULT_PAGE_SIZE,
+    sortBy: "CreatedAt",
+    sortDescending: true,
+};
+
+export const INITIAL_SUBSCRIPTIONS_QUERY: SubscriptionsQueryParams = {
     page: 1,
     pageSize: DEFAULT_PAGE_SIZE,
     sortBy: "CreatedAt",

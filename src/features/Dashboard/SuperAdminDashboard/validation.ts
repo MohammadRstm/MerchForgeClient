@@ -13,6 +13,7 @@ import {
     featureCreditOverviewSchema,
     socialLinksDtoSchema,
     businessHoursDtoSchema,
+    subscriptionHistoryEntryResponseSchema,
 } from "../BusinessOwnerDashboard/validation";
 
 export {
@@ -21,7 +22,11 @@ export {
     customerSnapshotResponseSchema,
     productPerformanceResponseSchema,
     inventorySummarySchema,
+    businessSubscriptionResponseSchema,
+    subscriptionHistoryEntryResponseSchema,
 };
+
+export const subscriptionHistorySchema = z.array(subscriptionHistoryEntryResponseSchema);
 
 export const businessRecentOrdersSchema = z.array(businessOrderResponseSchema);
 
@@ -188,6 +193,77 @@ export const subscriptionPlanFormSchema = z.object({
             limit: z.number().int("Limit must be a whole number.").positive("Limit must be greater than zero.").nullable(),
         })
     ),
+});
+
+// ---- plan groups (Monthly/Yearly rows merged by tier Name) ----
+
+export const subscriptionPlanGroupIntervalSchema = z.object({
+    id: z.string().uuid(),
+    price: z.number(),
+    isActive: z.boolean(),
+    activeSubscriberCount: z.number(),
+});
+
+export const subscriptionPlanGroupSchema = z.object({
+    name: z.string(),
+    description: z.string().nullable(),
+    currency: z.string(),
+    isCustom: z.boolean(),
+    monthly: subscriptionPlanGroupIntervalSchema.nullable(),
+    yearly: subscriptionPlanGroupIntervalSchema.nullable(),
+    totalActiveSubscriberCount: z.number(),
+    percentOfActiveSubscriptions: z.number().nullable(),
+    features: z.array(planFeatureItemSchema),
+});
+
+export const subscriptionPlanGroupsSchema = z.array(subscriptionPlanGroupSchema);
+
+export const planSubscriptionStatsSchema = z.object({
+    totalPlans: z.number(),
+    activePlans: z.number(),
+    subscribedBusinesses: z.number(),
+    monthlySubscriptions: z.number(),
+    yearlySubscriptions: z.number(),
+});
+
+// ---- subscriptions (platform-wide Subscriptions tab) ----
+
+export const subscriptionStatusSchema = z.enum(["Active", "Trialing", "PastDue", "Cancelled", "Expired"]);
+
+export const adminSubscriptionListItemSchema = z.object({
+    subscriptionId: z.string().uuid(),
+    businessId: z.string().uuid(),
+    businessName: z.string(),
+    ownerFullName: z.string(),
+    ownerEmail: z.string(),
+    domainName: z.string().nullable(),
+    planId: z.string().uuid(),
+    planName: z.string(),
+    planIsActive: z.boolean(),
+    billingInterval: z.string(),
+    status: subscriptionStatusSchema,
+    currentPeriodStart: z.iso.datetime(),
+    currentPeriodEnd: z.iso.datetime(),
+    cancelAtPeriodEnd: z.boolean(),
+    createdAt: z.iso.datetime(),
+});
+
+export const adminSubscriptionsPageSchema = pagedResultSchema(adminSubscriptionListItemSchema);
+
+export const recentSubscriptionActivityEntrySchema = z.object({
+    businessId: z.string().uuid(),
+    businessName: z.string(),
+    planName: z.string(),
+    billingInterval: z.string(),
+    isNewSubscription: z.boolean(),
+    createdAt: z.iso.datetime(),
+});
+
+export const recentSubscriptionActivitySchema = z.array(recentSubscriptionActivityEntrySchema);
+
+/** Mirrors the server's ChangeSubscriptionRequestValidator. */
+export const changeSubscriptionFormSchema = z.object({
+    subscriptionPlanId: z.string().trim().min(1, "Select a plan."),
 });
 
 /** Mirrors the server's CreateWebsiteTemplateRequestValidator so the form fails before the round trip. */

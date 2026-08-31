@@ -178,7 +178,7 @@ const AdminBusinessDetailPage = () => {
                         <dt>Website URL</dt>
                         <dd>
                             {business.websiteUrl ? (
-                                <a href={business.websiteUrl} target="_blank" rel="noopener noreferrer">{business.websiteUrl}</a>
+                                <a href={business.websiteUrl} target="_blank" rel="noopener noreferrer" className="dashboard-inline-link">{business.websiteUrl}</a>
                             ) : "No storefront configured."}
                         </dd>
                     </div>
@@ -226,7 +226,7 @@ const AdminBusinessDetailPage = () => {
                                         <td>{new Date(request.createdAt).toLocaleDateString()}</td>
                                         <td>
                                             {request.finalWebsiteUrl ? (
-                                                <a href={request.finalWebsiteUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>View</a>
+                                                <a href={request.finalWebsiteUrl} target="_blank" rel="noopener noreferrer" className="dashboard-inline-link" onClick={(e) => e.stopPropagation()}>View</a>
                                             ) : "—"}
                                         </td>
                                     </tr>
@@ -353,7 +353,7 @@ const AdminBusinessDetailPage = () => {
                 ) : !catalogue || catalogue.length === 0 ? (
                     <p className="dashboard-table-message">
                         This domain has no optional product fields defined yet.{" "}
-                        <Link to={routes.ADMIN_PRODUCT_FIELDS}>Add one</Link>.
+                        <Link to={routes.ADMIN_PRODUCT_FIELDS} className="dashboard-inline-link">Add one</Link>.
                     </p>
                 ) : (
                     <>

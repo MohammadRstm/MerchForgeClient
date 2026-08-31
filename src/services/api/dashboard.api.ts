@@ -10,6 +10,7 @@ import type {
     CreateProductAttributeDefinitionPayload,
     UpdateProductAttributeDefinitionPayload,
     CreateWebsiteTemplateCustomizableComponentPayload,
+    SubscriptionsQueryParams,
 } from "../../features/Dashboard/SuperAdminDashboard/types";
 import {
     dashboardBusinessesPageSchema,
@@ -35,6 +36,10 @@ import {
     inventorySummarySchema,
     productPerformanceResponseSchema,
     customerSnapshotResponseSchema,
+    adminSubscriptionsPageSchema,
+    recentSubscriptionActivitySchema,
+    subscriptionHistorySchema,
+    businessSubscriptionResponseSchema,
 } from "../../features/Dashboard/SuperAdminDashboard/validation";
 import { authenticatedApi } from "./api";
 import { apiRoutes } from "./apiRoutes";
@@ -303,4 +308,42 @@ export const closeWebsiteTemplateRequestService = async (
     const { data } = await authenticatedApi.post(apiRoutes.DASHBOARD_WEBSITE_TEMPLATE_REQUEST_CLOSE(requestId), payload);
 
     return websiteTemplateRequestDetailSchema.parse(data);
+};
+
+// ---- subscriptions (platform-wide Subscriptions tab) ----
+
+export const getDashboardSubscriptionsService = async (query: SubscriptionsQueryParams) => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_SUBSCRIPTIONS, {
+        params: query,
+    });
+
+    return adminSubscriptionsPageSchema.parse(data);
+};
+
+export const getRecentSubscriptionActivityService = async (take = 10) => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_SUBSCRIPTIONS_RECENT_ACTIVITY, {
+        params: { take },
+    });
+
+    return recentSubscriptionActivitySchema.parse(data);
+};
+
+export const getBusinessSubscriptionHistoryService = async (businessId: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_BUSINESS_SUBSCRIPTION_HISTORY(businessId));
+
+    return subscriptionHistorySchema.parse(data);
+};
+
+export const changeBusinessSubscriptionService = async (businessId: string, subscriptionPlanId: string) => {
+    const { data } = await authenticatedApi.post(apiRoutes.DASHBOARD_BUSINESS_SUBSCRIPTION_CHANGE(businessId), {
+        subscriptionPlanId,
+    });
+
+    return businessSubscriptionResponseSchema.parse(data);
+};
+
+export const cancelBusinessSubscriptionService = async (businessId: string) => {
+    const { data } = await authenticatedApi.post(apiRoutes.DASHBOARD_BUSINESS_SUBSCRIPTION_CANCEL(businessId));
+
+    return businessSubscriptionResponseSchema.parse(data);
 };
