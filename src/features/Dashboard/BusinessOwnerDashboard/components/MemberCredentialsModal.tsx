@@ -7,9 +7,9 @@ type MemberCredentialsModalProps = {
 };
 
 /**
- * Shown once, right after a member is created. The password is generated server-side
- * and only ever stored hashed, so this is the single moment it can be read — hence a
- * modal the owner has to dismiss rather than a toast that disappears on its own.
+ * Shown once, right after a member is created. Their account has no usable
+ * password yet — they were emailed an invitation to set their own — so this just
+ * confirms the invite went out rather than displaying a credential.
  */
 const MemberCredentialsModal = ({ member, onDismiss }: MemberCredentialsModalProps) => {
     return (
@@ -20,18 +20,13 @@ const MemberCredentialsModal = ({ member, onDismiss }: MemberCredentialsModalPro
 
             <Modal.Body>
                 <p className="business-dashboard-member-intro">
-                    Send these details to {member?.firstName}. We can't show the password
-                    again once you close this.
+                    We've emailed {member?.firstName} an invitation to set their own
+                    password and finish setting up their account.
                 </p>
 
                 <dl className="business-dashboard-credentials">
                     <dt>Email</dt>
                     <dd>{member?.email}</dd>
-
-                    <dt>Password</dt>
-                    <dd className="business-dashboard-credentials-secret">
-                        {member?.rawPassword}
-                    </dd>
 
                     <dt>Role</dt>
                     <dd>{member?.role}</dd>
@@ -44,7 +39,7 @@ const MemberCredentialsModal = ({ member, onDismiss }: MemberCredentialsModalPro
                     className="business-dashboard-button-primary"
                     onClick={onDismiss}
                 >
-                    I've saved these details
+                    Got it
                 </button>
             </Modal.Footer>
         </Modal>

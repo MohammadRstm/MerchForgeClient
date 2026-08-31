@@ -8,6 +8,7 @@ import Home from "../features/Home/Home";
 import { routes } from "../config/routes";
 import Login from "../features/Auth/Login/Login";
 import AcceptInvitation from "../features/Auth/AcceptInvitation/AcceptInvitation";
+import AcceptMemberInvitation from "../features/Auth/AcceptMemberInvitation/AcceptMemberInvitation";
 import CustomerLogin from "../features/CustomerAuth/CustomerLogin/CustomerLogin";
 import CustomerSignup from "../features/CustomerAuth/CustomerSignup/CustomerSignup";
 import PlanDetailPage from "../features/Plans/PlanDetailPage";
@@ -42,6 +43,7 @@ const AppRoutes = () =>{
                 <Route path={routes.HOME} element={<Home />} />
                 <Route element={<PagesWithHeaderLayout />}>
                     <Route path={routes.ACCEPT_INVITATION} element={<AcceptInvitation />} />
+                    <Route path={routes.ACCEPT_MEMBER_INVITATION} element={<AcceptMemberInvitation />} />
                     <Route path={routes.LOGIN} element={<Login />} />
                     <Route path={routes.CUSTOMER_LOGIN} element={<CustomerLogin />} />
                     <Route path={routes.CUSTOMER_SIGNUP} element={<CustomerSignup />} />

@@ -5,6 +5,8 @@ export const INITIAL_ACCEPT_INVITATION_FORM_DATA: AcceptInvitationFormDataType =
     LastName: "",
     BusinessName: "",
     Email: "",
+    Password: "",
+    ConfirmPassword: "",
     InvitationToken: "",
     BusinessDomainId: "",
     NewCategoryNames: [],
