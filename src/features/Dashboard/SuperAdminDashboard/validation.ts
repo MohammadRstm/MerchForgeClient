@@ -99,7 +99,9 @@ export const dashboardUserResponseSchema = z.object({
     systemRole: z.string(),
     businessName: z.string().nullable(),
     businessRole: z.string().nullable(),
+    additionalMembershipCount: z.number(),
     hasActiveSession: z.boolean(),
+    isDisabled: z.boolean(),
     createdAt: z.iso.datetime(),
 });
 
@@ -107,6 +109,95 @@ export const dashboardUsersPageSchema = pagedResultSchema(dashboardUserResponseS
 
 export const revokeUserSessionsResponseSchema = z.object({
     revokedSessionsCount: z.number(),
+});
+
+// ---- user detail / account status ----
+
+export const userMembershipResponseSchema = z.object({
+    businessId: z.string().uuid(),
+    businessName: z.string(),
+    businessRole: z.string(),
+    joinedAt: z.iso.datetime(),
+});
+
+export const auditEventTypeSchema = z.enum([
+    "Authentication",
+    "UserManagement",
+    "BusinessManagement",
+    "Subscription",
+    "Template",
+    "ProductFields",
+    "Security",
+]);
+
+export const auditLogResponseSchema = z.object({
+    id: z.string().uuid(),
+    actorUserId: z.string().uuid().nullable(),
+    actorDisplayName: z.string(),
+    eventType: auditEventTypeSchema,
+    action: z.string(),
+    entityType: z.string().nullable(),
+    entityId: z.string().uuid().nullable(),
+    businessId: z.string().uuid().nullable(),
+    businessName: z.string().nullable(),
+    description: z.string(),
+    success: z.boolean(),
+    createdAt: z.iso.datetime(),
+});
+
+export const auditLogsPageSchema = pagedResultSchema(auditLogResponseSchema);
+
+export const dashboardUserDetailResponseSchema = z.object({
+    id: z.string().uuid(),
+    firstName: z.string(),
+    lastName: z.string(),
+    email: z.string(),
+    systemRole: z.string(),
+    isDisabled: z.boolean(),
+    disabledAt: z.iso.datetime().nullable(),
+    disabledByName: z.string().nullable(),
+    createdAt: z.iso.datetime(),
+    updatedAt: z.iso.datetime(),
+    memberships: z.array(userMembershipResponseSchema),
+    hasActiveSession: z.boolean(),
+    activeSessionCount: z.number(),
+    nextSessionExpiresAt: z.iso.datetime().nullable(),
+    recentActivity: z.array(auditLogResponseSchema),
+});
+
+// ---- security overview ----
+
+export const authActivityPointSchema = z.object({
+    date: z.iso.datetime(),
+    successfulLogins: z.number(),
+    failedLogins: z.number(),
+});
+
+export const securityOverviewResponseSchema = z.object({
+    successfulLogins: z.number(),
+    failedLogins: z.number(),
+    activeSessions: z.number(),
+    adminActions: z.number(),
+    activityOverTime: z.array(authActivityPointSchema),
+});
+
+export const recentFailedLoginResponseSchema = z.object({
+    attemptedEmail: z.string(),
+    createdAt: z.iso.datetime(),
+});
+
+export const failedLoginStatsResponseSchema = z.object({
+    today: z.number(),
+    last7Days: z.number(),
+    last30Days: z.number(),
+    recent: z.array(recentFailedLoginResponseSchema),
+});
+
+export const securityAlertResponseSchema = z.object({
+    severity: z.enum(["Warning", "Critical"]),
+    title: z.string(),
+    description: z.string(),
+    createdAt: z.iso.datetime(),
 });
 
 /**

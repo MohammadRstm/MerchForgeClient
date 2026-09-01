@@ -1,5 +1,6 @@
 import type {
     BusinessesQueryParams,
+    BusinessRoleFilter,
     CustomersQueryParams,
     SubscriptionsQueryParams,
     SystemRoleFilter,
@@ -44,5 +45,7 @@ export const INITIAL_SUBSCRIPTIONS_QUERY: SubscriptionsQueryParams = {
 };
 
 export const SYSTEM_ROLE_FILTER_OPTIONS: SystemRoleFilter[] = ["User", "Admin", "SuperAdmin"];
+
+export const BUSINESS_ROLE_FILTER_OPTIONS: BusinessRoleFilter[] = ["Owner", "Admin", "Member"];
 
 export const SEARCH_DEBOUNCE_MS = 400;

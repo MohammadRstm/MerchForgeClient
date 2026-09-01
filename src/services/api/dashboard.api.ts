@@ -11,12 +11,18 @@ import type {
     UpdateProductAttributeDefinitionPayload,
     CreateWebsiteTemplateCustomizableComponentPayload,
     SubscriptionsQueryParams,
+    AuditLogQueryParams,
 } from "../../features/Dashboard/SuperAdminDashboard/types";
 import {
     dashboardBusinessesPageSchema,
     dashboardStatsResponseSchema,
     dashboardUsersPageSchema,
     revokeUserSessionsResponseSchema,
+    dashboardUserDetailResponseSchema,
+    auditLogsPageSchema,
+    securityOverviewResponseSchema,
+    failedLoginStatsResponseSchema,
+    securityAlertResponseSchema,
     websiteTemplateResponseSchema,
     websiteTemplatesResponseSchema,
     websiteTemplateDetailSchema,
@@ -41,6 +47,7 @@ import {
     subscriptionHistorySchema,
     businessSubscriptionResponseSchema,
 } from "../../features/Dashboard/SuperAdminDashboard/validation";
+import { z } from "zod";
 import { authenticatedApi } from "./api";
 import { apiRoutes } from "./apiRoutes";
 
@@ -86,6 +93,56 @@ export const revokeUserSessionsService = async (userId: string) => {
     );
 
     return revokeUserSessionsResponseSchema.parse(data);
+};
+
+export const getDashboardUserDetailService = async (userId: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_USER_DETAIL(userId));
+
+    return dashboardUserDetailResponseSchema.parse(data);
+};
+
+export const disableUserService = async (userId: string) => {
+    const { data } = await authenticatedApi.post(apiRoutes.DASHBOARD_DISABLE_USER(userId));
+
+    return dashboardUserDetailResponseSchema.parse(data);
+};
+
+export const enableUserService = async (userId: string) => {
+    const { data } = await authenticatedApi.post(apiRoutes.DASHBOARD_ENABLE_USER(userId));
+
+    return dashboardUserDetailResponseSchema.parse(data);
+};
+
+export const revokeAllSessionsService = async () => {
+    const { data } = await authenticatedApi.post(apiRoutes.DASHBOARD_REVOKE_ALL_SESSIONS);
+
+    return revokeUserSessionsResponseSchema.parse(data);
+};
+
+export const getAuditLogsService = async (query: AuditLogQueryParams) => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_AUDIT_LOGS, {
+        params: query,
+    });
+
+    return auditLogsPageSchema.parse(data);
+};
+
+export const getSecurityOverviewService = async () => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_SECURITY_OVERVIEW);
+
+    return securityOverviewResponseSchema.parse(data);
+};
+
+export const getFailedLoginStatsService = async () => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_SECURITY_FAILED_LOGINS);
+
+    return failedLoginStatsResponseSchema.parse(data);
+};
+
+export const getSecurityAlertsService = async () => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_SECURITY_ALERTS);
+
+    return z.array(securityAlertResponseSchema).parse(data);
 };
 
 export const getDashboardBusinessDetailService = async (businessId: string) => {

@@ -2,9 +2,9 @@ import Spinner from "../../../../components/LoadingSpinner/LoadingSpinner";
 import Pagination from "../../../../components/Pagination/Pagination";
 import SortableHeader from "../../../../components/SortableHeader/SortableHeader";
 import type { PagedResult } from "../../../../types/pagination";
-import { SYSTEM_ROLE_FILTER_OPTIONS } from "../constants";
+import { BUSINESS_ROLE_FILTER_OPTIONS, SYSTEM_ROLE_FILTER_OPTIONS } from "../constants";
 import type useUsersTableState from "../hooks/ui/useUsersTableState";
-import type { DashboardUserResponse, SystemRoleFilter } from "../types";
+import type { BusinessRoleFilter, DashboardUserResponse, SystemRoleFilter } from "../types";
 
 type UsersTableProps = {
     usersPage?: PagedResult<DashboardUserResponse>;
@@ -13,8 +13,12 @@ type UsersTableProps = {
     isError: boolean;
     tableState: ReturnType<typeof useUsersTableState>;
     currentUserId: string;
+    onOpenUser: (user: DashboardUserResponse) => void;
     onRevoke: (user: DashboardUserResponse) => void;
 };
+
+const initials = (firstName: string, lastName: string) =>
+    `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
 
 const UsersTable = ({
     usersPage,
@@ -23,14 +27,23 @@ const UsersTable = ({
     isError,
     tableState,
     currentUserId,
+    onOpenUser,
     onRevoke,
 }: UsersTableProps) => {
     const {
         query,
         searchInput,
+        businessRole,
+        hasActiveSession,
+        isDisabled,
+        hasActiveFilters,
         handleSearchChange,
         handleSystemRoleChange,
+        handleBusinessRoleChange,
+        handleHasActiveSessionChange,
+        handleIsDisabledChange,
         handleSortChange,
+        clearFilters,
         setPage,
     } = tableState;
 
@@ -43,7 +56,7 @@ const UsersTable = ({
                     <input
                         type="text"
                         className="dashboard-search-input"
-                        placeholder="Search by name or email..."
+                        placeholder="Search by name, email, or business..."
                         value={searchInput}
                         onChange={(e) => handleSearchChange(e.target.value)}
                     />
@@ -52,20 +65,61 @@ const UsersTable = ({
                         className="dashboard-filter-select"
                         value={query.systemRole ?? ""}
                         onChange={(e) =>
-                            handleSystemRoleChange(
-                                e.target.value
-                                    ? (e.target.value as SystemRoleFilter)
-                                    : undefined
-                            )
+                            handleSystemRoleChange(e.target.value ? (e.target.value as SystemRoleFilter) : undefined)
                         }
                     >
-                        <option value="">All roles</option>
+                        <option value="">All system roles</option>
                         {SYSTEM_ROLE_FILTER_OPTIONS.map((role) => (
                             <option key={role} value={role}>
                                 {role}
                             </option>
                         ))}
                     </select>
+
+                    <select
+                        className="dashboard-filter-select"
+                        value={businessRole ?? ""}
+                        onChange={(e) =>
+                            handleBusinessRoleChange(e.target.value ? (e.target.value as BusinessRoleFilter) : undefined)
+                        }
+                    >
+                        <option value="">All business roles</option>
+                        {BUSINESS_ROLE_FILTER_OPTIONS.map((role) => (
+                            <option key={role} value={role}>
+                                {role}
+                            </option>
+                        ))}
+                    </select>
+
+                    <select
+                        className="dashboard-filter-select"
+                        value={hasActiveSession === undefined ? "" : String(hasActiveSession)}
+                        onChange={(e) =>
+                            handleHasActiveSessionChange(e.target.value === "" ? undefined : e.target.value === "true")
+                        }
+                    >
+                        <option value="">Any session status</option>
+                        <option value="true">Active session</option>
+                        <option value="false">No active session</option>
+                    </select>
+
+                    <select
+                        className="dashboard-filter-select"
+                        value={isDisabled === undefined ? "" : String(isDisabled)}
+                        onChange={(e) =>
+                            handleIsDisabledChange(e.target.value === "" ? undefined : e.target.value === "true")
+                        }
+                    >
+                        <option value="">Any account status</option>
+                        <option value="false">Active</option>
+                        <option value="true">Disabled</option>
+                    </select>
+
+                    {hasActiveFilters && (
+                        <button type="button" className="dashboard-inline-link-btn" onClick={clearFilters}>
+                            Clear filters
+                        </button>
+                    )}
                 </div>
             </div>
 
@@ -79,9 +133,7 @@ const UsersTable = ({
                 </p>
             ) : !usersPage || usersPage.items.length === 0 ? (
                 <p className="dashboard-table-message">
-                    {query.search || query.systemRole
-                        ? "No users match your search or filters."
-                        : "No users yet."}
+                    {hasActiveFilters ? "No users match your search or filters." : "No platform users found."}
                 </p>
             ) : (
                 <div className="dashboard-table-wrapper">
@@ -89,24 +141,30 @@ const UsersTable = ({
                         <thead>
                             <tr>
                                 <SortableHeader
-                                    label="Name"
+                                    label="User"
                                     field="Name"
                                     sortBy={query.sortBy}
                                     sortDescending={query.sortDescending}
                                     onSort={handleSortChange}
                                 />
                                 <SortableHeader
-                                    label="Email"
-                                    field="Email"
+                                    label="System Role"
+                                    field="SystemRole"
                                     sortBy={query.sortBy}
                                     sortDescending={query.sortDescending}
                                     onSort={handleSortChange}
                                 />
-                                <th>System Role</th>
-                                <th>Business</th>
-                                <th>Session</th>
+                                <th>Business / Membership</th>
+                                <th>Account Status</th>
                                 <SortableHeader
-                                    label="Joined"
+                                    label="Session"
+                                    field="HasActiveSession"
+                                    sortBy={query.sortBy}
+                                    sortDescending={query.sortDescending}
+                                    onSort={handleSortChange}
+                                />
+                                <SortableHeader
+                                    label="Created"
                                     field="CreatedAt"
                                     sortBy={query.sortBy}
                                     sortDescending={query.sortDescending}
@@ -121,12 +179,25 @@ const UsersTable = ({
                                 const isSelf = user.id === currentUserId;
 
                                 return (
-                                    <tr key={user.id}>
+                                    <tr
+                                        key={user.id}
+                                        className="dashboard-table-row--clickable"
+                                        onClick={() => onOpenUser(user)}
+                                    >
                                         <td>
-                                            {user.firstName} {user.lastName}
-                                            {isSelf && <span className="dashboard-you-tag"> (you)</span>}
+                                            <div className="dashboard-user-cell">
+                                                <span className="dashboard-user-avatar" aria-hidden="true">
+                                                    {initials(user.firstName, user.lastName)}
+                                                </span>
+                                                <div className="dashboard-owner-cell">
+                                                    <span>
+                                                        {user.firstName} {user.lastName}
+                                                        {isSelf && <span className="dashboard-you-tag"> (you)</span>}
+                                                    </span>
+                                                    <span className="dashboard-owner-email">{user.email}</span>
+                                                </div>
+                                            </div>
                                         </td>
-                                        <td>{user.email}</td>
                                         <td>
                                             <span
                                                 className={`dashboard-badge dashboard-badge--${user.systemRole.toLowerCase()}`}
@@ -135,17 +206,33 @@ const UsersTable = ({
                                             </span>
                                         </td>
                                         <td>
-                                            {user.businessName
-                                                ? `${user.businessName} (${user.businessRole})`
-                                                : "—"}
+                                            {user.businessName ? (
+                                                <div className="dashboard-plan-cell">
+                                                    <span>
+                                                        {user.businessName}
+                                                        <span className="dashboard-table-muted"> · {user.businessRole}</span>
+                                                    </span>
+                                                    {user.additionalMembershipCount > 0 && (
+                                                        <span className="dashboard-table-muted">
+                                                            +{user.additionalMembershipCount} business
+                                                            {user.additionalMembershipCount === 1 ? "" : "es"}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                <span className="dashboard-table-muted">No business</span>
+                                            )}
                                         </td>
                                         <td>
                                             <span
-                                                className={`dashboard-session${
-                                                    user.hasActiveSession
-                                                        ? " dashboard-session--active"
-                                                        : ""
-                                                }`}
+                                                className={`dashboard-badge ${user.isDisabled ? "dashboard-badge--danger" : "dashboard-badge--success"}`}
+                                            >
+                                                {user.isDisabled ? "Disabled" : "Active"}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span
+                                                className={`dashboard-session${user.hasActiveSession ? " dashboard-session--active" : ""}`}
                                             >
                                                 {user.hasActiveSession ? "Active" : "None"}
                                             </span>
@@ -156,16 +243,19 @@ const UsersTable = ({
                                                 type="button"
                                                 className="dashboard-action-btn"
                                                 disabled={!user.hasActiveSession || isSelf}
-                                                onClick={() => onRevoke(user)}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    onRevoke(user);
+                                                }}
                                                 title={
                                                     isSelf
                                                         ? "You cannot revoke your own sessions"
                                                         : !user.hasActiveSession
-                                                        ? "No active session"
-                                                        : "Revoke sessions"
+                                                          ? "No active session"
+                                                          : "Force logout"
                                                 }
                                             >
-                                                Revoke sessions
+                                                Force Logout
                                             </button>
                                         </td>
                                     </tr>

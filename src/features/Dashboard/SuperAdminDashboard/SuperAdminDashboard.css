@@ -456,6 +456,75 @@
     padding: 6px 12px;
 }
 
+/* ---------- Users & Security ---------- */
+
+.failed-login-counts {
+    display: flex;
+    gap: 28px;
+    margin-bottom: 16px;
+}
+
+.failed-login-counts > div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.failed-login-count-value {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--dash-text-primary, #1a1a1a);
+    line-height: 1.1;
+}
+
+.session-management-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.security-alerts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.security-alert {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border-left: 3px solid var(--dash-border, #e2e2e2);
+    background: var(--dash-bg-hover, #f6f6f6);
+}
+
+.security-alert--warning {
+    border-left-color: var(--dash-warning-text, #b25e00);
+}
+
+.security-alert--critical {
+    border-left-color: var(--dash-danger-text, #d92d20);
+}
+
+.security-alert-title {
+    margin-left: 8px;
+    font-size: 14px;
+}
+
+.security-alert-description {
+    margin: 0;
+    font-size: 13px;
+    color: var(--dash-text-secondary, #444);
+}
+
+.audit-date-input {
+    width: auto;
+    max-width: 150px;
+}
+
 .subscriptions-filter-select {
     width: auto;
     max-width: 180px;
@@ -608,6 +677,26 @@
 .dashboard-owner-cell {
     display: flex;
     flex-direction: column;
+}
+
+.dashboard-user-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dashboard-user-avatar {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--dash-info-bg, #e8f3ff);
+    color: var(--dash-info-text, #1d5fb8);
+    font-size: 12px;
+    font-weight: 700;
 }
 
 .dashboard-owner-email {

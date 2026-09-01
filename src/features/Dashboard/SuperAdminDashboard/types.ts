@@ -41,6 +41,15 @@ import type {
     adminSubscriptionListItemSchema,
     recentSubscriptionActivityEntrySchema,
     changeSubscriptionFormSchema,
+    userMembershipResponseSchema,
+    auditEventTypeSchema,
+    auditLogResponseSchema,
+    dashboardUserDetailResponseSchema,
+    authActivityPointSchema,
+    securityOverviewResponseSchema,
+    recentFailedLoginResponseSchema,
+    failedLoginStatsResponseSchema,
+    securityAlertResponseSchema,
 } from "./validation";
 
 export type KeyCount = z.infer<typeof keyCountSchema>;
@@ -128,16 +137,44 @@ export type SubscriptionsQueryParams = PagedQuery & {
     sortDescending: boolean;
 };
 
-export type UsersSortField = "CreatedAt" | "Name" | "Email";
+export type UsersSortField = "CreatedAt" | "Name" | "Email" | "SystemRole" | "HasActiveSession";
 export type BusinessesSortField = "CreatedAt" | "Name" | "MemberCount" | "ProductCount";
 
 export type SystemRoleFilter = "User" | "Admin" | "SuperAdmin";
+export type BusinessRoleFilter = "Owner" | "Admin" | "Member";
 
 export type UsersQueryParams = PagedQuery & {
     search?: string;
     systemRole?: SystemRoleFilter;
+    businessRole?: BusinessRoleFilter;
+    hasActiveSession?: boolean;
+    isDisabled?: boolean;
     sortBy: UsersSortField;
     sortDescending: boolean;
+};
+
+// ---- user detail / account status ----
+
+export type UserMembershipResponse = z.infer<typeof userMembershipResponseSchema>;
+export type DashboardUserDetailResponse = z.infer<typeof dashboardUserDetailResponseSchema>;
+
+// ---- audit / security ----
+
+export type AuditEventType = z.infer<typeof auditEventTypeSchema>;
+export type AuditLogResponse = z.infer<typeof auditLogResponseSchema>;
+export type AuthActivityPoint = z.infer<typeof authActivityPointSchema>;
+export type SecurityOverviewResponse = z.infer<typeof securityOverviewResponseSchema>;
+export type RecentFailedLoginResponse = z.infer<typeof recentFailedLoginResponseSchema>;
+export type FailedLoginStatsResponse = z.infer<typeof failedLoginStatsResponseSchema>;
+export type SecurityAlertResponse = z.infer<typeof securityAlertResponseSchema>;
+
+export type AuditLogQueryParams = PagedQuery & {
+    eventType?: AuditEventType;
+    actor?: string;
+    success?: boolean;
+    from?: string;
+    to?: string;
+    businessId?: string;
 };
 
 export type BusinessesQueryParams = PagedQuery & {
