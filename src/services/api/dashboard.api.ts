@@ -12,6 +12,9 @@ import type {
     CreateWebsiteTemplateCustomizableComponentPayload,
     SubscriptionsQueryParams,
     AuditLogQueryParams,
+    UpdateCustomerPayload,
+    TopCustomersRankBy,
+    CustomerOrdersQueryParams,
 } from "../../features/Dashboard/SuperAdminDashboard/types";
 import {
     dashboardBusinessesPageSchema,
@@ -23,6 +26,15 @@ import {
     securityOverviewResponseSchema,
     failedLoginStatsResponseSchema,
     securityAlertResponseSchema,
+    revokeCustomerSessionsResponseSchema,
+    customerStatsResponseSchema,
+    timeSeriesPointSchema,
+    topCustomerResponseSchema,
+    keyCountSchema,
+    businessOptionResponseSchema,
+    customerOrdersPageSchema,
+    customerSpendPointSchema,
+    dashboardCustomerResponseSchema,
     websiteTemplateResponseSchema,
     websiteTemplatesResponseSchema,
     websiteTemplateDetailSchema,
@@ -85,6 +97,76 @@ export const getDashboardCustomerDetailService = async (customerId: string) => {
     const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_CUSTOMER_DETAIL(customerId));
 
     return dashboardCustomerDetailResponseSchema.parse(data);
+};
+
+export const updateCustomerService = async (customerId: string, payload: UpdateCustomerPayload) => {
+    const { data } = await authenticatedApi.put(apiRoutes.DASHBOARD_CUSTOMER_DETAIL(customerId), payload);
+
+    return dashboardCustomerDetailResponseSchema.parse(data);
+};
+
+export const revokeCustomerSessionsService = async (customerId: string) => {
+    const { data } = await authenticatedApi.post(apiRoutes.DASHBOARD_CUSTOMER_REVOKE_SESSIONS(customerId));
+
+    return revokeCustomerSessionsResponseSchema.parse(data);
+};
+
+export const getCustomerStatsService = async (newCustomersPeriodDays: number) => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_CUSTOMER_STATS, {
+        params: { newCustomersPeriodDays },
+    });
+
+    return customerStatsResponseSchema.parse(data);
+};
+
+export const getCustomerGrowthService = async (days: number) => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_CUSTOMER_GROWTH, {
+        params: { days },
+    });
+
+    return z.array(timeSeriesPointSchema).parse(data);
+};
+
+export const getTopCustomersService = async (by: TopCustomersRankBy, currency: string | undefined, take: number) => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_CUSTOMER_TOP, {
+        params: { by, currency, take },
+    });
+
+    return z.array(topCustomerResponseSchema).parse(data);
+};
+
+export const getCustomerDistributionService = async () => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_CUSTOMER_DISTRIBUTION);
+
+    return z.array(keyCountSchema).parse(data);
+};
+
+export const getRecentCustomersService = async (take: number) => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_CUSTOMERS_RECENT, {
+        params: { take },
+    });
+
+    return z.array(dashboardCustomerResponseSchema).parse(data);
+};
+
+export const getBusinessOptionsService = async () => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_BUSINESS_OPTIONS);
+
+    return z.array(businessOptionResponseSchema).parse(data);
+};
+
+export const getCustomerOrdersService = async (customerId: string, query: CustomerOrdersQueryParams) => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_CUSTOMER_ORDERS(customerId), {
+        params: query,
+    });
+
+    return customerOrdersPageSchema.parse(data);
+};
+
+export const getCustomerSpendOverTimeService = async (customerId: string) => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_CUSTOMER_SPEND_OVER_TIME(customerId));
+
+    return z.array(customerSpendPointSchema).parse(data);
 };
 
 export const revokeUserSessionsService = async (userId: string) => {

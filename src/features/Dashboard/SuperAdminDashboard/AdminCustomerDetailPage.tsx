@@ -1,24 +1,50 @@
 import "./SuperAdminDashboard.css";
+import "../BusinessOwnerDashboard/BusinessOwnerDashboard.css";
 import { useNavigate } from "react-router";
 import Spinner from "../../../components/LoadingSpinner/LoadingSpinner";
 import { routes } from "../../../config/routes";
+import { formatCurrency } from "./utils/formatCurrency";
 import useAdminCustomerDetailPage from "./hooks/useAdminCustomerDetailPage";
+import CustomerOrderSummary from "./components/CustomerOrderSummary";
+import CustomerSpendChart from "./components/CustomerSpendChart";
+import CustomerOrderHistory from "./components/CustomerOrderHistory";
+import EditCustomerModal from "./components/EditCustomerModal";
+import RevokeCustomerSessionsModal from "./components/RevokeCustomerSessionsModal";
 
-const currencyFormatterByCurrency = new Map<string, Intl.NumberFormat>();
+const timeAgo = (isoDate: string): string => {
+    const diffMs = Date.now() - new Date(isoDate).getTime();
+    const minutes = Math.round(diffMs / 60_000);
 
-const formatMoney = (amount: number, currency: string) => {
-    let formatter = currencyFormatterByCurrency.get(currency);
+    if (minutes < 1) return "just now";
+    if (minutes < 60) return `${minutes} minute${minutes === 1 ? "" : "s"} ago`;
 
-    if (!formatter) {
-        formatter = new Intl.NumberFormat(undefined, { style: "currency", currency });
-        currencyFormatterByCurrency.set(currency, formatter);
-    }
+    const hours = Math.round(minutes / 60);
+    if (hours < 24) return `${hours} hour${hours === 1 ? "" : "s"} ago`;
 
-    return formatter.format(amount);
+    const days = Math.round(hours / 24);
+    if (days === 1) return "yesterday";
+    if (days < 30) return `${days} days ago`;
+
+    return new Date(isoDate).toLocaleDateString();
 };
 
 const AdminCustomerDetailPage = () => {
-    const { customerId, customer, isLoading, isError } = useAdminCustomerDetailPage();
+    const {
+        customerId,
+        customer,
+        isLoading,
+        isError,
+        ordersTable,
+        ordersPage,
+        ordersLoading,
+        ordersFetching,
+        ordersError,
+        spendOverTime,
+        spendOverTimeLoading,
+        spendOverTimeError,
+        editModal,
+        revokeSessionsModal,
+    } = useAdminCustomerDetailPage();
 
     const navigate = useNavigate();
 
@@ -48,6 +74,14 @@ const AdminCustomerDetailPage = () => {
                 <h1 className="dashboard-heading">{customer.firstName} {customer.lastName}</h1>
 
                 <div className="business-detail-header-actions">
+                    <button type="button" className="dashboard-action-btn" onClick={editModal.open}>
+                        Edit Customer
+                    </button>
+                    {customer.hasActiveSession && (
+                        <button type="button" className="dashboard-action-btn" onClick={revokeSessionsModal.open}>
+                            Revoke Sessions
+                        </button>
+                    )}
                     <button type="button" className="dashboard-action-btn" onClick={() => navigate(routes.ADMIN_CUSTOMERS)}>
                         Back to customers
                     </button>
@@ -57,6 +91,9 @@ const AdminCustomerDetailPage = () => {
             <section className="dashboard-table-card">
                 <div className="dashboard-table-header">
                     <h3>Profile</h3>
+                    <span className={`dashboard-badge ${customer.hasActiveSession ? "dashboard-badge--success" : "dashboard-badge--neutral"}`}>
+                        {customer.hasActiveSession ? "Active session" : "No active session"}
+                    </span>
                 </div>
                 <dl className="business-detail-grid">
                     <div>
@@ -88,17 +125,19 @@ const AdminCustomerDetailPage = () => {
                         <dt>Customer since</dt>
                         <dd>{new Date(customer.createdAt).toLocaleDateString()}</dd>
                     </div>
+                    <div>
+                        <dt>Last updated</dt>
+                        <dd>{new Date(customer.updatedAt).toLocaleDateString()}</dd>
+                    </div>
                 </dl>
             </section>
 
             <section className="dashboard-table-card">
                 <div className="dashboard-table-header">
-                    <h3>Businesses ordered from</h3>
+                    <h3>Business Activity</h3>
                 </div>
                 {customer.businesses.length === 0 ? (
-                    <p className="dashboard-table-message">
-                        {customer.firstName} hasn't placed an order with any business yet.
-                    </p>
+                    <p className="dashboard-table-message">No business activity recorded.</p>
                 ) : (
                     <div className="dashboard-table-wrapper">
                         <table className="dashboard-table">
@@ -106,7 +145,8 @@ const AdminCustomerDetailPage = () => {
                                 <tr>
                                     <th>Business</th>
                                     <th>Orders</th>
-                                    <th>Total spent</th>
+                                    <th>Total Spent</th>
+                                    <th>Last Order</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -114,7 +154,8 @@ const AdminCustomerDetailPage = () => {
                                     <tr key={business.businessId}>
                                         <td>{business.businessName}</td>
                                         <td>{business.orderCount}</td>
-                                        <td>{formatMoney(business.totalSpent, business.currency)}</td>
+                                        <td>{formatCurrency(business.totalSpent, business.currency)}</td>
+                                        <td>{business.lastOrderAt ? new Date(business.lastOrderAt).toLocaleDateString() : "—"}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -123,9 +164,50 @@ const AdminCustomerDetailPage = () => {
                 )}
             </section>
 
+            <CustomerOrderSummary businesses={customer.businesses} />
+
+            <CustomerSpendChart points={spendOverTime} isLoading={spendOverTimeLoading} isError={spendOverTimeError} />
+
+            <CustomerOrderHistory
+                ordersPage={ordersPage}
+                isLoading={ordersLoading}
+                isFetching={ordersFetching}
+                isError={ordersError}
+                tableState={ordersTable}
+                businesses={customer.businesses}
+            />
+
+            <section className="dashboard-table-card">
+                <div className="dashboard-table-header">
+                    <h3>Recent Activity</h3>
+                </div>
+                {customer.recentActivity.length === 0 ? (
+                    <p className="dashboard-table-message">No security activity recorded yet.</p>
+                ) : (
+                    <ul className="recent-activity-list">
+                        {customer.recentActivity.map((entry) => (
+                            <li key={entry.id}>
+                                <div>
+                                    <span>{entry.description}</span>
+                                    {!entry.success && (
+                                        <span className="dashboard-badge dashboard-badge--danger" style={{ marginLeft: 8 }}>
+                                            Failed
+                                        </span>
+                                    )}
+                                </div>
+                                <span className="dashboard-table-muted">{timeAgo(entry.createdAt)}</span>
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </section>
+
             <p className="dashboard-table-message" style={{ textAlign: "left", padding: 0 }}>
                 Customer id: {customerId}
             </p>
+
+            <EditCustomerModal modal={editModal} />
+            <RevokeCustomerSessionsModal modal={revokeSessionsModal} />
         </main>
     );
 };

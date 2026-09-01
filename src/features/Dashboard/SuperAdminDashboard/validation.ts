@@ -654,6 +654,12 @@ export const dashboardCustomerResponseSchema = z.object({
     lastName: z.string(),
     email: z.string(),
     orderCount: z.number(),
+    totalSpent: z.number(),
+    spentCurrency: z.string().nullable(),
+    lastOrderAt: z.iso.datetime().nullable(),
+    recentBusinessNames: z.array(z.string()),
+    additionalBusinessCount: z.number(),
+    hasActiveSession: z.boolean(),
     createdAt: z.iso.datetime(),
 });
 
@@ -665,6 +671,8 @@ export const customerBusinessOrderSummarySchema = z.object({
     orderCount: z.number(),
     totalSpent: z.number(),
     currency: z.string(),
+    firstOrderAt: z.iso.datetime().nullable(),
+    lastOrderAt: z.iso.datetime().nullable(),
 });
 
 export const dashboardCustomerDetailResponseSchema = z.object({
@@ -682,4 +690,74 @@ export const dashboardCustomerDetailResponseSchema = z.object({
     createdAt: z.iso.datetime(),
     updatedAt: z.iso.datetime(),
     businesses: z.array(customerBusinessOrderSummarySchema),
+    hasActiveSession: z.boolean(),
+    recentActivity: z.array(auditLogResponseSchema),
+});
+
+// ---- customer analytics / session management ----
+
+export const customerCurrencyTotalSchema = z.object({
+    currency: z.string(),
+    totalSpent: z.number(),
+    customerCount: z.number(),
+});
+
+export const customerStatsResponseSchema = z.object({
+    totalCustomers: z.number(),
+    newCustomers: z.number(),
+    customersWithOrders: z.number(),
+    customersWithoutOrders: z.number(),
+    totalCustomerOrders: z.number(),
+    repeatCustomers: z.number(),
+    repeatCustomerRate: z.number().nullable(),
+    averageOrdersPerCustomer: z.number(),
+    revenueByCurrency: z.array(customerCurrencyTotalSchema),
+});
+
+export const topCustomerResponseSchema = z.object({
+    customerId: z.string().uuid(),
+    firstName: z.string(),
+    lastName: z.string(),
+    email: z.string(),
+    orderCount: z.number(),
+    totalSpent: z.number(),
+    currency: z.string(),
+});
+
+export const businessOptionResponseSchema = z.object({
+    id: z.string().uuid(),
+    name: z.string(),
+});
+
+export const revokeCustomerSessionsResponseSchema = z.object({
+    revokedSessionsCount: z.number(),
+});
+
+export const customerOrderResponseSchema = z.object({
+    id: z.string().uuid(),
+    businessId: z.string().uuid(),
+    businessName: z.string(),
+    status: z.string(),
+    total: z.number(),
+    currency: z.string(),
+    createdAt: z.iso.datetime(),
+});
+
+export const customerOrdersPageSchema = pagedResultSchema(customerOrderResponseSchema);
+
+export const customerSpendPointSchema = z.object({
+    period: z.string(),
+    total: z.number(),
+    currency: z.string(),
+});
+
+export const updateCustomerFormSchema = z.object({
+    firstName: z.string().trim().min(1, "First name is required").max(100),
+    lastName: z.string().trim().min(1, "Last name is required").max(100),
+    phone: z
+        .string()
+        .trim()
+        .max(50)
+        .transform((v) => (v === "" ? undefined : v))
+        .optional(),
 });

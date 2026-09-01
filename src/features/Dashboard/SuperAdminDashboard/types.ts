@@ -50,6 +50,15 @@ import type {
     recentFailedLoginResponseSchema,
     failedLoginStatsResponseSchema,
     securityAlertResponseSchema,
+    customerCurrencyTotalSchema,
+    customerStatsResponseSchema,
+    topCustomerResponseSchema,
+    businessOptionResponseSchema,
+    revokeCustomerSessionsResponseSchema,
+    customerOrderResponseSchema,
+    customerSpendPointSchema,
+    timeSeriesPointSchema,
+    updateCustomerFormSchema,
 } from "./validation";
 
 export type KeyCount = z.infer<typeof keyCountSchema>;
@@ -242,11 +251,36 @@ export type DashboardCustomerResponse = z.infer<typeof dashboardCustomerResponse
 export type CustomerBusinessOrderSummary = z.infer<typeof customerBusinessOrderSummarySchema>;
 export type DashboardCustomerDetailResponse = z.infer<typeof dashboardCustomerDetailResponseSchema>;
 
-export type CustomersSortField = "CreatedAt" | "Name" | "Email";
+export type CustomersSortField = "CreatedAt" | "Name" | "Email" | "OrderCount" | "TotalSpent" | "LastOrderAt";
 
 export type CustomersQueryParams = PagedQuery & {
     search?: string;
     businessId?: string;
+    hasOrders?: boolean;
+    registeredFrom?: string;
+    registeredTo?: string;
     sortBy: CustomersSortField;
     sortDescending: boolean;
+};
+
+export type TimeSeriesPoint = z.infer<typeof timeSeriesPointSchema>;
+export type CustomerCurrencyTotal = z.infer<typeof customerCurrencyTotalSchema>;
+export type CustomerStatsResponse = z.infer<typeof customerStatsResponseSchema>;
+export type TopCustomerResponse = z.infer<typeof topCustomerResponseSchema>;
+export type TopCustomersRankBy = "Spend" | "Orders";
+export type BusinessOption = z.infer<typeof businessOptionResponseSchema>;
+export type RevokeCustomerSessionsResponse = z.infer<typeof revokeCustomerSessionsResponseSchema>;
+export type CustomerOrderResponse = z.infer<typeof customerOrderResponseSchema>;
+export type CustomerSpendPoint = z.infer<typeof customerSpendPointSchema>;
+
+export type UpdateCustomerPayload = z.infer<typeof updateCustomerFormSchema>;
+
+export type UpdateCustomerFormValues = {
+    firstName: string;
+    lastName: string;
+    phone: string;
+};
+
+export type CustomerOrdersQueryParams = PagedQuery & {
+    businessId?: string;
 };
