@@ -230,10 +230,30 @@ export const websiteTemplateResponseSchema = z.object({
     isActive: z.boolean(),
     displayOrder: z.number(),
     businessesUsingIt: z.number(),
+    requestCount: z.number(),
+    activeCustomizableComponentCount: z.number(),
     createdAt: z.iso.datetime(),
 });
 
 export const websiteTemplatesResponseSchema = z.array(websiteTemplateResponseSchema);
+export const websiteTemplatesPageSchema = pagedResultSchema(websiteTemplateResponseSchema);
+
+export const domainTemplateSummarySchema = z.object({
+    businessDomainId: z.string().uuid(),
+    domainName: z.string(),
+    templateCount: z.number(),
+    businessCount: z.number(),
+});
+
+export const templateStatsResponseSchema = z.object({
+    totalTemplates: z.number(),
+    activeTemplates: z.number(),
+    inactiveTemplates: z.number(),
+    businessesUsingTemplates: z.number(),
+    mostUsedTemplateName: z.string().nullable(),
+    mostUsedTemplateBusinessCount: z.number(),
+    pendingTemplateRequests: z.number(),
+});
 
 // ---- subscription plans ----
 
@@ -414,6 +434,7 @@ export const uploadWebsiteTemplateImageResponseSchema = z.object({
 export const websiteTemplateBusinessSchema = z.object({
     id: z.string().uuid(),
     name: z.string(),
+    chosenAt: z.iso.datetime().nullable(),
 });
 
 export const websiteTemplateDetailSchema = z.object({
@@ -427,6 +448,9 @@ export const websiteTemplateDetailSchema = z.object({
     isActive: z.boolean(),
     displayOrder: z.number(),
     createdAt: z.iso.datetime(),
+    updatedAt: z.iso.datetime(),
+    requestCount: z.number(),
+    activeCustomizableComponentCount: z.number(),
     businesses: z.array(websiteTemplateBusinessSchema),
 });
 

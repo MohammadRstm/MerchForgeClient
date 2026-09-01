@@ -15,6 +15,7 @@ import type {
     UpdateCustomerPayload,
     TopCustomersRankBy,
     CustomerOrdersQueryParams,
+    WebsiteTemplatesQueryParams,
 } from "../../features/Dashboard/SuperAdminDashboard/types";
 import {
     dashboardBusinessesPageSchema,
@@ -36,7 +37,9 @@ import {
     customerSpendPointSchema,
     dashboardCustomerResponseSchema,
     websiteTemplateResponseSchema,
-    websiteTemplatesResponseSchema,
+    websiteTemplatesPageSchema,
+    templateStatsResponseSchema,
+    domainTemplateSummarySchema,
     websiteTemplateDetailSchema,
     uploadWebsiteTemplateImageResponseSchema,
     websiteTemplateRequestsPageSchema,
@@ -333,10 +336,34 @@ export const reactivateProductAttributeDefinitionService = async (id: string) =>
     return productAttributeDefinitionResponseSchema.parse(data);
 };
 
-export const getDashboardWebsiteTemplatesService = async () => {
-    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_WEBSITE_TEMPLATES);
+export const getDashboardWebsiteTemplatesService = async (query: WebsiteTemplatesQueryParams) => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_WEBSITE_TEMPLATES, { params: query });
 
-    return websiteTemplatesResponseSchema.parse(data);
+    return websiteTemplatesPageSchema.parse(data);
+};
+
+export const getTemplateStatsService = async () => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_TEMPLATE_STATS);
+
+    return templateStatsResponseSchema.parse(data);
+};
+
+export const getDomainTemplateSummaryService = async () => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_TEMPLATE_DOMAIN_SUMMARY);
+
+    return z.array(domainTemplateSummarySchema).parse(data);
+};
+
+export const getRequestedTemplatesService = async (take: number) => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_REQUESTED_TEMPLATES, { params: { take } });
+
+    return z.array(keyCountSchema).parse(data);
+};
+
+export const getTemplateRequestTrendService = async (days: number) => {
+    const { data } = await authenticatedApi.get(apiRoutes.DASHBOARD_TEMPLATE_REQUEST_TREND, { params: { days } });
+
+    return z.array(timeSeriesPointSchema).parse(data);
 };
 
 export const createWebsiteTemplateService = async (payload: CreateWebsiteTemplatePayload) => {
@@ -370,6 +397,12 @@ export const updateWebsiteTemplateService = async (templateId: string, payload: 
 
 export const deactivateWebsiteTemplateService = async (templateId: string) => {
     const { data } = await authenticatedApi.post(apiRoutes.DASHBOARD_WEBSITE_TEMPLATE_DEACTIVATE(templateId));
+
+    return websiteTemplateResponseSchema.parse(data);
+};
+
+export const reactivateWebsiteTemplateService = async (templateId: string) => {
+    const { data } = await authenticatedApi.post(apiRoutes.DASHBOARD_WEBSITE_TEMPLATE_REACTIVATE(templateId));
 
     return websiteTemplateResponseSchema.parse(data);
 };

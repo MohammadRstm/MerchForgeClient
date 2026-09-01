@@ -2,9 +2,12 @@ import { useState } from "react";
 import useWebsiteTemplateDetail from "../data/useWebsiteTemplateDetail";
 import useUpdateWebsiteTemplate from "../data/useUpdateWebsiteTemplate";
 import useDeactivateWebsiteTemplate from "../data/useDeactivateWebsiteTemplate";
+import useReactivateWebsiteTemplate from "../data/useReactivateWebsiteTemplate";
 import useWebsiteTemplateCustomizableComponents from "../data/useWebsiteTemplateCustomizableComponents";
 import useCreateWebsiteTemplateCustomizableComponent from "../data/useCreateWebsiteTemplateCustomizableComponent";
 import useSetWebsiteTemplateCustomizableComponentActive from "../data/useSetWebsiteTemplateCustomizableComponentActive";
+import useDashboardWebsiteTemplateRequests from "../data/useDashboardWebsiteTemplateRequests";
+import useAuditLogs from "../data/useAuditLogs";
 import { updateWebsiteTemplateFormSchema } from "../../validation";
 import { uploadWebsiteTemplateImageService } from "../../../../../services/api/dashboard.api";
 import { ApiError } from "../../../../../Error/ApiError";
@@ -21,13 +24,12 @@ const toFormValues = (template: WebsiteTemplateDetail): UpdateWebsiteTemplateFor
 });
 
 /**
- * Owns which template (if any) is open in the detail modal, its edit form, delete
- * confirmation, and its customizable-fields catalogue — the SuperAdmin's actual
- * "what's editable in this template" decision, previously only reachable via the
- * backend API directly. Fields are toggled on/off against the fixed
- * WEBSITE_CUSTOMIZABLE_FIELD_CATALOGUE vocabulary (see that file) rather than typed
- * by hand — key/label/valueType always come from the catalogue entry, never from
- * admin input.
+ * Owns which template (if any) is open in the detail modal, its edit form,
+ * deactivate/reactivate confirmation, its customizable-fields catalogue, and the
+ * businesses/requests/activity feeds shown alongside it. Fields are toggled
+ * on/off against the fixed WEBSITE_CUSTOMIZABLE_FIELD_CATALOGUE vocabulary (see
+ * that file) rather than typed by hand — key/label/valueType always come from
+ * the catalogue entry, never from admin input.
  */
 const useWebsiteTemplateDetailModal = () => {
     const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -35,11 +37,12 @@ const useWebsiteTemplateDetailModal = () => {
     const [values, setValues] = useState<UpdateWebsiteTemplateFormValues | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [imageUploading, setImageUploading] = useState(false);
-    const [confirmingDelete, setConfirmingDelete] = useState(false);
+    const [confirmingDeactivate, setConfirmingDeactivate] = useState(false);
 
     const { data: template, isLoading, isError } = useWebsiteTemplateDetail(selectedId);
     const { mutate: updateTemplate, isPending: isUpdating } = useUpdateWebsiteTemplate(selectedId ?? "");
-    const { mutate: deactivateTemplate, isPending: isDeleting } = useDeactivateWebsiteTemplate(selectedId ?? "");
+    const { mutate: deactivateTemplate, isPending: isDeactivating } = useDeactivateWebsiteTemplate(selectedId ?? "");
+    const { mutate: reactivateTemplate, isPending: isReactivating } = useReactivateWebsiteTemplate(selectedId ?? "");
 
     const {
         data: components,
@@ -50,16 +53,38 @@ const useWebsiteTemplateDetailModal = () => {
     const { mutate: setComponentActive, isPending: isTogglingComponentActive } =
         useSetWebsiteTemplateCustomizableComponentActive();
 
+    const {
+        data: requestsPage,
+        isLoading: requestsLoading,
+        isError: requestsError,
+    } = useDashboardWebsiteTemplateRequests({
+        page: 1,
+        pageSize: 10,
+        websiteTemplateId: selectedId ?? undefined,
+        sortDescending: true,
+    });
+
+    const {
+        data: activityPage,
+        isLoading: activityLoading,
+        isError: activityError,
+    } = useAuditLogs({
+        page: 1,
+        pageSize: 10,
+        entityId: selectedId ?? undefined,
+        eventType: "Template",
+    });
+
     const open = (templateId: string) => {
         setSelectedId(templateId);
         setMode("view");
         setValues(null);
         setError(null);
-        setConfirmingDelete(false);
+        setConfirmingDeactivate(false);
     };
 
     const close = () => {
-        if (isUpdating || isDeleting || imageUploading) {
+        if (isUpdating || isDeactivating || isReactivating || imageUploading) {
             return;
         }
 
@@ -123,17 +148,16 @@ const useWebsiteTemplateDetailModal = () => {
         });
     };
 
-    const requestDelete = () => setConfirmingDelete(true);
-    const cancelDelete = () => setConfirmingDelete(false);
+    const requestDeactivate = () => setConfirmingDeactivate(true);
+    const cancelDeactivate = () => setConfirmingDeactivate(false);
 
-    const confirmDelete = () => {
+    const confirmDeactivate = () => {
         deactivateTemplate(undefined, {
-            onSuccess: () => {
-                setConfirmingDelete(false);
-                setSelectedId(null);
-            },
+            onSuccess: () => setConfirmingDeactivate(false),
         });
     };
+
+    const reactivate = () => reactivateTemplate();
 
     // ---- customizable fields (catalogue-driven checkboxes) ----
 
@@ -178,8 +202,9 @@ const useWebsiteTemplateDetailModal = () => {
         isUpdating,
         imageUploading,
 
-        confirmingDelete,
-        isDeleting,
+        confirmingDeactivate,
+        isDeactivating,
+        isReactivating,
 
         open,
         close,
@@ -188,15 +213,24 @@ const useWebsiteTemplateDetailModal = () => {
         changeField,
         uploadImage,
         submitEdit,
-        requestDelete,
-        cancelDelete,
-        confirmDelete,
+        requestDeactivate,
+        cancelDeactivate,
+        confirmDeactivate,
+        reactivate,
 
         componentsLoading,
         componentsError,
         isFieldActive,
         toggleCatalogueField,
         isTogglingCatalogueField: isCreatingComponent || isTogglingComponentActive,
+
+        requestsPage,
+        requestsLoading,
+        requestsError,
+
+        activity: activityPage?.items ?? [],
+        activityLoading,
+        activityError,
     };
 };
 

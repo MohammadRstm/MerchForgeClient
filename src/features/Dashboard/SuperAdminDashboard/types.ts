@@ -59,6 +59,8 @@ import type {
     customerSpendPointSchema,
     timeSeriesPointSchema,
     updateCustomerFormSchema,
+    domainTemplateSummarySchema,
+    templateStatsResponseSchema,
 } from "./validation";
 
 export type KeyCount = z.infer<typeof keyCountSchema>;
@@ -184,6 +186,7 @@ export type AuditLogQueryParams = PagedQuery & {
     from?: string;
     to?: string;
     businessId?: string;
+    entityId?: string;
 };
 
 export type BusinessesQueryParams = PagedQuery & {
@@ -194,6 +197,24 @@ export type BusinessesQueryParams = PagedQuery & {
 
 export type WebsiteTemplateRequestsQueryParams = PagedQuery & {
     status?: WebsiteTemplateRequestStatus;
+    websiteTemplateId?: string;
+    sortDescending: boolean;
+};
+
+// ---- website templates (catalogue) ----
+
+export type DomainTemplateSummary = z.infer<typeof domainTemplateSummarySchema>;
+export type TemplateStatsResponse = z.infer<typeof templateStatsResponseSchema>;
+
+export type WebsiteTemplateSortField = "DisplayOrder" | "Name" | "CreatedAt" | "BusinessesUsingIt" | "RequestCount";
+
+export type WebsiteTemplatesQueryParams = PagedQuery & {
+    search?: string;
+    businessDomainId?: string;
+    isActive?: boolean;
+    hasBusinesses?: boolean;
+    isCustomizable?: boolean;
+    sortBy: WebsiteTemplateSortField;
     sortDescending: boolean;
 };
 

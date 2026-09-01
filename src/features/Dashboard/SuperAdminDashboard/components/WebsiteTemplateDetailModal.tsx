@@ -1,5 +1,7 @@
+import { Link, useNavigate } from "react-router";
 import Modal from "../../../../components/Modal/Modal";
 import Spinner from "../../../../components/LoadingSpinner/LoadingSpinner";
+import { buildAdminBusinessDetailRoute, routes } from "../../../../config/routes";
 import { resolveImageUrl } from "../../BusinessOwnerDashboard/utils/resolveImageUrl";
 import type useWebsiteTemplateDetailModal from "../hooks/ui/useWebsiteTemplateDetailModal";
 import { WEBSITE_CUSTOMIZABLE_FIELD_CATALOGUE } from "../websiteCustomizableFieldCatalogue";
@@ -9,6 +11,29 @@ type WebsiteTemplateDetailModalProps = {
 };
 
 const CATALOGUE_CATEGORIES = [...new Set(WEBSITE_CUSTOMIZABLE_FIELD_CATALOGUE.map((entry) => entry.category))];
+
+const REQUEST_STATUS_BADGE: Record<string, string> = {
+    Pending: "dashboard-badge--warning",
+    InProgress: "dashboard-badge--info",
+    Closed: "dashboard-badge--success",
+};
+
+const timeAgo = (isoDate: string): string => {
+    const diffMs = Date.now() - new Date(isoDate).getTime();
+    const minutes = Math.round(diffMs / 60_000);
+
+    if (minutes < 1) return "just now";
+    if (minutes < 60) return `${minutes} minute${minutes === 1 ? "" : "s"} ago`;
+
+    const hours = Math.round(minutes / 60);
+    if (hours < 24) return `${hours} hour${hours === 1 ? "" : "s"} ago`;
+
+    const days = Math.round(hours / 24);
+    if (days === 1) return "yesterday";
+    if (days < 30) return `${days} days ago`;
+
+    return new Date(isoDate).toLocaleDateString();
+};
 
 const WebsiteTemplateDetailModal = ({ modal }: WebsiteTemplateDetailModalProps) => {
     const {
@@ -21,24 +46,36 @@ const WebsiteTemplateDetailModal = ({ modal }: WebsiteTemplateDetailModalProps) 
         error,
         isUpdating,
         imageUploading,
-        confirmingDelete,
-        isDeleting,
+        confirmingDeactivate,
+        isDeactivating,
+        isReactivating,
         close,
         startEdit,
         cancelEdit,
         changeField,
         uploadImage,
         submitEdit,
-        requestDelete,
-        cancelDelete,
-        confirmDelete,
+        requestDeactivate,
+        cancelDeactivate,
+        confirmDeactivate,
+        reactivate,
 
         componentsLoading,
         componentsError,
         isFieldActive,
         toggleCatalogueField,
         isTogglingCatalogueField,
+
+        requestsPage,
+        requestsLoading,
+        requestsError,
+
+        activity,
+        activityLoading,
+        activityError,
     } = modal;
+
+    const navigate = useNavigate();
 
     return (
         <Modal isOpen={isOpen} onClose={close}>
@@ -154,15 +191,20 @@ const WebsiteTemplateDetailModal = ({ modal }: WebsiteTemplateDetailModalProps) 
                             </span>
                         </div>
 
+                        <h4 className="dashboard-subsection-heading">Template Information</h4>
                         <dl className="website-request-detail__grid">
                             <dt>Domain</dt>
                             <dd>{template.domainName}</dd>
 
                             <dt>Status</dt>
-                            <dd>{template.isActive ? "Active" : "Inactive"}</dd>
+                            <dd>
+                                <span className={`dashboard-badge ${template.isActive ? "dashboard-badge--success" : "dashboard-badge--neutral"}`}>
+                                    {template.isActive ? "Active" : "Inactive"}
+                                </span>
+                            </dd>
 
                             <dt>Display order</dt>
-                            <dd>{template.displayOrder}</dd>
+                            <dd>#{template.displayOrder}</dd>
 
                             <dt>Preview site</dt>
                             <dd>
@@ -177,6 +219,9 @@ const WebsiteTemplateDetailModal = ({ modal }: WebsiteTemplateDetailModalProps) 
 
                             <dt>Created</dt>
                             <dd>{new Date(template.createdAt).toLocaleString()}</dd>
+
+                            <dt>Updated</dt>
+                            <dd>{new Date(template.updatedAt).toLocaleString()}</dd>
                         </dl>
 
                         <img
@@ -185,17 +230,34 @@ const WebsiteTemplateDetailModal = ({ modal }: WebsiteTemplateDetailModalProps) 
                             className="dashboard-template-image-preview"
                         />
 
+                        <h4 className="dashboard-subsection-heading">Usage</h4>
+                        <dl className="website-request-detail__grid">
+                            <dt>Businesses Using</dt>
+                            <dd>{template.businesses.length}</dd>
+
+                            <dt>Website Requests</dt>
+                            <dd>{template.requestCount}</dd>
+
+                            <dt>Customizable Sections</dt>
+                            <dd>{template.activeCustomizableComponentCount}</dd>
+                        </dl>
+
                         <div className="website-request-detail__notes">
                             <span className="website-request-detail__notes-label">
                                 Businesses using this template ({template.businesses.length})
                             </span>
                             {template.businesses.length === 0 ? (
-                                <p className="dashboard-table-message">No businesses are live on this template yet.</p>
+                                <p className="dashboard-table-message">No businesses are currently using this template.</p>
                             ) : (
-                                <ul className="dashboard-template-businesses-list">
+                                <ul className="recent-activity-list">
                                     {template.businesses.map((b) => (
                                         <li key={b.id}>
-                                            {b.name} <code>{b.id}</code>
+                                            <Link to={buildAdminBusinessDetailRoute(b.id)} className="dashboard-inline-link">
+                                                {b.name}
+                                            </Link>
+                                            <span className="dashboard-table-muted">
+                                                {b.chosenAt ? `Chosen ${new Date(b.chosenAt).toLocaleDateString()}` : ""}
+                                            </span>
                                         </li>
                                     ))}
                                 </ul>
@@ -203,7 +265,39 @@ const WebsiteTemplateDetailModal = ({ modal }: WebsiteTemplateDetailModalProps) 
                         </div>
 
                         <div className="website-request-detail__notes">
-                            <span className="website-request-detail__notes-label">Customizable fields</span>
+                            <span className="website-request-detail__notes-label">Template Requests</span>
+                            {requestsLoading ? (
+                                <div className="dashboard-table-loading">
+                                    <Spinner size={20} />
+                                </div>
+                            ) : requestsError ? (
+                                <p className="dashboard-table-message dashboard-table-message--error">
+                                    Unable to load requests for this template.
+                                </p>
+                            ) : !requestsPage || requestsPage.items.length === 0 ? (
+                                <p className="dashboard-table-message">No website requests have been submitted for this template.</p>
+                            ) : (
+                                <ul className="recent-activity-list">
+                                    {requestsPage.items.map((request) => (
+                                        <li key={request.id}>
+                                            <button
+                                                type="button"
+                                                className="dashboard-inline-link-btn"
+                                                onClick={() => navigate(`${routes.ADMIN_WEBSITE_REQUESTS}?requestId=${request.id}`)}
+                                            >
+                                                {request.businessName}
+                                            </button>
+                                            <span className={`dashboard-badge ${REQUEST_STATUS_BADGE[request.status] ?? "dashboard-badge--neutral"}`}>
+                                                {request.status}
+                                            </span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </div>
+
+                        <div className="website-request-detail__notes">
+                            <span className="website-request-detail__notes-label">Customizable Components</span>
 
                             <p className="dashboard-table-message" style={{ textAlign: "left", padding: 0 }}>
                                 Check what this template's own storefront code actually reads from a business's
@@ -255,28 +349,53 @@ const WebsiteTemplateDetailModal = ({ modal }: WebsiteTemplateDetailModalProps) 
                             )}
                         </div>
 
-                        {confirmingDelete ? (
+                        <div className="website-request-detail__notes">
+                            <span className="website-request-detail__notes-label">Recent Activity</span>
+                            {activityLoading ? (
+                                <div className="dashboard-table-loading">
+                                    <Spinner size={20} />
+                                </div>
+                            ) : activityError ? (
+                                <p className="dashboard-table-message dashboard-table-message--error">
+                                    Unable to load recent activity.
+                                </p>
+                            ) : activity.length === 0 ? (
+                                <p className="dashboard-table-message">No security activity recorded yet.</p>
+                            ) : (
+                                <ul className="recent-activity-list">
+                                    {activity.map((entry) => (
+                                        <li key={entry.id}>
+                                            <span>{entry.description}</span>
+                                            <span className="dashboard-table-muted">{timeAgo(entry.createdAt)}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </div>
+
+                        {confirmingDeactivate ? (
                             <div className="website-request-detail__actions">
                                 <p className="dashboard-invite-error">
-                                    Delete "{template.label}"? It will be hidden from new template requests, but
-                                    kept on record for businesses already using it.
+                                    This template is currently used by {template.businesses.length} business
+                                    {template.businesses.length === 1 ? "" : "es"}. Existing businesses using this
+                                    template will not be changed — it will only become unavailable for new selections.
                                 </p>
                                 <div className="dashboard-modal-actions">
                                     <button
                                         type="button"
                                         className="dashboard-modal-cancel-btn"
-                                        onClick={cancelDelete}
-                                        disabled={isDeleting}
+                                        onClick={cancelDeactivate}
+                                        disabled={isDeactivating}
                                     >
                                         Cancel
                                     </button>
                                     <button
                                         type="button"
                                         className="dashboard-modal-confirm-btn"
-                                        onClick={confirmDelete}
-                                        disabled={isDeleting}
+                                        onClick={confirmDeactivate}
+                                        disabled={isDeactivating}
                                     >
-                                        {isDeleting ? "Deleting..." : "Delete template"}
+                                        {isDeactivating ? "Deactivating..." : "Deactivate"}
                                     </button>
                                 </div>
                             </div>
@@ -305,11 +424,22 @@ const WebsiteTemplateDetailModal = ({ modal }: WebsiteTemplateDetailModalProps) 
                         <button type="button" className="dashboard-modal-cancel-btn" onClick={close}>
                             Close
                         </button>
-                        {template && !confirmingDelete && (
+                        {template && !confirmingDeactivate && (
                             <>
-                                <button type="button" className="dashboard-action-btn" onClick={requestDelete}>
-                                    Delete
-                                </button>
+                                {template.isActive ? (
+                                    <button type="button" className="dashboard-action-btn" onClick={requestDeactivate}>
+                                        Deactivate
+                                    </button>
+                                ) : (
+                                    <button
+                                        type="button"
+                                        className="dashboard-action-btn"
+                                        onClick={reactivate}
+                                        disabled={isReactivating}
+                                    >
+                                        {isReactivating ? "Reactivating..." : "Reactivate"}
+                                    </button>
+                                )}
                                 <button type="button" className="dashboard-modal-primary-btn" onClick={startEdit}>
                                     Edit
                                 </button>

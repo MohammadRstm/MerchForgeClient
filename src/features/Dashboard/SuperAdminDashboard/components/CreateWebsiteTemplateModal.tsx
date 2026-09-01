@@ -29,6 +29,8 @@ const CreateWebsiteTemplateModal = ({ form }: CreateWebsiteTemplateModalProps) =
                         form.submit();
                     }}
                 >
+                    <h4 className="dashboard-subsection-heading">Basic Information</h4>
+
                     <div>
                         <label className="dashboard-invite-label" htmlFor="template-domain">
                             Domain
@@ -79,6 +81,8 @@ const CreateWebsiteTemplateModal = ({ form }: CreateWebsiteTemplateModalProps) =
                         />
                     </div>
 
+                    <h4 className="dashboard-subsection-heading">Preview</h4>
+
                     <div>
                         <label className="dashboard-invite-label" htmlFor="template-image">
                             Preview image
@@ -119,6 +123,8 @@ const CreateWebsiteTemplateModal = ({ form }: CreateWebsiteTemplateModalProps) =
                             disabled={form.isPending}
                         />
                     </div>
+
+                    <h4 className="dashboard-subsection-heading">Ordering</h4>
 
                     <div>
                         <label className="dashboard-invite-label" htmlFor="template-order">
