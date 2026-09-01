@@ -12,13 +12,13 @@ const useDeactivateWebsiteTemplate = (templateId: string) => {
             queryClient.invalidateQueries({ queryKey: ["dashboard", "website-templates"] });
             queryClient.invalidateQueries({ queryKey: ["dashboard", "website-template", templateId] });
 
-            notify.success(`Template "${data.label}" deleted.`);
+            notify.success(`Template "${data.label}" deactivated.`);
         },
         onError: (error) => {
             notify.error(
                 error instanceof ApiError
                     ? error.message
-                    : "Failed to delete the template."
+                    : "Failed to deactivate the template."
             );
         },
     });

@@ -5,6 +5,9 @@ import {
     subscriptionPlansResponseSchema,
     subscriptionPlanDetailResponseSchema,
     featuresResponseSchema,
+    subscriptionPlanGroupsSchema,
+    keyCountSchema,
+    planSubscriptionStatsSchema,
 } from "../../features/Dashboard/SuperAdminDashboard/validation";
 import { authenticatedApi, unAuthenticatedApi } from "./api";
 import { apiRoutes } from "./apiRoutes";
@@ -58,4 +61,24 @@ export const reactivateSubscriptionPlanService = async (id: string) => {
     const { data } = await authenticatedApi.post(apiRoutes.SUBSCRIPTION_PLAN_REACTIVATE(id));
 
     return subscriptionPlanResponseSchema.parse(data);
+};
+
+export const getSubscriptionPlanGroupsService = async () => {
+    const { data } = await authenticatedApi.get(apiRoutes.SUBSCRIPTION_PLAN_GROUPS);
+
+    return subscriptionPlanGroupsSchema.parse(data);
+};
+
+const distributionResponseSchema = z.array(keyCountSchema);
+
+export const getSubscriptionPlanDistributionService = async () => {
+    const { data } = await authenticatedApi.get(apiRoutes.SUBSCRIPTION_PLAN_DISTRIBUTION);
+
+    return distributionResponseSchema.parse(data);
+};
+
+export const getPlanSubscriptionStatsService = async () => {
+    const { data } = await authenticatedApi.get(apiRoutes.SUBSCRIPTION_PLAN_STATS);
+
+    return planSubscriptionStatsSchema.parse(data);
 };

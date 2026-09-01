@@ -1,6 +1,8 @@
 import type z from "zod";
 import type { PagedQuery } from "../../../types/pagination";
+import type { FeatureCreditOverview } from "../BusinessOwnerDashboard/types";
 import type {
+    keyCountSchema,
     dashboardStatsResponseSchema,
     dashboardUserResponseSchema,
     dashboardBusinessResponseSchema,
@@ -16,7 +18,6 @@ import type {
     websiteTemplateRequestDetailSchema,
     closeWebsiteTemplateRequestFormSchema,
     businessDetailResponseSchema,
-    businessDetailFeatureCreditSchema,
     metadataShapeFieldSchema,
     updateMetadataShapeFieldSchema,
     productAttributeValueTypeSchema,
@@ -33,8 +34,36 @@ import type {
     subscriptionPlanDetailResponseSchema,
     featureResponseSchema,
     subscriptionPlanFormSchema,
+    subscriptionPlanGroupSchema,
+    subscriptionPlanGroupIntervalSchema,
+    planSubscriptionStatsSchema,
+    subscriptionStatusSchema,
+    adminSubscriptionListItemSchema,
+    recentSubscriptionActivityEntrySchema,
+    changeSubscriptionFormSchema,
+    userMembershipResponseSchema,
+    auditEventTypeSchema,
+    auditLogResponseSchema,
+    dashboardUserDetailResponseSchema,
+    authActivityPointSchema,
+    securityOverviewResponseSchema,
+    recentFailedLoginResponseSchema,
+    failedLoginStatsResponseSchema,
+    securityAlertResponseSchema,
+    customerCurrencyTotalSchema,
+    customerStatsResponseSchema,
+    topCustomerResponseSchema,
+    businessOptionResponseSchema,
+    revokeCustomerSessionsResponseSchema,
+    customerOrderResponseSchema,
+    customerSpendPointSchema,
+    timeSeriesPointSchema,
+    updateCustomerFormSchema,
+    domainTemplateSummarySchema,
+    templateStatsResponseSchema,
 } from "./validation";
 
+export type KeyCount = z.infer<typeof keyCountSchema>;
 export type DashboardStatsResponse = z.infer<typeof dashboardStatsResponseSchema>;
 export type DashboardUserResponse = z.infer<typeof dashboardUserResponseSchema>;
 export type DashboardBusinessResponse = z.infer<typeof dashboardBusinessResponseSchema>;
@@ -96,16 +125,68 @@ export type SubscriptionPlanFormValues = {
     selectedFeatures: Record<string, string>;
 };
 
-export type UsersSortField = "CreatedAt" | "Name" | "Email";
+export type SubscriptionPlanGroup = z.infer<typeof subscriptionPlanGroupSchema>;
+export type SubscriptionPlanGroupInterval = z.infer<typeof subscriptionPlanGroupIntervalSchema>;
+export type PlanSubscriptionStats = z.infer<typeof planSubscriptionStatsSchema>;
+
+// ---- subscriptions (platform-wide Subscriptions tab) ----
+
+export type SubscriptionStatus = z.infer<typeof subscriptionStatusSchema>;
+export type AdminSubscriptionListItem = z.infer<typeof adminSubscriptionListItemSchema>;
+export type RecentSubscriptionActivityEntry = z.infer<typeof recentSubscriptionActivityEntrySchema>;
+export type ChangeSubscriptionPayload = z.infer<typeof changeSubscriptionFormSchema>;
+
+export type SubscriptionsSortField = "CreatedAt" | "BusinessName" | "PlanName" | "CurrentPeriodEnd";
+
+export type SubscriptionsQueryParams = PagedQuery & {
+    search?: string;
+    planId?: string;
+    planName?: string;
+    billingInterval?: "Monthly" | "Yearly";
+    status?: SubscriptionStatus;
+    sortBy: SubscriptionsSortField;
+    sortDescending: boolean;
+};
+
+export type UsersSortField = "CreatedAt" | "Name" | "Email" | "SystemRole" | "HasActiveSession";
 export type BusinessesSortField = "CreatedAt" | "Name" | "MemberCount" | "ProductCount";
 
 export type SystemRoleFilter = "User" | "Admin" | "SuperAdmin";
+export type BusinessRoleFilter = "Owner" | "Admin" | "Member";
 
 export type UsersQueryParams = PagedQuery & {
     search?: string;
     systemRole?: SystemRoleFilter;
+    businessRole?: BusinessRoleFilter;
+    hasActiveSession?: boolean;
+    isDisabled?: boolean;
     sortBy: UsersSortField;
     sortDescending: boolean;
+};
+
+// ---- user detail / account status ----
+
+export type UserMembershipResponse = z.infer<typeof userMembershipResponseSchema>;
+export type DashboardUserDetailResponse = z.infer<typeof dashboardUserDetailResponseSchema>;
+
+// ---- audit / security ----
+
+export type AuditEventType = z.infer<typeof auditEventTypeSchema>;
+export type AuditLogResponse = z.infer<typeof auditLogResponseSchema>;
+export type AuthActivityPoint = z.infer<typeof authActivityPointSchema>;
+export type SecurityOverviewResponse = z.infer<typeof securityOverviewResponseSchema>;
+export type RecentFailedLoginResponse = z.infer<typeof recentFailedLoginResponseSchema>;
+export type FailedLoginStatsResponse = z.infer<typeof failedLoginStatsResponseSchema>;
+export type SecurityAlertResponse = z.infer<typeof securityAlertResponseSchema>;
+
+export type AuditLogQueryParams = PagedQuery & {
+    eventType?: AuditEventType;
+    actor?: string;
+    success?: boolean;
+    from?: string;
+    to?: string;
+    businessId?: string;
+    entityId?: string;
 };
 
 export type BusinessesQueryParams = PagedQuery & {
@@ -116,11 +197,29 @@ export type BusinessesQueryParams = PagedQuery & {
 
 export type WebsiteTemplateRequestsQueryParams = PagedQuery & {
     status?: WebsiteTemplateRequestStatus;
+    websiteTemplateId?: string;
+    sortDescending: boolean;
+};
+
+// ---- website templates (catalogue) ----
+
+export type DomainTemplateSummary = z.infer<typeof domainTemplateSummarySchema>;
+export type TemplateStatsResponse = z.infer<typeof templateStatsResponseSchema>;
+
+export type WebsiteTemplateSortField = "DisplayOrder" | "Name" | "CreatedAt" | "BusinessesUsingIt" | "RequestCount";
+
+export type WebsiteTemplatesQueryParams = PagedQuery & {
+    search?: string;
+    businessDomainId?: string;
+    isActive?: boolean;
+    hasBusinesses?: boolean;
+    isCustomizable?: boolean;
+    sortBy: WebsiteTemplateSortField;
     sortDescending: boolean;
 };
 
 export type BusinessDetailResponse = z.infer<typeof businessDetailResponseSchema>;
-export type BusinessDetailFeatureCredit = z.infer<typeof businessDetailFeatureCreditSchema>;
+export type BusinessDetailFeatureCredit = FeatureCreditOverview;
 export type MetadataShapeField = z.infer<typeof metadataShapeFieldSchema>;
 export type UpdateMetadataShapeFieldPayload = z.infer<typeof updateMetadataShapeFieldSchema>;
 
@@ -173,10 +272,36 @@ export type DashboardCustomerResponse = z.infer<typeof dashboardCustomerResponse
 export type CustomerBusinessOrderSummary = z.infer<typeof customerBusinessOrderSummarySchema>;
 export type DashboardCustomerDetailResponse = z.infer<typeof dashboardCustomerDetailResponseSchema>;
 
-export type CustomersSortField = "CreatedAt" | "Name" | "Email";
+export type CustomersSortField = "CreatedAt" | "Name" | "Email" | "OrderCount" | "TotalSpent" | "LastOrderAt";
 
 export type CustomersQueryParams = PagedQuery & {
     search?: string;
+    businessId?: string;
+    hasOrders?: boolean;
+    registeredFrom?: string;
+    registeredTo?: string;
     sortBy: CustomersSortField;
     sortDescending: boolean;
+};
+
+export type TimeSeriesPoint = z.infer<typeof timeSeriesPointSchema>;
+export type CustomerCurrencyTotal = z.infer<typeof customerCurrencyTotalSchema>;
+export type CustomerStatsResponse = z.infer<typeof customerStatsResponseSchema>;
+export type TopCustomerResponse = z.infer<typeof topCustomerResponseSchema>;
+export type TopCustomersRankBy = "Spend" | "Orders";
+export type BusinessOption = z.infer<typeof businessOptionResponseSchema>;
+export type RevokeCustomerSessionsResponse = z.infer<typeof revokeCustomerSessionsResponseSchema>;
+export type CustomerOrderResponse = z.infer<typeof customerOrderResponseSchema>;
+export type CustomerSpendPoint = z.infer<typeof customerSpendPointSchema>;
+
+export type UpdateCustomerPayload = z.infer<typeof updateCustomerFormSchema>;
+
+export type UpdateCustomerFormValues = {
+    firstName: string;
+    lastName: string;
+    phone: string;
+};
+
+export type CustomerOrdersQueryParams = PagedQuery & {
+    businessId?: string;
 };

@@ -1,6 +1,8 @@
 import type {
     BusinessesQueryParams,
+    BusinessRoleFilter,
     CustomersQueryParams,
+    SubscriptionsQueryParams,
     SystemRoleFilter,
     UsersQueryParams,
     WebsiteTemplateRequestsQueryParams,
@@ -35,6 +37,15 @@ export const INITIAL_CUSTOMERS_QUERY: CustomersQueryParams = {
     sortDescending: true,
 };
 
+export const INITIAL_SUBSCRIPTIONS_QUERY: SubscriptionsQueryParams = {
+    page: 1,
+    pageSize: DEFAULT_PAGE_SIZE,
+    sortBy: "CreatedAt",
+    sortDescending: true,
+};
+
 export const SYSTEM_ROLE_FILTER_OPTIONS: SystemRoleFilter[] = ["User", "Admin", "SuperAdmin"];
+
+export const BUSINESS_ROLE_FILTER_OPTIONS: BusinessRoleFilter[] = ["Owner", "Admin", "Member"];
 
 export const SEARCH_DEBOUNCE_MS = 400;

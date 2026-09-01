@@ -4,6 +4,8 @@ import SortableHeader from "../../../../components/SortableHeader/SortableHeader
 import type { PagedResult } from "../../../../types/pagination";
 import type useBusinessesTableState from "../hooks/ui/useBusinessesTableState";
 import type { DashboardBusinessResponse } from "../types";
+import { formatCurrency } from "../utils/formatCurrency";
+import { subscriptionStatusBadge } from "../utils/subscriptionStatusBadge";
 
 type BusinessesTableProps = {
     businessesPage?: PagedResult<DashboardBusinessResponse>;
@@ -65,6 +67,7 @@ const BusinessesTable = ({
                                     onSort={handleSortChange}
                                 />
                                 <th>Owner</th>
+                                <th>Domain</th>
                                 <SortableHeader
                                     label="Members"
                                     field="MemberCount"
@@ -79,6 +82,9 @@ const BusinessesTable = ({
                                     sortDescending={query.sortDescending}
                                     onSort={handleSortChange}
                                 />
+                                <th>Orders</th>
+                                <th>Recorded Revenue</th>
+                                <th>Plan</th>
                                 <SortableHeader
                                     label="Created"
                                     field="CreatedAt"
@@ -86,36 +92,65 @@ const BusinessesTable = ({
                                     sortDescending={query.sortDescending}
                                     onSort={handleSortChange}
                                 />
+                                <th>Status</th>
                             </tr>
                         </thead>
 
                         <tbody style={{ opacity: isFetching ? 0.6 : 1 }}>
-                            {businessesPage.items.map((business) => (
-                                <tr
-                                    key={business.id}
-                                    className="dashboard-table-row--clickable"
-                                    onClick={() => onOpenBusiness(business.id)}
-                                    role="button"
-                                    tabIndex={0}
-                                    onKeyDown={(e) => {
-                                        if (e.key === "Enter" || e.key === " ") {
-                                            e.preventDefault();
-                                            onOpenBusiness(business.id);
-                                        }
-                                    }}
-                                >
-                                    <td>{business.name}</td>
-                                    <td>
-                                        <div className="dashboard-owner-cell">
-                                            <span>{business.ownerFullName}</span>
-                                            <span className="dashboard-owner-email">{business.ownerEmail}</span>
-                                        </div>
-                                    </td>
-                                    <td>{business.memberCount}</td>
-                                    <td>{business.productCount}</td>
-                                    <td>{new Date(business.createdAt).toLocaleDateString()}</td>
-                                </tr>
-                            ))}
+                            {businessesPage.items.map((business) => {
+                                const badge = subscriptionStatusBadge(business.subscriptionStatus);
+
+                                return (
+                                    <tr
+                                        key={business.id}
+                                        className="dashboard-table-row--clickable"
+                                        onClick={() => onOpenBusiness(business.id)}
+                                        role="button"
+                                        tabIndex={0}
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter" || e.key === " ") {
+                                                e.preventDefault();
+                                                onOpenBusiness(business.id);
+                                            }
+                                        }}
+                                    >
+                                        <td>{business.name}</td>
+                                        <td>
+                                            <div className="dashboard-owner-cell">
+                                                <span>{business.ownerFullName}</span>
+                                                <span className="dashboard-owner-email">{business.ownerEmail}</span>
+                                            </div>
+                                        </td>
+                                        <td>{business.domainName ?? "—"}</td>
+                                        <td>{business.memberCount}</td>
+                                        <td>{business.productCount}</td>
+                                        <td>{business.orderCount}</td>
+                                        <td>
+                                            {business.orderCount > 0
+                                                ? formatCurrency(business.recordedRevenue, business.revenueCurrency)
+                                                : "—"}
+                                        </td>
+                                        <td>
+                                            {business.planName ? (
+                                                <div className="dashboard-plan-cell">
+                                                    <span>{business.planName}</span>
+                                                    {business.billingInterval && (
+                                                        <span className="dashboard-owner-email">
+                                                            {business.billingInterval}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                <span className="dashboard-table-muted">No active plan</span>
+                                            )}
+                                        </td>
+                                        <td>{new Date(business.createdAt).toLocaleDateString()}</td>
+                                        <td>
+                                            <span className={`dashboard-badge ${badge.className}`}>{badge.label}</span>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
                         </tbody>
                     </table>
                 </div>

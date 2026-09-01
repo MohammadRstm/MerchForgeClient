@@ -15,6 +15,9 @@ const useSetSubscriptionPlanActive = () => {
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ["dashboard", "subscription-plans"] });
             queryClient.invalidateQueries({ queryKey: ["dashboard", "subscription-plan", data.id] });
+            queryClient.invalidateQueries({ queryKey: ["dashboard", "subscription-plan-groups"] });
+            queryClient.invalidateQueries({ queryKey: ["dashboard", "plan-subscription-stats"] });
+            queryClient.invalidateQueries({ queryKey: ["dashboard", "subscription-plan-distribution"] });
 
             notify.success(`Plan "${data.name}" ${data.isActive ? "reactivated" : "deactivated"}.`);
         },

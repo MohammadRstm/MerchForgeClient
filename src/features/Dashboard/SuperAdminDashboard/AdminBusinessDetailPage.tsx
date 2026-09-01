@@ -1,13 +1,20 @@
 import "./SuperAdminDashboard.css";
+import "../BusinessOwnerDashboard/BusinessOwnerDashboard.css";
 import { Link, useNavigate } from "react-router";
 import Spinner from "../../../components/LoadingSpinner/LoadingSpinner";
 import StatCards from "../../../components/DashboardWidgets/StatCards";
 import Modal from "../../../components/Modal/Modal";
 import { routes } from "../../../config/routes";
-import SubscriptionCard from "../BusinessOwnerDashboard/components/SubscriptionCard";
 import useAdminBusinessDetailPage from "./hooks/useAdminBusinessDetailPage";
-
-const currencyFormatter = new Intl.NumberFormat(undefined, { style: "currency", currency: "USD" });
+import BusinessQuickActions from "./components/BusinessQuickActions";
+import BusinessNeedsAttention from "./components/BusinessNeedsAttention";
+import BusinessSalesPerformance from "./components/BusinessSalesPerformance";
+import BusinessProductOverview from "./components/BusinessProductOverview";
+import BusinessInventorySnapshot from "./components/BusinessInventorySnapshot";
+import BusinessRecentOrders from "./components/BusinessRecentOrders";
+import AdminSubscriptionCard from "./components/AdminSubscriptionCard";
+import BusinessInformationCard from "./components/BusinessInformationCard";
+import { formatCurrency } from "./utils/formatCurrency";
 
 const AdminBusinessDetailPage = () => {
     const {
@@ -15,6 +22,34 @@ const AdminBusinessDetailPage = () => {
         business,
         isLoading,
         isError,
+
+        kpiOrderAnalytics,
+        kpiOrderAnalyticsLoading,
+
+        salesPreset,
+        setSalesPreset,
+        salesPresets,
+        salesMetric,
+        setSalesMetric,
+        salesAnalytics,
+        salesAnalyticsLoading,
+        salesAnalyticsFetching,
+        salesAnalyticsError,
+
+        recentOrders,
+        recentOrdersLoading,
+        recentOrdersError,
+
+        inventorySummary,
+        inventorySummaryLoading,
+        inventorySummaryError,
+
+        topProducts,
+        productPerformanceLoading,
+        productPerformanceError,
+
+        customerSnapshot,
+        customerSnapshotLoading,
 
         revokeConfirmOpen,
         openRevokeConfirm,
@@ -60,58 +95,204 @@ const AdminBusinessDetailPage = () => {
     return (
         <main className="dashboard-page">
             <div className="dashboard-page-header">
-                <h1 className="dashboard-heading">{business.name}</h1>
+                <div>
+                    <h1 className="dashboard-heading">{business.name}</h1>
+                    <p className="dashboard-subheading">
+                        Owner: {business.ownerFullName} · Domain: {business.domainName ?? "Not set"}
+                    </p>
+                </div>
 
                 <div className="business-detail-header-actions">
                     <button type="button" className="dashboard-action-btn" onClick={() => navigate(routes.ADMIN_BUSINESSES)}>
                         Back to businesses
                     </button>
-                    <button type="button" className="dashboard-action-btn" onClick={openRevokeConfirm}>
-                        Revoke all sessions
-                    </button>
+                    <BusinessQuickActions
+                        websiteUrl={business.websiteUrl}
+                        businessId={businessId}
+                        businessName={business.name}
+                        onRevokeSessions={openRevokeConfirm}
+                    />
                 </div>
             </div>
 
+            <StatCards
+                cards={[
+                    { label: "Products", value: business.productCount },
+                    {
+                        label: "Orders",
+                        value: kpiOrderAnalyticsLoading ? "…" : kpiOrderAnalytics?.currentPeriod.orderCount ?? 0,
+                    },
+                    {
+                        label: "Recorded Order Revenue",
+                        value: kpiOrderAnalyticsLoading
+                            ? "…"
+                            : formatCurrency(kpiOrderAnalytics?.currentPeriod.revenue ?? 0, business.currency),
+                    },
+                    {
+                        label: "Customers",
+                        value: customerSnapshotLoading ? "…" : customerSnapshot?.totalCustomers ?? 0,
+                    },
+                    { label: "Team Members", value: business.members.length },
+                ]}
+            />
+
+            <BusinessNeedsAttention business={business} inventorySummary={inventorySummary} />
+
+            <BusinessSalesPerformance
+                analytics={salesAnalytics}
+                isLoading={salesAnalyticsLoading}
+                isFetching={salesAnalyticsFetching}
+                isError={salesAnalyticsError}
+                preset={salesPreset}
+                presets={salesPresets}
+                onChangePreset={setSalesPreset}
+                metric={salesMetric}
+                onChangeMetric={setSalesMetric}
+            />
+
+            <div className="business-detail-two-col">
+                <BusinessProductOverview
+                    productCount={business.productCount}
+                    productsByCategory={business.productsByCategory}
+                    productDraftCount={business.productDraftCount}
+                    topProducts={topProducts}
+                    currency={business.currency}
+                    isLoading={productPerformanceLoading}
+                    isError={productPerformanceError}
+                />
+                <BusinessInventorySnapshot
+                    summary={inventorySummary}
+                    isLoading={inventorySummaryLoading}
+                    isError={inventorySummaryError}
+                />
+            </div>
+
+            <BusinessRecentOrders orders={recentOrders} isLoading={recentOrdersLoading} isError={recentOrdersError} />
+
             <section className="dashboard-table-card">
                 <div className="dashboard-table-header">
-                    <h3>Profile</h3>
+                    <h3>Storefront</h3>
                 </div>
                 <dl className="business-detail-grid">
                     <div>
-                        <dt>Owner</dt>
-                        <dd>{business.ownerFullName} ({business.ownerEmail})</dd>
+                        <dt>Website URL</dt>
+                        <dd>
+                            {business.websiteUrl ? (
+                                <a href={business.websiteUrl} target="_blank" rel="noopener noreferrer" className="dashboard-inline-link">{business.websiteUrl}</a>
+                            ) : "No storefront configured."}
+                        </dd>
+                    </div>
+                    <div>
+                        <dt>Template</dt>
+                        <dd>{business.websiteTemplateLabel ?? "None chosen"}</dd>
                     </div>
                     <div>
                         <dt>Domain</dt>
                         <dd>{business.domainName ?? "Not set"}</dd>
                     </div>
                     <div>
-                        <dt>Currency / Locale</dt>
-                        <dd>{business.currency} / {business.locale}</dd>
-                    </div>
-                    <div>
-                        <dt>Contact</dt>
-                        <dd>{business.contactEmail ?? "—"} {business.contactPhone ? `· ${business.contactPhone}` : ""}</dd>
-                    </div>
-                    <div>
-                        <dt>Created</dt>
-                        <dd>{new Date(business.createdAt).toLocaleDateString()}</dd>
+                        <dt>Chosen</dt>
+                        <dd>{business.websiteTemplateChosenAt ? new Date(business.websiteTemplateChosenAt).toLocaleDateString() : "—"}</dd>
                     </div>
                 </dl>
-                {business.description && <p className="dashboard-table-message" style={{ textAlign: "left", padding: 0 }}>{business.description}</p>}
+
+                <h4 className="dashboard-subsection-heading">Website Requests</h4>
+                {business.websiteTemplateRequests.length === 0 ? (
+                    <p className="dashboard-table-message">No website requests yet.</p>
+                ) : (
+                    <div className="dashboard-table-wrapper">
+                        <table className="dashboard-table">
+                            <thead>
+                                <tr>
+                                    <th>Template</th>
+                                    <th>Status</th>
+                                    <th>Requested</th>
+                                    <th>Final URL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {business.websiteTemplateRequests.map((request) => (
+                                    <tr
+                                        key={request.id}
+                                        className="dashboard-table-row--clickable"
+                                        onClick={() => navigate(`${routes.ADMIN_WEBSITE_REQUESTS}?requestId=${request.id}`)}
+                                    >
+                                        <td>{new Date(request.createdAt).toLocaleDateString()} · {request.templateLabel}</td>
+                                        <td>
+                                            <span className={`website-request-status website-request-status--${request.status.toLowerCase()}`}>
+                                                {request.status}
+                                            </span>
+                                        </td>
+                                        <td>{new Date(request.createdAt).toLocaleDateString()}</td>
+                                        <td>
+                                            {request.finalWebsiteUrl ? (
+                                                <a href={request.finalWebsiteUrl} target="_blank" rel="noopener noreferrer" className="dashboard-inline-link" onClick={(e) => e.stopPropagation()}>View</a>
+                                            ) : "—"}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
             </section>
 
-            <StatCards
-                cards={[
-                    { label: "Members", value: business.members.length },
-                    { label: "Products", value: business.productCount },
-                    { label: "Product Drafts", value: business.productDraftCount },
-                    {
-                        label: "Average Price",
-                        value: business.averageProductPrice != null ? currencyFormatter.format(business.averageProductPrice) : "—",
-                    },
-                ]}
+            <AdminSubscriptionCard
+                subscription={business.subscription}
+                activeSubscriberCountForPlan={business.activeSubscriberCountForPlan}
             />
+
+            <section className="dashboard-table-card">
+                <div className="dashboard-table-header">
+                    <h3>Feature Credits</h3>
+                </div>
+                {business.featureCredits.length === 0 ? (
+                    <p className="dashboard-table-message">No purchasable features configured.</p>
+                ) : (
+                    <div className="feature-credits-list">
+                        {business.featureCredits.map((credit) => {
+                            const percentUsed =
+                                !credit.includedInPlan && credit.creditsGrantedTotal > 0
+                                    ? Math.min(
+                                          100,
+                                          ((credit.creditsGrantedTotal - credit.creditsRemaining) /
+                                              credit.creditsGrantedTotal) *
+                                              100
+                                      )
+                                    : 0;
+
+                            return (
+                                <div key={credit.featureKey} className="feature-credit-row">
+                                    <div className="feature-credit-row-header">
+                                        <span>{credit.featureName}</span>
+                                        {credit.includedInPlan ? (
+                                            <span className="dashboard-badge dashboard-badge--success">
+                                                Unlimited (in plan)
+                                            </span>
+                                        ) : credit.creditsGrantedTotal > 0 ? (
+                                            <span className="dashboard-table-muted">
+                                                {credit.creditsRemaining} / {credit.creditsGrantedTotal} remaining
+                                            </span>
+                                        ) : (
+                                            <span className="dashboard-table-muted">No credits purchased</span>
+                                        )}
+                                    </div>
+                                    {!credit.includedInPlan && credit.creditsGrantedTotal > 0 && (
+                                        <div className="feature-credit-bar">
+                                            <div
+                                                className="feature-credit-bar-fill"
+                                                style={{ width: `${percentUsed}%` }}
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
+                )}
+            </section>
+
+            <BusinessInformationCard business={business} />
 
             <section className="dashboard-table-card">
                 <div className="dashboard-table-header">
@@ -151,102 +332,7 @@ const AdminBusinessDetailPage = () => {
 
             <section className="dashboard-table-card">
                 <div className="dashboard-table-header">
-                    <h3>Website & templates</h3>
-                </div>
-                <dl className="business-detail-grid">
-                    <div>
-                        <dt>Website URL</dt>
-                        <dd>
-                            {business.websiteUrl ? (
-                                <a href={business.websiteUrl} target="_blank" rel="noopener noreferrer">{business.websiteUrl}</a>
-                            ) : "Not live yet"}
-                        </dd>
-                    </div>
-                    <div>
-                        <dt>Current template</dt>
-                        <dd>{business.websiteTemplateLabel ?? "None chosen"}</dd>
-                    </div>
-                    <div>
-                        <dt>Chosen</dt>
-                        <dd>{business.websiteTemplateChosenAt ? new Date(business.websiteTemplateChosenAt).toLocaleDateString() : "—"}</dd>
-                    </div>
-                </dl>
-
-                {business.websiteTemplateRequests.length === 0 ? (
-                    <p className="dashboard-table-message">No website requests yet.</p>
-                ) : (
-                    <div className="dashboard-table-wrapper">
-                        <table className="dashboard-table">
-                            <thead>
-                                <tr>
-                                    <th>Template</th>
-                                    <th>Status</th>
-                                    <th>Requested</th>
-                                    <th>Final URL</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {business.websiteTemplateRequests.map((request) => (
-                                    <tr key={request.id}>
-                                        <td>{request.templateLabel}</td>
-                                        <td>
-                                            <span className={`website-request-status website-request-status--${request.status.toLowerCase()}`}>
-                                                {request.status}
-                                            </span>
-                                        </td>
-                                        <td>{new Date(request.createdAt).toLocaleDateString()}</td>
-                                        <td>
-                                            {request.finalWebsiteUrl ? (
-                                                <a href={request.finalWebsiteUrl} target="_blank" rel="noopener noreferrer">View</a>
-                                            ) : "—"}
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
-            </section>
-
-            <SubscriptionCard
-                subscription={business.subscription ?? undefined}
-                isLoading={false}
-                isError={false}
-            />
-
-            <section className="dashboard-table-card">
-                <div className="dashboard-table-header">
-                    <h3>Feature credits</h3>
-                </div>
-                {business.featureCredits.length === 0 ? (
-                    <p className="dashboard-table-message">No feature credits purchased.</p>
-                ) : (
-                    <div className="dashboard-table-wrapper">
-                        <table className="dashboard-table">
-                            <thead>
-                                <tr>
-                                    <th>Feature</th>
-                                    <th>Remaining</th>
-                                    <th>Granted (total)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {business.featureCredits.map((credit) => (
-                                    <tr key={credit.featureKey}>
-                                        <td>{credit.featureName}</td>
-                                        <td>{credit.creditsRemaining}</td>
-                                        <td>{credit.creditsGrantedTotal}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
-            </section>
-
-            <section className="dashboard-table-card">
-                <div className="dashboard-table-header">
-                    <h3>Product structure</h3>
+                    <h3>Product Configuration</h3>
                     <Link to={routes.ADMIN_PRODUCT_FIELDS} className="dashboard-action-btn">
                         Manage domain fields
                     </Link>
@@ -267,15 +353,14 @@ const AdminBusinessDetailPage = () => {
                 ) : !catalogue || catalogue.length === 0 ? (
                     <p className="dashboard-table-message">
                         This domain has no optional product fields defined yet.{" "}
-                        <Link to={routes.ADMIN_PRODUCT_FIELDS}>Add one</Link>.
+                        <Link to={routes.ADMIN_PRODUCT_FIELDS} className="dashboard-inline-link">Add one</Link>.
                     </p>
                 ) : (
                     <>
                         <p className="dashboard-table-message" style={{ textAlign: "left", padding: 0, marginBottom: 12 }}>
-                            Choose which of this domain's fields this business's products may use, and customize each
-                            one for this business. Existing product data is never affected — this only changes what
-                            the product form asks for going forward. Need an entirely new field? Add it to the domain
-                            catalogue first.
+                            Domain: <strong>{business.domainName}</strong>. Choose which of this domain's fields this
+                            business's products may use, and customize each one. Existing product data is never
+                            affected — this only changes what the product form asks for going forward.
                         </p>
                         <div className="metadata-shape-list">
                             {catalogue.map((attribute) => {
