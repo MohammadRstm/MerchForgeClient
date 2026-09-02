@@ -1,0 +1,31 @@
+/**
+ * Login credentials for SuperAdmin-created demo/showcase businesses (Business.IsDemo),
+ * keyed by businessId. Static and checked into the frontend deliberately -- these are
+ * internal showcase accounts with no real customer data behind them, not a real
+ * security boundary, so there's no reason to round-trip them through the backend.
+ *
+ * Add an entry here every time a new demo business is created via
+ * POST Dashboard/businesses/demo.
+ */
+export const DEMO_BUSINESS_CREDENTIALS: Record<string, { email: string; password: string }> = {
+    "b6770f8b-14a1-49ee-9c07-929e826e82ad": {
+        email: "demo-fashion-01@merchforge.internal",
+        password: "DemoFashion2026!",
+    },
+    "c1ce50bf-e95a-4c8a-ba49-921b4356c2e8": {
+        email: "demo-fashion-02@merchforge.internal",
+        password: "DemoFashion2026!",
+    },
+    "27e95606-b479-413a-8a89-a9e4cbb24571": {
+        email: "demo-electronics-01@merchforge.internal",
+        password: "DemoElectronics2026!",
+    },
+    "df3a1c47-81b3-4a12-92dc-112ba236453d": {
+        email: "demo-electronics-02@merchforge.internal",
+        password: "DemoPhonecase2026!",
+    },
+    "2bad4bc8-68dc-45e8-89a3-27da2a777acd": {
+        email: "demo-grocery-01@merchforge.internal",
+        password: "DemoGrocery2026!",
+    },
+};
