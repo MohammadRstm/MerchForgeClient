@@ -14,6 +14,7 @@ import BusinessInventorySnapshot from "./components/BusinessInventorySnapshot";
 import BusinessRecentOrders from "./components/BusinessRecentOrders";
 import AdminSubscriptionCard from "./components/AdminSubscriptionCard";
 import BusinessInformationCard from "./components/BusinessInformationCard";
+import DemoBusinessCredentialsBanner from "./components/DemoBusinessCredentialsBanner";
 import { formatCurrency } from "./utils/formatCurrency";
 
 const AdminBusinessDetailPage = () => {
@@ -114,6 +115,8 @@ const AdminBusinessDetailPage = () => {
                     />
                 </div>
             </div>
+
+            <DemoBusinessCredentialsBanner businessId={businessId} isDemo={business.isDemo} />
 
             <StatCards
                 cards={[

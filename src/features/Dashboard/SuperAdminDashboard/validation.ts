@@ -526,6 +526,7 @@ export const businessDetailResponseSchema = z.object({
     businessDomainId: z.string().uuid().nullable(),
     domainName: z.string().nullable(),
     createdAt: z.iso.datetime(),
+    isDemo: z.boolean(),
 
     ownerUserId: z.string().uuid(),
     ownerFullName: z.string(),
