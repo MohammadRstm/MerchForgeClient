@@ -1,3 +1,4 @@
+import { useLayoutEffect, useState } from "react";
 import { Link } from "react-router";
 import logo from "../../assets/logo.svg";
 import cartIllustration from "../../assets/illustrations/shopping-cart.svg";
@@ -18,8 +19,28 @@ interface AuthShellProps {
  * only the form side (passed as children) changes per page.
  */
 export default function AuthShell({ children }: AuthShellProps) {
+    // The header's real height varies by viewport (its padding uses clamp()) and
+    // isn't a fixed number anywhere in the app -- a hardcoded guess here just
+    // reserves the wrong amount of space and either strands empty room or, worse,
+    // forces a scrollbar on a form that should fit. Measuring the actual <header>
+    // is the only way this stays correct across viewport widths.
+    const [headerHeight, setHeaderHeight] = useState(0);
+
+    useLayoutEffect(() => {
+        const header = document.querySelector("header");
+        if (!header) return;
+
+        const observer = new ResizeObserver((entries) => {
+            const entry = entries[0];
+            if (entry) setHeaderHeight(entry.borderBoxSize?.[0]?.blockSize ?? entry.contentRect.height);
+        });
+        observer.observe(header);
+
+        return () => observer.disconnect();
+    }, []);
+
     return (
-        <main className="auth-shell">
+        <main className="auth-shell" style={{ height: `calc(100vh - ${headerHeight}px)` }}>
             <div className="auth-shell__visual">
                 <Link to="/" className="auth-shell__brand">
                     <img src={logo} alt="" className="auth-shell__brand-mark" />

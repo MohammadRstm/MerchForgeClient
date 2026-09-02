@@ -18,7 +18,10 @@
     display: flex;
     align-items: stretch;
 
-    height: calc(100vh - 145px);
+    /* Real value is set inline once AuthShell.tsx measures the actual <header>
+       height via ResizeObserver -- this is only a same-frame fallback (SSR/no-JS,
+       or the instant before the first layout effect runs). */
+    height: calc(100vh - 80px);
     background: var(--mf-bg-raised);
     overflow: hidden;
 }
@@ -31,7 +34,10 @@
 
     display: none;
     flex-direction: column;
-    justify-content: space-between;
+    /* Not space-between: the graphic below no longer flex-grows to fill the
+       whole column, so this would otherwise still shove the statement text
+       down to the very bottom edge on a tall viewport. */
+    justify-content: flex-start;
 
     flex: 0 0 44%;
     padding: clamp(1.75rem, 3vw, 2.75rem);
@@ -69,9 +75,13 @@
 
 .auth-shell__graphic {
     position: relative;
-    flex: 1;
-    min-height: 320px;
-    margin: 1.5rem 0;
+    /* Fixed target size, not flex: 1 -- growing to fill all remaining height
+       is what pushed the statement text below it down to the panel's bottom
+       edge on tall viewports. This keeps the illustration+headline grouped
+       together higher up instead. */
+    flex: 0 1 400px;
+    min-height: 280px;
+    margin: 2rem 0;
 
     display: flex;
     align-items: center;
