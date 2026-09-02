@@ -12,4 +12,8 @@ export const DEMO_BUSINESS_CREDENTIALS: Record<string, { email: string; password
         email: "demo-fashion-01@merchforge.internal",
         password: "DemoFashion2026!",
     },
+    "c1ce50bf-e95a-4c8a-ba49-921b4356c2e8": {
+        email: "demo-fashion-02@merchforge.internal",
+        password: "DemoFashion2026!",
+    },
 };
