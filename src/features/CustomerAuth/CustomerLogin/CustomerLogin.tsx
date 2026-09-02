@@ -4,6 +4,13 @@ import { Link } from "react-router";
 import Spinner from "../../../components/LoadingSpinner/LoadingSpinner";
 import useCustomerLoginPage from "./hooks/useCustomerLoginPage";
 import { routes } from "../../../config/routes";
+import secureLoginIllustration from "../../../assets/illustrations/secure-login.svg";
+
+const shellProps = {
+    illustration: secureLoginIllustration,
+    statementHeadline: "Your account, one login away.",
+    statementSubtext: "Sign in securely to pick up right where you left off, at any store MerchForge powers.",
+};
 
 const CustomerLogin = () => {
     const {
@@ -22,7 +29,7 @@ const CustomerLogin = () => {
     // the form never flashes back into view.
     if (loginResult?.exchangeCode && returnUrl) {
         return (
-            <AuthShell>
+            <AuthShell {...shellProps}>
                 <div className="auth-form__status">
                     <Spinner size={28} />
                     <p className="auth-form__subtext">Taking you back to the store...</p>
@@ -35,7 +42,7 @@ const CustomerLogin = () => {
     // customer back to, so this is the terminal state rather than a redirect.
     if (loginResult) {
         return (
-            <AuthShell>
+            <AuthShell {...shellProps}>
                 <div className="auth-form__status">
                     <h1 className="auth-form__headline">You're signed in</h1>
                     <p className="auth-form__subtext">
@@ -47,7 +54,7 @@ const CustomerLogin = () => {
     }
 
     return (
-        <AuthShell>
+        <AuthShell {...shellProps}>
             <form className="auth-form" onSubmit={submit}>
                 <h1 className="auth-form__headline">Welcome back</h1>
 

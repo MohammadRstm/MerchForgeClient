@@ -3,6 +3,13 @@ import AuthShell from "../../../components/AuthShell/AuthShell";
 import "../../../components/AuthShell/AuthForm.css";
 import { routes } from "./../../../config/routes";
 import useAcceptInvitationPage from "./hooks/useAcceptInvitationPage";
+import webShoppingIllustration from "../../../assets/illustrations/web-shopping.svg";
+
+const shellProps = {
+  illustration: webShoppingIllustration,
+  statementHeadline: "Your storefront, built in minutes.",
+  statementSubtext: "From catalog to checkout, MerchForge handles the busywork so you can focus on your products.",
+};
 
 export default function AcceptInvitation() {
   const {
@@ -35,7 +42,7 @@ export default function AcceptInvitation() {
 
   if (isInvitationInvalid) {
     return (
-      <AuthShell>
+      <AuthShell {...shellProps}>
         <div className="auth-form__status">
           <h1 className="auth-form__headline">This invitation link isn't valid.</h1>
           <p className="auth-form__subtext">
@@ -49,7 +56,7 @@ export default function AcceptInvitation() {
 
   if (acceptInvitationSuccess) {
     return (
-      <AuthShell>
+      <AuthShell {...shellProps}>
         <div className="auth-form__status">
           <h1 className="auth-form__headline">You're all set.</h1>
           <p className="auth-form__subtext">
@@ -65,7 +72,7 @@ export default function AcceptInvitation() {
   }
 
   return (
-    <AuthShell>
+    <AuthShell {...shellProps}>
       <p className="auth-form__eyebrow">Complete your registration</p>
       <h1 className="auth-form__headline">You're almost in.</h1>
       <p className="auth-form__subtext">

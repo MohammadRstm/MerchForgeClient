@@ -3,6 +3,13 @@ import AuthShell from "../../../components/AuthShell/AuthShell";
 import "../../../components/AuthShell/AuthForm.css";
 import { routes } from "./../../../config/routes";
 import useAcceptMemberInvitationPage from "./hooks/useAcceptMemberInvitationPage";
+import teamworkIllustration from "../../../assets/illustrations/teamwork.svg";
+
+const shellProps = {
+  illustration: teamworkIllustration,
+  statementHeadline: "Better run as a team.",
+  statementSubtext: "Invite teammates, share the workload, and keep your storefront running smoothly together.",
+};
 
 export default function AcceptMemberInvitation() {
   const {
@@ -18,7 +25,7 @@ export default function AcceptMemberInvitation() {
 
   if (isInvitationInvalid) {
     return (
-      <AuthShell>
+      <AuthShell {...shellProps}>
         <div className="auth-form__status">
           <h1 className="auth-form__headline">This invitation link isn't valid.</h1>
           <p className="auth-form__subtext">
@@ -32,7 +39,7 @@ export default function AcceptMemberInvitation() {
 
   if (acceptInvitationSuccess) {
     return (
-      <AuthShell>
+      <AuthShell {...shellProps}>
         <div className="auth-form__status">
           <h1 className="auth-form__headline">You're all set.</h1>
           <p className="auth-form__subtext">
@@ -47,7 +54,7 @@ export default function AcceptMemberInvitation() {
   }
 
   return (
-    <AuthShell>
+    <AuthShell {...shellProps}>
       <p className="auth-form__eyebrow">Complete your registration</p>
       <h1 className="auth-form__headline">Set your password.</h1>
       <p className="auth-form__subtext">

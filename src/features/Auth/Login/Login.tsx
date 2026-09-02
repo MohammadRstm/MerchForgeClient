@@ -1,6 +1,7 @@
 import { Link, Navigate } from "react-router";
 import AuthShell from "../../../components/AuthShell/AuthShell";
 import "../../../components/AuthShell/AuthForm.css";
+import cartIllustration from "../../../assets/illustrations/shopping-cart.svg";
 import Spinner from "../../../components/LoadingSpinner/LoadingSpinner";
 import useLoginPage from "./hooks/useLoginPage";
 import useAuth from "../../../context/Auth/useAuth";
@@ -27,7 +28,12 @@ const Login = () => {
     }
 
     return (
-        <AuthShell>
+        <AuthShell
+            illustration={cartIllustration}
+            statementHeadline="Every storefront starts with a good first impression."
+            statementSubtext="MerchForge gives merchants a real storefront — catalog, checkout, and orders — up and running in minutes."
+            animated
+        >
             <form className="auth-form" onSubmit={submit}>
                 <h1 className="auth-form__headline">Good to see you again.</h1>
 

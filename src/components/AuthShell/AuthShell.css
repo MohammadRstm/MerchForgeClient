@@ -122,6 +122,11 @@
     height: auto;
 
     filter: drop-shadow(0 30px 40px rgba(20, 22, 27, 0.16));
+}
+
+/* Only the owner login opts into this -- every other page's illustration
+   stays still. */
+.auth-shell__illustration--animated {
     animation: auth-shell-bob 4.5s ease-in-out infinite;
 }
 
@@ -135,7 +140,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .auth-shell__illustration {
+    .auth-shell__illustration--animated {
         animation: none;
     }
 }

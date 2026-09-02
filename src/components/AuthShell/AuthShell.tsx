@@ -1,11 +1,17 @@
 import { useLayoutEffect, useState } from "react";
 import { Link } from "react-router";
 import logo from "../../assets/logo.svg";
-import cartIllustration from "../../assets/illustrations/shopping-cart.svg";
 import "./AuthShell.css";
 
 interface AuthShellProps {
     children: React.ReactNode;
+    /** Decorative illustration for the left panel — unique per page. */
+    illustration: string;
+    statementHeadline: string;
+    statementSubtext: string;
+    /** Gentle bob animation on the illustration. Off by default — only the owner
+     *  login uses it; every other page's illustration stays still. */
+    animated?: boolean;
 }
 
 /**
@@ -14,11 +20,14 @@ interface AuthShellProps {
  * header (see PagesWithHeaderLayout), so this borrows the marketing site's own
  * brand system (--mf-* tokens, Fraunces display font, warm accent) instead of
  * the dashboard's blue, rather than reinventing a third look.
- *
- * The left panel's brand statement is intentionally static across every page —
- * only the form side (passed as children) changes per page.
  */
-export default function AuthShell({ children }: AuthShellProps) {
+export default function AuthShell({
+    children,
+    illustration,
+    statementHeadline,
+    statementSubtext,
+    animated = false,
+}: AuthShellProps) {
     // The header's real height varies by viewport (its padding uses clamp()) and
     // isn't a fixed number anywhere in the app -- a hardcoded guess here just
     // reserves the wrong amount of space and either strands empty room or, worse,
@@ -52,20 +61,15 @@ export default function AuthShell({ children }: AuthShellProps) {
                     <div className="auth-shell__blob auth-shell__blob--2" />
 
                     <img
-                        src={cartIllustration}
+                        src={illustration}
                         alt=""
-                        className="auth-shell__illustration"
+                        className={`auth-shell__illustration${animated ? " auth-shell__illustration--animated" : ""}`}
                     />
                 </div>
 
                 <div className="auth-shell__statement">
-                    <h2 className="auth-shell__statement-headline">
-                        Every storefront starts with a good first impression.
-                    </h2>
-                    <p className="auth-shell__statement-subtext">
-                        MerchForge gives merchants a real storefront — catalog, checkout, and
-                        orders — up and running in minutes.
-                    </p>
+                    <h2 className="auth-shell__statement-headline">{statementHeadline}</h2>
+                    <p className="auth-shell__statement-subtext">{statementSubtext}</p>
                 </div>
             </div>
 

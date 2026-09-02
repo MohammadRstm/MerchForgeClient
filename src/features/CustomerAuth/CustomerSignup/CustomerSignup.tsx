@@ -4,6 +4,13 @@ import { Link } from "react-router";
 import Spinner from "../../../components/LoadingSpinner/LoadingSpinner";
 import useCustomerSignupPage from "./hooks/useCustomerSignupPage";
 import { routes } from "../../../config/routes";
+import userAccountIllustration from "../../../assets/illustrations/user-account.svg";
+
+const shellProps = {
+    illustration: userAccountIllustration,
+    statementHeadline: "One account, every store.",
+    statementSubtext: "Create your account once and check out faster everywhere MerchForge powers.",
+};
 
 const CustomerSignup = () => {
     const {
@@ -19,7 +26,7 @@ const CustomerSignup = () => {
 
     if (signupResult?.exchangeCode && returnUrl) {
         return (
-            <AuthShell>
+            <AuthShell {...shellProps}>
                 <div className="auth-form__status">
                     <Spinner size={28} />
                     <p className="auth-form__subtext">Taking you back to the store...</p>
@@ -30,7 +37,7 @@ const CustomerSignup = () => {
 
     if (signupResult) {
         return (
-            <AuthShell>
+            <AuthShell {...shellProps}>
                 <div className="auth-form__status">
                     <h1 className="auth-form__headline">You're all set</h1>
                     <p className="auth-form__subtext">
@@ -42,7 +49,7 @@ const CustomerSignup = () => {
     }
 
     return (
-        <AuthShell>
+        <AuthShell {...shellProps}>
             <form className="auth-form" onSubmit={submit}>
                 <h1 className="auth-form__headline">Create your account</h1>
 
