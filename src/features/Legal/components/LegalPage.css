@@ -1,0 +1,198 @@
+/* Home.css's .mf-* utility classes (mf-btn, mf-section, mf-headline, mf-eyebrow) are
+   plain global selectors, safe to reuse here — but its design-token custom
+   properties are scoped to .home specifically, so this page redeclares the same
+   values under its own root class, same as PlanDetailPage does. */
+.legal-page {
+    --mf-bg: #e9ebec;
+    --mf-bg-raised: #ffffff;
+    --mf-text: #14161b;
+    --mf-text-secondary: #5b6270;
+    --mf-text-muted: #8a8f99;
+    --mf-border: #d6d8da;
+    --mf-accent: #ff9b00;
+    --mf-accent-mid: #ffaa00;
+    --mf-accent-tint: #fff4e0;
+
+    --mf-display-font: 'Fraunces', 'Times New Roman', serif;
+    --mf-body-font: 'Inter', system-ui, sans-serif;
+    --mf-display-weight: 500;
+    --mf-display-tracking: -0.02em;
+
+    min-height: 100vh;
+    background: var(--mf-bg);
+    color: var(--mf-text);
+    font-family: var(--mf-body-font);
+}
+
+.legal-page__inner {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+}
+
+@media (max-width: 800px) {
+    .legal-page__inner {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ---------- Side nav between the four documents ---------- */
+
+.legal-page__nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    position: sticky;
+    top: clamp(1.5rem, 4vw, 3rem);
+    padding: 1.25rem;
+    background: var(--mf-bg-raised);
+    border: 1px solid var(--mf-border);
+    border-radius: 14px;
+}
+
+@media (max-width: 800px) {
+    .legal-page__nav {
+        position: static;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+}
+
+.legal-page__nav-link {
+    font-family: var(--mf-body-font);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--mf-text-secondary);
+    text-decoration: none;
+    padding: 0.5rem 0.6rem;
+    border-radius: 8px;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.legal-page__nav-link:hover {
+    background: var(--mf-bg);
+    color: var(--mf-text);
+}
+
+.legal-page__nav-link--active {
+    background: var(--mf-accent-tint);
+    color: var(--mf-text);
+    font-weight: 600;
+}
+
+/* ---------- Document content ---------- */
+
+.legal-page__content {
+    max-width: 72ch;
+}
+
+.legal-page__title {
+    font-size: clamp(2rem, 4vw, 2.75rem);
+}
+
+.legal-page__meta {
+    font-family: var(--mf-body-font);
+    font-size: 0.875rem;
+    color: var(--mf-text-muted);
+    margin: 0 0 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--mf-border);
+}
+
+.legal-page__body {
+    font-family: var(--mf-body-font);
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--mf-text-secondary);
+}
+
+.legal-page__body h2 {
+    font-family: var(--mf-display-font);
+    font-weight: var(--mf-display-weight);
+    font-size: 1.4rem;
+    color: var(--mf-text);
+    margin: 2.5rem 0 1rem;
+}
+
+.legal-page__body h2:first-child {
+    margin-top: 0;
+}
+
+.legal-page__body h3 {
+    font-family: var(--mf-body-font);
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--mf-text);
+    margin: 1.75rem 0 0.6rem;
+}
+
+.legal-page__body p {
+    margin: 0 0 1rem;
+}
+
+.legal-page__body ul,
+.legal-page__body ol {
+    margin: 0 0 1rem;
+    padding-left: 1.4rem;
+}
+
+.legal-page__body li {
+    margin-bottom: 0.5rem;
+}
+
+.legal-page__body a {
+    color: var(--mf-accent);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.legal-page__body a:hover {
+    text-decoration: underline;
+}
+
+.legal-page__body strong {
+    color: var(--mf-text);
+}
+
+/* A bracketed placeholder like [LEGAL ENTITY NAME] that must be filled in before
+   this document is treated as final — kept visually distinct so it can never be
+   mistaken for an actual, confirmed fact while reading. */
+.legal-page__placeholder {
+    background: var(--mf-accent-tint);
+    color: var(--mf-text);
+    padding: 0.05rem 0.35rem;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.legal-page__callout {
+    background: var(--mf-bg-raised);
+    border: 1px solid var(--mf-border);
+    border-left: 3px solid var(--mf-accent);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin: 1.25rem 0;
+}
+
+.legal-page__callout p:last-child {
+    margin-bottom: 0;
+}
+
+.legal-page__draft-notice {
+    background: #fff4e0;
+    border: 1px solid var(--mf-accent);
+    border-radius: 12px;
+    padding: 1.1rem 1.4rem;
+    margin-bottom: 2.5rem;
+    font-size: 0.9375rem;
+    color: var(--mf-text);
+}
+
+.legal-page__draft-notice p {
+    margin: 0 0 0.5rem;
+}
+
+.legal-page__draft-notice p:last-child {
+    margin-bottom: 0;
+}

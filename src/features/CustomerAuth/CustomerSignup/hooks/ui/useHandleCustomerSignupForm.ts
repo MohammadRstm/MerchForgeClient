@@ -13,11 +13,18 @@ const useHandleCustomerSignupForm = () => {
         updateField(e.target.name as keyof CustomerSignupFormDataType, e.target.value);
     };
 
+    // A checkbox's meaningful value is `checked`, not `value` (which is always the
+    // fixed string "on") — handleChange above can't be reused for it.
+    const handleAgreedToTermsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        updateField("agreedToTerms", e.target.checked);
+    };
+
     return {
         signupFormData,
         errors,
 
         handleChange,
+        handleAgreedToTermsChange,
         setErrors,
     };
 };

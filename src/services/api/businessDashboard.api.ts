@@ -8,6 +8,7 @@ import type {
     SocialLinksDto,
     BusinessHoursDto,
 } from "../../features/Dashboard/BusinessOwnerDashboard/types";
+import type { PagedQuery } from "../../types/pagination";
 import {
     businessDashboardStatsResponseSchema,
     businessMemberResponseSchema,
@@ -42,6 +43,7 @@ import {
     publishWebsiteCustomizationResponseSchema,
     regeneratePreviewTokenResponseSchema,
     uploadWebsiteCustomizationImageResponseSchema,
+    productReviewsPageSchema,
 } from "../../features/Dashboard/BusinessOwnerDashboard/validation";
 import { authenticatedApi } from "./api";
 import { apiRoutes } from "./apiRoutes";
@@ -494,4 +496,40 @@ export const uploadWebsiteCustomizationImageService = async (
     );
 
     return uploadWebsiteCustomizationImageResponseSchema.parse(data);
+};
+
+// ---- product reviews ----
+
+/**
+ * One page of a product's reviews for the owner. Unlike the storefront's list this
+ * includes reviews the owner has hidden — hiding one must not hide it from the
+ * person who hid it, or unhiding would be unreachable.
+ */
+export const getProductReviewsService = async (
+    businessId: string,
+    productId: string,
+    query: PagedQuery
+) => {
+    const { data } = await authenticatedApi.get(
+        apiRoutes.BUSINESS_DASHBOARD_PRODUCT_REVIEWS(businessId, productId),
+        { params: query }
+    );
+
+    return productReviewsPageSchema.parse(data);
+};
+
+/**
+ * Hides or unhides one review. Hidden reviews leave the storefront and stop counting
+ * toward the product's average rating, but are never deleted.
+ */
+export const setProductReviewHiddenService = async (
+    businessId: string,
+    productId: string,
+    reviewId: string,
+    isHidden: boolean
+) => {
+    await authenticatedApi.put(
+        apiRoutes.BUSINESS_DASHBOARD_PRODUCT_REVIEW_VISIBILITY(businessId, productId, reviewId),
+        { isHidden }
+    );
 };

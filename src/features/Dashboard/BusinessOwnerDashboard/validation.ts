@@ -20,6 +20,10 @@ export const businessProductResponseSchema = z.object({
     imageUrl: z.string().nullable(),
     stockQuantity: z.number().nullable(),
     sku: z.string().nullable(),
+    // Visible reviews only, so the dashboard shows the same rating shoppers see.
+    // Null rather than 0 when unreviewed - a real average can never be 0.
+    averageRating: z.number().nullable(),
+    reviewCount: z.number(),
     createdAt: z.iso.datetime(),
     updatedAt: z.iso.datetime(),
 });
@@ -337,7 +341,12 @@ export const productFormSchema = z.object({
 export const businessProductDetailSchema = z.object({
     id: z.string().uuid(),
     title: z.string(),
-    description: z.string(),
+    // Nullable, not just optional: Product.Description is a nullable column and the
+    // API returns a literal `null` rather than omitting the key. Requiring z.string()
+    // here made this parse throw for every product without a description — which most
+    // seeded products are — and the detail modal silently rendered an empty body.
+    // The SDK's own productDetailSchema hit and fixed the identical bug.
+    description: z.string().nullable(),
     price: z.number(),
     compareAtPrice: z.number().nullable(),
     categoryId: z.string().uuid(),
@@ -349,6 +358,10 @@ export const businessProductDetailSchema = z.object({
     tags: z.array(z.string()),
     saleEndsAt: z.iso.datetime().nullable(),
     metadata: z.record(z.string(), z.unknown()).nullable(),
+    // Visible reviews only, so the dashboard shows the same rating shoppers see.
+    // Null rather than 0 when unreviewed - a real average can never be 0.
+    averageRating: z.number().nullable(),
+    reviewCount: z.number(),
     createdAt: z.iso.datetime(),
     updatedAt: z.iso.datetime(),
 });
@@ -647,3 +660,22 @@ export const imageEditJobSchema = z.object({
     errorMessage: z.string().nullable(),
     createdAt: z.iso.datetime(),
 });
+
+// ---- reviews ----
+
+/**
+ * One review as the owner sees it. Richer than the storefront's public shape: the
+ * reviewer's real name and email, plus whether the review is currently hidden.
+ */
+export const productReviewResponseSchema = z.object({
+    id: z.string().uuid(),
+    rating: z.number(),
+    comment: z.string().nullable(),
+    customerName: z.string(),
+    customerEmail: z.string(),
+    isHidden: z.boolean(),
+    createdAt: z.iso.datetime(),
+    updatedAt: z.iso.datetime(),
+});
+
+export const productReviewsPageSchema = pagedResultSchema(productReviewResponseSchema);

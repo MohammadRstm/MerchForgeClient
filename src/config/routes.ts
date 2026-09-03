@@ -10,6 +10,15 @@ export const routes = {
     ACCEPT_MEMBER_INVITATION: "/accept-member-invitation",
     PLAN_DETAIL: "/plans/:planId",
 
+    // Legal — static content pages, no separate cookie policy: MerchForge sets no
+    // cookies of its own other than the httpOnly refresh-token cookie, which is
+    // strictly necessary for the session and so needs no consent banner. Covered
+    // under Privacy Policy instead of a standalone document.
+    TERMS: "/terms",
+    PRIVACY: "/privacy",
+    ACCEPTABLE_USE: "/acceptable-use",
+    AI_TERMS: "/ai-terms",
+
     // Business owner dashboard
     DASHBOARD: "/dashboard",
     DASHBOARD_PRODUCTS: "/dashboard/products",

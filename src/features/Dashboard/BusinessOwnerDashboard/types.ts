@@ -22,6 +22,7 @@ import type {
     orderStatsResponseSchema,
     orderNoteResponseSchema,
     orderStatusHistoryEntryResponseSchema,
+    productReviewResponseSchema,
     orderAnalyticsGranularitySchema,
     orderAnalyticsPointResponseSchema,
     orderAnalyticsPeriodTotalsResponseSchema,
@@ -181,6 +182,7 @@ export type OrdersQueryParams = PagedQuery & {
 export type OrderStats = z.infer<typeof orderStatsResponseSchema>;
 export type OrderNote = z.infer<typeof orderNoteResponseSchema>;
 export type OrderStatusHistoryEntry = z.infer<typeof orderStatusHistoryEntryResponseSchema>;
+export type ProductReview = z.infer<typeof productReviewResponseSchema>;
 
 /** A named date-range preset for the orders toolbar's date filter. "custom" pairs with an explicit from/to picked by the owner. */
 export type OrderDateFilterPreset = "all" | "today" | "yesterday" | "last7" | "last30" | "custom";

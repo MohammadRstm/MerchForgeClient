@@ -13,6 +13,8 @@ const useAcceptMemberInvitationPage = () => {
         InvitationToken: searchParams.get("token") ?? "",
         Password: "",
         ConfirmPassword: "",
+        // Never pre-checked — the team member must actively opt in.
+        AgreedToTerms: false,
     }));
 
     const [errors, setErrors] = useState<Partial<Record<keyof AcceptMemberInvitationFormDataType, string>>>({});
@@ -21,6 +23,12 @@ const useAcceptMemberInvitationPage = () => {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         updateField(e.target.name as keyof AcceptMemberInvitationFormDataType, e.target.value);
+    };
+
+    // A checkbox's meaningful value is `checked`, not `value` — handleChange above
+    // reads `e.target.value` and can't be reused for it.
+    const handleAgreedToTermsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        updateField("AgreedToTerms", e.target.checked);
     };
 
     const {
@@ -54,6 +62,7 @@ const useAcceptMemberInvitationPage = () => {
         acceptInvitationError,
         acceptInvitationSuccess,
         handleChange,
+        handleAgreedToTermsChange,
         submit,
     };
 };

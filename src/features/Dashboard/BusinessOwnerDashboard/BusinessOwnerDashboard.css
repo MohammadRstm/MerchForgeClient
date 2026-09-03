@@ -4009,3 +4009,108 @@ p.voice-product-button__pill {
         align-items: flex-start;
     }
 }
+
+/* Product reviews — mirrors .product-detail__performance's own section treatment, so
+   it reads as one more stacked block in the detail modal rather than a new surface.
+   Every colour goes through a --dash-* token with a light-mode literal fallback,
+   matching the rest of this file; a raw hex here would break dark mode. */
+.product-detail__reviews {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--dash-border-subtle, #ececec);
+}
+
+.product-detail__reviews h3 {
+    margin: 0 0 12px;
+    font-size: 15px;
+}
+
+.product-review-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.product-review {
+    padding: 12px 14px;
+    border: 1px solid var(--dash-border-subtle, #f0f0f0);
+    border-radius: 8px;
+    background: var(--dash-surface-alt, #fafafa);
+}
+
+.product-review__head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Pushes the hide/restore control to the far right, whether or not the "Hidden"
+   badge is present. */
+.product-review__action {
+    margin-left: auto;
+}
+
+.product-review__stars {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.product-review__star {
+    width: 15px;
+    height: 15px;
+    color: var(--dash-border, #d8d8d8);
+}
+
+.product-review__star--filled {
+    color: var(--dash-warning-text, #b25e00);
+    fill: currentColor;
+}
+
+.product-review__content {
+    margin: 8px 0 0;
+    font-size: 13px;
+    color: var(--dash-text-secondary, #444);
+    white-space: pre-wrap;
+}
+
+.product-review__meta {
+    margin: 8px 0 0;
+    font-size: 12px;
+    color: var(--dash-text-muted, #777);
+}
+
+/* Product rating, shown under the image on a grid card and under the gallery in the
+   detail modal. Sits above the title on a card because it's a scanning aid — the eye
+   goes image, rating, name. */
+.product-rating-summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.product-rating-summary__value {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--dash-text-secondary, #444);
+}
+
+.product-rating-summary__count {
+    font-weight: 400;
+    color: var(--dash-text-muted, #777);
+}
+
+.product-rating-summary__empty {
+    font-size: 12px;
+    color: var(--dash-text-muted, #777);
+}
+
+/* In the detail modal it separates the gallery from the price row, so it needs its
+   own breathing room rather than a card's tighter rhythm. */
+.product-detail .product-rating-summary {
+    margin: 4px 0 12px;
+}

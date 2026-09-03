@@ -3,6 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { getBusinessProductService } from "../../../../../services/api/businessDashboard.api";
 import useProductForm from "../data/useProductForm";
 import useProductAnalytics from "../data/useProductAnalytics";
+import useProductReviews from "../data/useProductReviews";
+import useSetProductReviewHidden from "../data/useSetProductReviewHidden";
 
 /**
  * The read-only "view everything about this product" card opened by clicking a
@@ -34,7 +36,23 @@ const useProductDetailModal = (businessId: string, from: string, to: string) => 
         isError: performanceError,
     } = useProductAnalytics(businessId, isOpen ? from : "", isOpen ? to : "", productId);
 
-    const open = (id: string) => setProductId(id);
+    const [reviewsPage, setReviewsPage] = useState(1);
+
+    const {
+        data: reviews,
+        isLoading: reviewsLoading,
+        isError: reviewsError,
+    } = useProductReviews(businessId, productId, reviewsPage);
+
+    const { mutate: setReviewHidden, isPending: isUpdatingReview } =
+        useSetProductReviewHidden(businessId, productId);
+
+    const open = (id: string) => {
+        // Reset paging: page 3 of the last product's reviews means nothing for this one.
+        setReviewsPage(1);
+        setProductId(id);
+    };
+
     const close = () => setProductId(undefined);
 
     return {
@@ -45,6 +63,15 @@ const useProductDetailModal = (businessId: string, from: string, to: string) => 
         performance,
         performanceLoading,
         performanceError,
+
+        reviews,
+        reviewsLoading,
+        reviewsError,
+        reviewsPage,
+        setReviewsPage,
+        setReviewHidden,
+        isUpdatingReview,
+
         open,
         close,
     };

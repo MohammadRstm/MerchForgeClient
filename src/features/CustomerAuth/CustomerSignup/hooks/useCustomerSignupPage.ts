@@ -16,7 +16,8 @@ const useCustomerSignupPage = () => {
         data: signupResult,
     } = useCustomerSignup(returnUrl);
 
-    const { signupFormData, errors, handleChange, setErrors } = useHandleCustomerSignupForm();
+    const { signupFormData, errors, handleChange, handleAgreedToTermsChange, setErrors } =
+        useHandleCustomerSignupForm();
 
     useEffect(() => {
         if (signupResult?.exchangeCode && returnUrl) {
@@ -48,6 +49,7 @@ const useCustomerSignupPage = () => {
 
         submit,
         handleChange,
+        handleAgreedToTermsChange,
     };
 };
 

@@ -127,7 +127,9 @@ const useProductFormState = (
         if (editingProduct) {
             setValues({
                 title: editingProduct.title,
-                description: editingProduct.description,
+                // The form's textarea is a controlled input, so a null description
+                // from the API has to become an empty string, not null.
+                description: editingProduct.description ?? "",
                 price: String(editingProduct.price),
                 compareAtPrice: editingProduct.compareAtPrice != null ? String(editingProduct.compareAtPrice) : "",
                 categoryId: editingProduct.categoryId,

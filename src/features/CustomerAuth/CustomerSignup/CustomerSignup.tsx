@@ -22,6 +22,7 @@ const CustomerSignup = () => {
         returnUrl,
         submit,
         handleChange,
+        handleAgreedToTermsChange,
     } = useCustomerSignupPage();
 
     if (signupResult?.exchangeCode && returnUrl) {
@@ -128,6 +129,34 @@ const CustomerSignup = () => {
 
                     {errors?.password && <p className="auth-form__field-error">{errors.password}</p>}
                 </label>
+
+                <label className="auth-form__checkbox">
+                    <input
+                        type="checkbox"
+                        id="agreedToTerms"
+                        name="agreedToTerms"
+                        checked={signupFormData.agreedToTerms}
+                        onChange={handleAgreedToTermsChange}
+                        aria-invalid={Boolean(errors?.agreedToTerms)}
+                        aria-describedby={errors?.agreedToTerms ? "agreedToTerms-error" : undefined}
+                    />
+                    <span>
+                        I agree to the MerchForge{" "}
+                        <Link to={routes.TERMS} target="_blank" rel="noreferrer">
+                            Terms of Service
+                        </Link>{" "}
+                        and acknowledge the{" "}
+                        <Link to={routes.PRIVACY} target="_blank" rel="noreferrer">
+                            Privacy Policy
+                        </Link>
+                        .
+                    </span>
+                </label>
+                {errors?.agreedToTerms && (
+                    <p id="agreedToTerms-error" className="auth-form__field-error" role="alert">
+                        {errors.agreedToTerms}
+                    </p>
+                )}
 
                 <button className="auth-form__submit" disabled={signupPending}>
                     {signupPending ? <Spinner size={20} /> : "Create account"}
