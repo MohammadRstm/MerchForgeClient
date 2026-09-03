@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import useAuth from "../../../../context/Auth/useAuth";
 import { ApiError } from "../../../../Error/ApiError";
 import { FEATURE_KEY_WEBSITE_CUSTOMIZATION_ADVANCED } from "../constants/featureKeys";
@@ -36,7 +37,10 @@ const useOwnerWebsiteCustomizationPage = () => {
         isError: draftError,
     } = useWebsiteCustomizationDraft(businessId);
 
-    const fields = catalogue ?? [];
+    // Kept referentially stable: useWebsiteCustomizationFormState re-syncs its values
+    // whenever this identity changes, so a fresh `?? []` each render would loop that
+    // render-phase update forever while the catalogue is still loading.
+    const fields = useMemo(() => catalogue ?? [], [catalogue]);
     const form = useWebsiteCustomizationFormState(draft, fields);
 
     const {

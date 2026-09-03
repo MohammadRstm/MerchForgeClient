@@ -5,6 +5,11 @@ import type { BusinessOrderResponse } from "../../types";
  * Bulk-selection state, scoped to whatever page of orders is currently loaded —
  * selection doesn't persist across a page/filter change, since the rows it referred
  * to may no longer be visible (or may mean something different now).
+ *
+ * `items` MUST be referentially stable while the underlying data is unchanged: the
+ * prune below compares it by identity, so passing a freshly-allocated array (e.g. an
+ * inline `data?.items ?? []`) makes that check always true and loops the render-phase
+ * update until React throws "Too many re-renders". Memoize at the call site.
  */
 const useOrderSelection = (items: BusinessOrderResponse[]) => {
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
