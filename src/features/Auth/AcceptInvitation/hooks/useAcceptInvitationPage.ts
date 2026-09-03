@@ -50,6 +50,7 @@ const useAcceptInvitationPage = () => {
         removeNewCategory,
         toggleProductAttribute,
         handleNewCategoryInputChange,
+        handleAgreedToTermsChange,
         setErrors,
     } = useHandleAcceptInvitationForm(domainCategories ?? []);
 
@@ -98,6 +99,7 @@ const useAcceptInvitationPage = () => {
         removeNewCategory,
         toggleProductAttribute,
         handleNewCategoryInputChange,
+        handleAgreedToTermsChange,
     };
 };
 

@@ -12,6 +12,10 @@ import AcceptMemberInvitation from "../features/Auth/AcceptMemberInvitation/Acce
 import CustomerLogin from "../features/CustomerAuth/CustomerLogin/CustomerLogin";
 import CustomerSignup from "../features/CustomerAuth/CustomerSignup/CustomerSignup";
 import PlanDetailPage from "../features/Plans/PlanDetailPage";
+import TermsOfService from "../features/Legal/TermsOfService";
+import PrivacyPolicy from "../features/Legal/PrivacyPolicy";
+import AcceptableUsePolicy from "../features/Legal/AcceptableUsePolicy";
+import AiTerms from "../features/Legal/AiTerms";
 import DashboardLayout from "../components/DashboardLayout/DashboardLayout";
 import OwnerOverviewPage from "../features/Dashboard/BusinessOwnerDashboard/OwnerOverviewPage";
 import OwnerProductsPage from "../features/Dashboard/BusinessOwnerDashboard/OwnerProductsPage";
@@ -48,6 +52,10 @@ const AppRoutes = () =>{
                     <Route path={routes.CUSTOMER_LOGIN} element={<CustomerLogin />} />
                     <Route path={routes.CUSTOMER_SIGNUP} element={<CustomerSignup />} />
                     <Route path={routes.PLAN_DETAIL} element={<PlanDetailPage />} />
+                    <Route path={routes.TERMS} element={<TermsOfService />} />
+                    <Route path={routes.PRIVACY} element={<PrivacyPolicy />} />
+                    <Route path={routes.ACCEPTABLE_USE} element={<AcceptableUsePolicy />} />
+                    <Route path={routes.AI_TERMS} element={<AiTerms />} />
                 </Route>
 
                 {/* routes.CUSTOMER_SILENT is NOT registered here — main.tsx renders it

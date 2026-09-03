@@ -38,6 +38,7 @@ export default function AcceptInvitation() {
     removeNewCategory,
     toggleProductAttribute,
     handleNewCategoryInputChange,
+    handleAgreedToTermsChange,
   } = useAcceptInvitationPage();
 
   if (isInvitationInvalid) {
@@ -362,6 +363,36 @@ export default function AcceptInvitation() {
             )}
           </div>
         )}
+
+        <div className="auth-form__field">
+          <label className="auth-form__checkbox">
+            <input
+              type="checkbox"
+              id="AgreedToTerms"
+              name="AgreedToTerms"
+              checked={acceptInvitationFormData.AgreedToTerms}
+              onChange={handleAgreedToTermsChange}
+              aria-invalid={Boolean(errors.AgreedToTerms)}
+              aria-describedby={errors.AgreedToTerms ? 'AgreedToTerms-error' : undefined}
+            />
+            <span>
+              I agree to the MerchForge{" "}
+              <Link to={routes.TERMS} target="_blank" rel="noreferrer">
+                Terms of Service
+              </Link>{" "}
+              and acknowledge the{" "}
+              <Link to={routes.PRIVACY} target="_blank" rel="noreferrer">
+                Privacy Policy
+              </Link>
+              .
+            </span>
+          </label>
+          {errors.AgreedToTerms && (
+            <span id="AgreedToTerms-error" className="auth-form__field-error" role="alert">
+              {errors.AgreedToTerms}
+            </span>
+          )}
+        </div>
 
         {acceptInvitationError && (
           <p className="auth-form__server-error" role="alert">

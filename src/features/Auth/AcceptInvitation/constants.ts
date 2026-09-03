@@ -11,4 +11,6 @@ export const INITIAL_ACCEPT_INVITATION_FORM_DATA: AcceptInvitationFormDataType =
     BusinessDomainId: "",
     NewCategoryNames: [],
     SelectedProductAttributeKeys: [],
+    // Never pre-checked — the owner must actively opt in.
+    AgreedToTerms: false,
 };

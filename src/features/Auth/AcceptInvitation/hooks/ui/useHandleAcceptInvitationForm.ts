@@ -119,6 +119,12 @@ const useHandleAcceptInvitationForm = (existingCategories: DomainCategory[]) => 
         setNewCategoryError(undefined);
     };
 
+    // A checkbox's meaningful value is `checked`, not `value` — handleChange above
+    // (built from updateField) reads `e.target.value` and can't be reused for it.
+    const handleAgreedToTermsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        updateField("AgreedToTerms", e.target.checked);
+    };
+
     const isInvitationInvalid = acceptInvitationFormData.Email === "";
 
     return {
@@ -134,6 +140,7 @@ const useHandleAcceptInvitationForm = (existingCategories: DomainCategory[]) => 
         removeNewCategory,
         toggleProductAttribute,
         handleNewCategoryInputChange,
+        handleAgreedToTermsChange,
         setErrors,
     };
 };

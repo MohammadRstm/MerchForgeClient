@@ -20,6 +20,13 @@ export const acceptInvitationSchema = z
         // Keys only. The backend resolves them against the domain's catalogue and owns
         // the resulting metadata shape, so the form never constructs the schema itself.
         SelectedProductAttributeKeys: z.array(z.string().trim().min(1)),
+        // Not pre-checked (see INITIAL_ACCEPT_INVITATION_FORM_DATA) and required
+        // true — the backend enforces the identical rule independently.
+        AgreedToTerms: z
+            .boolean()
+            .refine((value) => value === true, {
+                message: "You must agree to the Terms of Service and Privacy Policy to create an account.",
+            }),
     })
     .refine((data) => data.Password === data.ConfirmPassword, {
         message: "Passwords don't match",

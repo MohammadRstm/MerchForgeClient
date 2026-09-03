@@ -1,4 +1,6 @@
+import { Link } from 'react-router';
 import './Footer.css';
+import { routes } from '../../../../config/routes';
 
 interface FooterColumn {
   title: string;
@@ -31,8 +33,10 @@ const COLUMNS: FooterColumn[] = [
   {
     title: 'Legal',
     links: [
-      { label: 'Privacy', href: '#privacy' },
-      { label: 'Terms', href: '#terms' },
+      { label: 'Terms of Service', href: routes.TERMS },
+      { label: 'Privacy Policy', href: routes.PRIVACY },
+      { label: 'Acceptable Use', href: routes.ACCEPTABLE_USE },
+      { label: 'AI Terms', href: routes.AI_TERMS },
     ],
   },
 ];
@@ -65,9 +69,18 @@ export default function Footer() {
                 <ul className="footer__link-list">
                   {column.links.map((link) => (
                     <li key={link.label}>
-                      <a href={link.href} className="footer__link">
-                        {link.label}
-                      </a>
+                      {/* Legal links are real routes and need client-side navigation;
+                          the other columns are same-page "#section" anchors, which a
+                          <Link> would mishandle from any page other than Home. */}
+                      {link.href.startsWith('/') ? (
+                        <Link to={link.href} className="footer__link">
+                          {link.label}
+                        </Link>
+                      ) : (
+                        <a href={link.href} className="footer__link">
+                          {link.label}
+                        </a>
+                      )}
                     </li>
                   ))}
                 </ul>
