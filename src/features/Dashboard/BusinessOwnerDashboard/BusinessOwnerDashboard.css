@@ -4082,3 +4082,35 @@ p.voice-product-button__pill {
     font-size: 12px;
     color: var(--dash-text-muted, #777);
 }
+
+/* Product rating, shown under the image on a grid card and under the gallery in the
+   detail modal. Sits above the title on a card because it's a scanning aid — the eye
+   goes image, rating, name. */
+.product-rating-summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.product-rating-summary__value {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--dash-text-secondary, #444);
+}
+
+.product-rating-summary__count {
+    font-weight: 400;
+    color: var(--dash-text-muted, #777);
+}
+
+.product-rating-summary__empty {
+    font-size: 12px;
+    color: var(--dash-text-muted, #777);
+}
+
+/* In the detail modal it separates the gallery from the price row, so it needs its
+   own breathing room rather than a card's tighter rhythm. */
+.product-detail .product-rating-summary {
+    margin: 4px 0 12px;
+}

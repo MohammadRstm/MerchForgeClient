@@ -20,6 +20,10 @@ export const businessProductResponseSchema = z.object({
     imageUrl: z.string().nullable(),
     stockQuantity: z.number().nullable(),
     sku: z.string().nullable(),
+    // Visible reviews only, so the dashboard shows the same rating shoppers see.
+    // Null rather than 0 when unreviewed - a real average can never be 0.
+    averageRating: z.number().nullable(),
+    reviewCount: z.number(),
     createdAt: z.iso.datetime(),
     updatedAt: z.iso.datetime(),
 });
@@ -354,6 +358,10 @@ export const businessProductDetailSchema = z.object({
     tags: z.array(z.string()),
     saleEndsAt: z.iso.datetime().nullable(),
     metadata: z.record(z.string(), z.unknown()).nullable(),
+    // Visible reviews only, so the dashboard shows the same rating shoppers see.
+    // Null rather than 0 when unreviewed - a real average can never be 0.
+    averageRating: z.number().nullable(),
+    reviewCount: z.number(),
     createdAt: z.iso.datetime(),
     updatedAt: z.iso.datetime(),
 });

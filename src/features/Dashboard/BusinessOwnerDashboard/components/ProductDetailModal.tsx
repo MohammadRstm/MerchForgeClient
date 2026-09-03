@@ -6,6 +6,7 @@ import ImageLightbox from "../../../../components/Lightbox/ImageLightbox";
 import AnalyticsChart from "./AnalyticsChart";
 import ChangeIndicator from "./ChangeIndicator";
 import ProductReviewsSection from "./ProductReviewsSection";
+import ProductRatingSummary from "./ProductRatingSummary";
 import type useProductDetailModal from "../hooks/ui/useProductDetailModal";
 import { resolveImageUrl } from "../utils/resolveImageUrl";
 import { numberFormatter, revenueMetric, unitsSoldMetric } from "../utils/chartMetrics";
@@ -93,6 +94,11 @@ const ProductDetailModal = ({ modal, onEdit }: ProductDetailModalProps) => {
                             ) : (
                                 <p className="business-dashboard-table-message">No images.</p>
                             )}
+
+                            <ProductRatingSummary
+                                averageRating={product.averageRating}
+                                reviewCount={product.reviewCount}
+                            />
 
                             <div className="product-detail__row">
                                 <span className="product-detail__price">{currencyFormatter.format(product.price)}</span>

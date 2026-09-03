@@ -1,4 +1,5 @@
 import StockCell from "./StockCell";
+import ProductRatingSummary from "./ProductRatingSummary";
 import ChangeIndicator from "./ChangeIndicator";
 import { currencyFormatter, numberFormatter } from "../utils/chartMetrics";
 import type { BusinessProductResponse, ProductPerformanceEntry } from "../types";
@@ -39,6 +40,11 @@ const ProductCard = ({ product, performance, onView, onEdit, onDelete, isDeletin
             </div>
 
             <div className="product-card__body">
+                <ProductRatingSummary
+                    averageRating={product.averageRating}
+                    reviewCount={product.reviewCount}
+                />
+
                 <div className="product-card__heading">
                     <h4 className="product-card__title">{product.title}</h4>
                     <span className="business-dashboard-badge">{product.category}</span>
