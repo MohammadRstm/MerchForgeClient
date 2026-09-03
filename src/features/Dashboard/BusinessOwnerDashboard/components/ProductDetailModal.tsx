@@ -5,6 +5,7 @@ import Spinner from "../../../../components/LoadingSpinner/LoadingSpinner";
 import ImageLightbox from "../../../../components/Lightbox/ImageLightbox";
 import AnalyticsChart from "./AnalyticsChart";
 import ChangeIndicator from "./ChangeIndicator";
+import ProductReviewsSection from "./ProductReviewsSection";
 import type useProductDetailModal from "../hooks/ui/useProductDetailModal";
 import { resolveImageUrl } from "../utils/resolveImageUrl";
 import { numberFormatter, revenueMetric, unitsSoldMetric } from "../utils/chartMetrics";
@@ -251,6 +252,8 @@ const ProductDetailModal = ({ modal, onEdit }: ProductDetailModalProps) => {
                                     </>
                                 ) : null}
                             </div>
+
+                            <ProductReviewsSection modal={modal} />
                         </div>
                     )}
                 </Modal.Body>

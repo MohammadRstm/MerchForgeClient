@@ -337,7 +337,12 @@ export const productFormSchema = z.object({
 export const businessProductDetailSchema = z.object({
     id: z.string().uuid(),
     title: z.string(),
-    description: z.string(),
+    // Nullable, not just optional: Product.Description is a nullable column and the
+    // API returns a literal `null` rather than omitting the key. Requiring z.string()
+    // here made this parse throw for every product without a description — which most
+    // seeded products are — and the detail modal silently rendered an empty body.
+    // The SDK's own productDetailSchema hit and fixed the identical bug.
+    description: z.string().nullable(),
     price: z.number(),
     compareAtPrice: z.number().nullable(),
     categoryId: z.string().uuid(),
@@ -647,3 +652,22 @@ export const imageEditJobSchema = z.object({
     errorMessage: z.string().nullable(),
     createdAt: z.iso.datetime(),
 });
+
+// ---- reviews ----
+
+/**
+ * One review as the owner sees it. Richer than the storefront's public shape: the
+ * reviewer's real name and email, plus whether the review is currently hidden.
+ */
+export const productReviewResponseSchema = z.object({
+    id: z.string().uuid(),
+    rating: z.number(),
+    comment: z.string().nullable(),
+    customerName: z.string(),
+    customerEmail: z.string(),
+    isHidden: z.boolean(),
+    createdAt: z.iso.datetime(),
+    updatedAt: z.iso.datetime(),
+});
+
+export const productReviewsPageSchema = pagedResultSchema(productReviewResponseSchema);

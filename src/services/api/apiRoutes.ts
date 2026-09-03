@@ -142,6 +142,10 @@ export const apiRoutes = {
     BUSINESS_DASHBOARD_ORDER_ANALYTICS : (businessId : string) => `/businesses/${businessId}/dashboard/orders/analytics`,
     BUSINESS_DASHBOARD_CUSTOMER_SNAPSHOT : (businessId : string) => `/businesses/${businessId}/dashboard/customers/snapshot`,
 
+    /** PRODUCT REVIEWS */
+    BUSINESS_DASHBOARD_PRODUCT_REVIEWS : (businessId : string, productId : string) => `/businesses/${businessId}/dashboard/products/${productId}/reviews`,
+    BUSINESS_DASHBOARD_PRODUCT_REVIEW_VISIBILITY : (businessId : string, productId : string, reviewId : string) => `/businesses/${businessId}/dashboard/products/${productId}/reviews/${reviewId}/visibility`,
+
     /** AI PRODUCT DRAFTS */
     PRODUCT_DRAFTS : (businessId : string) => `/businesses/${businessId}/dashboard/product-drafts`,
     PRODUCT_DRAFT : (businessId : string, draftId : string) => `/businesses/${businessId}/dashboard/product-drafts/${draftId}`,
