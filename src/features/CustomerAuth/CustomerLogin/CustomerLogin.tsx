@@ -1,8 +1,16 @@
-import "../CustomerAuth.css";
+import AuthShell from "../../../components/AuthShell/AuthShell";
+import "../../../components/AuthShell/AuthForm.css";
 import { Link } from "react-router";
 import Spinner from "../../../components/LoadingSpinner/LoadingSpinner";
 import useCustomerLoginPage from "./hooks/useCustomerLoginPage";
 import { routes } from "../../../config/routes";
+import secureLoginIllustration from "../../../assets/illustrations/secure-login.svg";
+
+const shellProps = {
+    illustration: secureLoginIllustration,
+    statementHeadline: "Your account, one login away.",
+    statementSubtext: "Sign in securely to pick up right where you left off, at any store MerchForge powers.",
+};
 
 const CustomerLogin = () => {
     const {
@@ -21,12 +29,12 @@ const CustomerLogin = () => {
     // the form never flashes back into view.
     if (loginResult?.exchangeCode && returnUrl) {
         return (
-            <main className="customer-auth-page">
-                <div className="customer-auth-form customer-auth-success">
+            <AuthShell {...shellProps}>
+                <div className="auth-form__status">
                     <Spinner size={28} />
-                    <p className="customer-auth-subtitle">Taking you back to the store...</p>
+                    <p className="auth-form__subtext">Taking you back to the store...</p>
                 </div>
-            </main>
+            </AuthShell>
         );
     }
 
@@ -34,77 +42,77 @@ const CustomerLogin = () => {
     // customer back to, so this is the terminal state rather than a redirect.
     if (loginResult) {
         return (
-            <main className="customer-auth-page">
-                <div className="customer-auth-form customer-auth-success">
-                    <h1 className="customer-auth-title">You're signed in</h1>
-                    <p className="customer-auth-subtitle">
+            <AuthShell {...shellProps}>
+                <div className="auth-form__status">
+                    <h1 className="auth-form__headline">You're signed in</h1>
+                    <p className="auth-form__subtext">
                         Welcome back, {loginResult.firstName}. You can close this tab and return to the store.
                     </p>
                 </div>
-            </main>
+            </AuthShell>
         );
     }
 
     return (
-        <main className="customer-auth-page">
-            <form className="customer-auth-form" onSubmit={submit}>
-                <h1 className="customer-auth-title">Welcome Back</h1>
+        <AuthShell {...shellProps}>
+            <form className="auth-form" onSubmit={submit}>
+                <h1 className="auth-form__headline">Welcome back</h1>
 
-                <p className="customer-auth-subtitle">Sign in to continue to checkout.</p>
+                <p className="auth-form__subtext">Sign in to continue to checkout.</p>
 
                 {loginError && (
-                    <div className="customer-auth-server-errors">
+                    <div className="auth-form__server-error">
                         Invalid email or password.
                     </div>
                 )}
 
-                <label className="customer-auth-field">
-                    <span className="customer-auth-label-text">Email</span>
+                <label className="auth-form__field">
+                    <span className="auth-form__label">Email</span>
 
                     <input
                         id="email"
                         name="email"
-                        className="customer-auth-form-inp"
+                        className="auth-form__input"
                         type="text"
                         placeholder="Enter your email"
                         value={loginFormData.email}
                         onChange={handleChange}
                     />
 
-                    {errors?.email && <p className="validation-errors">{errors.email}</p>}
+                    {errors?.email && <p className="auth-form__field-error">{errors.email}</p>}
                 </label>
 
-                <label className="customer-auth-field">
-                    <span className="customer-auth-label-text">Password</span>
+                <label className="auth-form__field">
+                    <span className="auth-form__label">Password</span>
 
                     <input
                         id="password"
                         name="password"
-                        className="customer-auth-form-inp"
+                        className="auth-form__input"
                         type="password"
                         placeholder="Enter your password"
                         value={loginFormData.password}
                         onChange={handleChange}
                     />
 
-                    {errors?.password && <p className="validation-errors">{errors.password}</p>}
+                    {errors?.password && <p className="auth-form__field-error">{errors.password}</p>}
                 </label>
 
-                <button className="customer-auth-submit-btn" disabled={loginPending}>
+                <button className="auth-form__submit" disabled={loginPending}>
                     {loginPending ? <Spinner size={20} /> : "Sign in"}
                 </button>
 
-                <p className="customer-auth-suggestion">
+                <p className="auth-form__suggestion">
                     Don't have an account?{" "}
                     <Link
-                        className="customer-auth-suggestion-link"
+                        className="auth-form__suggestion-link"
                         to={`${routes.CUSTOMER_SIGNUP}${returnUrl ? `?returnUrl=${encodeURIComponent(returnUrl)}` : ""}`}
                     >
                         Create one
                     </Link>
                 </p>
             </form>
-        </main>
+        </AuthShell>
     );
 };
 

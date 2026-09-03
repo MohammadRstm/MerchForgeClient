@@ -1,8 +1,16 @@
-import "../CustomerAuth.css";
+import AuthShell from "../../../components/AuthShell/AuthShell";
+import "../../../components/AuthShell/AuthForm.css";
 import { Link } from "react-router";
 import Spinner from "../../../components/LoadingSpinner/LoadingSpinner";
 import useCustomerSignupPage from "./hooks/useCustomerSignupPage";
 import { routes } from "../../../config/routes";
+import userAccountIllustration from "../../../assets/illustrations/user-account.svg";
+
+const shellProps = {
+    illustration: userAccountIllustration,
+    statementHeadline: "One account, every store.",
+    statementSubtext: "Create your account once and check out faster everywhere MerchForge powers.",
+};
 
 const CustomerSignup = () => {
     const {
@@ -18,124 +26,124 @@ const CustomerSignup = () => {
 
     if (signupResult?.exchangeCode && returnUrl) {
         return (
-            <main className="customer-auth-page">
-                <div className="customer-auth-form customer-auth-success">
+            <AuthShell {...shellProps}>
+                <div className="auth-form__status">
                     <Spinner size={28} />
-                    <p className="customer-auth-subtitle">Taking you back to the store...</p>
+                    <p className="auth-form__subtext">Taking you back to the store...</p>
                 </div>
-            </main>
+            </AuthShell>
         );
     }
 
     if (signupResult) {
         return (
-            <main className="customer-auth-page">
-                <div className="customer-auth-form customer-auth-success">
-                    <h1 className="customer-auth-title">You're all set</h1>
-                    <p className="customer-auth-subtitle">
+            <AuthShell {...shellProps}>
+                <div className="auth-form__status">
+                    <h1 className="auth-form__headline">You're all set</h1>
+                    <p className="auth-form__subtext">
                         Welcome, {signupResult.firstName}. You can close this tab and return to the store.
                     </p>
                 </div>
-            </main>
+            </AuthShell>
         );
     }
 
     return (
-        <main className="customer-auth-page">
-            <form className="customer-auth-form" onSubmit={submit}>
-                <h1 className="customer-auth-title">Create your account</h1>
+        <AuthShell {...shellProps}>
+            <form className="auth-form" onSubmit={submit}>
+                <h1 className="auth-form__headline">Create your account</h1>
 
-                <p className="customer-auth-subtitle">
+                <p className="auth-form__subtext">
                     One account, usable at checkout across every store we power.
                 </p>
 
                 {signupError && (
-                    <div className="customer-auth-server-errors">
+                    <div className="auth-form__server-error">
                         {signupError.message}
                     </div>
                 )}
 
-                <div className="customer-auth-form-row">
-                    <label className="customer-auth-field">
-                        <span className="customer-auth-label-text">First name</span>
+                <div className="auth-form__row">
+                    <label className="auth-form__field">
+                        <span className="auth-form__label">First name</span>
 
                         <input
                             id="firstName"
                             name="firstName"
-                            className="customer-auth-form-inp"
+                            className="auth-form__input"
                             type="text"
                             placeholder="Jamie"
                             value={signupFormData.firstName}
                             onChange={handleChange}
                         />
 
-                        {errors?.firstName && <p className="validation-errors">{errors.firstName}</p>}
+                        {errors?.firstName && <p className="auth-form__field-error">{errors.firstName}</p>}
                     </label>
 
-                    <label className="customer-auth-field">
-                        <span className="customer-auth-label-text">Last name</span>
+                    <label className="auth-form__field">
+                        <span className="auth-form__label">Last name</span>
 
                         <input
                             id="lastName"
                             name="lastName"
-                            className="customer-auth-form-inp"
+                            className="auth-form__input"
                             type="text"
                             placeholder="Chen"
                             value={signupFormData.lastName}
                             onChange={handleChange}
                         />
 
-                        {errors?.lastName && <p className="validation-errors">{errors.lastName}</p>}
+                        {errors?.lastName && <p className="auth-form__field-error">{errors.lastName}</p>}
                     </label>
                 </div>
 
-                <label className="customer-auth-field">
-                    <span className="customer-auth-label-text">Email</span>
+                <label className="auth-form__field">
+                    <span className="auth-form__label">Email</span>
 
                     <input
                         id="email"
                         name="email"
-                        className="customer-auth-form-inp"
+                        className="auth-form__input"
                         type="text"
                         placeholder="Enter your email"
                         value={signupFormData.email}
                         onChange={handleChange}
                     />
 
-                    {errors?.email && <p className="validation-errors">{errors.email}</p>}
+                    {errors?.email && <p className="auth-form__field-error">{errors.email}</p>}
                 </label>
 
-                <label className="customer-auth-field">
-                    <span className="customer-auth-label-text">Password</span>
+                <label className="auth-form__field">
+                    <span className="auth-form__label">Password</span>
 
                     <input
                         id="password"
                         name="password"
-                        className="customer-auth-form-inp"
+                        className="auth-form__input"
                         type="password"
                         placeholder="At least 8 characters"
                         value={signupFormData.password}
                         onChange={handleChange}
                     />
 
-                    {errors?.password && <p className="validation-errors">{errors.password}</p>}
+                    {errors?.password && <p className="auth-form__field-error">{errors.password}</p>}
                 </label>
 
-                <button className="customer-auth-submit-btn" disabled={signupPending}>
+                <button className="auth-form__submit" disabled={signupPending}>
                     {signupPending ? <Spinner size={20} /> : "Create account"}
                 </button>
 
-                <p className="customer-auth-suggestion">
+                <p className="auth-form__suggestion">
                     Already have an account?{" "}
                     <Link
-                        className="customer-auth-suggestion-link"
+                        className="auth-form__suggestion-link"
                         to={`${routes.CUSTOMER_LOGIN}${returnUrl ? `?returnUrl=${encodeURIComponent(returnUrl)}` : ""}`}
                     >
                         Sign in
                     </Link>
                 </p>
             </form>
-        </main>
+        </AuthShell>
     );
 };
 

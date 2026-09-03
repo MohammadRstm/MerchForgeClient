@@ -1,0 +1,204 @@
+.auth-shell {
+    --mf-bg: #e9ebec;
+    --mf-bg-raised: #ffffff;
+    --mf-text: #14161b;
+    --mf-text-secondary: #5b6270;
+    --mf-text-muted: #8a8f99;
+    --mf-border: #e3e0da;
+
+    --mf-accent: #ff9b00;
+    --mf-accent-mid: #ffaa00;
+    --mf-accent-tint: #fff4e0;
+
+    --mf-error: #b3453e;
+    --mf-error-bg: #fbeeee;
+
+    --mf-display-font: 'Fraunces', 'Times New Roman', serif;
+
+    display: flex;
+    align-items: stretch;
+
+    /* Real value is set inline once AuthShell.tsx measures the actual <header>
+       height via ResizeObserver -- this is only a same-frame fallback (SSR/no-JS,
+       or the instant before the first layout effect runs). */
+    height: calc(100vh - 80px);
+    background: var(--mf-bg-raised);
+    overflow: hidden;
+}
+
+/* ---------- Left: brand / decorative panel ---------- */
+
+.auth-shell__visual {
+    position: relative;
+    overflow: hidden;
+
+    display: none;
+    flex-direction: column;
+    /* Not space-between: the graphic below no longer flex-grows to fill the
+       whole column, so this would otherwise still shove the statement text
+       down to the very bottom edge on a tall viewport. */
+    justify-content: flex-start;
+
+    flex: 0 0 44%;
+    padding: clamp(1.75rem, 3vw, 2.75rem);
+
+    background: linear-gradient(160deg, #fffdfb 0%, #f6efe3 55%, #ffe4b0 100%);
+}
+
+.auth-shell__brand {
+    position: relative;
+    z-index: 2;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    align-self: flex-start;
+
+    text-decoration: none;
+}
+
+.auth-shell__brand-mark {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+}
+
+.auth-shell__brand-name {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 1.0625rem;
+    letter-spacing: -0.01em;
+    color: var(--mf-text);
+}
+
+/* ---------- Decorative illustration ---------- */
+
+.auth-shell__graphic {
+    position: relative;
+    /* Fixed target size, not flex: 1 -- growing to fill all remaining height
+       is what pushed the statement text below it down to the panel's bottom
+       edge on tall viewports. This keeps the illustration+headline grouped
+       together higher up instead. */
+    flex: 0 1 400px;
+    min-height: 280px;
+    margin: 2rem 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-shell__blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(48px);
+    opacity: 0.55;
+}
+
+.auth-shell__blob--1 {
+    width: 260px;
+    height: 260px;
+    top: -40px;
+    right: -60px;
+    background: var(--mf-accent);
+    opacity: 0.35;
+}
+
+.auth-shell__blob--2 {
+    width: 200px;
+    height: 200px;
+    bottom: 10%;
+    left: -50px;
+    background: #ffd58a;
+    opacity: 0.5;
+}
+
+.auth-shell__illustration {
+    position: relative;
+    z-index: 1;
+
+    width: 100%;
+    max-width: 460px;
+    height: auto;
+
+    filter: drop-shadow(0 30px 40px rgba(20, 22, 27, 0.16));
+}
+
+/* Only the owner login opts into this -- every other page's illustration
+   stays still. */
+.auth-shell__illustration--animated {
+    animation: auth-shell-bob 4.5s ease-in-out infinite;
+}
+
+@keyframes auth-shell-bob {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-14px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .auth-shell__illustration--animated {
+        animation: none;
+    }
+}
+
+/* ---------- Brand statement ---------- */
+
+.auth-shell__statement {
+    position: relative;
+    z-index: 2;
+    max-width: 26rem;
+}
+
+.auth-shell__statement-headline {
+    font-family: var(--mf-display-font);
+    font-weight: 500;
+    font-size: clamp(1.5rem, 2.4vw, 1.875rem);
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    color: var(--mf-text);
+    margin: 0 0 0.75rem;
+}
+
+.auth-shell__statement-subtext {
+    font-family: 'Roboto', system-ui, sans-serif;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--mf-text-secondary);
+    margin: 0;
+}
+
+/* ---------- Right: form panel ---------- */
+
+.auth-shell__form-side {
+    flex: 1;
+    overflow-y: auto;
+
+    display: flex;
+    justify-content: center;
+
+    padding: 1.5rem clamp(1.25rem, 4vw, 3rem) 2rem;
+    background: var(--mf-bg-raised);
+}
+
+.auth-shell__form-inner {
+    width: 100%;
+    max-width: 27rem;
+
+    /* Anchored a fixed distance from the top rather than vertically centered --
+       centering left a short form (e.g. login) looking adrift in a mostly-empty
+       column on tall viewports. This reads as the panel actually being used,
+       while staying small enough that a short form never needs to scroll on a
+       typical 720px-tall viewport. */
+    margin-top: 0.5rem;
+    margin-bottom: auto;
+}
+
+@media (min-width: 900px) {
+    .auth-shell__visual {
+        display: flex;
+    }
+}

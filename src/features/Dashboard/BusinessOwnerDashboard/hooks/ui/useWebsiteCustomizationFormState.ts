@@ -165,6 +165,10 @@ const useWebsiteCustomizationFormState = (
     // render, per
     // https://react.dev/reference/react/useState#storing-information-from-previous-renders,
     // rather than in an effect, so this doesn't trigger an extra cascading render.
+    //
+    // Both `draft` and `fields` must be referentially stable while unchanged — an
+    // inline `?? []` for `fields` allocates a new array each render, making this
+    // check always true and looping until React throws "Too many re-renders".
     const [prevSync, setPrevSync] = useState({ draft, fields });
     if (draft !== prevSync.draft || fields !== prevSync.fields) {
         setPrevSync({ draft, fields });

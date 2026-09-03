@@ -28,3 +28,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local Claude Code project instructions - not shared via the repo.
+CLAUDE.md

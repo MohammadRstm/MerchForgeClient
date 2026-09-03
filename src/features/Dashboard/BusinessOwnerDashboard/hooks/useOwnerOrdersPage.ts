@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import useAuth from "../../../../context/Auth/useAuth";
 import useBusinessOrders from "./data/useBusinessOrders";
 import useBusinessOrder from "./data/useBusinessOrder";
@@ -33,7 +33,13 @@ const useOwnerOrdersPage = () => {
         isError: ordersError,
     } = useBusinessOrders(businessId, ordersTable.query);
 
-    const selection = useOrderSelection(ordersPage?.items ?? []);
+    // useOrderSelection prunes stale ids by comparing this array's identity against
+    // the previous render's, so it must stay referentially stable while the data is
+    // unchanged. An inline `?? []` allocates a fresh array every render, which makes
+    // that comparison always true and loops the render-phase update forever.
+    const orderItems = useMemo(() => ordersPage?.items ?? [], [ordersPage]);
+
+    const selection = useOrderSelection(orderItems);
 
     const [selectedOrderId, setSelectedOrderId] = useState<string | undefined>(undefined);
 

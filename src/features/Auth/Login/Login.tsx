@@ -1,5 +1,7 @@
-import "./Login.css";
 import { Link, Navigate } from "react-router";
+import AuthShell from "../../../components/AuthShell/AuthShell";
+import "../../../components/AuthShell/AuthForm.css";
+import cartIllustration from "../../../assets/illustrations/shopping-cart.svg";
 import Spinner from "../../../components/LoadingSpinner/LoadingSpinner";
 import useLoginPage from "./hooks/useLoginPage";
 import useAuth from "../../../context/Auth/useAuth";
@@ -26,28 +28,32 @@ const Login = () => {
     }
 
     return (
-        <main className="login-page">
-            <form className="login-form" onSubmit={submit}>
+        <AuthShell
+            illustration={cartIllustration}
+            statementHeadline="Every storefront starts with a good first impression."
+            statementSubtext="MerchForge gives merchants a real storefront — catalog, checkout, and orders — up and running in minutes."
+            animated
+        >
+            <form className="auth-form" onSubmit={submit}>
+                <h1 className="auth-form__headline">Good to see you again.</h1>
 
-                <h1 className="login-title">Welcome Back</h1>
-
-                <p className="login-subtitle">
-                    Sign in to continue to your account.
+                <p className="auth-form__subtext">
+                    Sign in to manage your storefront, orders, and catalog.
                 </p>
 
                 {loginError && (
-                    <div className="login-server-errors">
+                    <div className="auth-form__server-error">
                         Invalid email or password.
                     </div>
                 )}
 
-                <label className="login-field">
-                    <span className="login-label-text">Username</span>
+                <label className="auth-form__field">
+                    <span className="auth-form__label">Email</span>
 
                     <input
                         id="email"
                         name="Email"
-                        className="login-form-inp"
+                        className="auth-form__input"
                         type="text"
                         placeholder="Enter your email"
                         value={loginFormData.Email}
@@ -55,17 +61,17 @@ const Login = () => {
                     />
 
                     {errors?.Email && (
-                        <p className="validation-errors">{errors.Email}</p>
+                        <p className="auth-form__field-error">{errors.Email}</p>
                     )}
                 </label>
 
-                <label className="login-field">
-                    <span className="login-label-text">Password</span>
+                <label className="auth-form__field">
+                    <span className="auth-form__label">Password</span>
 
                     <input
                         id="password"
                         name="Password"
-                        className="login-form-inp"
+                        className="auth-form__input"
                         type="password"
                         placeholder="Enter your password"
                         value={loginFormData.Password}
@@ -73,33 +79,22 @@ const Login = () => {
                     />
 
                     {errors?.Password && (
-                        <p className="validation-errors">{errors.Password}</p>
+                        <p className="auth-form__field-error">{errors.Password}</p>
                     )}
                 </label>
 
-                <button
-                    className="login-submit-btn"
-                    disabled={loginPending}
-                >
-                    {loginPending ? (
-                        <Spinner size={20} />
-                    ) : (
-                        "Login"
-                    )}
+                <button className="auth-form__submit" disabled={loginPending}>
+                    {loginPending ? <Spinner size={20} /> : "Log in"}
                 </button>
 
-                <p className="signup-suggestion">
+                <p className="auth-form__suggestion">
                     Don't have an account?{" "}
-                    <Link
-                        className="signup-suggestion-link"
-                        to={routes.SIGNUP}
-                    >
+                    <Link className="auth-form__suggestion-link" to={routes.SIGNUP}>
                         Create one
                     </Link>
                 </p>
-
             </form>
-        </main>
+        </AuthShell>
     );
 };
 
