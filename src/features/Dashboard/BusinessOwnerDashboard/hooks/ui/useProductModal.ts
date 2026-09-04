@@ -67,28 +67,6 @@ const useProductModal = (businessId: string) => {
         setImageUploadError(undefined);
     };
 
-    /**
-     * Natural pixel size, read client-side rather than trusted from anywhere else:
-     * the upload endpoint doesn't compute it, and reading it here means the gallery
-     * carries real dimensions with no backend change required.
-     */
-    const readImageDimensions = (file: File): Promise<{ width: number; height: number } | undefined> =>
-        new Promise((resolve) => {
-            const objectUrl = URL.createObjectURL(file);
-            const img = new Image();
-
-            img.onload = () => {
-                URL.revokeObjectURL(objectUrl);
-                resolve({ width: img.naturalWidth, height: img.naturalHeight });
-            };
-            img.onerror = () => {
-                URL.revokeObjectURL(objectUrl);
-                resolve(undefined);
-            };
-
-            img.src = objectUrl;
-        });
-
     const uploadImage = async (file: File) => {
         if (values.images.length >= maxImages) {
             setImageUploadError(`A product can have at most ${maxImages} images.`);
@@ -99,12 +77,16 @@ const useProductModal = (businessId: string) => {
         setImageUploadError(undefined);
 
         try {
-            const [{ imageUrl }, dimensions] = await Promise.all([
-                uploadProductImageService(businessId, productId, file),
-                readImageDimensions(file),
-            ]);
+            // Dimensions come from the response rather than being measured here: the
+            // server shrinks oversized images before storing them, so the local file
+            // describes something other than what actually ended up in the gallery.
+            const { imageUrl, width, height } = await uploadProductImageService(
+                businessId,
+                productId,
+                file
+            );
 
-            addImage({ url: imageUrl, width: dimensions?.width, height: dimensions?.height });
+            addImage({ url: imageUrl, width: width ?? undefined, height: height ?? undefined });
         } catch (error) {
             // The server's message is specific and actionable ("Images must be 5 MB
             // or smaller", "isn't a valid image of the type it claims to be"), so
