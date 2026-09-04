@@ -11,11 +11,12 @@ import {
  * features query is invalidated to keep the balance shown elsewhere (the chat
  * header, the Features card) current.
  */
-const useEditProductImage = (businessId: string) => {
+const useEditProductImage = (businessId: string, productId: string) => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (payload: EditProductImagePayload) => editProductImageService(businessId, payload),
+        mutationFn: (payload: Omit<EditProductImagePayload, "productId">) =>
+            editProductImageService(businessId, { ...payload, productId }),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["business-dashboard", "features", businessId] });
         },

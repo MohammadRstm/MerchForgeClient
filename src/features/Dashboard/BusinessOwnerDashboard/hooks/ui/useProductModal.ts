@@ -12,6 +12,16 @@ import useProductFormState from "./useProductFormState";
 const useProductModal = (businessId: string) => {
     const [isOpen, setIsOpen] = useState(false);
     const [editingProductId, setEditingProductId] = useState<string | undefined>(undefined);
+
+    /**
+     * A product's image object keys are nested under the product itself, so its id has
+     * to be settled before the first upload — which happens well before the product is
+     * saved, so the form can preview a file. For a new product the client picks the id
+     * and sends the same one on save; openForCreate issues a fresh one each time so two
+     * products never share a prefix.
+     */
+    const [newProductId, setNewProductId] = useState<string>(() => crypto.randomUUID());
+    const productId = editingProductId ?? newProductId;
     const [imageUploading, setImageUploading] = useState(false);
     const [imageUploadError, setImageUploadError] = useState<string | undefined>(undefined);
 
@@ -38,6 +48,7 @@ const useProductModal = (businessId: string) => {
 
     const openForCreate = () => {
         setEditingProductId(undefined);
+        setNewProductId(crypto.randomUUID());
         setImageUploadError(undefined);
         resetSave();
         setIsOpen(true);
@@ -89,7 +100,7 @@ const useProductModal = (businessId: string) => {
 
         try {
             const [{ imageUrl }, dimensions] = await Promise.all([
-                uploadProductImageService(businessId, file),
+                uploadProductImageService(businessId, productId, file),
                 readImageDimensions(file),
             ]);
 
@@ -112,7 +123,12 @@ const useProductModal = (businessId: string) => {
         if (!validate()) return;
 
         save(
-            { productId: editingProductId, payload: toPayload() },
+            {
+                productId: editingProductId,
+                // Only on create: the id the images were already uploaded against.
+                // On update the route names the product and this is ignored.
+                payload: editingProductId ? toPayload() : { ...toPayload(), id: productId },
+            },
             { onSuccess: close }
         );
     };
@@ -120,6 +136,9 @@ const useProductModal = (businessId: string) => {
     return {
         isOpen,
         isEditing: Boolean(editingProductId),
+
+        /** The product images are stored under, whether it exists yet or not. */
+        productId,
 
         openForCreate,
         openForEdit,

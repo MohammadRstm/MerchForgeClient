@@ -12,6 +12,7 @@ import { editProductImageService } from "../../../../../services/api/imageEditin
 import useColorImages from "./useColorImages";
 
 const BUSINESS_ID = "44444444-4444-4444-8444-444444444444";
+const PRODUCT_ID = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
 const MAIN_IMAGE_URL = "/uploads/products/main.png";
 
 const job = (overrides: Partial<ImageEditJob> = {}): ImageEditJob => ({
@@ -53,7 +54,7 @@ const renderColorImages = (
     const images = imagesOverride ?? [{ url: MAIN_IMAGE_URL, isMain: true }];
 
     const { result, rerender } = renderHook(
-        () => useColorImages(BUSINESS_ID, { images, colors, addImage, replaceImage }),
+        () => useColorImages(BUSINESS_ID, { productId: PRODUCT_ID, images, colors, addImage, replaceImage }),
         { wrapper }
     );
 

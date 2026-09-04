@@ -12,6 +12,7 @@ import { editProductImageService } from "../../../../../services/api/imageEditin
 import useMultiAngleImages from "./useMultiAngleImages";
 
 const BUSINESS_ID = "33333333-3333-4333-8333-333333333333";
+const PRODUCT_ID = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
 const MAIN_IMAGE_URL = "/uploads/products/main.png";
 
 const job = (overrides: Partial<ImageEditJob> = {}): ImageEditJob => ({
@@ -50,7 +51,7 @@ const renderMultiAngle = (imagesOverride?: Parameters<typeof useMultiAngleImages
     const images = imagesOverride ?? [{ url: MAIN_IMAGE_URL, isMain: true }];
 
     const { result, rerender } = renderHook(
-        () => useMultiAngleImages(BUSINESS_ID, { images, addImage, replaceImage }),
+        () => useMultiAngleImages(BUSINESS_ID, { productId: PRODUCT_ID, images, addImage, replaceImage }),
         { wrapper }
     );
 

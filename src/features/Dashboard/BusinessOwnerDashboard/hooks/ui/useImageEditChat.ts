@@ -23,7 +23,12 @@ export type ImageReplacement = { oldUrl: string; newUrl: string };
  * three selected photos independently means three requests, not one request naming
  * three images (that would fuse them into a single combined image instead).
  */
-const useImageEditChat = (businessId: string, onImagesReplaced: (replacements: ImageReplacement[]) => void) => {
+const useImageEditChat = (
+    businessId: string,
+    /** The product the edited results belong to, so they are stored under it. */
+    productId: string,
+    onImagesReplaced: (replacements: ImageReplacement[]) => void
+) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedUrls, setSelectedUrls] = useState<Set<string>>(new Set());
     const [messages, setMessages] = useState<ImageEditChatMessage[]>([]);
@@ -34,7 +39,7 @@ const useImageEditChat = (businessId: string, onImagesReplaced: (replacements: I
     /** Which selected image the current request is for — the others are still queued, not yet started. */
     const [processingUrl, setProcessingUrl] = useState<string | undefined>(undefined);
 
-    const editImage = useEditProductImage(businessId);
+    const editImage = useEditProductImage(businessId, productId);
 
     const describeError = describeAiChatError;
 
