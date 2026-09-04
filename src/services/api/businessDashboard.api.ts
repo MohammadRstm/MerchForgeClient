@@ -66,6 +66,11 @@ export type SaveProductImagePayload = {
  * the backend's own SaveProductRequest contract (one DTO for both create and update).
  */
 export type SaveProductPayload = {
+    /**
+     * The id to create the product with, so it matches the one its images were
+     * uploaded against. Omitted when editing, where the route already names it.
+     */
+    id?: string;
     title: string;
     description: string;
     price: number;
@@ -395,7 +400,13 @@ export const updateOrderPaymentStatusService = async (
     return businessOrderDetailResponseSchema.parse(data);
 };
 
-export const uploadProductImageService = async (businessId: string, file: File) => {
+/**
+ * productId is the product the image will belong to. It does not have to exist yet:
+ * images are uploaded before a new product is committed, so the form settles the id
+ * up front and sends the same one when it saves. The server nests the stored object
+ * under it, and refuses an id another business already owns.
+ */
+export const uploadProductImageService = async (businessId: string, productId: string, file: File) => {
     const formData = new FormData();
     formData.append("file", file);
 
@@ -403,7 +414,8 @@ export const uploadProductImageService = async (businessId: string, file: File) 
     // multipart boundary is included, and setting it by hand omits that.
     const { data } = await authenticatedApi.post(
         apiRoutes.BUSINESS_DASHBOARD_PRODUCT_IMAGE(businessId),
-        formData
+        formData,
+        { params: { productId } }
     );
 
     return productImageUploadSchema.parse(data);

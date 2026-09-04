@@ -368,6 +368,11 @@ export const businessProductDetailSchema = z.object({
 
 export const productImageUploadSchema = z.object({
     imageUrl: z.string(),
+    // Dimensions of the image as stored, which is not the file that was picked once
+    // an oversized photo has been scaled down server-side. Nullable because an image
+    // the server could not decode is stored without them rather than with wrong ones.
+    width: z.number().nullable(),
+    height: z.number().nullable(),
 });
 
 /**

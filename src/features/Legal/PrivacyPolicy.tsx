@@ -177,11 +177,25 @@ const PrivacyPolicy = () => (
                 invitations, order and website-request notifications) are sent via SMTP.
                 No marketing or newsletter email is sent.
             </li>
+            <li>
+                <strong>Cloudflare (R2 object storage)</strong> — stores and serves product
+                images and storefront template preview images (Section 5). Because those
+                images are delivered to browsers directly by Cloudflare rather than by
+                MerchForge, Cloudflare receives the requests for them, including the IP
+                address and browser details of anyone who views a page containing one —
+                including storefront shoppers who have no MerchForge account.{" "}
+                <Placeholder>
+                    [WHETHER A DATA PROCESSING AGREEMENT WITH CLOUDFLARE IS REQUIRED, AND
+                    WHICH CLOUDFLARE TERMS APPLY TO THIS ACCOUNT, NEEDS TO BE CONFIRMED BY
+                    THE BUSINESS AND REVIEWED BY COUNSEL]
+                </Placeholder>
+            </li>
         </ul>
         <p>
             MerchForge does not currently use any analytics service, error/crash-monitoring
-            service, advertising network, or CDN. Background job processing (for example,
-            sending an invitation email asynchronously) runs on MerchForge's own
+            service, or advertising network. Images are served from Cloudflare as described
+            above; no other content delivery network is used. Background job processing (for
+            example, sending an invitation email asynchronously) runs on MerchForge's own
             infrastructure and database — it is not an external queueing service.
         </p>
         <p>
@@ -198,9 +212,19 @@ const PrivacyPolicy = () => (
             stored in MerchForge's own database.
         </p>
         <p>
-            <strong>Uploaded files and images</strong> — product photos, business
-            logos/favicons, and storefront customization images — are stored on local disk
-            on MerchForge's own server, not in any third-party cloud storage service.
+            <strong>Product photos and storefront template preview images</strong> are
+            stored in Cloudflare R2 object storage and are served to browsers directly by
+            Cloudflare, not through MerchForge's own server. The storage bucket is
+            configured for a Cloudflare region in Eastern Europe.
+        </p>
+        <p>
+            <strong>Business logos, favicons, and storefront customization images</strong>{" "}
+            are stored on local disk on MerchForge's own server.
+        </p>
+        <p>
+            Product images were previously stored on MerchForge's own server. They were
+            moved to Cloudflare R2 on September 4, 2026, and the local copies removed. This
+            change is why this document has a new version and effective date.
         </p>
         <div className="legal-page__callout">
             <p>
@@ -248,6 +272,12 @@ const PrivacyPolicy = () => (
         </ul>
 
         <h2>8. Data Transfers</h2>
+        <p>
+            Product images are stored with Cloudflare in a storage region in Eastern Europe
+            (Section 5), which may be outside the country you or your business are located
+            in. Because those images are served directly by Cloudflare's network, requests
+            for them may also be handled outside that region.
+        </p>
         <p>
             Using a third-party AI or email provider may involve transferring data to
             servers outside the country you or your business are located in, depending on

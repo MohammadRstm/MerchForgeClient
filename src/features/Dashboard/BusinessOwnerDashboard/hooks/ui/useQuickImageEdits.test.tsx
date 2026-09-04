@@ -12,6 +12,7 @@ import { editProductImageService } from "../../../../../services/api/imageEditin
 import useQuickImageEdits from "./useQuickImageEdits";
 
 const BUSINESS_ID = "55555555-5555-4555-8555-555555555555";
+const PRODUCT_ID = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
 const FRONT_URL = "/uploads/products/front.png";
 const BACK_URL = "/uploads/products/back.png";
 
@@ -47,7 +48,7 @@ const wrapper = ({ children }: { children: ReactNode }) => {
 const renderQuickEdits = () => {
     const replaceImage = vi.fn();
 
-    const { result } = renderHook(() => useQuickImageEdits(BUSINESS_ID, { replaceImage }), { wrapper });
+    const { result } = renderHook(() => useQuickImageEdits(BUSINESS_ID, { productId: PRODUCT_ID, replaceImage }), { wrapper });
 
     return { result, replaceImage };
 };

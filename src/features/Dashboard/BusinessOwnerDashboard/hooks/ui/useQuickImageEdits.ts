@@ -13,6 +13,8 @@ export type QuickImageEditResult = {
 };
 
 type UseQuickImageEditsArgs = {
+    /** The product the generated images belong to, so they are stored under it. */
+    productId: string;
     replaceImage: (oldUrl: string, newUrl: string) => void;
 };
 
@@ -26,7 +28,7 @@ type UseQuickImageEditsArgs = {
  * result replaces that exact image in place — this edits existing photos, it
  * doesn't generate new variants, so there's no "swap the gallery" step needed.
  */
-const useQuickImageEdits = (businessId: string, { replaceImage }: UseQuickImageEditsArgs) => {
+const useQuickImageEdits = (businessId: string, { productId, replaceImage }: UseQuickImageEditsArgs) => {
     const [actionKey, setActionKey] = useState<QuickImageEditKey | undefined>(undefined);
     const [isSelecting, setIsSelecting] = useState(false);
     const [selectedUrls, setSelectedUrls] = useState<Set<string>>(new Set());
@@ -85,7 +87,7 @@ const useQuickImageEdits = (businessId: string, { replaceImage }: UseQuickImageE
         let settledCount = 0;
 
         urls.forEach((url) => {
-            editProductImageService(businessId, { imageUrl: url, prompt })
+            editProductImageService(businessId, { imageUrl: url, productId, prompt })
                 .then((job) => {
                     invalidateFeatureCredits();
 

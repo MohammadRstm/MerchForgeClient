@@ -16,6 +16,8 @@ export type AngleResult = {
 };
 
 type UseMultiAngleImagesArgs = {
+    /** The product the generated images belong to, so they are stored under it. */
+    productId: string;
     images: ProductFormImage[];
     addImage: (image: Omit<ProductFormImage, "isMain">) => void;
     replaceImage: (oldUrl: string, newUrl: string) => void;
@@ -36,7 +38,7 @@ type UseMultiAngleImagesArgs = {
  */
 const useMultiAngleImages = (
     businessId: string,
-    { images, addImage, replaceImage }: UseMultiAngleImagesArgs
+    { productId, images, addImage, replaceImage }: UseMultiAngleImagesArgs
 ) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
@@ -117,7 +119,11 @@ const useMultiAngleImages = (
             const source = nonMainImages[index];
             const sourceUrl = source?.url ?? mainImage.url;
 
-            editProductImageService(businessId, { imageUrl: sourceUrl, prompt: angle.prompt })
+            editProductImageService(businessId, {
+                imageUrl: sourceUrl,
+                productId,
+                prompt: angle.prompt,
+            })
                 .then((job) => {
                     invalidateFeatureCredits();
 

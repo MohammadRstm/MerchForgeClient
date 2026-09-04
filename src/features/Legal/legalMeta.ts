@@ -7,7 +7,7 @@
  */
 export const LEGAL_VERSIONS = {
     termsOfService: "1.0",
-    privacyPolicy: "1.0",
+    privacyPolicy: "1.1",
     acceptableUse: "1.0",
     aiTerms: "1.0",
 } as const;
@@ -17,4 +17,4 @@ export const LEGAL_VERSIONS = {
  * updated" date regardless of when they load the page, and it should only ever
  * change when a document actually changes, not on every deploy.
  */
-export const LEGAL_EFFECTIVE_DATE = "September 3, 2026";
+export const LEGAL_EFFECTIVE_DATE = "September 4, 2026";

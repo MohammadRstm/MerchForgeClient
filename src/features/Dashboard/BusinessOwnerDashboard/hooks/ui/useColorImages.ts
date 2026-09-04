@@ -15,6 +15,8 @@ export type ColorImageResult = {
 };
 
 type UseColorImagesArgs = {
+    /** The product the generated images belong to, so they are stored under it. */
+    productId: string;
     images: ProductFormImage[];
     /** The product's currently chosen colors, in order — same list ColorListField edits. */
     colors: string[];
@@ -31,7 +33,7 @@ type UseColorImagesArgs = {
  */
 const useColorImages = (
     businessId: string,
-    { images, colors, addImage, replaceImage }: UseColorImagesArgs
+    { productId, images, colors, addImage, replaceImage }: UseColorImagesArgs
 ) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedColors, setSelectedColors] = useState<string[]>([]);
@@ -101,7 +103,11 @@ const useColorImages = (
             const source = nonMainImages[index];
             const sourceUrl = source?.url ?? mainImage.url;
 
-            editProductImageService(businessId, { imageUrl: sourceUrl, prompt: buildColorImagePrompt(hex) })
+            editProductImageService(businessId, {
+                imageUrl: sourceUrl,
+                productId,
+                prompt: buildColorImagePrompt(hex),
+            })
                 .then((job) => {
                     invalidateFeatureCredits();
 

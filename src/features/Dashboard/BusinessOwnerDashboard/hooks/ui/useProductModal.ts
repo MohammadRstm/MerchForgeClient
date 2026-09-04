@@ -12,6 +12,16 @@ import useProductFormState from "./useProductFormState";
 const useProductModal = (businessId: string) => {
     const [isOpen, setIsOpen] = useState(false);
     const [editingProductId, setEditingProductId] = useState<string | undefined>(undefined);
+
+    /**
+     * A product's image object keys are nested under the product itself, so its id has
+     * to be settled before the first upload — which happens well before the product is
+     * saved, so the form can preview a file. For a new product the client picks the id
+     * and sends the same one on save; openForCreate issues a fresh one each time so two
+     * products never share a prefix.
+     */
+    const [newProductId, setNewProductId] = useState<string>(() => crypto.randomUUID());
+    const productId = editingProductId ?? newProductId;
     const [imageUploading, setImageUploading] = useState(false);
     const [imageUploadError, setImageUploadError] = useState<string | undefined>(undefined);
 
@@ -38,6 +48,7 @@ const useProductModal = (businessId: string) => {
 
     const openForCreate = () => {
         setEditingProductId(undefined);
+        setNewProductId(crypto.randomUUID());
         setImageUploadError(undefined);
         resetSave();
         setIsOpen(true);
@@ -56,28 +67,6 @@ const useProductModal = (businessId: string) => {
         setImageUploadError(undefined);
     };
 
-    /**
-     * Natural pixel size, read client-side rather than trusted from anywhere else:
-     * the upload endpoint doesn't compute it, and reading it here means the gallery
-     * carries real dimensions with no backend change required.
-     */
-    const readImageDimensions = (file: File): Promise<{ width: number; height: number } | undefined> =>
-        new Promise((resolve) => {
-            const objectUrl = URL.createObjectURL(file);
-            const img = new Image();
-
-            img.onload = () => {
-                URL.revokeObjectURL(objectUrl);
-                resolve({ width: img.naturalWidth, height: img.naturalHeight });
-            };
-            img.onerror = () => {
-                URL.revokeObjectURL(objectUrl);
-                resolve(undefined);
-            };
-
-            img.src = objectUrl;
-        });
-
     const uploadImage = async (file: File) => {
         if (values.images.length >= maxImages) {
             setImageUploadError(`A product can have at most ${maxImages} images.`);
@@ -88,12 +77,16 @@ const useProductModal = (businessId: string) => {
         setImageUploadError(undefined);
 
         try {
-            const [{ imageUrl }, dimensions] = await Promise.all([
-                uploadProductImageService(businessId, file),
-                readImageDimensions(file),
-            ]);
+            // Dimensions come from the response rather than being measured here: the
+            // server shrinks oversized images before storing them, so the local file
+            // describes something other than what actually ended up in the gallery.
+            const { imageUrl, width, height } = await uploadProductImageService(
+                businessId,
+                productId,
+                file
+            );
 
-            addImage({ url: imageUrl, width: dimensions?.width, height: dimensions?.height });
+            addImage({ url: imageUrl, width: width ?? undefined, height: height ?? undefined });
         } catch (error) {
             // The server's message is specific and actionable ("Images must be 5 MB
             // or smaller", "isn't a valid image of the type it claims to be"), so
@@ -112,7 +105,12 @@ const useProductModal = (businessId: string) => {
         if (!validate()) return;
 
         save(
-            { productId: editingProductId, payload: toPayload() },
+            {
+                productId: editingProductId,
+                // Only on create: the id the images were already uploaded against.
+                // On update the route names the product and this is ignored.
+                payload: editingProductId ? toPayload() : { ...toPayload(), id: productId },
+            },
             { onSuccess: close }
         );
     };
@@ -120,6 +118,9 @@ const useProductModal = (businessId: string) => {
     return {
         isOpen,
         isEditing: Boolean(editingProductId),
+
+        /** The product images are stored under, whether it exists yet or not. */
+        productId,
 
         openForCreate,
         openForEdit,

@@ -50,19 +50,21 @@ const useOwnerProductsPage = () => {
         productModal.close();
     });
 
-    const imageEditChat = useImageEditChat(businessId, (replacements) => {
+    const imageEditChat = useImageEditChat(businessId, productModal.productId, (replacements) => {
         for (const { oldUrl, newUrl } of replacements) {
             productModal.replaceImage(oldUrl, newUrl);
         }
     });
 
     const multiAngle = useMultiAngleImages(businessId, {
+        productId: productModal.productId,
         images: productModal.values.images,
         addImage: productModal.addImage,
         replaceImage: productModal.replaceImage,
     });
 
     const colorImages = useColorImages(businessId, {
+        productId: productModal.productId,
         images: productModal.values.images,
         colors: getProductColors(productModal.values, productModal.form),
         addImage: productModal.addImage,
@@ -70,6 +72,7 @@ const useOwnerProductsPage = () => {
     });
 
     const quickImageEdits = useQuickImageEdits(businessId, {
+        productId: productModal.productId,
         replaceImage: productModal.replaceImage,
     });
 
