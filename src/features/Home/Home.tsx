@@ -6,6 +6,7 @@ import Capabilities from './components/Capabilities/Capabilities';
 import ProductShowcase from './components/ProductShowcase/ProductShowcase';
 import HowItWorks from './components/HowItWorks/HowItWorks';
 import MerchantBenefits from './components/MerchantBenefits/MerchantBenefits';
+import OwnerDesk from './components/OwnerDesk/OwnerDesk';
 import Faq from './components/Faq/Faq';
 import Pricing from './components/Pricing/Pricing';
 import FinalCTA from './components/FinalCTA/FinalCTA';
@@ -24,6 +25,7 @@ export default function Home() {
         <ProductShowcase />
         <HowItWorks />
         <MerchantBenefits />
+        <OwnerDesk />
         <Pricing />
         <Faq />
         <FinalCTA />
