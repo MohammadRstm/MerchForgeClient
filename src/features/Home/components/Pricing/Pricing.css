@@ -12,13 +12,21 @@
   justify-content: center;
 }
 
-.pricing__headline {
+/* Both of these are scoped to the parent deliberately. .mf-headline and
+   .mf-subtext set the "margin" shorthand, and Home.tsx imports Home.css after
+   every section's CSS - so at equal specificity the shared rule wins on source
+   order, and a bare ".pricing__headline { margin-left: auto }" computes back to
+   0. That left the headline hanging 74px off the centre of its own intro. The
+   eyebrow rule above already had to be scoped for exactly this reason. */
+.pricing__intro .pricing__headline {
   max-width: 20ch;
   margin-left: auto;
   margin-right: auto;
 }
 
-.pricing__subtext {
+/* The subtext only looked centred by luck: its 46ch is wider than the intro at
+   most widths, so it filled the box rather than sitting in the middle of it. */
+.pricing__intro .pricing__subtext {
   margin: 0 auto;
   text-align: center;
 }

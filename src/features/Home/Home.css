@@ -117,6 +117,11 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  /* There is no global border-box reset on the marketing side, so a button
+     given an explicit width - .pricing__cta is width: 100% - would add its own
+     padding and border on top of it and overflow the column by 53px. Buttons
+     that size to their content are unaffected either way. */
+  box-sizing: border-box;
   font-family: var(--mf-body-font);
   font-size: 0.9375rem;
   font-weight: 600;
