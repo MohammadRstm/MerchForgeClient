@@ -1,3 +1,4 @@
+import './Home.css';
 import Hero from './components/Hero/Hero';
 import Studio from './components/Studio/Studio';
 import Header from '../Header/Header';
@@ -9,7 +10,6 @@ import Faq from './components/Faq/Faq';
 import Pricing from './components/Pricing/Pricing';
 import FinalCTA from './components/FinalCTA/FinalCTA';
 import Footer from './components/Footer/Footer';
-import './Home.css';
 
 export default function Home() {
   return (
