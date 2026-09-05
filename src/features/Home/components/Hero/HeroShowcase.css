@@ -1,0 +1,479 @@
+/* The hero's showcase stage. Reads the marketing tokens from .home rather than
+   redeclaring a palette — see Home.css. */
+
+.showcase {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  height: 100%;
+  min-height: 0;
+}
+
+.showcase__viewport {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 6px;
+  cursor: grab;
+  touch-action: pan-y;
+}
+
+.showcase__viewport:active {
+  cursor: grabbing;
+}
+
+.showcase__viewport:focus-visible {
+  outline: 2px solid var(--mf-accent);
+  outline-offset: 3px;
+}
+
+.showcase__track {
+  display: flex;
+  height: 100%;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+/* While a finger is down the track has to track the finger exactly; easing here
+   makes a drag feel like it is fighting you. */
+.showcase__viewport--dragging .showcase__track {
+  transition: none;
+}
+
+.showcase__panel {
+  flex: 0 0 100%;
+  height: 100%;
+  min-width: 0;
+}
+
+/* ---------- Scenes ---------- */
+
+.scene {
+  display: grid;
+  gap: 0.7rem;
+  height: 100%;
+  min-height: 0;
+}
+
+.scene--pair {
+  grid-template-columns: 1.4fr 0.85fr;
+}
+
+.scene--panel {
+  grid-template-columns: 1.1fr 1fr;
+}
+
+.scene--dashboard {
+  grid-template-columns: 1.35fr 0.9fr;
+}
+
+.scene__source,
+.scene__card {
+  position: relative;
+  margin: 0;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 5px;
+  background: var(--mf-bg-raised);
+  box-shadow: 0 18px 40px -26px rgba(20, 22, 27, 0.42);
+}
+
+.scene__source img,
+.scene__card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.scene__output {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 0.7rem;
+  min-height: 0;
+}
+
+/* Small caps tag, same language as .hero__frame-tag. */
+.scene__source figcaption,
+.scene__card figcaption {
+  position: absolute;
+  left: 0.5rem;
+  bottom: 0.5rem;
+  font-family: var(--mf-body-font);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #fff;
+  background: rgba(20, 22, 27, 0.58);
+  backdrop-filter: blur(6px);
+  border-radius: 999px;
+  padding: 0.25rem 0.6rem;
+}
+
+/* ---------- Ingredients readout ---------- */
+
+.scene__readout {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0.9rem 1rem;
+  border-radius: 5px;
+  background: var(--mf-bg-raised);
+  border: 1px solid var(--mf-border);
+}
+
+.scene__readout-title {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0 0 0.7rem;
+  font-family: var(--mf-body-font);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--mf-text-muted);
+}
+
+.scene__pulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--mf-accent);
+  animation: showcase-pulse 1.5s ease-in-out infinite;
+}
+
+.scene__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.34rem;
+  align-content: start;
+  overflow: hidden;
+}
+
+.scene__list li {
+  position: relative;
+  padding-left: 1rem;
+  font-family: var(--mf-body-font);
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  color: var(--mf-text);
+}
+
+/* A found item, not a bullet. */
+.scene__list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.42em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--mf-accent);
+}
+
+/* ---------- Dashboard ---------- */
+
+.scene--dashboard .scene__panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0.9rem 1rem;
+  border-radius: 5px;
+  background: var(--mf-bg-raised);
+  border: 1px solid var(--mf-border);
+}
+
+.scene__metric-label {
+  margin: 0;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--mf-text-muted);
+}
+
+.scene__metric-value {
+  margin: 0.3rem 0 0;
+  font-family: var(--mf-display-font);
+  font-weight: var(--mf-display-weight);
+  font-size: clamp(1.35rem, 2.4vw, 1.9rem);
+  letter-spacing: var(--mf-display-tracking);
+  color: var(--mf-text);
+  /* Digits in a column should not shift width as they change. */
+  font-variant-numeric: tabular-nums;
+}
+
+.scene__metric-delta {
+  margin: 0.1rem 0 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #2f7d55;
+  font-variant-numeric: tabular-nums;
+}
+
+.scene__bars {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.3rem;
+  margin-top: 0.8rem;
+}
+
+.scene__bars span {
+  flex: 1;
+  height: var(--h);
+  border-radius: 2px 2px 0 0;
+  background: linear-gradient(to top, var(--mf-accent), var(--mf-accent-mid));
+  transform-origin: bottom;
+}
+
+.scene__panel--donut {
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+}
+
+.scene__panel--donut svg {
+  width: min(100%, 7.5rem);
+  height: auto;
+  flex-shrink: 1;
+  min-height: 0;
+}
+
+.scene__arc--0 { stroke: var(--mf-accent); }
+.scene__arc--1 { stroke: #14161b; }
+.scene__arc--2 { stroke: #b8bcc4; }
+
+.scene__legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  display: grid;
+  gap: 0.28rem;
+}
+
+.scene__legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  color: var(--mf-text-secondary);
+}
+
+.scene__legend b {
+  margin-left: auto;
+  color: var(--mf-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.scene__swatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.scene__swatch--0 { background: var(--mf-accent); }
+.scene__swatch--1 { background: #14161b; }
+.scene__swatch--2 { background: #b8bcc4; }
+
+/* ---------- Control bar ---------- */
+
+.showcase__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.showcase__label {
+  margin: 0;
+  font-family: var(--mf-body-font);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--mf-text-secondary);
+}
+
+.showcase__controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.showcase__dots {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.showcase__dot {
+  width: 6px;
+  height: 6px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: var(--mf-border);
+  cursor: pointer;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.showcase__dot.is-active {
+  width: 18px;
+  background: var(--mf-accent);
+}
+
+.showcase__dot:focus-visible,
+.showcase__next:focus-visible {
+  outline: 2px solid var(--mf-accent);
+  outline-offset: 2px;
+}
+
+.showcase__next {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid var(--mf-border);
+  background: transparent;
+  color: var(--mf-text);
+  cursor: pointer;
+  transition: transform 0.18s ease, border-color 0.18s ease, background-color 0.18s ease;
+}
+
+.showcase__next svg {
+  width: 15px;
+  height: 15px;
+}
+
+.showcase__next:hover {
+  border-color: var(--mf-text);
+  transform: translateX(1px);
+}
+
+/* Described for screen readers, not shown twice. */
+.showcase__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------- Entrances, played by the active panel only ---------- */
+
+@keyframes showcase-rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes showcase-bar {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+
+@keyframes showcase-arc {
+  from { stroke-dashoffset: var(--dash); }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes showcase-pulse {
+  0%, 100% { opacity: 0.35; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+/* `backwards` holds the from-state through the delay, so nothing flashes in
+   before its turn. */
+.showcase__panel.is-active .scene__source,
+.showcase__panel.is-active .scene__card,
+.showcase__panel.is-active .scene__readout,
+.showcase__panel.is-active .scene__panel {
+  animation: showcase-rise 0.55s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: var(--step, 0s);
+}
+
+.showcase__panel.is-active .scene__list li,
+.showcase__panel.is-active .scene__legend li {
+  animation: showcase-rise 0.42s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: var(--step, 0s);
+}
+
+.showcase__panel.is-active .scene__bars span {
+  animation: showcase-bar 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: var(--step, 0s);
+}
+
+.showcase__panel.is-active .scene__arc {
+  animation: showcase-arc 0.75s cubic-bezier(0.33, 1, 0.68, 1) backwards;
+  animation-delay: var(--step, 0s);
+}
+
+/* ---------- Narrow ---------- */
+
+@media (max-width: 900px) {
+  .showcase {
+    gap: 0.6rem;
+  }
+
+  .scene {
+    gap: 0.5rem;
+  }
+
+  .scene__output {
+    gap: 0.5rem;
+  }
+
+  .scene--panel,
+  .scene--dashboard {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .scene__readout,
+  .scene--dashboard .scene__panel {
+    padding: 0.7rem 0.75rem;
+  }
+
+  .scene__list li {
+    font-size: 0.75rem;
+  }
+
+  .showcase__label {
+    font-size: 0.75rem;
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .showcase__track {
+    transition: none;
+  }
+
+  .showcase__panel.is-active .scene__source,
+  .showcase__panel.is-active .scene__card,
+  .showcase__panel.is-active .scene__readout,
+  .showcase__panel.is-active .scene__panel,
+  .showcase__panel.is-active .scene__list li,
+  .showcase__panel.is-active .scene__legend li,
+  .showcase__panel.is-active .scene__bars span,
+  .showcase__panel.is-active .scene__arc {
+    animation: none;
+  }
+
+  .scene__pulse {
+    animation: none;
+  }
+}
