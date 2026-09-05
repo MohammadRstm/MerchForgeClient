@@ -88,14 +88,9 @@ const Header = () => {
                             </button>
                         </>
                     ) : (
-                        <>
-                            <Link to={routes.LOGIN} className="header__login">
-                                Log in
-                            </Link>
-                            <Link to={routes.SIGNUP} className="header__cta">
-                                Sign up
-                            </Link>
-                        </>
+                        <Link to={routes.LOGIN} className="header__login">
+                            Log in
+                        </Link>
                     )}
                 </div>
 
@@ -140,14 +135,9 @@ const Header = () => {
                             </button>
                         </>
                     ) : (
-                        <>
-                            <Link to={routes.LOGIN} className="header__login header__login--mobile" onClick={closeMenu}>
-                                Log in
-                            </Link>
-                            <Link to={routes.SIGNUP} className="header__cta header__cta--mobile" onClick={closeMenu}>
-                                Sign up
-                            </Link>
-                        </>
+                        <Link to={routes.LOGIN} className="header__login header__login--mobile" onClick={closeMenu}>
+                            Log in
+                        </Link>
                     )}
                 </div>
             </div>
