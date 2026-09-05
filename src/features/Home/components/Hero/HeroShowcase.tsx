@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { AnglesScene, ColourwaysScene, DashboardScene, IngredientsScene } from './HeroScenes';
+import { AnglesScene, ColourwaysScene, ConveyorScene, IngredientsScene } from './HeroScenes';
 import './HeroShowcase.css';
 
 interface Scene {
@@ -32,9 +32,9 @@ const SCENES: Scene[] = [
     },
     {
         id: 'dashboard',
-        label: 'And the numbers that follow',
-        description: 'Revenue for the last thirty days, trending up, with sales split across three categories.',
-        render: () => <DashboardScene />,
+        label: 'A real dashboard, not a mockup',
+        description: 'Cards from a live MerchForge dashboard drifting past — real charts, real products, real storefront templates.',
+        render: () => <ConveyorScene />,
     },
 ];
 
