@@ -2832,6 +2832,16 @@ p.voice-product-button__pill {
     align-items: start;
 }
 
+/* Grid items default to min-width: auto, so a table with nowrap cells (see
+   .business-dashboard-table) was refusing to shrink below its own content
+   width and pushing its 1fr track - and the whole page - wider than the
+   viewport, on every page that uses this row (Overview, Products,
+   Inventory). .business-dashboard-table-wrapper already scrolls its table
+   horizontally; this is what lets that kick in instead of the page doing it. */
+.product-performance-row > * {
+    min-width: 0;
+}
+
 /* Ranked product lists (Top Products / Best Sellers) */
 
 .product-ranking-card {
