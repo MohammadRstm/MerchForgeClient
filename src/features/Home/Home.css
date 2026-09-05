@@ -33,7 +33,15 @@
 .home main {
   display: flex;
   flex-direction: column;
-  overflow-x: hidden;
+
+  /* clip, not hidden. "overflow-x: hidden" forces the other axis to compute as
+     auto, which makes this element a scroll container - and a sticky descendant
+     then sticks to *it* rather than to the viewport. Since this container
+     scrolls with the page, the sticky element never appears to stick at all.
+     "clip" does the same visual job without creating a scroll container, so the
+     Studio stage works and wide sections still cannot push out a horizontal
+     scrollbar. */
+  overflow-x: clip;
 }
 
 @media (prefers-reduced-motion: no-preference) {

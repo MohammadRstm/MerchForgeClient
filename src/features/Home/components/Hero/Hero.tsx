@@ -37,7 +37,7 @@ export default function Hero() {
             <a href="#get-started" className="hero__btn hero__btn--primary">
               Start Creating
             </a>
-            <a href="#capabilities" className="hero__btn hero__btn--secondary">
+            <a href="#studio" className="hero__btn hero__btn--secondary">
               See how it works
             </a>
           </div>
