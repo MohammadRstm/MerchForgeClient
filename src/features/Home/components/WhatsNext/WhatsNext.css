@@ -1,0 +1,232 @@
+/* The roadmap section. Marketing tokens from .home — see Home.css. */
+
+.next__header {
+  max-width: 46rem;
+  margin-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+
+.next__heading {
+  font-family: var(--mf-display-font);
+  font-weight: var(--mf-display-weight);
+  font-size: clamp(1.9rem, 3.4vw, 2.9rem);
+  line-height: 1.1;
+  letter-spacing: var(--mf-display-tracking);
+  color: var(--mf-text);
+  margin: 0.75rem 0 0.9rem;
+  text-wrap: balance;
+}
+
+.next__lede {
+  margin: 0;
+  font-size: clamp(1rem, 1.1vw, 1.0625rem);
+  line-height: 1.6;
+  color: var(--mf-text-secondary);
+  max-width: 36rem;
+}
+
+/* ---------- Rows ---------- */
+
+.next__row {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: clamp(1.5rem, 5vw, 4.5rem);
+  align-items: center;
+  padding: clamp(2rem, 4vw, 3.5rem) 0;
+  border-top: 1px solid var(--mf-border);
+}
+
+/* Alternating, so two rows do not read as two cards in a grid. */
+.next__row--reverse .next__copy {
+  order: 2;
+}
+
+.next__badge {
+  display: inline-block;
+  margin: 0 0 0.9rem;
+  font-family: var(--mf-body-font);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--mf-accent);
+  border: 1px solid color-mix(in srgb, var(--mf-accent) 40%, transparent);
+  border-radius: 999px;
+  padding: 0.22rem 0.6rem;
+}
+
+.next__title {
+  margin: 0 0 0.8rem;
+  font-family: var(--mf-display-font);
+  font-weight: var(--mf-display-weight);
+  font-size: clamp(1.35rem, 2.3vw, 1.85rem);
+  line-height: 1.15;
+  letter-spacing: var(--mf-display-tracking);
+  color: var(--mf-text);
+  text-wrap: balance;
+}
+
+.next__body {
+  margin: 0 0 1.2rem;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--mf-text-secondary);
+  max-width: 32rem;
+}
+
+.next__points {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.next__points li {
+  position: relative;
+  padding-left: 1.1rem;
+  font-size: 0.9375rem;
+  color: var(--mf-text-secondary);
+}
+
+.next__points li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--mf-accent);
+}
+
+/* ---------- Sketches ---------- */
+
+.next__sketch {
+  border: 1px solid var(--mf-border);
+  border-radius: 10px;
+  background: var(--mf-bg-raised);
+  padding: clamp(1rem, 2.5vw, 2rem);
+  box-shadow: 0 34px 70px -50px rgba(32, 26, 16, 0.45);
+}
+
+.next__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* Line art, one weight throughout. */
+.next__svg rect,
+.next__svg path,
+.next__svg circle {
+  fill: none;
+  stroke: var(--mf-text);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* All scoped under .next__svg deliberately. The base rule above is
+   ".next__svg path", which is one element more specific than a bare class - so
+   an unscoped ".next__draw--accent" loses to it and every accent silently
+   renders as ink. Two of these used !important to force their way past that,
+   which hid the problem rather than fixing it. Matching the base rule's
+   specificity fixes it for all of them. */
+.next__svg .next__grid {
+  stroke: var(--mf-border);
+  stroke-width: 1;
+}
+
+.next__svg .next__hair {
+  stroke: var(--mf-text-muted);
+}
+
+.next__svg .next__dot,
+.next__svg .next__marker {
+  fill: color-mix(in srgb, var(--mf-accent) 22%, transparent);
+  stroke: var(--mf-accent);
+}
+
+.next__svg .next__tick {
+  stroke: var(--mf-accent);
+  stroke-width: 1.8;
+}
+
+.next__svg .next__spark {
+  fill: var(--mf-accent);
+  stroke: var(--mf-accent);
+}
+
+.next__svg .next__draw--accent {
+  stroke: var(--mf-accent);
+}
+
+.next__svg .next__route {
+  stroke-width: 1.8;
+}
+
+/* ---------- The one-shot draw ---------- */
+
+/* pathLength="1" normalises every path, so one dash length covers all of them
+   with no runtime measuring. */
+.next__draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.next__pop {
+  opacity: 0;
+}
+
+.is-visible .next__draw {
+  animation: next-draw 0.9s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+  animation-delay: var(--d, 0s);
+}
+
+.is-visible .next__pop {
+  animation: next-pop 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--d, 0s);
+}
+
+@keyframes next-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes next-pop {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---------- Narrow ---------- */
+
+@media (max-width: 900px) {
+  .next__row {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  /* The alternation only exists to break a two-column rhythm. Stacked there is
+     no rhythm to break, and reordering would just put the picture before the
+     heading that explains it. */
+  .next__row--reverse .next__copy {
+    order: 0;
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .next__draw {
+    stroke-dashoffset: 0;
+  }
+
+  .next__pop {
+    opacity: 1;
+  }
+
+  .is-visible .next__draw,
+  .is-visible .next__pop {
+    animation: none;
+  }
+}

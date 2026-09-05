@@ -4,6 +4,7 @@ import Header from '../Header/Header';
 import ProofStrip from './components/ProofStrip/ProofStrip';
 import HowItWorks from './components/HowItWorks/HowItWorks';
 import OwnerDesk from './components/OwnerDesk/OwnerDesk';
+import WhatsNext from './components/WhatsNext/WhatsNext';
 import Faq from './components/Faq/Faq';
 import Pricing from './components/Pricing/Pricing';
 import FinalCTA from './components/FinalCTA/FinalCTA';
@@ -20,6 +21,7 @@ export default function Home() {
         <Studio />
         <HowItWorks />
         <OwnerDesk />
+        <WhatsNext />
         <Pricing />
         <Faq />
         <FinalCTA />
