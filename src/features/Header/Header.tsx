@@ -1,4 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
+
+/** Collapse the header past here, and only restore it well back above there. The
+ *  gap has to exceed the 16px of padding the collapse removes - see the comment on
+ *  the scroll handler for why. */
+const SHRINK_AT = 64;
+const GROW_AT = 12;
 import { Link } from "react-router";
 import "./Header.css";
 import logo from "../../assets/logo.svg";
@@ -23,13 +29,30 @@ const Header = () => {
     const { isAuthenticated } = useAuth();
     const { mutate: submitLogout, isPending: logoutPending } = useLogout();
 
-    const [scrolled, setScrolled] = useState(false);
+    // Read once on mount rather than assumed false, so arriving at a deep-linked
+    // anchor does not start tall and immediately collapse.
+    const [scrolled, setScrolled] = useState(() => window.scrollY > SHRINK_AT);
     const [menuOpen, setMenuOpen] = useState(false);
 
     useEffect(() => {
-        const onScroll = () => setScrolled(window.scrollY > 8);
-        onScroll();
+        // No rAF throttle: the work is one comparison, and React bails out of the
+        // render when the value is unchanged, so the common case costs nothing.
+        //
+        // Hysteresis, not one threshold. Collapsing the header removes 16px of
+        // padding above the scroll anchor, and the browser compensates by taking the
+        // same 16px off scrollY to keep the content still. Against a single 8px line
+        // that lands back under it, which restores the padding, which pushes back
+        // over it - the two states then flip against each other as fast as the
+        // browser can lay out, which is the header visibly vibrating. Two lines far
+        // enough apart that one 16px correction cannot cross both makes that
+        // impossible.
+        const onScroll = () =>
+            setScrolled((current) =>
+                current ? window.scrollY > GROW_AT : window.scrollY > SHRINK_AT,
+            );
+
         window.addEventListener("scroll", onScroll, { passive: true });
+
         return () => window.removeEventListener("scroll", onScroll);
     }, []);
 

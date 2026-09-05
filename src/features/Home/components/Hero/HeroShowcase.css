@@ -17,6 +17,21 @@
   border-radius: 6px;
   cursor: grab;
   touch-action: pan-y;
+
+  /* A drag across text is still a text selection as far as the browser is
+     concerned, so pulling the stage sideways left a blue highlight behind. The
+     stage is a control, not prose - there is nothing here anyone means to
+     select. */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Images carry their own native drag, which starts a ghost and swallows the
+   pointer stream the swipe is built on. */
+.showcase__viewport img {
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .showcase__viewport:active {
