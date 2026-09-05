@@ -142,10 +142,17 @@
   stroke: var(--mf-text-muted);
 }
 
-.next__svg .next__dot,
-.next__svg .next__marker {
+.next__svg .next__dot {
   fill: color-mix(in srgb, var(--mf-accent) 22%, transparent);
   stroke: var(--mf-accent);
+}
+
+/* Opaque, unlike the tiles' dots: the route passes underneath this one, and a
+   translucent fill let the line show straight through the driver. */
+.next__svg .next__marker {
+  fill: var(--mf-bg-raised);
+  stroke: var(--mf-accent);
+  stroke-width: 1.8;
 }
 
 .next__svg .next__tick {

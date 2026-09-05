@@ -52,37 +52,49 @@ function SocialSketch() {
 }
 
 function DeliverySketch() {
+    // Geometry is anchored, not eyeballed. The storefront's right edge sits at
+    // x=92, its mid-height at y=188; the home's left edge at x=330, mid-height
+    // y=64. The route begins and ends on exactly those points, so it meets both
+    // buildings instead of floating past them, and its inflection lands at
+    // (211,126) which is where the driver stands.
+    const SHOP = { x: 92, y: 188 };
+    const DRIVER = { x: 211, y: 126 };
+    const HOME = { x: 330, y: 64 };
+
     return (
-        <svg viewBox="0 0 420 250" role="img" aria-label="A delivery route drawn from the shop to a customer, with a driver on the way" className="next__svg">
-            {/* Ground grid, faint */}
-            {[60, 110, 160, 210].map((y) => (
+        <svg viewBox="0 0 420 250" role="img" aria-label="A delivery route from the storefront, past the driver, to the customer's home" className="next__svg">
+            {[50, 100, 150, 200].map((y) => (
                 <path key={y} d={`M12 ${y}h396`} className="next__grid" />
             ))}
 
-            {/* The route */}
+            {/* Storefront: flat awning and a door, so it reads as a shop rather
+                than as a second house. */}
+            <g className="next__pop" style={{ '--d': '0s' } as React.CSSProperties}>
+                <path d="M28 208v-40h64v40z" />
+                <path d="M22 168l8-14h60l8 14z" className="next__hair" />
+                <path d="M52 208v-18h16v18" className="next__hair" />
+            </g>
+
+            {/* Storefront -> driver -> home, in one stroke. */}
             <path
                 className="next__draw next__draw--accent next__route"
                 pathLength="1"
-                d="M56 196C120 196 118 96 186 96C254 96 244 58 356 58"
-                style={{ '--d': '0.15s' } as React.CSSProperties}
+                d={`M${SHOP.x} ${SHOP.y}C150 ${SHOP.y} 150 ${DRIVER.y} ${DRIVER.x} ${DRIVER.y}C272 ${DRIVER.y} 272 ${HOME.y} ${HOME.x} ${HOME.y}`}
+                style={{ '--d': '0.2s' } as React.CSSProperties}
             />
 
-            {/* Shop */}
-            <g className="next__pop" style={{ '--d': '0s' } as React.CSSProperties}>
-                <path d="M40 196v-26h32v26z" />
-                <path d="M36 170l10-14h20l10 14z" className="next__hair" />
+            {/* The driver, standing on the route. The marker is filled opaque so
+                the line passes behind it rather than through it. */}
+            <g className="next__pop" style={{ '--d': '1.2s' } as React.CSSProperties}>
+                <circle cx={DRIVER.x} cy={DRIVER.y} r="14" className="next__marker" />
+                <path d={`M${DRIVER.x - 5} ${DRIVER.y}l4 4 7-8`} className="next__tick" />
             </g>
 
-            {/* Driver, part-way along */}
-            <g className="next__pop" style={{ '--d': '1.15s' } as React.CSSProperties}>
-                <circle cx="186" cy="96" r="13" className="next__marker" />
-                <path d="M181 96l4 4 7-8" className="next__tick" />
-            </g>
-
-            {/* Customer */}
-            <g className="next__pop" style={{ '--d': '1.35s' } as React.CSSProperties}>
-                <path d="M340 72v-22h32v22z" />
-                <path d="M336 50l20-16 20 16z" className="next__hair" />
+            {/* Home: pitched roof. */}
+            <g className="next__pop" style={{ '--d': '1.45s' } as React.CSSProperties}>
+                <path d="M330 84v-40h64v40z" />
+                <path d="M324 44l38-28 38 28z" className="next__hair" />
+                <path d="M354 84v-16h16v16" className="next__hair" />
             </g>
         </svg>
     );
