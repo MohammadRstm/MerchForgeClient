@@ -1,5 +1,3 @@
-import { useEffect, useRef } from 'react';
-import { approach, beltOffset, clamp } from './conveyorMotion';
 import AngleFront from '../../../../assets/Landing/Landing__Showcase__angle-front.jpg';
 import AngleBack from '../../../../assets/Landing/Landing__Showcase__angle-back.jpg';
 import AngleLeft from '../../../../assets/Landing/Landing__Showcase__angle-left.jpg';
@@ -7,15 +5,6 @@ import CounterBase from '../../../../assets/Landing/Landing__Showcase__counter-b
 import CounterGreen from '../../../../assets/Landing/Landing__Showcase__counter-green.jpg';
 import CounterTerracotta from '../../../../assets/Landing/Landing__Showcase__counter-terracotta.jpg';
 import Burger from '../../../../assets/Landing/Landing__Showcase__burger.jpg';
-import RevenueChart from '../../../../assets/Landing/Landing__Showcase__conveyor-revenue-chart.png';
-import CategoryPerformance from '../../../../assets/Landing/Landing__Showcase__conveyor-category-performance.png';
-import InventoryHealth from '../../../../assets/Landing/Landing__Showcase__conveyor-inventory-health.png';
-import ProductSneaker from '../../../../assets/Landing/Landing__Showcase__conveyor-product-sneaker.png';
-import ProductBlouse from '../../../../assets/Landing/Landing__Showcase__conveyor-product-blouse.png';
-import ProductCamiSet from '../../../../assets/Landing/Landing__Showcase__conveyor-product-cami-set.png';
-import ProductBikini from '../../../../assets/Landing/Landing__Showcase__conveyor-product-bikini.png';
-import TemplateVineta from '../../../../assets/Landing/Landing__Showcase__conveyor-template-vineta.png';
-import TemplateVinetaStyle1 from '../../../../assets/Landing/Landing__Showcase__conveyor-template-vineta-style1.png';
 
 /**
  * The four things MerchForge does to one photograph, one scene each.
@@ -104,153 +93,72 @@ export function IngredientsScene() {
     );
 }
 
-/**
- * Real captures from a live MerchForge dashboard (Urban Thread Co.'s Fashion-01
- * account), not an illustration of one. Each image is a card taken straight out
- * of the Overview and Products pages — same charts, same product photos, same
- * prices — plus two storefront template previews from the website picker.
- */
-const TILES = [
-    { src: RevenueChart, alt: 'The Revenue Overview chart from a real MerchForge dashboard' },
-    { src: ProductSneaker, alt: 'A sneaker product card from a real MerchForge catalog, with its price and stock' },
-    { src: CategoryPerformance, alt: 'Real revenue split by category, Shoes and Shirts, from a MerchForge dashboard' },
-    { src: ProductBlouse, alt: 'A blouse product card from a real MerchForge catalog, with reviews and units sold' },
-    { src: TemplateVineta, alt: 'A storefront template preview from the MerchForge template picker' },
-    { src: ProductCamiSet, alt: 'A cami and shorts set product card from a real MerchForge catalog' },
-    { src: InventoryHealth, alt: 'A real Inventory Health card from a MerchForge dashboard' },
-    { src: ProductBikini, alt: 'A product card from a real MerchForge catalog, with its sales trend' },
-    { src: TemplateVinetaStyle1, alt: 'A second storefront template preview from the MerchForge template picker' },
+/** Deliberately uneven — round, tidy numbers are the tell that data is invented. */
+const REVENUE = [38, 52, 44, 67, 59, 81, 74, 96];
+const SPLIT = [
+    { label: 'Apparel', share: 0.46 },
+    { label: 'Home', share: 0.31 },
+    { label: 'Food', share: 0.23 },
 ];
 
-/** Laps the belt needs before content repeats, so a hard drag never runs out of
- * track to slide in from the left. */
-const LAPS = 3;
+export function DashboardScene() {
+    // Pre-compute the donut arcs. A stroke-dasharray sweep animates cleanly and
+    // needs no path maths at runtime.
+    const circumference = 2 * Math.PI * 52;
 
-/** Steady drift with nobody touching it — slow enough to read a card as it
- * passes, closer to a real conveyor than a ticker. */
-const BASE_SPEED = 26;
-
-/** How hard a swipe pushes belt speed, per px/s of pointer travel. */
-const DRAG_GAIN = 0.9;
-
-/** Never so fast a card blurs past unread. */
-const MAX_SPEED = 640;
-
-/** How quickly speed settles back toward BASE_SPEED once nobody is dragging. */
-const RECOVERY_PER_SECOND = 1.6;
-
-/**
- * A belt of real dashboard screenshots, always drifting left to right on its
- * own. Dragging does not page it — there is nothing to page to, the belt just
- * loops — it pushes the belt's speed up in whichever direction the swipe
- * travelled, the way shoving a real conveyor's surface would.
- *
- * Runs its own rAF loop rather than reusing the showcase's, because it never
- * stops: the parent's five-second auto-advance still fires around it to move
- * on to the next scene, entirely independent of this one's animation.
- */
-export function ConveyorScene() {
-    const trackRef = useRef<HTMLDivElement>(null);
-    const distanceRef = useRef(0);
-    const velocityRef = useRef(BASE_SPEED);
-    const draggingRef = useRef<{ lastX: number; lastT: number } | null>(null);
-
-    useEffect(() => {
-        const track = trackRef.current;
-        if (!track) return;
-
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            // Static is the reduced-motion form of a thing that otherwise never
-            // stops moving — there is no slower version of an always-on belt.
-            return;
-        }
-
-        // The showcase only remounts the panel that is becoming active (see
-        // HeroShowcase's key comment) — this one stays mounted, off-screen, for
-        // as long as a visitor sits on any of the other three scenes. Without
-        // this it would keep animating a card nobody can see for the rest of
-        // the visit. The showcase moves inactive panels a full width off the
-        // viewport rather than hiding them, so a plain viewport-rooted observer
-        // already reads "not intersecting" while this one is inactive.
-        let visible = false;
-        const observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; }, { threshold: 0 });
-        observer.observe(track);
-
-        let frame = 0;
-        let last: number | null = null;
-
-        const tick = (now: number) => {
-            frame = requestAnimationFrame(tick);
-            if (!visible) { last = null; return; }
-            if (last === null) { last = now; return; }
-            const dt = Math.min((now - last) / 1000, 1 / 15);
-            last = now;
-
-            if (!draggingRef.current) {
-                velocityRef.current = approach(velocityRef.current, BASE_SPEED, RECOVERY_PER_SECOND, dt);
-            }
-
-            distanceRef.current += velocityRef.current * dt;
-
-            const setWidth = track.scrollWidth / LAPS;
-            track.style.transform = `translate3d(${beltOffset(distanceRef.current, setWidth).toFixed(2)}px, 0, 0)`;
-        };
-
-        frame = requestAnimationFrame(tick);
-        return () => {
-            cancelAnimationFrame(frame);
-            observer.disconnect();
-        };
-    }, []);
-
-    const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
-        if (event.button !== 0) return;
-        // Caught here rather than let through: the showcase above swipes between
-        // scenes on the same gesture, and this belt has its own use for it.
-        event.stopPropagation();
-        event.currentTarget.setPointerCapture(event.pointerId);
-        draggingRef.current = { lastX: event.clientX, lastT: performance.now() };
-    };
-
-    const onPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
-        if (!draggingRef.current) return;
-        event.stopPropagation();
-
-        const now = performance.now();
-        const dt = Math.max((now - draggingRef.current.lastT) / 1000, 1 / 240);
-        const pointerSpeed = (event.clientX - draggingRef.current.lastX) / dt;
-
-        velocityRef.current = clamp(velocityRef.current + pointerSpeed * DRAG_GAIN * dt, -MAX_SPEED, MAX_SPEED);
-        draggingRef.current = { lastX: event.clientX, lastT: now };
-    };
-
-    const endDrag = (event: React.PointerEvent<HTMLDivElement>) => {
-        if (!draggingRef.current) return;
-        event.stopPropagation();
-        draggingRef.current = null;
-    };
+    const arcs = SPLIT.map((slice, index) => ({
+        ...slice,
+        dash: slice.share * circumference,
+        // Where this slice starts: everything before it, as degrees.
+        rotation: SPLIT.slice(0, index).reduce((sum, s) => sum + s.share, 0) * 360,
+    }));
 
     return (
-        <div className="scene scene--conveyor">
-            <div
-                className="conveyor"
-                onPointerDown={onPointerDown}
-                onPointerMove={onPointerMove}
-                onPointerUp={endDrag}
-                onPointerCancel={endDrag}
-            >
-                <div className="conveyor__track" ref={trackRef}>
-                    {Array.from({ length: LAPS }, (_, lap) =>
-                        TILES.map((tile, index) => (
-                            // Only the first lap's alt text is real; the repeats are the
-                            // same cards again for the loop, and a screen reader announcing
-                            // the same nine captions three times over would be noise.
-                            <figure className="conveyor__tile" key={`${lap}-${index}`}>
-                                <img src={tile.src} alt={lap === 0 ? tile.alt : ''} aria-hidden={lap !== 0} loading={lap === 0 ? 'eager' : 'lazy'} />
-                            </figure>
-                        )),
-                    )}
+        <div className="scene scene--dashboard">
+            <div className="scene__panel" style={step(0)}>
+                <div className="scene__metric">
+                    <p className="scene__metric-label">Revenue, last 30 days</p>
+                    <p className="scene__metric-value">$18,420</p>
+                    <p className="scene__metric-delta">+12.4%</p>
                 </div>
+
+                <div className="scene__bars" role="img" aria-label="Revenue trending upward over the last eight weeks">
+                    {REVENUE.map((value, index) => (
+                        <span
+                            key={index}
+                            style={{ '--h': `${value}%`, '--step': `${0.32 + index * 0.07}s` } as React.CSSProperties}
+                        />
+                    ))}
+                </div>
+            </div>
+
+            <div className="scene__panel scene__panel--donut" style={step(1)}>
+                <svg viewBox="0 0 120 120" aria-label="Sales split by category: apparel 46 percent, home 31 percent, food 23 percent">
+                    {arcs.map((arc, index) => (
+                        <circle
+                            key={arc.label}
+                            cx="60"
+                            cy="60"
+                            r="52"
+                            fill="none"
+                            strokeWidth="13"
+                            strokeDasharray={`${arc.dash} ${circumference}`}
+                            transform={`rotate(${arc.rotation - 90} 60 60)`}
+                            className={`scene__arc scene__arc--${index}`}
+                            style={{ '--step': `${0.6 + index * 0.18}s`, '--dash': `${arc.dash}` } as React.CSSProperties}
+                        />
+                    ))}
+                </svg>
+
+                <ul className="scene__legend">
+                    {SPLIT.map((slice, index) => (
+                        <li key={slice.label} style={{ '--step': `${0.85 + index * 0.1}s` } as React.CSSProperties}>
+                            <span className={`scene__swatch scene__swatch--${index}`} aria-hidden="true" />
+                            {slice.label}
+                            <b>{Math.round(slice.share * 100)}%</b>
+                        </li>
+                    ))}
+                </ul>
             </div>
         </div>
     );
