@@ -11,6 +11,13 @@
   position: sticky;
   top: 0;
   z-index: 100;
+
+  /* Belt and braces with the hysteresis in Header.tsx. Collapsing this element
+     changes its height above everything else, and scroll anchoring answers that
+     by shifting the scroll offset to hold the content still - which is the nudge
+     that used to push the scroll position back across the threshold and set the
+     header flickering. Excluding it from anchoring removes the nudge itself. */
+  overflow-anchor: none;
   background: var(--nav-bg);
   border-bottom: 1px solid transparent;
   transition: border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
@@ -19,6 +26,10 @@
 .header--scrolled {
   background: color-mix(in srgb, var(--nav-bg) 88%, transparent);
   backdrop-filter: blur(10px);
+
+  /* Promotes the header to its own compositing layer, so the blur samples a
+     cached texture rather than forcing the painting behind it to be redone. */
+  will-change: backdrop-filter;
 }
 
 .header--scrolled {
@@ -33,7 +44,14 @@
   align-items: center;
   gap: 2rem;
   padding: 1.25rem clamp(1.25rem, 5vw, 3rem);
-  transition: padding 0.25s ease;
+
+  /* The collapse is deliberately not animated. Padding is a layout property, so
+     transitioning it reflowed the whole document below this sticky header on
+     every frame for a quarter of a second - and it did that at exactly the
+     moment the backdrop blur switched on and the hero canvas was still drawing.
+     There is no compositor path for padding, so the only way to make it cheap is
+     not to tween it. The height now snaps while the tint, border and shadow
+     still fade over 0.25s, which reads as crisp rather than abrupt. */
 }
 
 .header--scrolled .header__inner {

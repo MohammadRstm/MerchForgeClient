@@ -1,0 +1,108 @@
+/* The dashboard section. Reads the shared marketing tokens from .home — see
+   Home.css — and never the dashboard's own blue, which CLAUDE.md keeps on the
+   other side of the fence. Status colours below are semantic, not accents. */
+
+.desk__header {
+  max-width: 46rem;
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+
+.desk__heading {
+  font-family: var(--mf-display-font);
+  font-weight: var(--mf-display-weight);
+  font-size: clamp(1.9rem, 3.4vw, 2.9rem);
+  line-height: 1.1;
+  letter-spacing: var(--mf-display-tracking);
+  color: var(--mf-text);
+  margin: 0.75rem 0 0.9rem;
+  text-wrap: balance;
+}
+
+.desk__lede {
+  margin: 0;
+  font-size: clamp(1rem, 1.1vw, 1.0625rem);
+  line-height: 1.6;
+  color: var(--mf-text-secondary);
+  max-width: 38rem;
+}
+
+/* ---------- Conveyor ---------- */
+
+.desk-conveyor {
+  position: relative;
+  height: clamp(19rem, 30vw, 24rem);
+  overflow: hidden;
+  border-radius: 10px;
+
+  /* The rotateY tilt on off-centre tiles needs real 3D space to turn into,
+     rather than flattening onto the page like a normal scale transform. */
+  perspective: 1600px;
+
+  /* Fades tiles into the section instead of cutting one off mid-frame at
+     either edge. */
+  mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+}
+
+.desk-conveyor__track {
+  display: flex;
+  align-items: center;
+  gap: clamp(1.5rem, 3vw, 2.75rem);
+  height: 100%;
+  padding: 0 2rem;
+  transform-style: preserve-3d;
+  /* Set by the rAF loop in OwnerDeskConveyor — transform only, so the loop
+     never triggers layout. */
+  will-change: transform;
+}
+
+.desk-conveyor__tile {
+  flex-shrink: 0;
+  height: 78%;
+  margin: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--mf-bg-raised);
+  box-shadow: 0 30px 60px -30px rgba(20, 22, 27, 0.5);
+  /* Also set per-frame in JS (scale, rotateY, opacity, blur, z-index) - this
+     is only the resting state before the loop's first tick. */
+  transition: none;
+}
+
+.desk-conveyor__tile img {
+  display: block;
+  height: 100%;
+  width: auto;
+  /* Every tile is already a composed card — a dashboard screenshot or a
+     product photo with its own baked-in price and stock text. Cropping any
+     of it would risk slicing off a caption. */
+  object-fit: contain;
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ---------- Narrow ---------- */
+
+@media (max-width: 860px) {
+  .desk-conveyor {
+    height: clamp(15rem, 46vw, 19rem);
+  }
+
+  .desk-conveyor__track {
+    gap: 1.1rem;
+    padding: 0 1.25rem;
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  /* OwnerDeskConveyor's own effect skips starting the loop under reduced
+     motion, so the track and every tile simply sit at their natural CSS
+     values - full size, unrotated, sharp. */
+  .desk-conveyor__track,
+  .desk-conveyor__tile {
+    transition: none;
+  }
+}

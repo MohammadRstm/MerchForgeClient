@@ -1,0 +1,299 @@
+/* The pipeline section. Marketing tokens from .home — see Home.css. */
+
+.studio__header {
+  max-width: 46rem;
+  margin-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+
+.studio__heading {
+  font-family: var(--mf-display-font);
+  font-weight: var(--mf-display-weight);
+  font-size: clamp(1.9rem, 3.4vw, 2.9rem);
+  line-height: 1.1;
+  letter-spacing: var(--mf-display-tracking);
+  color: var(--mf-text);
+  margin: 0.75rem 0 0.9rem;
+  text-wrap: balance;
+}
+
+.studio__lede {
+  margin: 0;
+  font-size: clamp(1rem, 1.1vw, 1.0625rem);
+  line-height: 1.6;
+  color: var(--mf-text-secondary);
+  max-width: 38rem;
+}
+
+/* ---------- Two columns: copy scrolls, stage stays ---------- */
+
+.studio__body {
+  display: grid;
+  grid-template-columns: 0.85fr 1fr;
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: start;
+}
+
+.studio__steps {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Each step occupies enough height that exactly one of them can own the middle
+   band the observer watches. Too short and two qualify at once; too tall and the
+   section becomes a scroll marathon. */
+.studio__step {
+  min-height: 62vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 1.5rem 0;
+}
+
+.studio__step-index {
+  margin: 0 0 0.6rem;
+  font-family: var(--mf-body-font);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--mf-text-muted);
+  font-variant-numeric: tabular-nums;
+  transition: color 0.3s ease;
+}
+
+.studio__step-title {
+  margin: 0 0 0.7rem;
+  font-family: var(--mf-display-font);
+  font-weight: var(--mf-display-weight);
+  font-size: clamp(1.35rem, 2.2vw, 1.75rem);
+  letter-spacing: var(--mf-display-tracking);
+  line-height: 1.15;
+  color: var(--mf-text-muted);
+  transition: color 0.3s ease;
+}
+
+.studio__step-body {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--mf-text-muted);
+  max-width: 32rem;
+  transition: color 0.3s ease;
+}
+
+/* The current step is the only one at full strength. Dimming the rest is what
+   makes a column of six paragraphs read as a sequence with a position in it,
+   rather than as six paragraphs. */
+.studio__step.is-current .studio__step-index {
+  color: var(--mf-accent);
+}
+
+.studio__step.is-current .studio__step-title {
+  color: var(--mf-text);
+}
+
+.studio__step.is-current .studio__step-body {
+  color: var(--mf-text-secondary);
+}
+
+/* ---------- Stage ---------- */
+
+.studio__stage {
+  position: sticky;
+  /* Clears the sticky header, plus a little air. */
+  top: 7rem;
+  height: 66vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.studio__stage-inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: studio-fade 0.34s ease-out;
+}
+
+@keyframes studio-fade {
+  from { opacity: 0; transform: translateY(8px) scale(0.995); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Only shown in the narrow layout, where there is no sticky stage. */
+.studio__step-visual {
+  display: none;
+}
+
+/* ---------- Plates ---------- */
+
+.studio__plate {
+  position: relative;
+  margin: 0;
+  height: 100%;
+  min-height: 0;
+  flex: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--mf-bg-raised);
+  box-shadow: 0 34px 70px -44px rgba(32, 26, 16, 0.5);
+}
+
+.studio__plate img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.studio__plate figcaption {
+  position: absolute;
+  left: 0.6rem;
+  bottom: 0.6rem;
+  font-family: var(--mf-body-font);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #fff;
+  background: rgba(20, 22, 27, 0.58);
+  backdrop-filter: blur(6px);
+  border-radius: 999px;
+  padding: 0.25rem 0.62rem;
+}
+
+.studio__pair {
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---------- Suggested details ---------- */
+
+.studio__details {
+  width: 100%;
+  max-width: 28rem;
+  padding: 1.4rem 1.5rem;
+  border: 1px solid var(--mf-border);
+  border-radius: 8px;
+  background: var(--mf-bg-raised);
+  box-shadow: 0 34px 70px -44px rgba(32, 26, 16, 0.5);
+}
+
+.studio__details-caption {
+  margin: 0 0 1rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--mf-accent);
+}
+
+.studio__details dl {
+  margin: 0;
+  display: grid;
+  gap: 0.1rem;
+}
+
+.studio__details dl > div {
+  display: grid;
+  grid-template-columns: 9rem 1fr;
+  gap: 1rem;
+  padding: 0.6rem 0;
+  border-top: 1px solid var(--mf-border);
+}
+
+.studio__details dt {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--mf-text-muted);
+}
+
+.studio__details dd {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--mf-text);
+}
+
+/* ---------- Narrow ---------- */
+
+@media (max-width: 900px) {
+  .studio__body {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  /* Sticky needs a tall column beside it to stick against, which a stacked
+     layout does not have. Each step carries its own visual instead. */
+  .studio__stage {
+    display: none;
+  }
+
+  .studio__step {
+    min-height: 0;
+    padding: 0 0 2.75rem;
+  }
+
+  /* Nothing is dimmed when every step brings its own picture — there is no
+     stage to keep in step with, so dimming would just make five sixths of the
+     section hard to read. */
+  .studio__step-title,
+  .studio__step-index,
+  .studio__step-body {
+    color: var(--mf-text);
+  }
+
+  .studio__step-index {
+    color: var(--mf-accent);
+  }
+
+  .studio__step-body {
+    color: var(--mf-text-secondary);
+  }
+
+  .studio__step-visual {
+    display: block;
+    margin-top: 1.1rem;
+    height: 58vw;
+    max-height: 22rem;
+  }
+
+  .studio__step-visual .studio__plate,
+  .studio__step-visual .studio__pair {
+    height: 100%;
+  }
+
+  .studio__details {
+    max-width: none;
+    padding: 1.1rem 1.2rem;
+  }
+
+  .studio__details dl > div {
+    grid-template-columns: 7.5rem 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .studio__details dl > div {
+    grid-template-columns: 1fr;
+    gap: 0.15rem;
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .studio__stage-inner {
+    animation: none;
+  }
+
+  .studio__step-index,
+  .studio__step-title,
+  .studio__step-body {
+    transition: none;
+  }
+}
