@@ -3,7 +3,6 @@ import Hero from './components/Hero/Hero';
 import Studio from './components/Studio/Studio';
 import Header from '../Header/Header';
 import ProofStrip from './components/ProofStrip/ProofStrip';
-import HowItWorks from './components/HowItWorks/HowItWorks';
 import OwnerDesk from './components/OwnerDesk/OwnerDesk';
 import WhatsNext from './components/WhatsNext/WhatsNext';
 import Faq from './components/Faq/Faq';
@@ -19,7 +18,6 @@ export default function Home() {
         <Hero />
         <ProofStrip />
         <Studio />
-        <HowItWorks />
         <OwnerDesk />
         <WhatsNext />
         <Pricing />
