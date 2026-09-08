@@ -39,7 +39,8 @@
      --step     centre-to-centre spacing as a multiple of card width; >1 leaves
                 a gap between neighbours, <1 makes them overlap
      --tilt     how far an off-centre card turns away
-     --depth    how far it recedes
+     --depth    how far it recedes at the far ends
+     --lift     how far it comes forward at the centre, past the base plane
      --cycle    time for one card to cross the whole belt
 */
 
@@ -61,12 +62,20 @@
      than a belt and hides the edge of whatever is behind the focal card. */
   --step: 1.12;
 
-  /* Both deliberately restrained. A card that turns 20 degrees and drops 240px
-     back is dramatic and unreadable - the screenshots stop being screenshots and
-     become texture. These keep the depth cue while leaving the off-centre cards
-     legible enough to be worth looking at. */
-  --tilt: 15deg;
-  --depth: 150px;
+  /* Depth is the whole effect, so it is sized to actually register. Apparent
+     size under perspective is P / (P - z), which is why the earlier pairing of
+     a 1700px perspective with 150px of travel read as flat: it worked out to an
+     8% size difference between an edge card and the centre one, well under what
+     the eye takes for depth. Against the 850px perspective on the stage these
+     give roughly 0.64x at the far ends, 0.85x one slot out and 1.13x dead
+     centre - a card visibly leaves the distance, comes forward past the base
+     plane, and recedes again.
+     --lift is what makes the centre a focal *plane* rather than just the middle
+     of the animation: the card crosses in front of where every other card sits,
+     toward the viewer, instead of merely being the least-receded of them. */
+  --tilt: 28deg;
+  --depth: 480px;
+  --lift: 100px;
 
   /* Longer than it looks: with ten cards this is the time for one to cross the
      whole belt, so a card holds the centre for cycle/count - about seven
@@ -99,8 +108,22 @@
    doing the clipping, or the rotateY below collapses into a 2D squash. */
 .desk-belt__stage {
   position: relative;
-  height: calc(var(--card-w) / var(--card-ar) + 5rem);
-  perspective: 1700px;
+
+  /* Extra head-room over the card's own height because the centre card is now
+     larger than its layout box - it sits forward of the base plane, so it
+     projects bigger and needs somewhere to grow into. */
+  height: calc(var(--card-w) / var(--card-ar) + 7rem);
+
+  /* Short, and that is the point. Perspective distance is the strength of the
+     foreshortening: a long one flattens everything toward orthographic, which
+     is what made the previous version read as a plain horizontal slide. This is
+     close enough to the belt to make a receding card genuinely shrink and a
+     turned card genuinely skew.
+     perspective-origin is left at its 50% 50% default, so the vanishing point
+     is the centre of the stage - which is what curves the path: as cards fall
+     back in Z they also converge horizontally toward that point, so they travel
+     an arc into the distance rather than a straight line. */
+  perspective: 850px;
   transform-style: preserve-3d;
 }
 
@@ -162,14 +185,24 @@
   to   { transform: translate3d(calc(var(--span) / -2), 0, 0); }
 }
 
+/* far away -> approach -> forward past the base plane -> peak -> back out again.
+   The stops are bunched around the middle rather than spread evenly: most of
+   the depth change happens in the 12% of the cycle either side of centre, which
+   is what makes a card visibly rush forward and settle instead of drifting
+   linearly toward the viewer for half a minute. Travel stays linear in its own
+   animation, so shaping this one cannot disturb the spacing. */
 @keyframes desk-belt-depth {
-  0%   { transform: translateZ(calc(var(--depth) * -1)) rotateY(calc(var(--tilt) * -1)); opacity: 0.3; }
-  12%  { opacity: 0.85; }
+  0%   { transform: translateZ(calc(var(--depth) * -1)) rotateY(calc(var(--tilt) * -1)); opacity: 0.25; }
+  10%  { opacity: 0.7; }
+  22%  { transform: translateZ(calc(var(--depth) * -0.72)) rotateY(calc(var(--tilt) * -0.8)); }
   38%  { transform: translateZ(calc(var(--depth) * -0.3)) rotateY(calc(var(--tilt) * -0.42)); }
-  50%  { transform: translateZ(0) rotateY(0deg); opacity: 1; }
+  46%  { transform: translateZ(calc(var(--lift) * 0.55)) rotateY(calc(var(--tilt) * -0.12)); }
+  50%  { transform: translateZ(var(--lift)) rotateY(0deg); opacity: 1; }
+  54%  { transform: translateZ(calc(var(--lift) * 0.55)) rotateY(calc(var(--tilt) * 0.12)); }
   62%  { transform: translateZ(calc(var(--depth) * -0.3)) rotateY(calc(var(--tilt) * 0.42)); }
-  88%  { opacity: 0.85; }
-  100% { transform: translateZ(calc(var(--depth) * -1)) rotateY(var(--tilt)); opacity: 0.3; }
+  78%  { transform: translateZ(calc(var(--depth) * -0.72)) rotateY(calc(var(--tilt) * 0.8)); }
+  90%  { opacity: 0.7; }
+  100% { transform: translateZ(calc(var(--depth) * -1)) rotateY(var(--tilt)); opacity: 0.25; }
 }
 
 /* Click toggles the belt; hover deliberately does not. A pointer crossing this
@@ -223,16 +256,19 @@
        size an aggressive angle costs legibility for depth nobody can make out. */
     --card-w: min(88vw, 26rem);
     --step: 1.1;
-    --tilt: 9deg;
-    --depth: 80px;
+    --tilt: 18deg;
+    --depth: 240px;
+    --lift: 50px;
     --cycle: 55s;
     mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
     -webkit-mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
   }
 
   .desk-belt__stage {
-    perspective: 900px;
-    height: calc(var(--card-w) / var(--card-ar) + 3rem);
+    /* Same reasoning as the desktop stage, scaled to the box: a shorter
+       perspective keeps the depth readable on a smaller card. */
+    perspective: 560px;
+    height: calc(var(--card-w) / var(--card-ar) + 4.5rem);
   }
 }
 
