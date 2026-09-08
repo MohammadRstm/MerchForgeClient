@@ -79,6 +79,7 @@
 
   position: relative;
   overflow: hidden;
+  cursor: pointer;
 
   /* Cards dissolve into the section rather than being cut off mid-frame. This
      is also what hides the wrap, so it is load-bearing, not decoration. */
@@ -164,12 +165,25 @@
   100% { transform: translateZ(calc(var(--depth) * -1)) rotateY(var(--tilt)); opacity: 0.3; }
 }
 
-/* Hovering is someone trying to read a card, so stop moving it. Paused rather
-   than slowed: a belt that keeps creeping is harder to read than one that
-   stops, and play-state resumes exactly where it left off. */
-.desk-belt:hover .desk-belt__slot,
-.desk-belt:hover .desk-belt__card {
+/* Click toggles the belt; hover deliberately does not. A pointer crossing this
+   section is usually on its way somewhere else, so pausing on hover made the
+   animation stop for reasons the visitor never intended. Pausing is an explicit
+   act now, and play-state resumes exactly where it left off either way.
+
+   Also the WCAG 2.2.2 escape hatch: anything that animates automatically for
+   more than five seconds needs a way to stop it, which is why this is a real
+   keyboard-reachable control rather than a pointer-only affordance. */
+.desk-belt.is-paused .desk-belt__slot,
+.desk-belt.is-paused .desk-belt__card {
   animation-play-state: paused;
+}
+
+.desk-belt:focus-visible {
+  /* Offset outwards so the ring sits clear of the cards. The edge mask fades
+     its extreme left and right, but the run along the top and bottom stays
+     solid, which is enough to see where focus is. */
+  outline: 2px solid var(--mf-accent);
+  outline-offset: 3px;
 }
 
 /* ---------- Narrow ---------- */

@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import { useState, type CSSProperties, type KeyboardEvent } from 'react';
 import Overview from '../../../../assets/Landing/Landing__OwnerDesk__overview.png';
 import ProductsCatalog from '../../../../assets/Landing/Landing__OwnerDesk__products-catalog.png';
 import OrdersSummary from '../../../../assets/Landing/Landing__OwnerDesk__orders-summary.png';
@@ -54,13 +54,45 @@ const TILES: Tile[] = [
 ];
 
 export default function OwnerDeskConveyor() {
+    /**
+     * Click to stop, click again to carry on - not hover. A pointer crossing
+     * this section is usually travelling somewhere else, so pausing on hover
+     * stopped the belt for reasons nobody intended.
+     *
+     * It is a real toggle button rather than a click handler on a div because
+     * something that animates by itself for more than five seconds needs a way
+     * to stop it that does not require a mouse (WCAG 2.2.2). Enter and Space
+     * are handled explicitly since this is a div playing the role.
+     */
+    const [paused, setPaused] = useState(false);
+
+    const toggle = () => setPaused((current) => !current);
+
+    const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+
+        // Space would otherwise scroll the page out from under the thing the
+        // visitor is trying to pause.
+        event.preventDefault();
+        toggle();
+    };
+
     return (
         // --count belongs on .desk-belt, not on the stage: .desk-belt is where
         // --span is declared, custom properties only inherit downward, and a
         // --span that cannot see --count resolves to nothing - which silently
         // takes the whole travel transform with it and stacks every card in one
         // place. Verified in the browser rather than assumed.
-        <div className="desk-belt" style={{ '--count': TILES.length } as CSSProperties}>
+        <div
+            className={`desk-belt${paused ? ' is-paused' : ''}`}
+            style={{ '--count': TILES.length } as CSSProperties}
+            role="button"
+            tabIndex={0}
+            aria-pressed={paused}
+            aria-label={paused ? 'Resume the dashboard screenshots' : 'Pause the dashboard screenshots'}
+            onClick={toggle}
+            onKeyDown={onKeyDown}
+        >
             <div
                 className="desk-belt__stage"
                 role="img"
