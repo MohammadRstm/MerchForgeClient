@@ -238,6 +238,18 @@ export default function OwnerDeskConveyor() {
         });
     };
 
+    /**
+     * Ends the gesture and hands the belt back.
+     *
+     * Reachable from pointerup, pointercancel *and* lostpointercapture. The
+     * last one is the safety net and it is not theoretical: a native image drag
+     * takes the pointer stream away mid-gesture and no pointerup ever arrives,
+     * which left the belt paused with is-dragging still on it - stuck until the
+     * next press. It showed up more often on narrow screens simply because the
+     * card fills most of the belt there, so almost every press lands on an
+     * image. Preventing the drag (below) stops that particular cause; ending on
+     * lost capture covers every other way a pointer can vanish.
+     */
     const endDrag = (event: PointerEvent<HTMLDivElement>) => {
         const drag = dragRef.current;
         if (!drag) return;
@@ -245,7 +257,7 @@ export default function OwnerDeskConveyor() {
         dragRef.current = null;
         setDragging(false);
 
-        if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+        if (event.currentTarget.hasPointerCapture?.(event.pointerId)) {
             event.currentTarget.releasePointerCapture(event.pointerId);
         }
 
@@ -286,6 +298,12 @@ export default function OwnerDeskConveyor() {
             onPointerMove={onPointerMove}
             onPointerUp={endDrag}
             onPointerCancel={endDrag}
+            onLostPointerCapture={endDrag}
+            // The browser's own image dragging competes for the same gesture and
+            // wins, swallowing the pointer stream. Cancelling it here is what
+            // keeps a press on a screenshot scrubbing the belt instead of
+            // peeling the picture off it.
+            onDragStart={(event) => event.preventDefault()}
         >
             <div
                 className="desk-belt__stage"
@@ -299,7 +317,15 @@ export default function OwnerDeskConveyor() {
                         style={{ '--i': index } as CSSProperties}
                     >
                         <figure className="desk-belt__card">
-                            <img src={tile.src} alt={tile.alt} loading={index < 3 ? 'eager' : 'lazy'} />
+                            {/* draggable={false} as well as the CSS: -webkit-user-drag
+                                is non-standard and Firefox ignores it entirely, so
+                                the stylesheet alone left images draggable there. */}
+                            <img
+                                src={tile.src}
+                                alt={tile.alt}
+                                draggable={false}
+                                loading={index < 3 ? 'eager' : 'lazy'}
+                            />
                         </figure>
                     </div>
                 ))}
