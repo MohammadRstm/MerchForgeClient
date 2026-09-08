@@ -26,83 +26,192 @@
   max-width: 38rem;
 }
 
-/* ---------- Conveyor ---------- */
+/* ---------- Conveyor ----------
 
-.desk-conveyor {
+   A shallow 3D belt of dashboard screenshots. Every card runs the same pair of
+   infinite animations, offset in time by one slot each, which is what spaces
+   them evenly and what makes the loop seamless - no group ever restarts, so
+   there is no jump to conceal and no duplicated set to carry.
+
+   The tunables live here rather than being scattered through the keyframes:
+
+     --card-w   width of one card; everything else is derived from it
+     --step     centre-to-centre spacing as a multiple of card width; >1 leaves
+                a gap between neighbours, <1 makes them overlap
+     --tilt     how far an off-centre card turns away
+     --depth    how far it recedes
+     --cycle    time for one card to cross the whole belt
+*/
+
+.desk-belt {
+  /* Sized for legibility first. These are 1893px-wide captures, so a small card
+     renders the dashboard at a scale where none of it can actually be read - at
+     ~46vw the headings and headline figures ($1,420.00, "30 Total Orders") are
+     legible, which is the entire point of showing real screenshots rather than
+     a drawing of one. */
+  --card-w: clamp(18rem, 46vw, 40rem);
+
+  /* Measured from the ten captures, which run 2.156 to 2.179 - so cover trims
+     roughly a percent off the tallest rather than the ~5% a rounder 16/7 would
+     have cost. A single decimal (not "13 / 6") because the stage height below
+     divides by this, and calc() would read a slashed ratio as two divisions. */
+  --card-ar: 2.169;
+  /* Above 1, so neighbours sit apart with a real gap instead of overlapping.
+     Below 1 they tuck behind each other, which reads as a stack of cards rather
+     than a belt and hides the edge of whatever is behind the focal card. */
+  --step: 1.12;
+
+  /* Both deliberately restrained. A card that turns 20 degrees and drops 240px
+     back is dramatic and unreadable - the screenshots stop being screenshots and
+     become texture. These keep the depth cue while leaving the off-centre cards
+     legible enough to be worth looking at. */
+  --tilt: 15deg;
+  --depth: 150px;
+
+  /* Longer than it looks: with ten cards this is the time for one to cross the
+     whole belt, so a card holds the centre for cycle/count - about seven
+     seconds, which is roughly how long it takes to actually read one. */
+  --cycle: 72s;
+
+  /* The belt is wider than the stage on purpose: cards wrap from one end to the
+     other out here, far outside anything the mask leaves visible. */
+  --span: calc(var(--count) * var(--card-w) * var(--step));
+
   position: relative;
-  height: clamp(19rem, 30vw, 24rem);
   overflow: hidden;
-  border-radius: 10px;
 
-  /* The rotateY tilt on off-centre tiles needs real 3D space to turn into,
-     rather than flattening onto the page like a normal scale transform. */
-  perspective: 1600px;
-
-  /* Fades tiles into the section instead of cutting one off mid-frame at
-     either edge. */
-  mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+  /* Cards dissolve into the section rather than being cut off mid-frame. This
+     is also what hides the wrap, so it is load-bearing, not decoration. */
+  mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
 }
 
-.desk-conveyor__track {
-  display: flex;
-  align-items: center;
-  gap: clamp(1.5rem, 3vw, 2.75rem);
-  height: 100%;
-  padding: 0 2rem;
+/* Separate from .desk-belt because overflow: hidden forces an element's own
+   transform-style flat - the perspective has to live on an element that is not
+   doing the clipping, or the rotateY below collapses into a 2D squash. */
+.desk-belt__stage {
+  position: relative;
+  height: calc(var(--card-w) / var(--card-ar) + 5rem);
+  perspective: 1700px;
   transform-style: preserve-3d;
-  /* Set by the rAF loop in OwnerDeskConveyor — transform only, so the loop
-     never triggers layout. */
+}
+
+/* Travel only, and strictly linear: any easing here would bunch the cards up
+   and break the even spacing the offsets create. inset/margin centres each slot
+   so the keyframes carry nothing but the movement. */
+.desk-belt__slot {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: var(--card-w);
+  aspect-ratio: var(--card-ar);
+  transform-style: preserve-3d;
+  --delay: calc(var(--i) * var(--cycle) / var(--count) * -1);
+  animation: desk-belt-travel var(--cycle) linear infinite;
+  animation-delay: var(--delay);
   will-change: transform;
 }
 
-.desk-conveyor__tile {
-  flex-shrink: 0;
-  height: 78%;
+/* Depth, shaped rather than linear - most of the change happens close to the
+   centre, so one card is clearly the focus instead of four being vaguely
+   different sizes. translateZ (not scale) does the resizing, so the card grows
+   because it is nearer the viewer, and preserve-3d sorts the overlap for free
+   without a single z-index. */
+.desk-belt__card {
+  position: relative;
+  width: 100%;
+  height: 100%;
   margin: 0;
-  border-radius: 8px;
+  border-radius: 10px;
   overflow: hidden;
   background: var(--mf-bg-raised);
-  box-shadow: 0 30px 60px -30px rgba(20, 22, 27, 0.5);
-  /* Also set per-frame in JS (scale, rotateY, opacity, blur, z-index) - this
-     is only the resting state before the loop's first tick. */
-  transition: none;
+  border: 1px solid var(--mf-border);
+  box-shadow: 0 34px 60px -34px rgba(20, 22, 27, 0.55);
+  animation: desk-belt-depth var(--cycle) linear infinite;
+  animation-delay: var(--delay);
+  will-change: transform, opacity;
 }
 
-.desk-conveyor__tile img {
+.desk-belt__card img {
   display: block;
+  width: 100%;
   height: 100%;
-  width: auto;
-  /* Every tile is already a composed card — a dashboard screenshot or a
-     product photo with its own baked-in price and stock text. Cropping any
-     of it would risk slicing off a caption. */
-  object-fit: contain;
+  /* cover, not contain, and never a fixed width/height pair: the captures sit
+     within a percent of each other but are not identical, and cover absorbs that
+     by trimming rather than stretching - nothing is ever distorted. The card
+     ratio above is set to their measured mean so there is almost nothing to
+     trim, and the top-left bias spends what little there is on the bottom edge,
+     keeping each panel's heading and headline figure in frame. */
+  object-fit: cover;
+  object-position: left top;
   -webkit-user-drag: none;
   user-select: none;
   -webkit-user-select: none;
 }
 
+@keyframes desk-belt-travel {
+  from { transform: translate3d(calc(var(--span) / 2), 0, 0); }
+  to   { transform: translate3d(calc(var(--span) / -2), 0, 0); }
+}
+
+@keyframes desk-belt-depth {
+  0%   { transform: translateZ(calc(var(--depth) * -1)) rotateY(calc(var(--tilt) * -1)); opacity: 0.3; }
+  12%  { opacity: 0.85; }
+  38%  { transform: translateZ(calc(var(--depth) * -0.3)) rotateY(calc(var(--tilt) * -0.42)); }
+  50%  { transform: translateZ(0) rotateY(0deg); opacity: 1; }
+  62%  { transform: translateZ(calc(var(--depth) * -0.3)) rotateY(calc(var(--tilt) * 0.42)); }
+  88%  { opacity: 0.85; }
+  100% { transform: translateZ(calc(var(--depth) * -1)) rotateY(var(--tilt)); opacity: 0.3; }
+}
+
+/* Hovering is someone trying to read a card, so stop moving it. Paused rather
+   than slowed: a belt that keeps creeping is harder to read than one that
+   stops, and play-state resumes exactly where it left off. */
+.desk-belt:hover .desk-belt__slot,
+.desk-belt:hover .desk-belt__card {
+  animation-play-state: paused;
+}
+
 /* ---------- Narrow ---------- */
 
 @media (max-width: 860px) {
-  .desk-conveyor {
-    height: clamp(15rem, 46vw, 19rem);
+  .desk-belt {
+    /* Almost the full viewport width: on a phone one readable card beats three
+       unreadable ones, so the belt becomes essentially one-up with its
+       neighbours just breaking the edges. Turned and recessed less too - at this
+       size an aggressive angle costs legibility for depth nobody can make out. */
+    --card-w: min(88vw, 26rem);
+    --step: 1.1;
+    --tilt: 9deg;
+    --depth: 80px;
+    --cycle: 55s;
+    mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
   }
 
-  .desk-conveyor__track {
-    gap: 1.1rem;
-    padding: 0 1.25rem;
+  .desk-belt__stage {
+    perspective: 900px;
+    height: calc(var(--card-w) / var(--card-ar) + 3rem);
   }
 }
 
 /* ---------- Reduced motion ---------- */
 
 @media (prefers-reduced-motion: reduce) {
-  /* OwnerDeskConveyor's own effect skips starting the loop under reduced
-     motion, so the track and every tile simply sit at their natural CSS
-     values - full size, unrotated, sharp. */
-  .desk-conveyor__track,
-  .desk-conveyor__tile {
-    transition: none;
+  /* Nothing moves, so the belt becomes a single card sitting square-on and
+     legible - the state the animation was carrying each one through anyway.
+     The rest stay mounted but out of the way rather than being unmounted, so
+     the section keeps its height and the markup stays identical. */
+  .desk-belt__slot,
+  .desk-belt__card {
+    animation: none;
+  }
+
+  .desk-belt__slot {
+    opacity: 0;
+  }
+
+  .desk-belt__slot:first-child {
+    opacity: 1;
   }
 }
