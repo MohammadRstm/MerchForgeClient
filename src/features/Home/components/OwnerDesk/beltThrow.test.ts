@@ -36,13 +36,26 @@ describe('throwRateFromVelocity', () => {
     });
 
     /**
-     * Releasing while holding the belt still should leave it still for an
-     * instant and let the settle wind it back up - not snap it to full speed.
+     * The regression these exist to prevent. A throw must only ever add energy:
+     * a release slower than the belt itself hands it straight back at 1x rather
+     * than parking it near a standstill and crawling up from there, which reads
+     * as the animation having stopped.
      */
-    it('returns a standstill, not normal speed, when released without motion', () => {
-        // Signed-zero territory: negating 0 yields -0, and toBe would compare
-        // that with Object.is. The sign of a zero rate means nothing here.
-        expect(throwRateFromVelocity(0, BELT, MAX)).toBeCloseTo(0, 10);
+    it('hands the belt back at normal speed when released without motion', () => {
+        expect(throwRateFromVelocity(0, BELT, MAX)).toBe(1);
+    });
+
+    it('ignores a gentle release in either direction rather than slowing the belt', () => {
+        // A drag that ends leisurely - the common case, and the one that used to
+        // leave the belt crawling for over two seconds.
+        expect(throwRateFromVelocity(-BELT * 0.4, BELT, MAX)).toBe(1);
+        expect(throwRateFromVelocity(BELT * 0.6, BELT, MAX)).toBe(1);
+        expect(throwRateFromVelocity(BELT * 0.99, BELT, MAX)).toBe(1);
+    });
+
+    it('still takes over the moment the throw beats the belt', () => {
+        expect(throwRateFromVelocity(-BELT * 1.01, BELT, MAX)).toBeCloseTo(1.01, 5);
+        expect(throwRateFromVelocity(BELT * 1.5, BELT, MAX)).toBeCloseTo(-1.5, 5);
     });
 
     it('falls back to normal speed rather than dividing by a zero-width belt', () => {

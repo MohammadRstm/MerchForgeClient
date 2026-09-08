@@ -21,10 +21,16 @@
  * what makes the result a multiple of normal rather than an absolute: throw
  * twice as fast as the belt travels and you get exactly 2.
  *
- * A velocity of zero returns zero, not one. Releasing while holding the belt
- * still should leave it still for an instant and let it wind back up, which is
- * what the settle below then does; snapping straight to full speed would feel
- * like the belt was yanked out of the hand.
+ * A throw only ever adds energy: anything slower than the belt's own speed, in
+ * either direction, hands it straight back at 1x.
+ *
+ * That rule replaced the opposite one, which returned the measured rate however
+ * small it was on the theory that letting go of something held still should
+ * leave it still. It reads as a fault rather than as physics. Most releases are
+ * gentle - you drag to look at a card and let go - and anything under 0.1px/ms
+ * lands below 1x, with a dead release taking 2.4 seconds to crawl back up to
+ * normal. Reported, correctly, as "the animation stops". Only a deliberate
+ * flick should change the speed; everything else should be invisible.
  */
 export function throwRateFromVelocity(
     velocityPxPerMs: number,
@@ -34,6 +40,8 @@ export function throwRateFromVelocity(
     if (!Number.isFinite(velocityPxPerMs) || beltPxPerMs <= 0) return 1;
 
     const thrown = -velocityPxPerMs / beltPxPerMs;
+
+    if (Math.abs(thrown) < 1) return 1;
 
     return Math.max(-maxRate, Math.min(maxRate, thrown));
 }
