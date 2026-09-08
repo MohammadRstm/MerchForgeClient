@@ -1,4 +1,5 @@
-import { useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from 'react';
+import { settleStep, throwRateFromVelocity } from './beltThrow';
 import Overview from '../../../../assets/Landing/Landing__OwnerDesk__overview.png';
 import ProductsCatalog from '../../../../assets/Landing/Landing__OwnerDesk__products-catalog.png';
 import OrdersSummary from '../../../../assets/Landing/Landing__OwnerDesk__orders-summary.png';
@@ -19,8 +20,11 @@ import OrdersTable from '../../../../assets/Landing/Landing__OwnerDesk__orders-t
  * and is simply offset in time by one slot - a card's phase is (i / count) of
  * the cycle - which is what spaces them evenly along the belt and what makes the
  * loop seamless: nothing ever restarts as a group, so there is no jump to hide.
- * It also means no duplicated set and no JavaScript animation loop; the browser
- * composites transform and opacity on its own.
+ * It also means no duplicated set: the browser composites transform and opacity
+ * on its own, and the only JavaScript that ever animates anything here is the
+ * sub-second loop that eases a thrown belt back to its normal speed.
+ *
+ * Dragging scrubs it and a flick throws it; clicking deliberately does nothing.
  *
  * Travel and depth are two separate animations on two nested elements on
  * purpose. The travel has to stay perfectly linear or the cards stop being
@@ -53,8 +57,30 @@ const TILES: Tile[] = [
     { src: OrdersTable, alt: 'The orders list, showing customer, item count, total and fulfilment status' },
 ];
 
-/** Travel past this and the gesture is a drag, not a click that wobbled. */
+/** Travel past this and the gesture counts as a drag rather than a stray press. */
 const DRAG_SLOP = 5;
+
+/** Only the last of these milliseconds of pointer travel decide the throw. */
+const FLING_WINDOW_MS = 120;
+
+/** A flick can drive the belt this many times its own speed, forwards or back. */
+const MAX_RATE = 9;
+
+/** Exponential settle constant: how quickly a thrown belt returns to 1x. */
+const SETTLE_TAU_MS = 620;
+
+/**
+ * currentTime is parked this many cycles up the clock while dragging. The
+ * effect is periodic so it changes nothing on screen, but it leaves room for a
+ * rightward throw to run the animation backwards without the clock reaching
+ * zero - below which an animation sits in its before-phase and stops rendering.
+ */
+const CLOCK_HEADROOM_CYCLES = 50;
+
+interface PointerSample {
+    x: number;
+    t: number;
+}
 
 interface DragState {
     pointerX: number;
@@ -63,49 +89,61 @@ interface DragState {
     baseTimes: number[];
     cycleMs: number;
     msPerPx: number;
+    /** The belt's own speed, for turning a throw into a playback rate. */
+    pxPerMs: number;
+    samples: PointerSample[];
     moved: boolean;
 }
 
 export default function OwnerDeskConveyor() {
     const beltRef = useRef<HTMLDivElement>(null);
     const dragRef = useRef<DragState | null>(null);
+    const settleRef = useRef(0);
 
-    /**
-     * Set when a drag actually travelled, and read by the click handler.
-     * pointerup is followed by a click, so without this every drag would also
-     * toggle the pause it just finished scrubbing.
-     */
-    const suppressClick = useRef(false);
-
-    const [paused, setPaused] = useState(false);
     const [dragging, setDragging] = useState(false);
 
-    /**
-     * Click to stop, click again to carry on - not hover. A pointer crossing
-     * this section is usually travelling somewhere else, so pausing on hover
-     * stopped the belt for reasons nobody intended.
-     *
-     * It is a real toggle button rather than a click handler on a div because
-     * something that animates by itself for more than five seconds needs a way
-     * to stop it that does not require a mouse (WCAG 2.2.2). Enter and Space
-     * are handled explicitly since this is a div playing the role.
-     */
-    const toggle = () => {
-        if (suppressClick.current) {
-            suppressClick.current = false;
-            return;
-        }
-
-        setPaused((current) => !current);
+    const stopSettling = () => {
+        if (!settleRef.current) return;
+        cancelAnimationFrame(settleRef.current);
+        settleRef.current = 0;
     };
 
-    const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-        if (event.key !== 'Enter' && event.key !== ' ') return;
+    // The settle loop below outlives any single event handler, so it has to be
+    // cancelled if the section unmounts mid-throw.
+    useEffect(() => stopSettling, []);
 
-        // Space would otherwise scroll the page out from under the thing the
-        // visitor is trying to pause.
-        event.preventDefault();
-        toggle();
+    /**
+     * Ease the playback rate back to 1 after a throw.
+     *
+     * This is the one JavaScript animation loop in the component, and it earns
+     * its place: it runs for under a second after a flick, adjusts a single
+     * number per frame rather than measuring or laying anything out, and the
+     * belt itself is still being animated and composited by CSS throughout.
+     * Exponential rather than linear so the fast part of the throw is over
+     * quickly and the last of it drifts in, which is how something with mass
+     * actually slows down.
+     */
+    const settleToNormalSpeed = (animations: Animation[]) => {
+        stopSettling();
+        let previous = performance.now();
+
+        const tick = (now: number) => {
+            const dt = now - previous;
+            previous = now;
+
+            const rate = settleStep(animations[0].playbackRate, dt, SETTLE_TAU_MS);
+
+            if (Math.abs(rate - 1) < 0.02) {
+                animations.forEach((animation) => { animation.playbackRate = 1; });
+                settleRef.current = 0;
+                return;
+            }
+
+            animations.forEach((animation) => { animation.playbackRate = rate; });
+            settleRef.current = requestAnimationFrame(tick);
+        };
+
+        settleRef.current = requestAnimationFrame(tick);
     };
 
     /**
@@ -139,6 +177,19 @@ export default function OwnerDeskConveyor() {
         ) || 1;
         const span = slot.offsetWidth * step * TILES.length;
 
+        stopSettling();
+
+        // Park the clock high before anything else touches it. A rightward throw
+        // runs the animations backwards, and a currentTime that reaches zero
+        // drops into the before-phase and stops rendering - so give it room
+        // first. Modulo keeps this idempotent across repeated drags, and the
+        // effect is periodic so none of it shows.
+        animations.forEach((animation) => {
+            const time = Number(animation.currentTime ?? 0) % cycleMs;
+            animation.playbackRate = 1;
+            animation.currentTime = time + CLOCK_HEADROOM_CYCLES * cycleMs;
+        });
+
         dragRef.current = {
             pointerX: event.clientX,
             animations,
@@ -147,6 +198,8 @@ export default function OwnerDeskConveyor() {
             // The belt covers `span` pixels in one cycle, so this converts the
             // pointer's travel into the clock's.
             msPerPx: cycleMs / span,
+            pxPerMs: span / cycleMs,
+            samples: [{ x: event.clientX, t: performance.now() }],
             moved: false,
         };
 
@@ -160,6 +213,16 @@ export default function OwnerDeskConveyor() {
 
         const dx = event.clientX - drag.pointerX;
         if (Math.abs(dx) > DRAG_SLOP) drag.moved = true;
+
+        // Kept for the throw. Only the tail matters, so the list is trimmed to
+        // the window rather than growing for the length of the gesture - and it
+        // means a drag that stalls before release throws nothing, which is what
+        // stopping dead should do.
+        const now = performance.now();
+        drag.samples.push({ x: event.clientX, t: now });
+        while (drag.samples.length > 2 && now - drag.samples[0].t > FLING_WINDOW_MS) {
+            drag.samples.shift();
+        }
 
         drag.animations.forEach((animation, index) => {
             // Travel runs +span/2 -> -span/2, so advancing the clock carries
@@ -179,20 +242,35 @@ export default function OwnerDeskConveyor() {
         const drag = dragRef.current;
         if (!drag) return;
 
-        suppressClick.current = drag.moved;
         dragRef.current = null;
         setDragging(false);
-
-        // Letting go returns to the normal animation, which is also why a drag
-        // clears an earlier click-pause: the gesture ends in motion either way.
-        if (drag.moved) setPaused(false);
 
         if (event.currentTarget.hasPointerCapture(event.pointerId)) {
             event.currentTarget.releasePointerCapture(event.pointerId);
         }
+
+        // A press that never travelled is not a throw. Hand the belt straight
+        // back at its own speed rather than reading a velocity out of noise.
+        if (!drag.moved) {
+            drag.animations.forEach((animation) => { animation.playbackRate = 1; });
+            return;
+        }
+
+        const oldest = drag.samples[0];
+        const newest = drag.samples[drag.samples.length - 1];
+        const elapsed = newest.t - oldest.t;
+
+        // Pointer velocity in px/ms over the tail of the gesture. A drag that
+        // came to rest before release has newest ~= oldest, so this is ~0 and
+        // the belt simply resumes.
+        const velocity = elapsed > 0 ? (newest.x - oldest.x) / elapsed : 0;
+        const rate = throwRateFromVelocity(velocity, drag.pxPerMs, MAX_RATE);
+
+        drag.animations.forEach((animation) => { animation.playbackRate = rate; });
+        settleToNormalSpeed(drag.animations);
     };
 
-    const state = `${paused ? ' is-paused' : ''}${dragging ? ' is-dragging' : ''}`;
+    const state = dragging ? ' is-dragging' : '';
 
     return (
         // --count belongs on .desk-belt, not on the stage: .desk-belt is where
@@ -204,12 +282,6 @@ export default function OwnerDeskConveyor() {
             ref={beltRef}
             className={`desk-belt${state}`}
             style={{ '--count': TILES.length } as CSSProperties}
-            role="button"
-            tabIndex={0}
-            aria-pressed={paused}
-            aria-label={paused ? 'Resume the dashboard screenshots' : 'Pause the dashboard screenshots'}
-            onClick={toggle}
-            onKeyDown={onKeyDown}
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}
             onPointerUp={endDrag}

@@ -205,21 +205,15 @@
   100% { transform: translateZ(calc(var(--depth) * -1)) rotateY(var(--tilt)); opacity: 0.25; }
 }
 
-/* Click toggles the belt; hover deliberately does not. A pointer crossing this
-   section is usually on its way somewhere else, so pausing on hover made the
-   animation stop for reasons the visitor never intended. Pausing is an explicit
-   act now, and play-state resumes exactly where it left off either way.
+/* Only a drag holds the belt still, and only while the finger is down. Neither
+   hover nor click does anything: hover pausing stopped the animation whenever a
+   pointer merely crossed the section, and click pausing left it frozen until
+   clicked a second time, which reads as a fault rather than a control.
 
-   Also the WCAG 2.2.2 escape hatch: anything that animates automatically for
-   more than five seconds needs a way to stop it, which is why this is a real
-   keyboard-reachable control rather than a pointer-only affordance. */
-/* Dragging pauses by the same mechanism, because a scrub is just a paused belt
-   whose clock the pointer is setting by hand. Keeping both states on one CSS
-   property means the component never has to reconcile a WAAPI play state
-   against a CSS one - there is a single source of truth for whether the belt
-   is moving on its own. */
-.desk-belt.is-paused .desk-belt__slot,
-.desk-belt.is-paused .desk-belt__card,
+   A scrub is just a paused belt whose clock the pointer is setting by hand, so
+   this is the same play-state property - held for the length of the gesture and
+   released with it. Speed after a throw is a playback rate instead, which is a
+   separate axis and does not touch this. */
 .desk-belt.is-dragging .desk-belt__slot,
 .desk-belt.is-dragging .desk-belt__card {
   animation-play-state: paused;
@@ -236,14 +230,6 @@
 .desk-belt.is-dragging * {
   user-select: none;
   -webkit-user-select: none;
-}
-
-.desk-belt:focus-visible {
-  /* Offset outwards so the ring sits clear of the cards. The edge mask fades
-     its extreme left and right, but the run along the top and bottom stays
-     solid, which is enough to see where focus is. */
-  outline: 2px solid var(--mf-accent);
-  outline-offset: 3px;
 }
 
 /* ---------- Narrow ---------- */
