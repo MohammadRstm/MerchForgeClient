@@ -87,7 +87,17 @@
   --span: calc(var(--count) * var(--card-w) * var(--step));
 
   position: relative;
-  overflow: hidden;
+
+  /* Clipped horizontally only. The belt has to hide the cards parked off each
+     end, but the cards also throw a soft shadow well below themselves, and
+     clipping both axes sliced those off flat against the section edge.
+     clip rather than hidden, and this is the whole reason: `overflow-x: hidden`
+     with `overflow-y: visible` does not do what it reads like - a hidden axis
+     forces the other to compute as auto, which would quietly turn this into a
+     scroll container. `clip` carries no such rule, so overflow-y stays
+     genuinely visible and the shadows spill as they should. */
+  overflow-x: clip;
+  overflow-y: visible;
 
   /* grab rather than pointer: dragging is the richer of the two gestures here,
      and the cursor is the only thing advertising that it exists. */
