@@ -79,7 +79,14 @@
 
   position: relative;
   overflow: hidden;
-  cursor: pointer;
+
+  /* grab rather than pointer: dragging is the richer of the two gestures here,
+     and the cursor is the only thing advertising that it exists. */
+  cursor: grab;
+
+  /* Horizontal drags belong to the belt, vertical ones to the page - without
+     this, touch scrolling either fights the scrub or is swallowed by it. */
+  touch-action: pan-y;
 
   /* Cards dissolve into the section rather than being cut off mid-frame. This
      is also what hides the wrap, so it is load-bearing, not decoration. */
@@ -173,9 +180,29 @@
    Also the WCAG 2.2.2 escape hatch: anything that animates automatically for
    more than five seconds needs a way to stop it, which is why this is a real
    keyboard-reachable control rather than a pointer-only affordance. */
+/* Dragging pauses by the same mechanism, because a scrub is just a paused belt
+   whose clock the pointer is setting by hand. Keeping both states on one CSS
+   property means the component never has to reconcile a WAAPI play state
+   against a CSS one - there is a single source of truth for whether the belt
+   is moving on its own. */
 .desk-belt.is-paused .desk-belt__slot,
-.desk-belt.is-paused .desk-belt__card {
+.desk-belt.is-paused .desk-belt__card,
+.desk-belt.is-dragging .desk-belt__slot,
+.desk-belt.is-dragging .desk-belt__card {
   animation-play-state: paused;
+}
+
+.desk-belt.is-dragging {
+  cursor: grabbing;
+}
+
+/* Only while dragging: a belt that can never be selected is fine, but leaving
+   this on permanently also blocks selecting the heading above it on some
+   browsers when a drag starts high. */
+.desk-belt.is-dragging,
+.desk-belt.is-dragging * {
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .desk-belt:focus-visible {
