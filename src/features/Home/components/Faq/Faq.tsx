@@ -2,9 +2,8 @@ import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import './Faq.css';
 
 /* The numbers that used to label these are gone. mf-index means "step N of a
-   sequence" everywhere else it appears - HowItWorks and Studio - and these
-   questions have no order, so numbering them only implied one that isn't
-   there. */
+   sequence" where it appears - Studio - and these questions have no order, so
+   numbering them only implied one that isn't there. */
 interface FaqItem {
   question: string;
   answer: string;
