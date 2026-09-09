@@ -19,6 +19,14 @@
     font-family: var(--mf-body-font);
 }
 
+/* .mf-section's own padding-top (clamp(4rem, 9vw, 7rem)) is sized for a hero
+   with visual content above the fold; stacked under the sticky header on a
+   plain form page it reads as a large empty gap. Two classes beats
+   .mf-section's one regardless of which stylesheet the cascade sees last. */
+.contact-page.mf-section {
+    padding-top: clamp(2rem, 5vw, 2.75rem);
+}
+
 .contact-page__headline {
     font-size: clamp(2.5rem, 5vw, 3.5rem);
     margin: 0 0 1.1rem;
