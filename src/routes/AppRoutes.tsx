@@ -12,6 +12,7 @@ import AcceptMemberInvitation from "../features/Auth/AcceptMemberInvitation/Acce
 import CustomerLogin from "../features/CustomerAuth/CustomerLogin/CustomerLogin";
 import CustomerSignup from "../features/CustomerAuth/CustomerSignup/CustomerSignup";
 import PlanDetailPage from "../features/Plans/PlanDetailPage";
+import Contact from "../features/Contact/Contact";
 import TermsOfService from "../features/Legal/TermsOfService";
 import PrivacyPolicy from "../features/Legal/PrivacyPolicy";
 import AcceptableUsePolicy from "../features/Legal/AcceptableUsePolicy";
@@ -52,6 +53,7 @@ const AppRoutes = () =>{
                     <Route path={routes.CUSTOMER_LOGIN} element={<CustomerLogin />} />
                     <Route path={routes.CUSTOMER_SIGNUP} element={<CustomerSignup />} />
                     <Route path={routes.PLAN_DETAIL} element={<PlanDetailPage />} />
+                    <Route path={routes.CONTACT} element={<Contact />} />
                     <Route path={routes.TERMS} element={<TermsOfService />} />
                     <Route path={routes.PRIVACY} element={<PrivacyPolicy />} />
                     <Route path={routes.ACCEPTABLE_USE} element={<AcceptableUsePolicy />} />

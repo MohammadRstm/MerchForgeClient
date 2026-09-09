@@ -1,0 +1,268 @@
+.contact-page {
+    --mf-bg: #e9ebec;
+    --mf-bg-raised: #ffffff;
+    --mf-text: #14161b;
+    --mf-text-secondary: #5b6270;
+    --mf-text-muted: #8a8f99;
+    --mf-border: #d6d8da;
+    --mf-accent: #ff9b00;
+    --mf-accent-tint: #fff4e0;
+    --mf-error: #b3453e;
+    --mf-error-bg: #fde8e6;
+    --mf-display-font: 'Fraunces', 'Times New Roman', serif;
+    --mf-body-font: 'Inter', system-ui, sans-serif;
+    --mf-display-weight: 500;
+    --mf-display-tracking: -0.02em;
+
+    background: var(--mf-bg);
+    color: var(--mf-text);
+    font-family: var(--mf-body-font);
+}
+
+/* .mf-section's own padding-top (clamp(4rem, 9vw, 7rem)) is sized for a hero
+   with visual content above the fold; stacked under the sticky header on a
+   plain form page it reads as a large empty gap. Two classes beats
+   .mf-section's one regardless of which stylesheet the cascade sees last. */
+.contact-page.mf-section {
+    padding-top: clamp(2rem, 5vw, 2.75rem);
+}
+
+.contact-page__headline {
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    margin: 0 0 1.1rem;
+}
+
+.contact-page__tagline {
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    color: var(--mf-text-secondary);
+    margin: 0 0 3rem;
+    max-width: 50ch;
+}
+
+.contact-page__content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: clamp(2rem, 5vw, 4rem);
+    max-width: 1200px;
+}
+
+@media (max-width: 768px) {
+    .contact-page__content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+}
+
+/* --- Form --- */
+
+.contact-page__form-wrapper {
+    min-height: 400px;
+}
+
+.contact-page__form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.contact-page__form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.contact-page__label {
+    font-family: var(--mf-body-font);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--mf-text);
+    display: block;
+}
+
+.contact-page__input,
+.contact-page__textarea,
+.contact-page__select {
+    font-family: var(--mf-body-font);
+    font-size: 0.9375rem;
+    color: var(--mf-text);
+    background: var(--mf-bg-raised);
+    border: 1px solid var(--mf-border);
+    border-radius: 8px;
+    padding: 0.875rem 1rem;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    resize: vertical;
+}
+
+.contact-page__input::placeholder,
+.contact-page__textarea::placeholder {
+    color: var(--mf-text-muted);
+}
+
+.contact-page__input:focus,
+.contact-page__textarea:focus,
+.contact-page__select:focus {
+    outline: none;
+    border-color: var(--mf-accent);
+    box-shadow: 0 0 0 3px var(--mf-accent-tint);
+}
+
+.contact-page__input:disabled,
+.contact-page__textarea:disabled,
+.contact-page__select:disabled {
+    background: var(--mf-bg);
+    color: var(--mf-text-secondary);
+    cursor: not-allowed;
+}
+
+.contact-page__select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath fill='%235b6270' d='M6 8 0 0h12z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 11px 7px;
+    padding-right: 2.5rem;
+    cursor: pointer;
+}
+
+.contact-page__select:invalid {
+    color: var(--mf-text-muted);
+}
+
+.contact-page__textarea {
+    font-family: var(--mf-body-font);
+    line-height: 1.5;
+}
+
+.contact-page__field-error {
+    font-family: var(--mf-body-font);
+    font-size: 0.8125rem;
+    color: var(--mf-error);
+    margin: 0;
+}
+
+.contact-page__char-count {
+    font-family: var(--mf-body-font);
+    font-size: 0.75rem;
+    color: var(--mf-text-muted);
+    margin: 0;
+    text-align: right;
+}
+
+.contact-page__server-error {
+    font-family: var(--mf-body-font);
+    font-size: 0.875rem;
+    color: var(--mf-error);
+    background: var(--mf-error-bg);
+    border: 1px solid rgba(179, 69, 62, 0.25);
+    border-radius: 8px;
+    padding: 0.875rem 1rem;
+    margin: 0 0 1.5rem;
+}
+
+.contact-page__submit {
+    margin-top: 0.5rem;
+    align-self: flex-start;
+}
+
+.contact-page__submit:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.contact-page__submit-spinner {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* --- Success State --- */
+
+.contact-page__success {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 3rem 1rem;
+}
+
+.contact-page__success-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    background: var(--mf-accent-tint);
+    border-radius: 50%;
+    font-size: 2rem;
+    color: var(--mf-accent);
+    margin: 0 0 1.5rem;
+}
+
+.contact-page__success-headline {
+    font-family: var(--mf-display-font);
+    font-size: 1.75rem;
+    font-weight: 500;
+    color: var(--mf-text);
+    margin: 0 0 0.5rem;
+}
+
+.contact-page__success-message {
+    font-family: var(--mf-body-font);
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--mf-text-secondary);
+    margin: 0;
+    max-width: 40ch;
+}
+
+/* --- Contact Methods --- */
+
+.contact-page__methods {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.contact-page__method {
+    background: var(--mf-bg-raised);
+    border: 1px solid var(--mf-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.contact-page__method-title {
+    font-family: var(--mf-display-font);
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--mf-text);
+    margin: 0 0 0.75rem;
+}
+
+.contact-page__method-text {
+    font-family: var(--mf-body-font);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--mf-text-secondary);
+    margin: 0 0 1rem;
+}
+
+.contact-page__method-btn {
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    .contact-page__headline {
+        font-size: 2rem;
+    }
+
+    .contact-page__tagline {
+        font-size: 1rem;
+        margin: 0 0 2rem;
+    }
+
+    .contact-page__submit {
+        width: 100%;
+    }
+}

@@ -23,7 +23,7 @@ const PlanDetailPage = () => {
     );
 
     const isOwner = session?.business?.role === "Owner";
-    const ctaHref = isOwner ? `${routes.DASHBOARD_BILLING}?plan=${planId}` : routes.SIGNUP;
+    const ctaHref = isOwner ? `${routes.DASHBOARD_BILLING}?plan=${planId}` : routes.CONTACT;
     const ctaLabel = isOwner ? "Choose this plan" : "Get started";
 
     return (

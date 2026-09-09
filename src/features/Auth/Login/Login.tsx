@@ -89,8 +89,11 @@ const Login = () => {
 
                 <p className="auth-form__suggestion">
                     Don't have an account?{" "}
-                    <Link className="auth-form__suggestion-link" to={routes.SIGNUP}>
-                        Create one
+                    {/* There is no self-service signup — an owner account only
+                        exists after a SuperAdmin verifies the business and sends
+                        an invitation, so this sends them to ask for one. */}
+                    <Link className="auth-form__suggestion-link" to={routes.CONTACT}>
+                        Contact us
                     </Link>
                 </p>
             </form>
