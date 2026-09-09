@@ -9,6 +9,7 @@ export const routes = {
     ACCEPT_INVITATION: "/accept-invitation",
     ACCEPT_MEMBER_INVITATION: "/accept-member-invitation",
     PLAN_DETAIL: "/plans/:planId",
+    CONTACT: "/contact",
 
     // Legal — static content pages, no separate cookie policy: MerchForge sets no
     // cookies of its own other than the httpOnly refresh-token cookie, which is

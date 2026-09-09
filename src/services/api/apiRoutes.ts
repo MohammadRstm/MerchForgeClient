@@ -91,6 +91,9 @@ export const apiRoutes = {
     SUBSCRIPTION_PLAN_DISTRIBUTION : "/subscription-plans/distribution",
     SUBSCRIPTION_PLAN_STATS : "/subscription-plans/stats",
 
+    /** PUBLIC CONTACT FORM (no auth required) */
+    CONTACT : "/contact",
+
     /** DASHBOARD — subscriptions (platform-wide, Subscriptions tab) */
     DASHBOARD_SUBSCRIPTIONS : "/Dashboard/subscriptions",
     DASHBOARD_SUBSCRIPTIONS_RECENT_ACTIVITY : "/Dashboard/subscriptions/recent-activity",

@@ -20,7 +20,7 @@ const COLUMNS: FooterColumn[] = [
     title: 'Company',
     links: [
       { label: 'About', href: '#about' },
-      { label: 'Contact', href: '#contact' },
+      { label: 'Contact', href: routes.CONTACT },
     ],
   },
   {
