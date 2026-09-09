@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import "./Contact.css";
 import Spinner from "../../components/LoadingSpinner/LoadingSpinner";
 import { useContactForm } from "./hooks/useContactForm";
+import { SUBJECT_OPTIONS } from "./types";
 import "../Home/Home.css";
 
 const Contact = () => {
@@ -80,24 +81,52 @@ const Contact = () => {
                                 </div>
 
                                 <div className="contact-page__form-group">
-                                    <label htmlFor="subject" className="contact-page__label">
+                                    <label htmlFor="subjectOption" className="contact-page__label">
                                         Subject
                                     </label>
-                                    <input
-                                        id="subject"
-                                        name="subject"
-                                        type="text"
-                                        className="contact-page__input"
-                                        placeholder="What is this about?"
-                                        value={formData.subject}
+                                    <select
+                                        id="subjectOption"
+                                        name="subjectOption"
+                                        className="contact-page__select"
+                                        value={formData.subjectOption}
                                         onChange={handleChange}
                                         disabled={isPending}
-                                        maxLength={150}
-                                    />
-                                    {errors.subject && (
-                                        <p className="contact-page__field-error">{errors.subject}</p>
+                                    >
+                                        <option value="" disabled>
+                                            Choose a subject
+                                        </option>
+                                        {SUBJECT_OPTIONS.map((option) => (
+                                            <option key={option.value} value={option.value}>
+                                                {option.label}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    {errors.subjectOption && (
+                                        <p className="contact-page__field-error">{errors.subjectOption}</p>
                                     )}
                                 </div>
+
+                                {formData.subjectOption === "custom" && (
+                                    <div className="contact-page__form-group">
+                                        <label htmlFor="customSubject" className="contact-page__label">
+                                            Tell us the subject
+                                        </label>
+                                        <input
+                                            id="customSubject"
+                                            name="customSubject"
+                                            type="text"
+                                            className="contact-page__input"
+                                            placeholder="What is this about?"
+                                            value={formData.customSubject}
+                                            onChange={handleChange}
+                                            disabled={isPending}
+                                            maxLength={150}
+                                        />
+                                        {errors.customSubject && (
+                                            <p className="contact-page__field-error">{errors.customSubject}</p>
+                                        )}
+                                    </div>
+                                )}
 
                                 <div className="contact-page__form-group">
                                     <label htmlFor="message" className="contact-page__label">

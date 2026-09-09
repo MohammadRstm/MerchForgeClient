@@ -1,16 +1,30 @@
 import { useState } from "react";
 import type { ContactFormData, ContactFormErrors } from "../types";
+import { SUBJECT_OPTIONS } from "../types";
 import { validateContactForm } from "../validation";
 import { submitContactEnquiry } from "../../../services/api/contact.api";
 import type { AxiosError } from "axios";
 
+const EMPTY_FORM: ContactFormData = {
+    name: "",
+    email: "",
+    subjectOption: "",
+    customSubject: "",
+    message: "",
+};
+
+// The backend takes one free-text Subject string — the dropdown is a frontend
+// convenience over that, so a chosen option is resolved to its label (or, for
+// "Custom", to what the visitor typed) right before the request goes out.
+const resolveSubject = (formData: ContactFormData): string => {
+    if (formData.subjectOption === "custom") {
+        return formData.customSubject.trim();
+    }
+    return SUBJECT_OPTIONS.find((option) => option.value === formData.subjectOption)?.label ?? "";
+};
+
 export const useContactForm = () => {
-    const [formData, setFormData] = useState<ContactFormData>({
-        name: "",
-        email: "",
-        subject: "",
-        message: "",
-    });
+    const [formData, setFormData] = useState<ContactFormData>(EMPTY_FORM);
 
     const [errors, setErrors] = useState<ContactFormErrors>({});
     const [serverError, setServerError] = useState<string>("");
@@ -18,14 +32,17 @@ export const useContactForm = () => {
     const [isSuccess, setIsSuccess] = useState(false);
 
     const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
     ) => {
         const { name, value } = e.target;
         setFormData((prev) => ({
             ...prev,
             [name]: value,
+            // Switching away from "Custom" leaves a stale value behind that
+            // would otherwise resurface if the visitor picks "Custom" again.
+            ...(name === "subjectOption" && value !== "custom" ? { customSubject: "" } : {}),
         }));
-        // Clear field error when user starts typing
+        // Clear field error when user starts typing/selecting
         if (errors[name as keyof ContactFormErrors]) {
             setErrors((prev) => ({
                 ...prev,
@@ -53,17 +70,12 @@ export const useContactForm = () => {
             await submitContactEnquiry({
                 Name: formData.name.trim(),
                 Email: formData.email.trim(),
-                Subject: formData.subject.trim(),
+                Subject: resolveSubject(formData),
                 Message: formData.message.trim(),
             });
 
             // Reset form and show success
-            setFormData({
-                name: "",
-                email: "",
-                subject: "",
-                message: "",
-            });
+            setFormData(EMPTY_FORM);
             setIsSuccess(true);
         } catch (error) {
             const axiosError = error as AxiosError<{ message?: string }>;

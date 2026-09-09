@@ -22,10 +22,14 @@ export const validateContactForm = (data: ContactFormData): ContactFormErrors =>
     }
 
     // Subject validation
-    if (!data.subject?.trim()) {
-        errors.subject = "Subject is required";
-    } else if (data.subject.length > 150) {
-        errors.subject = "Subject must be 150 characters or less";
+    if (!data.subjectOption) {
+        errors.subjectOption = "Please choose a subject";
+    } else if (data.subjectOption === "custom") {
+        if (!data.customSubject?.trim()) {
+            errors.customSubject = "Please describe the subject";
+        } else if (data.customSubject.length > 150) {
+            errors.customSubject = "Subject must be 150 characters or less";
+        }
     }
 
     // Message validation
