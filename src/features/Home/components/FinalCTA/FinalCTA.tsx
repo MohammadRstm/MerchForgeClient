@@ -38,9 +38,10 @@ export default function FinalCTA() {
         </p>
         <div className="final-cta__actions">
           {/* This button lives inside #get-started, so linking there scrolled
-              nowhere. Login is the only real entry point — accounts come from an
-              invitation, not a signup form. */}
-          <Link to={routes.LOGIN} className="final-cta__btn final-cta__btn--primary">
+              nowhere. There is no signup form — an owner account only exists
+              after a SuperAdmin verifies the business and sends an invitation,
+              so Contact is the real entry point. */}
+          <Link to={routes.CONTACT} className="final-cta__btn final-cta__btn--primary">
             Get Started
           </Link>
           <a href="#studio" className="final-cta__btn final-cta__btn--secondary">

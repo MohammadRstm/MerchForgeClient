@@ -17,12 +17,15 @@ interface NavLink {
     href: string;
 }
 
-// Every href must match an id actually rendered on the landing page.
+// Every hash href must match an id actually rendered on the landing page.
+// CONTACT is a real route rather than an anchor, so it is rendered as a
+// <Link> below instead of a plain <a>.
 const NAV_LINKS: NavLink[] = [
     { label: "How it works", href: "#studio" },
     { label: "Dashboard", href: "#dashboard" },
     { label: "Coming soon", href: "#whats-next" },
     { label: "Pricing", href: "#pricing" },
+    { label: "Contact us", href: routes.CONTACT },
 ];
 
 const Header = () => {
@@ -88,11 +91,17 @@ const Header = () => {
                 </Link>
 
                 <nav className="header__links" aria-label="Primary">
-                    {NAV_LINKS.map((link) => (
-                        <a key={link.label} href={link.href} className="header__link">
-                            {link.label}
-                        </a>
-                    ))}
+                    {NAV_LINKS.map((link) =>
+                        link.href.startsWith("/") ? (
+                            <Link key={link.label} to={link.href} className="header__link">
+                                {link.label}
+                            </Link>
+                        ) : (
+                            <a key={link.label} href={link.href} className="header__link">
+                                {link.label}
+                            </a>
+                        ),
+                    )}
                 </nav>
 
                 <div className="header__actions">
@@ -133,11 +142,27 @@ const Header = () => {
 
             <div className="header__mobile" id="header-mobile-menu" hidden={!menuOpen}>
                 <nav className="header__mobile-links" aria-label="Mobile">
-                    {NAV_LINKS.map((link) => (
-                        <a key={link.label} href={link.href} className="header__mobile-link" onClick={closeMenu}>
-                            {link.label}
-                        </a>
-                    ))}
+                    {NAV_LINKS.map((link) =>
+                        link.href.startsWith("/") ? (
+                            <Link
+                                key={link.label}
+                                to={link.href}
+                                className="header__mobile-link"
+                                onClick={closeMenu}
+                            >
+                                {link.label}
+                            </Link>
+                        ) : (
+                            <a
+                                key={link.label}
+                                href={link.href}
+                                className="header__mobile-link"
+                                onClick={closeMenu}
+                            >
+                                {link.label}
+                            </a>
+                        ),
+                    )}
                 </nav>
                 <div className="header__mobile-actions">
                     {isAuthenticated ? (

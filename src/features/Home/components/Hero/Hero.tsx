@@ -1,6 +1,8 @@
 import { useEffect, useState, type CSSProperties } from 'react';
+import { Link } from 'react-router';
 import HeroBackdrop from './HeroBackdrop';
 import HeroShowcase from './HeroShowcase';
+import { routes } from '../../../../config/routes';
 import './Hero.css';
 
 function withDelay(seconds: number): CSSProperties {
@@ -34,9 +36,9 @@ export default function Hero() {
             powered by AI that turns a photo and a voice note into a finished listing.
           </p>
           <div className="hero__actions" style={withDelay(0.24)}>
-            <a href="#get-started" className="hero__btn hero__btn--primary">
+            <Link to={routes.CONTACT} className="hero__btn hero__btn--primary">
               Start Creating
-            </a>
+            </Link>
             <a href="#studio" className="hero__btn hero__btn--secondary">
               See how it works
             </a>
